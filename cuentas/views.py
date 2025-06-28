@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render , redirect
 from django.http import HttpResponse
 from usuarios.models import Usuario
 
@@ -11,6 +11,24 @@ import io
 @login_required
 def profile(request):
     user_id = request.user.id
+
+    if(request.method == "POST"):
+        nombres = request.POST.get("nombres")
+        apellido_paterno = request.POST.get("apellido_paterno")
+        apellido_materno = request.POST.get("apellido_materno")
+        email = request.POST.get("email")
+        telefono = request.POST.get("telefono")
+        imagen_perfil = request.FILES.get("imagen_perfil")
+
+        usuario = Usuario.objects.filter(id=user_id).update(
+            nombres = nombres,
+            apellido_paterno = apellido_paterno,
+            apellido_materno = apellido_materno,
+            correo = email,
+            telefono = telefono,
+            imagen_perfil = imagen_perfil,
+        )
+        return redirect("cuentas:perfil")
 
     usuario = Usuario.objects.get(id=user_id)
     formato_imagen = None

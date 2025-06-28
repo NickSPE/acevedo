@@ -1,9 +1,10 @@
 {% extends "core/base_template.html" %}
+
 {% block title %}Dashboard | BuilderQuantum{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold font-semibold text-gray-800 mb-1">Dashboard</h2>
-<p class="text-sm text-gray-600 mb-6">Overview of your financial situation</p>
+<h2 class="text-2xl font-bold font-semibold text-gray-800 mb-1">Panel de resumen</h2>
+<p class="text-sm text-gray-600 mb-6">Observe su situacion financiera.</p>
 
 <!-- Tabs -->
 <div class="flex space-x-4 mb-6 text-sm font-medium">
@@ -45,14 +46,16 @@
       <h3 class="font-semibold mb-3">Recent Transactions</h3>
       <ul class="space-y-2 text-sm">
         {% for movimiento in movimientos %}
-          {% if movmiento.tipo == "Ingreso" %}
+          {% if movimiento.tipo == "ingreso" %}
             <li class="flex justify-between">
-              <span>Internet Bill · Jul 21</span><span class="text-green-600">{{ simbolo_moneda }} {{ movimiento.monto }}</span>
+              <span>{{ movimiento.nombre }} · {{ movimiento.fecha_movimiento|date:"b d, Y" }}</span>
+              <span class="text-green-600">{{ simbolo_moneda }} {{ movimiento.monto }}</span>
             </li>
-            {% elif movimiento.tipo == "Egreso" %}
-              <li class="flex justify-between">
-                <span>Internet Bill · Jul 21</span><span class="text-red-500">-{{ simbolo_moneda }} {{ movimiento.monto }}</span>
-              </li>
+          {% elif movimiento.tipo == "egreso" %}
+            <li class="flex justify-between">
+              <span>{{ movimiento.nombre }} · {{ movimiento.fecha_movimiento|date:"b d, Y" }}</span>
+              <span class="text-red-500">-{{ simbolo_moneda }} {{ movimiento.monto }}</span>
+            </li>
           {% endif %}
         {% endfor %}
       </ul>

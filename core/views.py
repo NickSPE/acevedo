@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from gestion_financiera_basica.models import Movimiento
 from usuarios.models import Usuario
+from cuentas.models import Cuenta
 
 """ Views App CORE """
 def Inicio(request):
@@ -19,33 +20,25 @@ def dashboard(request):
     simbolo_moneda = simbolo_moneda.first()
     simbolo_moneda = simbolo_moneda["id_moneda__simbolo"]
     movimientos = Movimiento.objects.filter(id_usuario_id=user_id)
-    total_balance = Usuario.objects.filter(id=user_id).values('id').annotate(total=Sum('id_cuenta__saldo_cuenta'))
-    
-    total_balance = total_balance.first()
-    total_balance = total_balance['total']
 
-    total_ingresos = Movimiento.objects.filter(id_usuario__id=user_id , tipo="Ingreso").values('id_usuario').annotate(total=Sum('monto')).order_by('id_usuario')
-    cantidad_registros_ingresos = Movimiento.objects.filter(id_usuario__id=user_id , tipo="Ingreso").count()
+    total_ingresos = Movimiento.objects.filter(id_cuenta__id_usuario=user_id , tipo="ingreso").aggregate(total=Sum('monto'))['total']
+    cantidad_registros_ingresos = Movimiento.objects.filter(id_usuario__id=user_id , tipo="ingreso").count()
 
+    if(not total_ingresos):
+        total_ingresos = 0
 
-    total_ingresos = total_ingresos.first()
-    if(total_ingresos):
-        total_ingresos = total_ingresos['total']
-    else:
-        total_ingresos = "0"
+    total_egresos = Movimiento.objects.filter(id_cuenta__id_usuario=user_id , tipo="egreso").aggregate(total=Sum('monto'))['total']
 
-    total_egresos = Movimiento.objects.filter(id_usuario__id=user_id , tipo="Egresos").values('id_usuario').annotate(total=Sum('monto')).order_by('id_usuario')
+    print(total_egresos)
+    if(not total_egresos):
+        total_egresos = 0
 
-    total_egresos = total_egresos.first()
-    if(total_egresos):
-        total_egresos = total_egresos['total']
-    else:
-        total_egresos = "0"
-
-    if(int(total_egresos) == 0):
+    if(total_ingresos == 0):
         porcentaje_de_ingresos_para_egresos = 0
     else:
         porcentaje_de_ingresos_para_egresos = (float(total_egresos) / float(total_ingresos)) * 100
+
+    total_balance = float(total_ingresos) - float(total_egresos)
 
     tab = request.GET.get("tab", "overview")
 

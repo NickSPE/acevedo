@@ -28,7 +28,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     telefono = models.BigIntegerField()
     imagen_perfil = models.BinaryField(null=True, blank=True)
     id_moneda = models.ForeignKey("cuentas.Moneda", on_delete=models.CASCADE)
-    id_cuenta = models.ForeignKey("cuentas.Cuenta", on_delete=models.CASCADE)
 
     # Campos obligatorios para el sistema de autenticación
     is_active = models.BooleanField(default=True)

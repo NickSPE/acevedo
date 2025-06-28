@@ -91,11 +91,6 @@ def Register(request):
             error = "El correo ya está registrado."
             return render(request, "usuarios/register.html", {"error": error, 'monedas': monedas})
 
-        cuenta = Cuenta.objects.create(
-            nombre=nombre_cuenta,
-            descripcion=descripcion,
-            saldo_cuenta=saldo_inicial_float,
-        )
 
         usuario = Usuario.objects.create_user(
             documento_identidad=documento_identidad,
@@ -107,7 +102,12 @@ def Register(request):
             telefono=telefono,
             imagen_perfil=imagen_binario,
             id_moneda=moneda_obj,
-            id_cuenta=cuenta,
+        )
+        cuenta = Cuenta.objects.create(
+            nombre=nombre_cuenta,
+            descripcion=descripcion,
+            saldo_cuenta=saldo_inicial_float,
+            id_usuario=usuario,
         )
 
         login(request, usuario, backend='usuarios.backends.EmailBackend')

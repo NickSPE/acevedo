@@ -1,7 +1,12 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from .forms import MovimientoForm
-""" Views App GESTION_FINANCIERA_BASICA """
+from cuentas.models import Cuenta
+from django.shortcuts import render
+from django.db.models import Sum
+from cuentas.models import Cuenta
+from .models import Movimiento
+
+
 def savings_goals(request):
     goals = [
         ("Emergency Fund", "$3000.00 / $5000.00", "60%", "December 30, 2023", "Emergency fund for unexpected expenses"),
@@ -20,7 +25,12 @@ def savings_goals(request):
     })
 
 def transactions(request):
+    user_id = request.user.id
+
     filter_type = request.GET.get("filter", "all")
+
+    transacciones = Movimiento.objects.filter(id_cuenta__id_usuario=user_id)
+    # egresos = Movimiento.objects.filter(id_cuenta__id_usuario=user_id , tipo="egreso")
 
     all_transactions = [
         ("Internet Bill", "Jul 21, 2023", "Utilities", "-$150.00", "bg-teal-500"),
@@ -41,17 +51,49 @@ def transactions(request):
         transactions = all_transactions
 
     return render(request, "gestion_financiera_basica/transactions.html", {
-        "transactions": transactions,
-        "filter_type": filter_type,
+        "transactions": all_transactions,
     })
-
+    
+     
 def agregar_movimiento(request):
     if request.method == 'POST':
         form = MovimientoForm(request.POST)
+        
         if form.is_valid():
-            form.save()
-            return redirect('transactions')  # nombre de la vista que muestra transacciones
+            # Guardar el movimiento en la base de datos sin commit
+            movimiento = form.save(commit=False)
+            tipo = movimiento.tipo  # 'ingreso' o 'egreso'
+            monto = movimiento.monto
+            id_cuenta = movimiento.id_cuenta  # Obtener la cuenta relacionada
+
+            # Verificar si la cuenta existe
+            try:
+                cuenta = Cuenta.objects.get(id=id_cuenta.id)
+            except Cuenta.DoesNotExist:
+                # Si no existe la cuenta, redirigir o mostrar un error
+                return redirect('error')  # Cambia esto a la URL o vista que desees para manejo de errores
+
+            # Si el tipo es "ingreso", aumentar el saldo
+            if tipo == 'ingreso':
+                cuenta.saldo_cuenta += monto  # Aumentar el saldo
+            elif tipo == 'egreso':
+                cuenta.saldo_cuenta -= monto  # Reducir el saldo
+            
+            # Verificar que el saldo no sea negativo (si es necesario)
+            if cuenta.saldo_cuenta < 0 and tipo == 'egreso':
+                form.add_error('monto', 'El saldo no puede ser negativo.')
+                return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
+
+            # Guardar la cuenta actualizada
+            cuenta.save()
+
+            # Ahora guardar el movimiento
+            movimiento.save()
+
+            # Redirigir a la vista de dashboard donde se debe reflejar el cambio
+            return redirect('core:dashboard')  # Redirigir al dashboard para ver el saldo actualizado
+
     else:
         form = MovimientoForm()
-    
+
     return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
