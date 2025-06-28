@@ -74,6 +74,7 @@
             <li><a href="{% url 'settings' %}" class="block hover:text-blue-600">⚙️ Configuración</a></li>
             <li><a href="#" class="block hover:text-blue-600">📈 Subcuentas</a></li>
             <li><a href="{% url 'reports' %}" class="block hover:text-blue-600">📄 Informes</a></li>
+            <li><a href="{% url 'configuraciones' %}" class="block hover:text-blue-600">🔔 Notificaciones</a></li>
             <li>
               <form method="post" action="{% url 'core:logout' %}">
                 {% csrf_token %}

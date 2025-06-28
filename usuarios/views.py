@@ -12,18 +12,39 @@ def Login(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
-
-        usuario = authenticate(request , correo=email , password=password)
-
-        if usuario:
-            request.session['user_id'] = usuario.id
+        
+        # Crear un diccionario para almacenar los errores específicos
+        errors = {}
+        
+        # Validar que el email no esté vacío
+        if not email:
+            errors['email_error'] = "Por favor ingresa tu correo electrónico"
+        
+        # Validar que la contraseña no esté vacía
+        if not password:
+            errors['password_error'] = "Por favor ingresa tu contraseña"
+        
+        # Si no hay errores de validación, intentar autenticar
+        if not errors:
+            usuario = authenticate(request, correo=email, password=password)
             
-            login(request , usuario , backend='usuarios.backends.EmailBackend')
-
-            return redirect('core:dashboard')  # o 'index' si tienes así la url
-        else:
-            return render(request, 'usuarios/login.html' , {
-                "message_error": "Credenciales no validas.",
+            if usuario:
+                request.session['user_id'] = usuario.id
+                login(request, usuario, backend='usuarios.backends.EmailBackend')
+                return redirect('core:dashboard')  # o 'index' si tienes así la url
+            else:
+                # Verificar si el email existe
+                if Usuario.objects.filter(correo=email).exists():
+                    errors['password_error'] = "Contraseña incorrecta"
+                else:
+                    errors['email_error'] = "Este correo no está registrado"
+        
+        # Si hay errores, renderizar el formulario con los errores
+        if errors:
+            return render(request, 'usuarios/login.html', {
+                "errors": errors,
+                "email": email,  # Mantener el email para no tener que escribirlo de nuevo
+                "message_error": "Por favor corrige los errores"
             })
 
     return render(request, 'usuarios/login.html')
