@@ -27,6 +27,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     correo = models.EmailField(unique=True, max_length=100)
     telefono = models.BigIntegerField()
     imagen_perfil = models.BinaryField(null=True, blank=True)
+    pin_acceso_rapido = models.IntegerField(max_length=6)
+    email_verificado = models.BooleanField(default=False)
+    
     id_moneda = models.ForeignKey("cuentas.Moneda", on_delete=models.CASCADE)
 
     # Campos obligatorios para el sistema de autenticación
