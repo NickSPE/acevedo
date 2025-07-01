@@ -1,7 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from core.decorators import fast_access_pin_verified
+from django.contrib.auth.decorators import login_required
 
 """ Views App EDUCACION_FINANCIERA """
+@login_required
+@fast_access_pin_verified
 def calculators(request):
     tab = request.GET.get("tab", "savings")  # default tab
     result = None
@@ -36,6 +40,8 @@ def calculators(request):
         "result": result
     })
 
+@login_required
+@fast_access_pin_verified
 def courses(request):
     course_list = [
         {
@@ -69,6 +75,8 @@ def courses(request):
     ]
     return render(request, "educacion_financiera/courses.html", {"courses": course_list})
 
+@login_required
+@fast_access_pin_verified
 def tips(request):
     tab = request.GET.get("tab", "daily")
 

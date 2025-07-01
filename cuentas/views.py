@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render , redirect
 from django.http import HttpResponse
 from usuarios.models import Usuario
+from core.decorators import fast_access_pin_verified
 
 import base64
 from PIL import Image
@@ -9,6 +10,7 @@ import io
 
 """ Views App CUENTAS """
 @login_required
+@fast_access_pin_verified
 def profile(request):
     user_id = request.user.id
 
@@ -48,5 +50,6 @@ def profile(request):
     })
 
 @login_required
+@fast_access_pin_verified
 def settings(request):
     return render(request, "cuentas/settings.html")
