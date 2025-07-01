@@ -5,7 +5,11 @@ from django.shortcuts import render
 from django.db.models import Sum
 from cuentas.models import Cuenta
 from .models import Movimiento
+from django.contrib.auth.decorators import login_required
+from core.decorators import fast_access_pin_verified
 
+@login_required
+@fast_access_pin_verified
 def savings_goals(request):
     goals = [
         ("Emergency Fund", "$3000.00 / $5000.00", "60%", "December 30, 2023", "Emergency fund for unexpected expenses"),
@@ -23,6 +27,8 @@ def savings_goals(request):
         "tips": tips
     })
 
+@login_required
+@fast_access_pin_verified
 def transactions(request):
     user_id = request.user.id
 
@@ -53,6 +59,8 @@ def transactions(request):
         "transactions": all_transactions,
     })
     
+@login_required
+@fast_access_pin_verified
 def agregar_movimiento(request):
     if request.method == 'POST':
         form = MovimientoForm(request.POST)

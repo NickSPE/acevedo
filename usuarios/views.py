@@ -26,7 +26,12 @@ def Login(request):
             
             login(request , usuario , backend='usuarios.backends.EmailBackend')
 
-            return redirect('usuarios:acceso_rapido')  # o 'index' si tienes así la url
+            email_verificado = request.user.email_verificado
+
+            if(email_verificado):
+                return redirect('usuarios:acceso_rapido')
+            else:
+                return redirect('usuarios:pagina_verificar_correo')
         else:
             return render(request, 'usuarios/login.html' , {
                 "message_error": "Credenciales no validas.",
@@ -176,3 +181,38 @@ def Verificacion_Correo(request):
             return redirect('core:dashboard')
         else:
             return render(request , 'usuarios/validar_correo.html' , { 'error_message' : 'PIN incorrecto'})
+
+@login_required
+def Acceso_Rapido(request):
+    user = request.user
+    if(not user.is_authenticated):
+        return redirect('usuarios:login')
+    print("Ingreso acceso rapido")
+
+    if(request.method == "POST"):
+        pin_input = ''.join([
+            request.POST.get(f'pin{i}', '') for i in range(6)
+        ])
+
+        if not pin_input.isdigit() or len(pin_input) != 6:
+            error_message = "PIN inválido. Ingrese 6 dígitos numéricos."
+            return render(request, 'usuarios/acceso_rapido.html', {'error_message': error_message})
+
+        try:
+            usuario = Usuario.objects.get(id=user.id)
+        except Usuario.DoesNotExist:
+            error_message = "Usuario no encontrado."
+            return render(request, 'usuarios/acceso_rapido.html', {'error_message': error_message})
+
+        print(pin_input)
+        print(usuario.pin_acceso_rapido)
+
+        if str(usuario.pin_acceso_rapido).zfill(6) == pin_input:
+            request.session['pin_acceso_rapido_validado'] = True
+
+            return redirect('core:dashboard') 
+        else:
+            error_message = "El PIN ingresado es incorrecto."
+            return render(request, 'usuarios/acceso_rapido.html', {'error_message': error_message})
+
+    return render(request , 'usuarios/acceso_rapido.html')

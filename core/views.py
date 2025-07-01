@@ -4,17 +4,19 @@ from django.shortcuts import redirect, render
 from gestion_financiera_basica.models import Movimiento
 from usuarios.models import Usuario
 from cuentas.models import Cuenta
+from core.decorators import fast_access_pin_verified
 
 """ Views App CORE """
 def Inicio(request):
-    if(not request.session.get('pin_validado')):
-        return render(request , 'core/index.html')
+    if(not request.session.get('pin_acceso_rapido_validado')):
+        return redirect('usuarios:acceso_rapido')
     if(not request.user.is_authenticated):
         return render(request , 'core/index.html')
     else:
         return redirect('core:dashboard')
 
 @login_required
+@fast_access_pin_verified
 def dashboard(request):
     user_id = request.user.id
 
@@ -57,7 +59,10 @@ def dashboard(request):
     })
 
 @login_required
+@fast_access_pin_verified
 def logout_view(request):
     request.session.flush()
     return redirect('core:index')
 
+def exit_from_account(request):
+    pass
