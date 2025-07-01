@@ -7,6 +7,8 @@ from cuentas.models import Cuenta
 
 """ Views App CORE """
 def Inicio(request):
+    if(not request.session.get('pin_validado')):
+        return render(request , 'core/index.html')
     if(not request.user.is_authenticated):
         return render(request , 'core/index.html')
     else:
@@ -29,7 +31,6 @@ def dashboard(request):
 
     total_egresos = Movimiento.objects.filter(id_cuenta__id_usuario=user_id , tipo="egreso").aggregate(total=Sum('monto'))['total']
 
-    print(total_egresos)
     if(not total_egresos):
         total_egresos = 0
 
@@ -58,5 +59,5 @@ def dashboard(request):
 @login_required
 def logout_view(request):
     request.session.flush()
-    return redirect('core:index')  # Cambia a la URL de login que uses
+    return redirect('core:index')
 

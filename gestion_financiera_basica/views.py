@@ -6,7 +6,6 @@ from django.db.models import Sum
 from cuentas.models import Cuenta
 from .models import Movimiento
 
-
 def savings_goals(request):
     goals = [
         ("Emergency Fund", "$3000.00 / $5000.00", "60%", "December 30, 2023", "Emergency fund for unexpected expenses"),
@@ -54,7 +53,6 @@ def transactions(request):
         "transactions": all_transactions,
     })
     
-     
 def agregar_movimiento(request):
     if request.method == 'POST':
         form = MovimientoForm(request.POST)

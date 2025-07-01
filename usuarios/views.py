@@ -2,49 +2,34 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate , login , logout
+from django.core.mail import send_mail
+from django.conf import settings
 
 from django.shortcuts import redirect
 
 from cuentas.models import Moneda, Cuenta
 from .models import Usuario
+import random
+
+def Generar_Pin():
+    return str(random.randint(100000, 999999))  # 6 dígitos
 
 def Login(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
-        
-        # Crear un diccionario para almacenar los errores específicos
-        errors = {}
-        
-        # Validar que el email no esté vacío
-        if not email:
-            errors['email_error'] = "Por favor ingresa tu correo electrónico"
-        
-        # Validar que la contraseña no esté vacía
-        if not password:
-            errors['password_error'] = "Por favor ingresa tu contraseña"
-        
-        # Si no hay errores de validación, intentar autenticar
-        if not errors:
-            usuario = authenticate(request, correo=email, password=password)
+
+        usuario = authenticate(request , correo=email , password=password)
+
+        if usuario:
+            request.session['user_id'] = usuario.id
             
-            if usuario:
-                request.session['user_id'] = usuario.id
-                login(request, usuario, backend='usuarios.backends.EmailBackend')
-                return redirect('core:dashboard')  # o 'index' si tienes así la url
-            else:
-                # Verificar si el email existe
-                if Usuario.objects.filter(correo=email).exists():
-                    errors['password_error'] = "Contraseña incorrecta"
-                else:
-                    errors['email_error'] = "Este correo no está registrado"
-        
-        # Si hay errores, renderizar el formulario con los errores
-        if errors:
-            return render(request, 'usuarios/login.html', {
-                "errors": errors,
-                "email": email,  # Mantener el email para no tener que escribirlo de nuevo
-                "message_error": "Por favor corrige los errores"
+            login(request , usuario , backend='usuarios.backends.EmailBackend')
+
+            return redirect('usuarios:acceso_rapido')  # o 'index' si tienes así la url
+        else:
+            return render(request, 'usuarios/login.html' , {
+                "message_error": "Credenciales no validas.",
             })
 
     return render(request, 'usuarios/login.html')
@@ -61,9 +46,11 @@ def Register(request):
         correo = request.POST.get('correo')
         contrasena = request.POST.get('contrasena')
         telefono = request.POST.get('telefono')
+        pin_acceso_rapido = request.POST.get("pin_acceso_rapido")
         imagen_perfil = request.FILES.get('imagen_perfil')
 
         id_moneda_seleccionada = request.POST.get('id_moneda')
+        print(id_moneda_seleccionada)
         try:
             moneda_obj = Moneda.objects.get(id=id_moneda_seleccionada)
         except Moneda.DoesNotExist:
@@ -85,39 +72,107 @@ def Register(request):
             error = "El saldo inicial debe ser un número válido."
             return render(request, "usuarios/register.html", {"error": error, 'monedas': monedas})
 
-        imagen_binario = imagen_perfil.read() if imagen_perfil else None
+        if imagen_perfil:
+            import base64
+            imagen_b64 = base64.b64encode(imagen_perfil.read()).decode('utf-8')
+        else:
+            imagen_b64 = None
 
         if Usuario.objects.filter(correo=correo).exists():
             error = "El correo ya está registrado."
             return render(request, "usuarios/register.html", {"error": error, 'monedas': monedas})
 
+        request.session['registro_temp'] = {
+            'documento_identidad': documento_identidad,
+            'nombres': nombres,
+            'apellido_paterno': apellido_paterno,
+            'apellido_materno': apellido_materno,
+            'correo': correo,
+            'contrasena': contrasena,
+            'telefono': telefono,
+            'id_moneda': id_moneda_seleccionada,
+            'nombre_cuenta': nombre_cuenta,
+            'saldo_inicial': saldo_inicial,
+            'descripcion': descripcion,
+            'imagen_perfil': imagen_b64,
+            'pin_acceso_rapido': pin_acceso_rapido,
+        }
 
-        usuario = Usuario.objects.create_user(
-            documento_identidad=documento_identidad,
-            nombres=nombres,
-            apellido_paterno=apellido_paterno,
-            apellido_materno=apellido_materno,
-            correo=correo,
-            password=contrasena,
-            telefono=telefono,
-            imagen_perfil=imagen_binario,
-            id_moneda=moneda_obj,
-        )
-        cuenta = Cuenta.objects.create(
-            nombre=nombre_cuenta,
-            descripcion=descripcion,
-            saldo_cuenta=saldo_inicial_float,
-            id_usuario=usuario,
-        )
-
-        login(request, usuario, backend='usuarios.backends.EmailBackend')
-
-        return redirect('core:dashboard')
+        return redirect('usuarios:pagina_verificar_correo')
 
     return render(request, 'usuarios/register.html', {
         'monedas': monedas,
     })
 
-@login_required
-def Fast_Access():
-    pass
+def Pagina_Verificar_Correo(request):
+    data = request.session.get('registro_temp')
+    user_email = data['correo']
+
+    if(user_email):
+        PIN = Generar_Pin()
+        request.session['pin_acceso'] = PIN
+        request.session['correo_usuario'] = user_email
+
+        send_mail(
+            subject='Tu código de acceso rápido - FinGest',
+            message=f'Tu código de acceso rapido paraes: {PIN}',
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user_email],
+            fail_silently=False,
+        )
+
+        return render(request , 'usuarios/validar_correo.html')
+
+def Verificacion_Correo(request):
+    if(request.method == 'POST'):
+        input_pin = ''.join([
+            request.POST.get(f'pin{i}', '') for i in range(6)
+        ])
+
+        session_pin = request.session.get('pin_acceso')
+        if(input_pin == session_pin):
+            data = request.session.get('registro_temp')
+
+            request.session['pin_validado'] = True
+
+            del request.session['pin_acceso']
+            del request.session['correo_usuario']
+
+            saldo_inicial = float(data['saldo_inicial'])
+            id_moneda_seleccionada = int(data['id_moneda'])
+
+            imagen_binario = None
+            if 'imagen_perfil' in data:
+                if(data['imagen_perfil']):
+                    import base64
+                    imagen_binario = base64.b64decode(data['imagen_perfil'])
+
+            moneda = Moneda.objects.get(id=id_moneda_seleccionada)
+            usuario = Usuario.objects.create_user(
+                documento_identidad=data['documento_identidad'],
+                nombres=data['nombres'],
+                apellido_paterno=data['apellido_paterno'],
+                apellido_materno=data['apellido_materno'],
+                correo=data['correo'],
+                password=data['contrasena'],
+                telefono=data['telefono'],
+                imagen_perfil=imagen_binario,
+                pin_acceso_rapido=data['pin_acceso_rapido'],
+                email_verificado=True,
+                id_moneda=moneda
+            )
+
+            Cuenta.objects.create(
+                id_usuario=usuario,
+                nombre=data['nombre_cuenta'],
+                saldo_cuenta=saldo_inicial,
+                descripcion=data['descripcion'],
+            )
+
+            del request.session['registro_temp']
+
+            login(request, usuario, backend='usuarios.backends.EmailBackend')
+
+            return redirect('core:dashboard')
+        else:
+            return render(request , 'usuarios/validar_correo.html' , { 'error_message' : 'PIN incorrecto'})
