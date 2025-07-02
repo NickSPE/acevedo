@@ -19,121 +19,251 @@
         </div>
         <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm transition-all duration-300 opacity-0 pointer-events-none z-30 md:hidden"></div>
         <aside id="side-bar" class="bg-emerald-100 shadow px-4 py-6 space-y-6 text-sm w-64 fixed top-0 left-0 h-full z-40 transform transition-transform duration-300 -translate-x-full md:translate-x-0 md:static md:block md:min-h-screen">
-        <div class="text-xl font-bold flex items-center gap-3">
-            {% load static %}
-            <img class="h-10 w-45 object-contain shadow-sm transition-transform hover:scale-105" src="{% static 'images/LogoFinGest.jpg' %}" alt="">
-            <a class="text-green-600 hidden lg:inline" href="{% url 'core:dashboard' %}">FinGest</a>
-        </div>
+            <div class="text-xl font-bold flex items-center gap-3">
+                {% load static %}
+                <img class="h-10 w-45 object-contain shadow-sm transition-transform hover:scale-105" src="{% static 'images/LogoFinGest.jpg' %}" alt="">
+                <a class="text-green-600 hidden lg:inline" href="{% url 'core:dashboard' %}">FinGest</a>
+            </div>
 
-        <div>
-            <p id="menu-toggle-vision" class="text-gray-500 uppercase text-xs mb-2">Visión General</p>
-            <ul id="menu-list-vision" class="space-y-2">
-            <li><a href="{% url 'core:dashboard' %}" class="block hover:text-blue-600">📊 Panel Principal</a></li>
-            <li><a href="{% url 'transactions' %}" class="block hover:text-blue-600">💳 Transacciones</a></li> <!-- aún no creado -->
-            <li><a href="{% url 'savings_goals' %}" class="block hover:text-blue-600">📉 Metas de Ahorro</a></li>
-            </ul>
-        </div>
-        <script>
-            const toggle1 = document.getElementById('menu-toggle-vision');
-            const menu1 = document.getElementById('menu-list-vision');
-            toggle1.addEventListener('click', () => {
-            menu1.classList.toggle('hidden');
-            if(menu1.classList.contains('hidden')) {
-                toggle1.textContent = 'Vision General';
-            } else {
-                toggle1.textContent = 'Vision General';
-            }
-            });
-        </script>
+            <div class="space-y-4">
+                <!-- Visión General -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden transition-shadow hover:shadow-lg">
+                <button class="accordion-header w-full flex justify-between items-center px-4 py-3 bg-emerald-50 hover:bg-emerald-100 focus:outline-none transition-colors"
+                        onclick="toggleSection('menu-list-vision', this)">
+                    <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 transition-transform duration-300 transform"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4 4.7a.75.75 0 01-1.14 0l-4-4.7a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-medium text-gray-700 uppercase text-xs">Visión General</span>
+                    </div>
+                </button>
+                    <ul id="menu-list-vision"
+                        class="accordion-panel overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-300 ease-in-out space-y-2 pl-2">
+                    <li><a href="{% url 'core:dashboard' %}" class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">📊 Panel Principal</a></li>
+                    <li><a href="{% url 'transactions' %}" class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">💳 Transacciones</a></li>
+                    <li><a href="{% url 'savings_goals' %}" class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">📉 Metas de Ahorro</a></li>
+                    </ul>
+                </div>
 
-        <div>
-            <p id="menu-toggle-aprendizaje" class="text-gray-500 uppercase text-xs mb-2">Aprendizaje</p>
-            <ul id="menu-list-aprendizaje"  class="space-y-2">
-            <li><a href="{% url 'courses' %}" class="block hover:text-blue-600">📘 Cursos</a></li>
-            <li><a href="{% url 'tips' %}" class="block hover:text-blue-600">💡 Consejos Financieros</a></li>
-            <li><a href="{% url 'calculators' %}" class="block hover:text-blue-600">🧮 Calculadoras</a></li>
-            </ul>
-        </div>
-        <script>
-            const toggle2 = document.getElementById('menu-toggle-aprendizaje');
-            const menu2 = document.getElementById('menu-list-aprendizaje');
-            toggle2.addEventListener('click', () => {
-            menu2.classList.toggle('hidden');
-            if(menu2.classList.contains('hidden')) {
-                toggle2.textContent = 'Aprendizaje';
-            } else {
-                toggle2.textContent = 'Aprendizaje';
-            }
-            });
-        </script>
+                <!-- Aprendizaje -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden transition-shadow hover:shadow-lg">
+                <button class="accordion-header w-full flex justify-between items-center px-4 py-3 bg-emerald-50 hover:bg-emerald-100 focus:outline-none transition-colors"
+                        onclick="toggleSection('menu-list-aprendizaje', this)">
+                    <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 transition-transform duration-300 transform"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4 4.7a.75.75 0 01-1.14 0l-4-4.7a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-medium text-gray-700 uppercase text-xs">Aprendizaje</span>
+                    </div>
+                </button>
+                <ul id="menu-list-aprendizaje"
+                    class="accordion-panel overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-300 ease-in-out space-y-2 pl-2">
+                    <li><a href="{% url 'courses' %}"
+                        class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">📘 Cursos</a></li>
+                    <li><a href="{% url 'tips' %}"
+                        class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">💡 Consejos Financieros</a></li>
+                    <li><a href="{% url 'calculators' %}"
+                        class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">🧮 Calculadoras</a></li>
+                </ul>
+                </div>
 
-        <div>
-            <p id="menu-toggle-cuenta" class="text-gray-500 uppercase text-xs mb-2 cursor-pointer">Cuenta</p>
-            <ul id="menu-list-cuenta" class="space-y-2 hidden">
-            <li><a href="{% url 'profile' %}" class="block hover:text-blue-600">👤 Perfil</a></li>
-            <li><a href="{% url 'settings' %}" class="block hover:text-blue-600">⚙️ Configuración</a></li>
-            <li><a href="#" class="block hover:text-blue-600">📈 Subcuentas</a></li>
-            <li><a href="{% url 'reports' %}" class="block hover:text-blue-600">📄 Informes</a></li>
-            <li><a href="{% url 'configuraciones' %}" class="block hover:text-blue-600">🔔 Notificaciones</a></li>
-            <li>
-              <form method="post" action="{% url 'core:logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="block w-full text-left hover:text-blue-600 bg-transparent border-none p-0 m-0">Cerrar Sesión</button>
-              </form>
-            </li>
-            </ul>
-        </div>
-        <script>
-            const toggle3 = document.getElementById('menu-toggle-cuenta');
-            const menu3 = document.getElementById('menu-list-cuenta');
-            toggle3.addEventListener('click', () => {
-            menu3.classList.toggle('hidden');
-            if(menu3.classList.contains('hidden')) {
-                toggle3.textContent = 'Cuenta';
-            } else {
-                toggle3.textContent = 'Cuenta';
-            }
-            });
-        </script>
+                <!-- Cuenta -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden transition-shadow hover:shadow-lg">
+                <button class="accordion-header w-full flex justify-between items-center px-4 py-3 bg-emerald-50 hover:bg-emerald-100 focus:outline-none transition-colors"
+                        onclick="toggleSection('menu-list-cuenta', this)">
+                    <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 transition-transform duration-300 transform"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.584l3.71-4.354a.75.75 0 111.14.976l-4 4.7a.75.75 0 01-1.14 0l-4-4.7a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd"/>
+                    </svg>
+                    <span class="font-medium text-gray-700 uppercase text-xs">Cuenta</span>
+                    </div>
+                </button>
+                <ul id="menu-list-cuenta"
+                    class="accordion-panel overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-300 ease-in-out space-y-2 pl-2">
+                    <li><a href="{% url 'profile' %}"
+                        class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">👤 Perfil</a></li>
+                    <li><a href="{% url 'settings' %}"
+                        class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">⚙️ Configuración</a></li>
+                    <li><a href="#" class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">📈 Subcuentas</a></li>
+                    <li><a href="{% url 'reports' %}"
+                        class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">📄 Informes</a></li>
+                    <li><a href="{% url 'configuraciones' %}"
+                        class="block px-2 py-1 rounded hover:bg-blue-50 hover:text-blue-600 transition-colors">🔔 Notificaciones</a></li>
+                    <li>
+                        <button type="button"
+                            onclick="abrirTemporaryLogoutModal()"
+                            class="flex items-center gap-2 w-full text-left text-gray-700 hover:text-orange-500 transition-colors">
+                            
+                            <!-- Icono de logout suave -->
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3H6.75A2.25 2.25 0 004.5 5.25v13.5A2.25 2.25 0 006.75 21h6.75a2.25 2.25 0 002.25-2.25V15m3-3H9m0 0l3-3m-3 3l3 3" />
+                            </svg>
+
+                            <span>Salir</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button"
+                            onclick="abrirLogoutModal()"
+                            class="flex items-center gap-2 w-full text-left text-gray-700 hover:text-red-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3H6.75A2.25 2.25 0 004.5 5.25v13.5A2.25 2.25 0 006.75 21h6.75a2.25 2.25 0 002.25-2.25V15m3-3H9m0 0l3-3m-3 3l3 3"/>
+                            </svg>
+                            <span>Cerrar Sesión</span>
+                        </button>
+                    </li>
+                </ul>
+                </div>
+            </div>
+            <script>
+                function toggleSection(id, header) {
+                    const target = document.getElementById(id);
+                    const allPanels = document.querySelectorAll('.accordion-panel');
+                    const allIcons = document.querySelectorAll('.accordion-header svg');
+
+                    allPanels.forEach(panel => {
+                    if (panel.id !== id) {
+                        panel.classList.remove('expanded');
+                        panel.style.maxHeight = '0px';
+                        panel.style.opacity = '0';
+                        panel.style.pointerEvents = 'none';
+                    }
+                    });
+
+                    allIcons.forEach(icon => icon.classList.remove('rotate-180'));
+
+                    const icon = header.querySelector('svg');
+
+                    if (target.classList.contains('expanded')) {
+                    target.classList.remove('expanded');
+                    target.style.maxHeight = '0px';
+                    target.style.opacity = '0';
+                    target.style.pointerEvents = 'none';
+                    icon.classList.remove('rotate-180');
+                    } else {
+                    target.classList.add('expanded');
+                    target.style.maxHeight = target.scrollHeight + 'px';
+                    target.style.opacity = '1';
+                    target.style.pointerEvents = 'auto';
+                    icon.classList.add('rotate-180');
+                    }
+                }
+            </script>
         </aside>
         <!-- Main Content -->
         <main class="flex-1 p-6 mt-4 md:mt-0">
         {% block content %}{% endblock %}
         </main>
+    </div>
+    <!-- Dialog confirmar cierre sesion -->
+    <div id="validate_logout_overlay"
+        class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 hidden"
+        onclick="cerrarLogoutModal()">
 
-        <script>
-            const toggleBtn = document.getElementById("toggleSidebar");
-            const sidebar = document.getElementById("side-bar");
-            const overlay = document.getElementById("sidebarOverlay");
+        <!-- Modal -->
+        <div id="ventana_confirmar_cierre_sesion"
+            role="dialog"
+            aria-modal="true"
+            onclick="event.stopPropagation()"
+            class="relative rounded-md p-6 bg-white shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0 pointer-events-none">
+            
+            <!-- Botón X -->
+            <button type="button"
+                class="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-xl"
+                onclick="cerrarLogoutModal()">&times;</button>
 
-            // Abrir sidebar
-            toggleBtn.addEventListener("click", () => {
-                sidebar.classList.remove("-translate-x-full");
-                overlay.classList.remove("opacity-0", "pointer-events-none");
-            });
+            <form method="post" action="{% url 'core:logout' %}" enctype="multipart/form-data" class="flex flex-col items-center">
+                {% csrf_token %}
+                <h2 class="text-lg font-bold mb-3 text-center">¿Cerrar sesión?</h2>
+                <p class="text-gray-500 text-sm mb-4 text-center">La próxima vez deberá iniciar sesión con sus credenciales.</p>
+                <div class="flex justify-between gap-4 mt-2">
+                    <button type="button" onclick="cerrarLogoutModal()"
+                        class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-sm">Cancelar</button>
+                    <button type="submit"
+                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Dialog confirmar salida temporal -->
+    <div id="validate_temporary_logout"
+        class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 hidden"
+        onclick="cerrarTemporaryLogoutModal()">
 
-            // Cerrar al hacer clic en el fondo
-            overlay.addEventListener("click", () => {
-                sidebar.classList.add("-translate-x-full");
-                overlay.classList.add("opacity-0", "pointer-events-none");
-            });
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-          <script>
-            flatpickr("input[name='fecha_movimiento']", {
-                minDate: "2020-01-01",
-                maxDate: new Date().toISOString().split('T')[0],
-                disableMobile: true,
-                dateFormat: "Y-m-d",
-            });
-          </script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const form = document.getElementById("savings-form");
-                const unidadSelect = document.getElementById("tiempo");
-                const duracionLabel = document.getElementById("duracion-label");
-                const aporteLabel = document.querySelector("label[for='aporte']");
+        <!-- Modal -->
+        <div id="ventana_confirmar_salida_temporal"
+            role="dialog"
+            aria-modal="true"
+            onclick="event.stopPropagation()"
+            class="relative rounded-md p-6 bg-white shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0 pointer-events-none">
+            
+            <!-- Botón X -->
+            <button type="button"
+                class="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-xl"
+                onclick="cerrarTemporaryLogoutModal()">&times;</button>
 
+            <form method="post" action="{% url 'core:temporary_logout' %}" enctype="multipart/form-data" class="flex flex-col items-center">
+                {% csrf_token %}
+                <h2 class="text-lg font-bold mb-3 text-center">¿Salir temporalmente?</h2>
+                <p class="text-gray-500 text-sm mb-4 text-center">La proxima vez solo necesitaras tu PIN para ingresar.</p>
+                <div class="flex justify-between gap-4 mt-2">
+                    <button type="button" onclick="cerrarTemporaryLogoutModal()"
+                        class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded text-sm">Cancelar</button>
+                    <button type="submit"
+                        class="bg-orange-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        const toggleBtn = document.getElementById("toggleSidebar");
+        const sidebar = document.getElementById("side-bar");
+        const sidebaroverlay = document.getElementById("sidebarOverlay");
+
+        // Abrir sidebar
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.remove("-translate-x-full");
+            sidebaroverlay.classList.remove("opacity-0", "pointer-events-none");
+        });
+
+        // Cerrar al hacer clic en el fondo
+        sidebaroverlay.addEventListener("click", () => {
+            sidebar.classList.add("-translate-x-full");
+            sidebaroverlay.classList.add("opacity-0", "pointer-events-none");
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    flatpickr("input[name='fecha_movimiento']", {
+        minDate: "2020-01-01",
+        maxDate: new Date().toISOString().split('T')[0],
+        disableMobile: true,
+        dateFormat: "Y-m-d",
+    });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("savings-form");
+            const unidadSelect = document.getElementById("tiempo");
+            const duracionLabel = document.getElementById("duracion-label");
+            const aporteLabel = document.querySelector("label[for='aporte']");
+
+            if(form && unidadSelect && duracionLabel && aporteLabel){
                 function actualizarLabels() {
                     const unidad = unidadSelect.value;
                     duracionLabel.textContent = `Cantidad de ${unidad.toLowerCase()}s`;
@@ -168,55 +298,107 @@
                     document.getElementById("resultado").textContent =
                         `Ahorro estimado: € ${montoFinal.toFixed(4)}`;
                 });
-            });
-        </script>
+                
+            };
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const unidadSelectPrestamo = document.getElementById("unidad-prestamo");
+            const plazoLabel = document.getElementById("plazo-label");
+            const loanForm = document.getElementById("loan-form");
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const unidadSelectPrestamo = document.getElementById("unidad-prestamo");
-                const plazoLabel = document.getElementById("plazo-label");
-                const loanForm = document.getElementById("loan-form");
+        function actualizarLabelPrestamo() {
+            const unidad = unidadSelectPrestamo.value;
+            plazoLabel.textContent = `Cantidad de ${unidad.toLowerCase()}s`;
+        }
 
-            function actualizarLabelPrestamo() {
+        if (unidadSelectPrestamo && plazoLabel) {
+            unidadSelectPrestamo.addEventListener("change", actualizarLabelPrestamo);
+            actualizarLabelPrestamo();
+        }
+
+        if (loanForm) {
+            loanForm.addEventListener("submit", function (e) {
+                e.preventDefault();
+
+                const monto = parseFloat(document.getElementById("monto").value) || 0;
+                const interesAnual = parseFloat(document.getElementById("interes").value) || 0;
+                const plazo = parseFloat(document.getElementById("plazo").value) || 0;
                 const unidad = unidadSelectPrestamo.value;
-                plazoLabel.textContent = `Cantidad de ${unidad.toLowerCase()}s`;
-            }
 
-            if (unidadSelectPrestamo && plazoLabel) {
-                unidadSelectPrestamo.addEventListener("change", actualizarLabelPrestamo);
-                actualizarLabelPrestamo();
-            }
+                let periodosPorAnio = 1;
+                if (unidad === "Mes") periodosPorAnio = 12;
+                else if (unidad === "Semana") periodosPorAnio = 52;
 
-            if (loanForm) {
-                loanForm.addEventListener("submit", function (e) {
-                    e.preventDefault();
+                const r = (interesAnual / 100) / periodosPorAnio;
+                const n = plazo;
 
-                    const monto = parseFloat(document.getElementById("monto").value) || 0;
-                    const interesAnual = parseFloat(document.getElementById("interes").value) || 0;
-                    const plazo = parseFloat(document.getElementById("plazo").value) || 0;
-                    const unidad = unidadSelectPrestamo.value;
-
-                    let periodosPorAnio = 1;
-                    if (unidad === "Mes") periodosPorAnio = 12;
-                    else if (unidad === "Semana") periodosPorAnio = 52;
-
-                    const r = (interesAnual / 100) / periodosPorAnio;
-                    const n = plazo;
-
-                    let pago = 0;
-                    if (r === 0) {
-                        pago = monto / n;
-                    } else {
-                        pago = monto * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-                    }
-
-                    document.getElementById("resultado-prestamo").textContent =
-                        `Pago por ${unidad.toLowerCase()}: € ${pago.toFixed(4)}`;
-                    });
+                let pago = 0;
+                if (r === 0) {
+                    pago = monto / n;
+                } else {
+                    pago = monto * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
                 }
-            });
-        </script>
 
-    </div>
+                document.getElementById("resultado-prestamo").textContent =
+                    `Pago por ${unidad.toLowerCase()}: € ${pago.toFixed(4)}`;
+                });
+            }
+        });
+    </script>
+    <script>
+        const logoutOverlay = document.getElementById('validate_logout_overlay');
+        const logoutModal = document.getElementById('ventana_confirmar_cierre_sesion');
+
+        const TemporarylogoutOverlay = document.getElementById('validate_temporary_logout');
+        const TemporarylogoutModal = document.getElementById('ventana_confirmar_salida_temporal');
+
+        function abrirLogoutModal() {
+            logoutOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                logoutModal.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                logoutModal.classList.add('opacity-100', 'scale-100');
+            }, 10); // pequeño delay para que se apliquen transiciones
+        }
+
+        function cerrarLogoutModal() {
+            logoutModal.classList.remove('opacity-100', 'scale-100');
+            logoutModal.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                logoutOverlay.classList.add('hidden');
+                logoutModal.classList.add('pointer-events-none');
+            }, 200);
+        }
+
+        function cerrarLogoutModalPorFondo(event) {
+            if (event.target === logoutOverlay) {
+                cerrarLogoutModal();
+            }
+        }
+
+        function abrirTemporaryLogoutModal() {
+            TemporarylogoutOverlay.classList.remove('hidden');
+            setTimeout(() => {
+                TemporarylogoutModal.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                TemporarylogoutModal.classList.add('opacity-100', 'scale-100');
+            }, 10); // pequeño delay para que se apliquen transiciones
+        }
+
+        function cerrarTemporaryLogoutModal() {
+            TemporarylogoutModal.classList.remove('opacity-100', 'scale-100');
+            TemporarylogoutModal.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                TemporarylogoutOverlay.classList.add('hidden');
+                TemporarylogoutModal.classList.add('pointer-events-none');
+            }, 200);
+        }
+
+        function cerrarTemporaryLogoutModalPorFondo(event) {
+            if (event.target === TemporarylogoutOverlay) {
+                cerrarTemporaryLogoutModal();
+            }
+        }
+    </script>
 </body>
 </html>

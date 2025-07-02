@@ -8,11 +8,11 @@ from core.decorators import fast_access_pin_verified
 
 """ Views App CORE """
 def Inicio(request):
-    if(not request.session.get('pin_acceso_rapido_validado')):
-        return redirect('usuarios:acceso_rapido')
     if(not request.user.is_authenticated):
         return render(request , 'core/index.html')
     else:
+        if(not request.session.get('pin_acceso_rapido_validado')):
+            return redirect('usuarios:acceso_rapido')
         return redirect('core:dashboard')
 
 @login_required
@@ -64,5 +64,7 @@ def logout_view(request):
     request.session.flush()
     return redirect('core:index')
 
-def exit_from_account(request):
-    pass
+@login_required
+def temporary_logout(request):
+    request.session["pin_acceso_rapido_validado"] = False
+    return redirect("usuarios:acceso_rapido")

@@ -120,7 +120,7 @@ def Pagina_Verificar_Correo(request):
 
         send_mail(
             subject='Tu código de acceso rápido - FinGest',
-            message=f'Tu código de acceso rapido paraes: {PIN}',
+            message=f'Tu código de acceso rapido paraes: {PIN}',        
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user_email],
             fail_silently=False,
@@ -216,3 +216,6 @@ def Acceso_Rapido(request):
             return render(request, 'usuarios/acceso_rapido.html', {'error_message': error_message})
 
     return render(request , 'usuarios/acceso_rapido.html')
+
+def Reestablecer_Contraseña(request):
+    pass
