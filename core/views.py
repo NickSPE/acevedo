@@ -19,6 +19,10 @@ def Inicio(request):
 @login_required
 @fast_access_pin_verified
 def dashboard(request):
+    # Verificar si el usuario necesita completar onboarding
+    if not request.user.onboarding_completed:
+        return redirect('usuarios:onboarding')
+        
     user_id = request.user.id
 
     simbolo_moneda = Usuario.objects.filter(id=user_id).values('id_moneda__simbolo').all()

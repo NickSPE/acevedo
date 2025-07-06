@@ -1,0 +1,218 @@
+{% extends 'core/auth_base.html' %}
+
+{% block title %}Registro - FinGest{% endblock %}
+
+{% block nav_links %}
+    <a href="{% url 'usuarios:login' %}" class="text-gray-600 hover:text-emerald-600 transition-colors">
+        ¿Ya tienes cuenta? Inicia Sesión
+    </a>
+{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-2xl mx-auto p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Únete a FinGest</h1>
+            <p class="text-gray-600">Crea tu cuenta y comienza a gestionar tus finanzas</p>
+        </div>
+
+        {% if error %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" id="registration-form" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Información personal -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombres</label>
+                    <input type="text" name="nombres" id="id_nombres" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Apellidos completos</label>
+                    <input type="text" name="apellidos_completos" id="id_apellidos_completos" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                </div>
+            </div>
+
+            <!-- Correo -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Correo electrónico</label>
+                <input type="email" name="correo" id="id_correo" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+            </div>
+
+            <!-- Contraseñas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" name="contrasena" id="id_contrasena" required minlength="8"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar contraseña</label>
+                    <input type="password" name="confirmar_contrasena" id="id_confirmar_contrasena" required minlength="8"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                </div>
+            </div>
+
+            <!-- Verificación por correo -->
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Verificación de correo</h3>
+                
+                <button type="button" id="send-code-btn" 
+                        class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors mb-4">
+                    📧 Enviar código de verificación
+                </button>
+
+                <div id="verification-section" style="display: none;" class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Código de verificación</label>
+                    <input type="text" name="codigo_verificacion" id="verification_code" maxlength="6" pattern="[0-9]{6}"
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-center text-xl tracking-widest">
+                    <p class="text-xs text-green-600 mt-1">Código enviado a tu email</p>
+                </div>
+            </div>
+
+            <!-- Términos y condiciones -->
+            <div class="flex items-center">
+                <input type="checkbox" id="id_acepta_terminos" name="acepta_terminos" required
+                       class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                <label for="id_acepta_terminos" class="ml-2 block text-sm text-gray-900">
+                    Acepto los <a href="#" class="text-emerald-600 hover:text-emerald-700 underline">términos y condiciones</a>
+                </label>
+            </div>
+
+            <!-- Campos ocultos para compatibilidad -->
+            <input type="hidden" name="apellido_paterno" id="apellido_paterno">
+            <input type="hidden" name="apellido_materno" id="apellido_materno">
+            <input type="hidden" name="documento_identidad" value="">
+            <input type="hidden" name="telefono" value="">
+            <input type="hidden" name="id_moneda" value="1">
+            <input type="hidden" name="nombre_cuenta" value="Mi Cuenta Principal">
+            <input type="hidden" name="saldo_inicial" value="0">
+            <input type="hidden" name="pin_acceso_rapido" value="">
+
+            <!-- Botón de envío -->
+            <button type="submit" id="submit-btn" style="display: none;"
+                    class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-4 px-6 rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all font-semibold text-lg">
+                🚀 Crear mi cuenta
+            </button>
+
+            <div class="text-center">
+                <p class="text-gray-600">
+                    ¿Ya tienes cuenta? 
+                    <a href="{% url 'usuarios:login' %}" class="text-emerald-600 hover:text-emerald-700 underline">Iniciar sesión</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// JavaScript simplificado
+let codeRequested = false;
+
+// Dividir apellidos automáticamente
+function splitApellidos() {
+    const apellidosCompletos = document.getElementById('id_apellidos_completos').value.trim();
+    const apellidos = apellidosCompletos.split(' ');
+    
+    document.getElementById('apellido_paterno').value = apellidos[0] || '';
+    document.getElementById('apellido_materno').value = apellidos[1] || '';
+}
+
+// Enviar código de verificación
+document.getElementById('send-code-btn').addEventListener('click', async function() {
+    const correo = document.getElementById('id_correo').value;
+    const nombres = document.getElementById('id_nombres').value;
+
+    if (!correo || !nombres) {
+        alert('Por favor completa el correo y nombres primero');
+        return;
+    }
+
+    this.disabled = true;
+    this.textContent = '⏳ Enviando código...';
+
+    try {
+        const formData = new FormData();
+        formData.append('action', 'send_verification');
+        formData.append('correo', correo);
+        formData.append('nombres', nombres);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+        const response = await fetch('', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('verification-section').style.display = 'block';
+            document.getElementById('submit-btn').style.display = 'block';
+            this.style.display = 'none';
+            
+            codeRequested = true;
+            alert('✅ Código enviado a tu email');
+            document.getElementById('verification_code').focus();
+        } else {
+            alert('❌ ' + (data.error || 'Error al enviar el código'));
+        }
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
+    } finally {
+        this.disabled = false;
+        this.textContent = '📧 Enviar código de verificación';
+    }
+});
+
+// Validar formulario antes del envío
+document.getElementById('registration-form').addEventListener('submit', function(e) {
+    if (!codeRequested) {
+        e.preventDefault();
+        alert('Primero debes solicitar y verificar tu código de email');
+        return;
+    }
+    
+    const codigo = document.getElementById('verification_code').value;
+    if (!codigo || codigo.length !== 6) {
+        e.preventDefault();
+        alert('Debes ingresar el código de verificación de 6 dígitos');
+        return;
+    }
+    
+    const contrasena = document.getElementById('id_contrasena').value;
+    const confirmar = document.getElementById('id_confirmar_contrasena').value;
+    
+    if (contrasena !== confirmar) {
+        e.preventDefault();
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+    
+    // Dividir apellidos antes del envío
+    splitApellidos();
+    
+    // Mostrar loading
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '⏳ Creando cuenta...';
+    
+    console.log('✅ Enviando formulario al servidor...');
+});
+
+// Auto-mostrar botón al completar código
+document.getElementById('verification_code').addEventListener('input', function() {
+    if (this.value.length === 6) {
+        document.getElementById('submit-btn').style.display = 'block';
+    }
+});
+</script>
+    </div>
+</div>
+{% endblock %}

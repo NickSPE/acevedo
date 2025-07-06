@@ -93,16 +93,16 @@ def profile(request):
                         from django.contrib.auth import update_session_auth_hash
                         update_session_auth_hash(request, usuario)
                         
-                        return redirect("cuentas:profile" + "?tab=security")
+                        return redirect(reverse("cuentas:profile") + "?tab=security")
                     else:
                         messages.error(request, "La nueva contraseña debe tener al menos 8 caracteres.")
-                        return redirect("cuentas:profile" + "?tab=security")
+                        return redirect(reverse("cuentas:profile") + "?tab=security")
                 else:
                     messages.error(request, "Las nuevas contraseñas no coinciden.")
-                    return redirect("cuentas:profile" + "?tab=security")
+                    return redirect(reverse("cuentas:profile") + "?tab=security")
             else:
                 messages.error(request, "La contraseña actual es incorrecta.")
-                return redirect("cuentas:profile" + "?tab=security")
+                return redirect(reverse("cuentas:profile") + "?tab=security")
         
         return redirect("cuentas:profile")
 
