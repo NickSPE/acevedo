@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
-from decouple import config
+from decouple import config  # Para leer el archivo .env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,13 +28,18 @@ LOGIN_REDIRECT_URL = 'core:dashboard'
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
+# Configuración de Email REAL - Usando credenciales del .env
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # o el proveedor que uses
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config("EMAIL_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_PASS")
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST_USER = config("EMAIL_USER")  # Desde .env
+EMAIL_HOST_PASSWORD = config("EMAIL_PASS")  # Desde .env
+DEFAULT_FROM_EMAIL = f'FinGest <{EMAIL_HOST_USER}>'
+
+# Para pruebas con archivos (descomenta si quieres ver archivos en lugar de envío real):
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -96,6 +101,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.currency_context",
             ],
         },
     },
@@ -110,10 +116,22 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fingest_db',
-        'USER': 'user',     # O 'django_user' si usaste la opción recomendada
-        'PASSWORD': 'user123',
+        'USER': 'postgres',     # O 'django_user' si usaste la opción recomendada
+        'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '5432',
+    }
+}
+
+# Configuración de Cache para el sistema de locks de signals
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # 5 minutos por defecto
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+        }
     }
 }
 

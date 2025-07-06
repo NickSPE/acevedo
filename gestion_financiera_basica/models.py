@@ -1,12 +1,24 @@
 from django.db import models
+from django.db.models import Sum
 
 # Create your models here.
 
 class MetaAhorro(models.Model):
-    fecha_inicio = models.DateTimeField()
-    fecha_limite = models.DateTimeField()
+    FRECUENCIAS = (
+        ('diaria', 'Diaria'),
+        ('semanal', 'Semanal'),
+        ('quincenal', 'Quincenal'),
+        ('mensual', 'Mensual'),
+        ('bimestral', 'Bimestral'),
+        ('trimestral', 'Trimestral'),
+        ('semestral', 'Semestral'),
+        ('anual', 'Anual'),
+    )
+
+    fecha_inicio = models.DateField()
+    fecha_limite = models.DateField()
     monto_objetivo = models.DecimalField(max_digits=15, decimal_places=2)
-    frecuencia_aporte = models.DateTimeField()
+    frecuencia_aporte = models.CharField(max_length=20, choices=FRECUENCIAS, default='mensual')
     descripcion = models.CharField(max_length=255)
     nombre = models.CharField(max_length=50)
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
@@ -14,6 +26,28 @@ class MetaAhorro(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def monto_ahorrado(self):
+        """Calcula el monto total ahorrado hasta la fecha"""
+        total = self.aportes.aggregate(Sum('monto'))['monto__sum']
+        return float(total) if total is not None else 0.0
+
+    def porcentaje_progreso(self):
+        """Calcula el porcentaje de progreso hacia la meta"""
+        if self.monto_objetivo <= 0:
+            return 0.0
+        monto_actual = self.monto_ahorrado()
+        objetivo = float(self.monto_objetivo)
+        return min((monto_actual / objetivo) * 100, 100.0)
+
+    def falta_por_ahorrar(self):
+        """Calcula cuánto falta para alcanzar la meta"""
+        falta = float(self.monto_objetivo) - self.monto_ahorrado()
+        return max(falta, 0.0)
+
+    def meta_alcanzada(self):
+        """Verifica si la meta ya fue alcanzada"""
+        return self.monto_ahorrado() >= float(self.monto_objetivo)
 
 
 class MoldeAhorro(models.Model):
@@ -23,6 +57,21 @@ class MoldeAhorro(models.Model):
 
     def __str__(self):
         return self.nombre
+
+
+class AporteMetaAhorro(models.Model):
+    """Modelo para registrar los aportes individuales a una meta de ahorro"""
+    id_meta_ahorro = models.ForeignKey(MetaAhorro, on_delete=models.CASCADE, related_name='aportes')
+    monto = models.DecimalField(max_digits=15, decimal_places=2)
+    fecha_aporte = models.DateTimeField(auto_now_add=True)
+    descripcion = models.CharField(max_length=300, blank=True, null=True)
+    id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Aporte ${self.monto} a {self.id_meta_ahorro.nombre}"
+
+    class Meta:
+        ordering = ['-fecha_aporte']
 
 
 class Movimiento(models.Model):
@@ -35,10 +84,9 @@ class Movimiento(models.Model):
     tipo = models.CharField(max_length=25, choices=TIPOS_MOVIMIENTO)
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_movimiento = models.DateTimeField()
-    descripcion = models.CharField(max_length=300)
+    descripcion = models.CharField(max_length=300, blank=True, null=True)
     id_cuenta = models.ForeignKey("cuentas.Cuenta", on_delete=models.CASCADE)
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.tipo} - {self.monto}"
-

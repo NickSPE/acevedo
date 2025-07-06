@@ -1,0 +1,179 @@
+{% extends 'core/base_template.html' %}
+
+{% block title %}Admin - Notificaciones{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2><i class="fas fa-bell"></i> Administración de Notificaciones</h2>
+            
+            <!-- Estadísticas Generales -->
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5>Total</h5>
+                            <h3>{{ total_notificaciones }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5>Hoy</h5>
+                            <h3>{{ notificaciones_hoy }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5>Enviadas</h5>
+                            <h3>{{ notificaciones_enviadas }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h5>Pendientes</h5>
+                            <h3>{{ notificaciones_pendientes }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body">
+                            <h5>Errores</h5>
+                            <h3>{{ notificaciones_error }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card bg-dark text-white">
+                        <div class="card-body text-center">
+                            <a href="{% url 'alertas_notificaciones:debug_duplicados' %}" class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-bug"></i> Debug
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Posibles Duplicados -->
+            {% if duplicados_potenciales %}
+            <div class="alert alert-warning">
+                <h5><i class="fas fa-exclamation-triangle"></i> Posibles Duplicados Detectados ({{ duplicados_potenciales|length }})</h5>
+                {% for dup in duplicados_potenciales %}
+                <div class="mb-2 p-2 border-left border-warning">
+                    <strong>Usuario:</strong> {{ dup.usuario.nombres }}<br>
+                    <strong>Tipo:</strong> {{ dup.tipo }}<br>
+                    <strong>Cantidad:</strong> {{ dup.count }} notificaciones<br>
+                    <small>
+                        {% for notif in dup.notificaciones %}
+                            ID: {{ notif.id }} ({{ notif.fecha_creacion|date:"H:i:s" }}){% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </small>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Estadísticas por Tipo -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Estadísticas por Tipo (Últimas 24h)</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Total</th>
+                                        <th>Enviadas</th>
+                                        <th>Pendientes</th>
+                                        <th>Errores</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stat in stats_por_tipo %}
+                                    <tr>
+                                        <td>{{ stat.tipo_notificacion__nombre }}</td>
+                                        <td><span class="badge badge-primary">{{ stat.total }}</span></td>
+                                        <td><span class="badge badge-success">{{ stat.enviadas }}</span></td>
+                                        <td><span class="badge badge-warning">{{ stat.pendientes }}</span></td>
+                                        <td><span class="badge badge-danger">{{ stat.errores }}</span></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notificaciones Recientes -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Notificaciones Recientes (Últimas 24h - Top 50)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuario</th>
+                                    <th>Tipo</th>
+                                    <th>Título</th>
+                                    <th>Estado</th>
+                                    <th>Fecha</th>
+                                    <th>Email</th>
+                                    <th>Push</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for notif in notificaciones_recientes %}
+                                <tr class="{% if notif.estado == 'error' %}table-danger{% elif notif.estado == 'enviada' %}table-success{% elif notif.estado == 'pendiente' %}table-warning{% endif %}">
+                                    <td>{{ notif.id }}</td>
+                                    <td>{{ notif.usuario.nombres|truncatechars:20 }}</td>
+                                    <td><small>{{ notif.tipo_notificacion.nombre }}</small></td>
+                                    <td>{{ notif.titulo|truncatechars:30 }}</td>
+                                    <td>
+                                        <span class="badge {% if notif.estado == 'enviada' %}badge-success{% elif notif.estado == 'pendiente' %}badge-warning{% elif notif.estado == 'error' %}badge-danger{% else %}badge-secondary{% endif %}">
+                                            {{ notif.estado }}
+                                        </span>
+                                    </td>
+                                    <td><small>{{ notif.fecha_creacion|date:"H:i:s" }}</small></td>
+                                    <td>
+                                        {% if notif.email_enviado %}
+                                            <i class="fas fa-check text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-times text-danger"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if notif.push_enviado %}
+                                            <i class="fas fa-check text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-times text-muted"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center">No hay notificaciones recientes</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

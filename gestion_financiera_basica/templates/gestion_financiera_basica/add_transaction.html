@@ -1,32 +1,335 @@
 {% extends 'core/base_template.html' %}
 
+{% block title %}Agregar Transacción | FinGest{% endblock %}
+
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
-  <h2 class="text-2xl font-semibold text-green-700 mb-6 text-center">➕ Añadir Movimiento</h2>
-
-  <form method="post" class="space-y-6">
-    {% csrf_token %}
+<!-- Modal-style Container -->
+<div class="fixed inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-gray-200/50 overflow-hidden">
     
-    {% for field in form %}
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          {{ field.label_tag }}
-        </label>
-        {{ field }}
-        {% if field.errors %}
-          <p class="text-red-500 text-sm mt-1">{{ field.errors|join:", " }}</p>
-        {% endif %}
+    <!-- Header con gradiente -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">Nueva Transacción</h2>
+            <p class="text-blue-100 text-sm">Registra tus movimientos financieros</p>
+          </div>
+        </div>
+        <a href="{% url 'gestion_financiera_basica:transactions' %}" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 group">
+          <svg class="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </a>
       </div>
-    {% endfor %}
-
-    <div class="flex justify-between items-center">
-      <a href="{% url 'transactions' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded transition duration-200">
-        ⬅ Volver
-      </a>
-      <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded transition duration-200">
-        💾 Guardar
-      </button>
     </div>
-  </form>
+
+    <!-- Formulario -->
+    <form method="post" class="p-6">
+      {% csrf_token %}
+      <!-- Tipo de transacción -->
+      <div class="mb-5">
+        <label class="block text-sm font-bold text-gray-800 mb-3">¿Qué tipo de movimiento es?</label>
+        {% if form.tipo.errors %}
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-sm">{{ form.tipo.errors.0 }}</p>
+          </div>
+        {% endif %}
+        <div class="grid grid-cols-2 gap-3">
+          {% for choice in form.tipo.field.choices %}
+            {% if choice.0 %}
+            <label class="relative group cursor-pointer">
+              <input type="radio" name="tipo" value="{{ choice.0 }}" 
+                     class="peer sr-only" {% if form.tipo.value == choice.0 %}checked{% endif %}>
+              <div class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-2xl peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-offset-2 hover:border-gray-300 transition-all duration-300 group-hover:scale-105 {% if choice.0 == 'ingreso' %}peer-checked:ring-green-400 peer-checked:bg-gradient-to-br peer-checked:from-green-50 peer-checked:to-emerald-50{% else %}peer-checked:ring-red-400 peer-checked:bg-gradient-to-br peer-checked:from-red-50 peer-checked:to-pink-50{% endif %}">
+                {% if choice.0 == 'ingreso' %}
+                  <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+                    </svg>
+                  </div>
+                  <span class="font-semibold text-gray-700">Ingreso</span>
+                  <span class="text-xs text-gray-500">Dinero que entra</span>
+                {% else %}
+                  <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-pink-500 rounded-2xl flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+                    </svg>
+                  </div>
+                  <span class="font-semibold text-gray-700">Gasto</span>
+                  <span class="text-xs text-gray-500">Dinero que sale</span>
+                {% endif %}
+              </div>
+            </label>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Nombre de la transacción -->
+      <div class="mb-4">
+        <label class="block text-sm font-bold text-gray-800 mb-2">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+            ¿Cómo quieres llamar esta transacción?
+          </span>
+        </label>
+        {% if form.nombre.errors %}
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-sm">{{ form.nombre.errors.0 }}</p>
+          </div>
+        {% endif %}
+        <div class="relative">
+          <input type="text" name="nombre" value="{{ form.nombre.value|default:'' }}" 
+                 class="w-full px-4 py-3 bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-400 focus:border-transparent focus:from-white focus:to-blue-50 transition-all duration-300 text-gray-800 placeholder-gray-400"
+                 placeholder="Ej: Cine, Salario, Compras..." required>
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monto y Cuenta en una fila compacta -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-bold text-gray-800 mb-2">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+              </svg>
+              Monto
+            </span>
+          </label>
+          {% if form.monto.errors %}
+            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p class="text-red-600 text-sm">{{ form.monto.errors.0 }}</p>
+            </div>
+          {% endif %}
+          <div class="relative">
+            <span class="absolute left-4 top-3.5 text-gray-600 font-bold text-lg">$</span>
+            <input type="number" name="monto" value="{{ form.monto.value|default:'' }}" 
+                   class="w-full pl-10 pr-4 py-3 bg-gradient-to-r from-gray-50 to-green-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-green-400 focus:border-transparent focus:from-white focus:to-green-50 transition-all duration-300 text-gray-800 text-lg font-semibold"
+                   placeholder="0.00" step="0.01" min="0" required>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold text-gray-800 mb-2">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+              </svg>
+              Cuenta
+            </span>
+          </label>
+          {% if form.id_cuenta.errors %}
+            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p class="text-red-600 text-sm">{{ form.id_cuenta.errors.0 }}</p>
+            </div>
+          {% endif %}
+          <div class="relative">
+            <select name="id_cuenta" 
+                    class="w-full px-4 py-3 bg-gradient-to-r from-gray-50 to-purple-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-purple-400 focus:border-transparent focus:from-white focus:to-purple-50 transition-all duration-300 appearance-none text-gray-800 font-medium" required>
+              <option value="">Elige tu cuenta</option>
+              {% for choice in form.id_cuenta.field.choices %}
+                <option value="{{ choice.0 }}" {% if form.id_cuenta.value == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+              {% endfor %}
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fecha compacta -->
+      <div class="mb-4">
+        <label class="block text-sm font-bold text-gray-800 mb-2">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            ¿Cuándo ocurrió?
+          </span>
+        </label>
+        {% if form.fecha_movimiento.errors %}
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-sm">{{ form.fecha_movimiento.errors.0 }}</p>
+          </div>
+        {% endif %}
+        <div class="relative">
+          <input type="date" name="fecha_movimiento" value="{{ form.fecha_movimiento.value|default:'' }}"
+                 class="w-full px-4 py-3 bg-gradient-to-r from-gray-50 to-indigo-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent focus:from-white focus:to-indigo-50 transition-all duration-300 text-gray-800 font-medium" required>
+        </div>
+      </div>
+
+      <!-- Descripción compacta -->
+      <div class="mb-5">
+        <label class="block text-sm font-bold text-gray-800 mb-2">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+            </svg>
+            Descripción <span class="text-gray-400 font-normal text-xs">(opcional)</span>
+          </span>
+        </label>
+        {% if form.descripcion.errors %}
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-sm">{{ form.descripcion.errors.0 }}</p>
+          </div>
+        {% endif %}
+        <textarea name="descripcion" rows="2" 
+                  class="w-full px-4 py-3 bg-gradient-to-r from-gray-50 to-orange-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-orange-400 focus:border-transparent focus:from-white focus:to-orange-50 transition-all duration-300 resize-none text-gray-800"
+                  placeholder="Agrega detalles si quieres...">{{ form.descripcion.value|default:'' }}</textarea>
+      </div>
+
+      <!-- Botones mejorados -->
+      <div class="flex gap-3 pt-2">
+        <a href="{% url 'gestion_financiera_basica:transactions' %}" 
+           class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-bold transition-all duration-200 transform hover:scale-105">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Cancelar
+        </a>
+        <button type="submit" 
+                class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-2xl font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<style>
+/* Custom styles for better date picker */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Custom focus states */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animación de entrada
+  const form = document.querySelector('form');
+  form.classList.add('animate-slide-in');
+  
+  // Auto-focus en el primer campo
+  setTimeout(() => {
+    const firstInput = document.querySelector('input[name="nombre"]');
+    if (firstInput) firstInput.focus();
+  }, 300);
+  
+  // Establecer fecha actual por defecto
+  const fechaInput = document.querySelector('input[name="fecha_movimiento"]');
+  if (fechaInput && !fechaInput.value) {
+    const today = new Date().toISOString().split('T')[0];
+    fechaInput.value = today;
+  }
+  
+  // Validación en tiempo real del monto
+  const montoInput = document.querySelector('input[name="monto"]');
+  if (montoInput) {
+    montoInput.addEventListener('input', function(e) {
+      let value = parseFloat(e.target.value);
+      if (value < 0) {
+        e.target.value = 0;
+      }
+      
+      // Añadir feedback visual
+      if (value > 0) {
+        e.target.classList.add('border-green-400', 'ring-1', 'ring-green-200');
+        e.target.classList.remove('border-gray-200');
+      } else {
+        e.target.classList.remove('border-green-400', 'ring-1', 'ring-green-200');
+        e.target.classList.add('border-gray-200');
+      }
+    });
+  }
+  
+  // Mejorar experiencia del select
+  const selectElement = document.querySelector('select[name="id_cuenta"]');
+  if (selectElement) {
+    selectElement.addEventListener('change', function() {
+      if (this.value) {
+        this.classList.add('border-purple-400', 'ring-1', 'ring-purple-200');
+        this.classList.remove('border-gray-200');
+      } else {
+        this.classList.remove('border-purple-400', 'ring-1', 'ring-purple-200');
+        this.classList.add('border-gray-200');
+      }
+    });
+  }
+  
+  // Feedback visual para el nombre
+  const nombreInput = document.querySelector('input[name="nombre"]');
+  if (nombreInput) {
+    nombreInput.addEventListener('input', function(e) {
+      if (e.target.value.length > 0) {
+        e.target.classList.add('border-blue-400', 'ring-1', 'ring-blue-200');
+        e.target.classList.remove('border-gray-200');
+      } else {
+        e.target.classList.remove('border-blue-400', 'ring-1', 'ring-blue-200');
+        e.target.classList.add('border-gray-200');
+      }
+    });
+  }
+  
+  // Efecto hover para botones de tipo
+  const tipoButtons = document.querySelectorAll('input[name="tipo"]');
+  tipoButtons.forEach(button => {
+    button.addEventListener('change', function() {
+      // Añadir efecto de confetti virtual
+      if (this.checked) {
+        const label = this.closest('label');
+        label.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          label.style.transform = 'scale(1)';
+        }, 100);
+      }
+    });
+  });
+});
+</script>
 {% endblock %}

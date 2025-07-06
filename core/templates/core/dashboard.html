@@ -1,87 +1,238 @@
 {% extends "core/base_template.html" %}
+{% load currency_filters %}
 
-{% block title %}Dashboard | BuilderQuantum{% endblock %}
+{% block title %}Dashboard | FinGest{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold font-semibold text-gray-800 mb-1">Panel de resumen</h2>
-<p class="text-sm text-gray-600 mb-6">Observe su situacion financiera.</p>
+<!-- Header -->
+<div class="mb-8">
+  <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Panel Principal</h1>
+  <p class="text-lg text-gray-500 dark:text-gray-400">Resumen general de su situación financiera</p>
+  
+  <!-- Enlace temporal para pruebas de notificaciones -->
+  <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+    <div class="flex items-center justify-between">
+      <div>
+        <h4 class="text-sm font-medium text-blue-800 dark:text-blue-300">🧪 Sistema de Notificaciones</h4>
+        <p class="text-xs text-blue-600 dark:text-blue-400">Prueba y revisa las notificaciones por email</p>
+      </div>
+      <div class="flex space-x-2">
+        <a href="{% url 'alertas_notificaciones:ver_emails' %}" 
+           class="bg-green-600 dark:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-700 dark:hover:bg-green-600 transition-colors">
+          📧 Ver Emails
+        </a>
+        <a href="{% url 'gestion_financiera_basica:test_notifications' %}" 
+           class="bg-blue-600 dark:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors">
+          🧪 Probar
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Tabs -->
-<div class="flex space-x-4 mb-6 text-sm font-medium">
-  <a href="{% url 'core:dashboard' %}?tab=overview" class="px-4 py-2 rounded {% if tab == 'overview' %}bg-blue-100 text-blue-600{% endif %}">Panel General</a>
-  <a href="{% url 'core:dashboard' %}?tab=analytics" class="px-4 py-2 rounded {% if tab == 'analytics' %}bg-blue-100 text-blue-600{% endif %}">Analisis</a>
-  <a href="{% url 'core:dashboard' %}?tab=savings" class="px-4 py-2 rounded {% if tab == 'savings' %}bg-blue-100 text-blue-600{% endif %}">Metas de Ahorros</a>
+<div class="border-b border-gray-200 dark:border-gray-700 mb-8">
+  <nav class="-mb-px flex space-x-8">
+    <a href="{% url 'core:dashboard' %}?tab=overview" 
+       class="{% if tab == 'overview' %}border-blue-500 text-blue-600 dark:text-blue-400{% else %}border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+      Panel General
+    </a>
+    <a href="{% url 'core:dashboard' %}?tab=analytics" 
+       class="{% if tab == 'analytics' %}border-blue-500 text-blue-600 dark:text-blue-400{% else %}border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+      Análisis
+    </a>
+    <a href="{% url 'core:dashboard' %}?tab=savings" 
+       class="{% if tab == 'savings' %}border-blue-500 text-blue-600 dark:text-blue-400{% else %}border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
+      Metas de Ahorros
+    </a>
+  </nav>
 </div>
 
 <!-- Contenido dinámico -->
 {% if tab == "overview" %}
-  <!-- 💰 Overview -->
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
-    <div class="bg-yellow-100 p-4 rounded-lg shadow-md">
-      <p class="text-gray-500 text-sm">Saldo total</p>
-      <p class="text-xl font-semibold">{{ simbolo_moneda }} {{ total_balance }}</p>
-      <p class="text-xs text-green-500">+5.2% from last month</p>
-    </div>
-    <div class="bg-yellow-100 p-4 rounded-lg shadow-md">
-      <p class="text-gray-500 text-sm">Ingresos Totales</p>
-      <p class="text-xl font-semibold text-green-600">{{ simbolo_moneda }} {{ total_ingresos }}</p>
-      <p class="text-xs text-gray-400">De {{ cantidad_ingresos }} movimientos</p>
-    </div>
-    <div class="bg-yellow-100 p-4 rounded-lg shadow-md">
-      <p class="text-gray-500 text-sm">Egresos Totales</p>
-      <p class="text-xl font-semibold text-red-500">-{{ simbolo_moneda }} {{ total_egresos }}</p>
-      <p class="text-xs text-gray-400">{{ porcentaje_de_ingresos_para_egresos }}% de los ingresos</p>
-    </div>
-    <div class="bg-yellow-100 p-4 rounded-lg shadow-md">
-      <p class="text-gray-500 text-sm">Savings Progress</p>
-      <p class="text-xl font-semibold text-blue-500">45.8%</p>
-      <div class="w-full bg-gray-200 h-2 mt-2 rounded">
-        <div class="bg-blue-500 h-2 rounded" style="width: 45.8%;"></div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Total Balance -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Balance Total</p>
+            <p class="text-2xl font-bold text-gray-900 dark:text-white">{% format_money total_balance user %}</p>
+            <p class="text-sm text-green-600 dark:text-green-400 mt-1">+5.2% desde el mes pasado</p>
+          </div>
+          <div class="h-12 w-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Income -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Ingresos Totales</p>
+            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{% format_money total_ingresos user %}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">De {{ cantidad_ingresos }} fuentes</p>
+          </div>
+          <div class="h-12 w-12 bg-green-50 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Expenses -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Gastos Totales</p>
+            <p class="text-2xl font-bold text-red-600 dark:text-red-400">{% format_money total_egresos user %}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ porcentaje_de_ingresos_para_egresos|floatformat:1 }}% de ingresos</p>
+          </div>
+          <div class="h-12 w-12 bg-red-50 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Savings Progress -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Progreso de Ahorros</p>
+            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">45.8%</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Hacia sus metas de ahorro</p>
+          </div>
+          <div class="h-12 w-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="grid md:grid-cols-2 gap-6">
-    <div class="bg-white p-4 rounded-lg shadow-md">
-      <h3 class="font-semibold mb-3">Recent Transactions</h3>
-      <ul class="space-y-2 text-sm">
-        {% for movimiento in movimientos %}
-          {% if movimiento.tipo == "ingreso" %}
-            <li class="flex justify-between">
-              <span>{{ movimiento.nombre }} · {{ movimiento.fecha_movimiento|date:"b d, Y" }}</span>
-              <span class="text-green-600">{{ simbolo_moneda }} {{ movimiento.monto }}</span>
-            </li>
-          {% elif movimiento.tipo == "egreso" %}
-            <li class="flex justify-between">
-              <span>{{ movimiento.nombre }} · {{ movimiento.fecha_movimiento|date:"b d, Y" }}</span>
-              <span class="text-red-500">-{{ simbolo_moneda }} {{ movimiento.monto }}</span>
-            </li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+      <!-- Recent Transactions -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-xl transition-shadow">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Movimientos Recientes</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Sus últimas actividades financieras</p>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            {% for movimiento in movimientos|slice:":5" %}
+              <div class="flex items-center justify-between py-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg px-2 transition-colors">
+                <div class="flex items-center space-x-4">
+                  {% if movimiento.tipo == "ingreso" %}
+                    <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                      <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                      </svg>
+                    </div>
+                  {% else %}
+                    <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                      <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                      </svg>
+                    </div>
+                  {% endif %}
+                  <div>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ movimiento.nombre }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ movimiento.fecha_movimiento|date:"j M, Y" }} • {{ movimiento.id_cuenta.nombre_cuenta }}</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  {% if movimiento.tipo == "ingreso" %}
+                    <p class="text-sm font-semibold text-green-600 dark:text-green-400">+{% format_money movimiento.monto user %}</p>
+                  {% else %}
+                    <p class="text-sm font-semibold text-red-600 dark:text-red-400">-{% format_money movimiento.monto user %}</p>
+                  {% endif %}
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-gray-500 dark:text-gray-400 text-center py-8">No hay movimientos aún</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
 
-    <div class="bg-white p-4 rounded-lg shadow-md">
-      <h3 class="font-semibold mb-3">Alerts & Reminders</h3>
-      <ul class="space-y-3 text-sm">
-        <li class="border rounded p-2 bg-red-50 border-red-300">🚨 Your balance is below $500</li>
-        <li class="border rounded p-2 bg-blue-50 border-blue-300">📈 You've reached 60% of your Emergency Fund goal!</li>
-        <li class="border rounded p-2 bg-indigo-50 border-indigo-300">⚡ Electricity bill due in 3 days</li>
-      </ul>
+      <!-- Alerts & Reminders -->
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-xl transition-shadow">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Alertas y Recordatorios</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Notificaciones importantes sobre sus finanzas</p>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <!-- Low Balance Alert -->
+            <div class="flex items-start space-x-3 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.634 0L4.182 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-red-800 dark:text-red-300">Su balance está por debajo de {{ currency_symbol }}500</p>
+                <p class="text-xs text-red-600 dark:text-red-400 mt-1">22 Jul, 2023</p>
+              </div>
+            </div>
+
+            <!-- Emergency Fund Goal -->
+            <div class="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-green-800 dark:text-green-300">¡Ha alcanzado el 60% de su meta de Fondo de Emergencia!</p>
+                <p class="text-xs text-green-600 dark:text-green-400 mt-1">21 Jul, 2023</p>
+              </div>
+            </div>
+
+            <!-- Bill Due -->
+            <div class="flex items-start space-x-3 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
+              <div class="flex-shrink-0">
+                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-blue-800 dark:text-blue-300">Factura de electricidad vence en 3 días</p>
+                <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">20 Jul, 2023</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
 {% elif tab == "analytics" %}
   <!-- 📊 Analytics -->
-  <div class="grid md:grid-cols-2 gap-6">
-    <div class="bg-white p-6 rounded shadow text-center">
-      <h3 class="font-semibold mb-2">Expense Breakdown</h3>
-      <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-400">[Donut Chart]</div>
+  <div class="grid md:grid-cols-2 gap-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Desglose de Gastos</h3>
+      <div class="h-40 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 border border-gray-100">
+        <div class="text-center">
+          <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+          </svg>
+          <p class="text-sm">Gráfico de dona</p>
+        </div>
+      </div>
     </div>
-    <div class="bg-white p-6 rounded shadow text-center">
-      <h3 class="font-semibold mb-2">Financial Health</h3>
-      <div class="text-5xl font-bold text-green-600">82</div>
-      <p class="text-sm text-gray-500">Your financial score is better than 75% of users</p>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition-shadow">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Salud Financiera</h3>
+      <div class="text-5xl font-bold text-green-600 mb-2">82</div>
+      <p class="text-sm text-gray-500">Su puntuación financiera es mejor que el 75% de los usuarios</p>
     </div>
   </div>
 
@@ -89,22 +240,27 @@
   <!-- 🏦 Savings Goals -->
   <div class="grid md:grid-cols-3 gap-6">
     {% for goal in savings_goals %}
-      <div class="bg-white p-4 rounded shadow">
-        <h4 class="font-semibold">{{ goal.0 }}</h4>
-        <p class="text-sm text-gray-500 mb-2">{{ goal.1 }}</p>
-        <div class="w-full bg-gray-200 h-2 rounded mb-2">
-          <div class="bg-blue-600 h-2 rounded" style="width: {{ goal.2 }}"></div>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <h4 class="font-semibold text-gray-900 mb-1">{{ goal.0 }}</h4>
+        <p class="text-sm text-gray-500 mb-4">{{ goal.1 }}</p>
+        <div class="w-full bg-gray-200 h-2 rounded-full mb-3">
+          <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ goal.2 }}"></div>
         </div>
-        <p class="text-xs text-gray-400 mb-2">Target Date: {{ goal.3 }}</p>
+        <p class="text-xs text-gray-400 mb-4">Fecha objetivo: {{ goal.3 }}</p>
         <div class="flex gap-2">
-          <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Add Funds</button>
-          <button class="border px-3 py-1 rounded text-sm">Edit</button>
+          <button class="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex-1">Agregar Fondos</button>
+          <button class="border border-gray-300 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">Editar</button>
         </div>
       </div>
     {% endfor %}
 
-    <div class="flex items-center justify-center border-dashed border-2 rounded text-gray-400 h-40 cursor-pointer">
-      ➕ Add New Goal
+    <div class="flex items-center justify-center border-dashed border-2 border-gray-300 rounded-xl text-gray-400 h-48 cursor-pointer hover:border-blue-400 hover:text-blue-500 transition-colors">
+      <div class="text-center">
+        <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+        <p class="font-medium">Agregar Nueva Meta</p>
+      </div>
     </div>
   </div>
 {% endif %}

@@ -1,23 +1,159 @@
 {% extends "core/base_template.html" %}
-{% block title %}Cursos | BuilderQuantum{% endblock %}
+{% block title %}Cursos | FinGest{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-1">Cursos</h2>
-<p class="text-sm text-gray-500 mb-6">Aprende lo esencial sobre finanzas personales</p>
+<div class="mb-6">
+  <h2 class="text-2xl font-bold mb-1">Cursos de Educación Financiera</h2>
+  <p class="text-sm text-gray-500">Aprende lo esencial sobre finanzas personales con cursos externos seleccionados</p>
+</div>
 
-<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Filtros -->
+<div class="mb-6 flex flex-wrap gap-2">
+  <button onclick="filterCourses('all')" class="filter-btn active px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm">
+    Todos
+  </button>
+  <button onclick="filterCourses('basico')" class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors text-sm">
+    Básico
+  </button>
+  <button onclick="filterCourses('intermedio')" class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors text-sm">
+    Intermedio
+  </button>
+  <button onclick="filterCourses('avanzado')" class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors text-sm">
+    Avanzado
+  </button>
+  <button onclick="filterCourses('gratis')" class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors text-sm">
+    Gratis
+  </button>
+</div>
+
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="courses-grid">
   {% for course in courses %}
-    <div class="bg-white p-4 rounded shadow">
-      <div class="h-32 bg-gray-200 rounded mb-4 flex items-center justify-center text-gray-400 text-3xl">▶</div>
-      <h3 class="text-lg font-semibold">{{ course.title }}</h3>
-      <p class="text-sm text-gray-500 mb-2">{{ course.description }}</p>
-      <p class="text-xs text-gray-400 mb-1">{{ course.lessons }} lecciones</p>
-      <p class="text-xs text-gray-400 mb-1">Progreso: {{ course.progress }}%</p>
-      <div class="w-full bg-gray-200 h-2 rounded mb-3">
-        <div class="bg-blue-600 h-2 rounded" style="width: {{ course.progress }}%;"></div>
+    <div class="course-card bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow" 
+         data-level="{{ course.nivel|lower }}" 
+         data-free="{{ course.gratis|yesno:'true,false' }}">
+      
+      <!-- Imagen o thumbnail -->
+      <div class="relative mb-4">
+        {% if course.imagen_url %}
+          <img src="{{ course.imagen_url }}" alt="{{ course.titulo }}" class="w-full h-32 object-cover rounded-lg">
+        {% else %}
+          <div class="h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-4xl">
+            {{ course.plataforma_icon }}
+          </div>
+        {% endif %}
+        
+        <!-- Botón de favorito -->
+        <button onclick="toggleFavorito({{ course.id }})" 
+                class="absolute top-2 right-2 p-2 bg-white rounded-full shadow hover:shadow-md transition-shadow"
+                id="fav-btn-{{ course.id }}">
+          {% if course.es_favorito %}
+            <span class="text-red-500">❤️</span>
+          {% else %}
+            <span class="text-gray-400">🤍</span>
+          {% endif %}
+        </button>
       </div>
-      <button class="w-full bg-gray-900 text-white py-2 rounded text-sm hover:bg-gray-800">{{ course.button }}</button>
+      
+      <!-- Metadatos -->
+      <div class="mb-3 flex justify-between items-center">
+        <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full 
+          {% if course.nivel == 'Básico' %}bg-green-100 text-green-800{% elif course.nivel == 'Intermedio' %}bg-yellow-100 text-yellow-800{% else %}bg-red-100 text-red-800{% endif %}">
+          {{ course.nivel }}
+        </span>
+        
+        <div class="flex items-center gap-2 text-xs text-gray-500">
+          <span>{{ course.plataforma_icon }} {{ course.plataforma }}</span>
+          {% if course.gratis %}
+            <span class="bg-green-100 text-green-800 px-2 py-1 rounded">GRATIS</span>
+          {% endif %}
+        </div>
+      </div>
+      
+      <!-- Contenido -->
+      <h3 class="text-lg font-semibold mb-2">{{ course.titulo }}</h3>
+      <p class="text-sm text-gray-600 mb-3">{{ course.descripcion|truncatewords:15 }}</p>
+      
+      <!-- Información adicional -->
+      <div class="text-xs text-gray-500 mb-4 space-y-1">
+        {% if course.instructor %}
+          <div>👨‍🏫 {{ course.instructor }}</div>
+        {% endif %}
+        <div>⏱️ {{ course.duracion }}</div>
+      </div>
+      
+      <!-- Acción -->
+      <a href="{{ course.url_externa }}" 
+         target="_blank" 
+         rel="noopener noreferrer"
+         class="block w-full bg-blue-600 text-white py-2 rounded text-sm text-center hover:bg-blue-700 transition-colors">
+        Ver Curso 🔗
+      </a>
+    </div>
+  {% empty %}
+    <div class="col-span-full text-center py-12">
+      <div class="text-gray-400 text-6xl mb-4">📚</div>
+      <h3 class="text-lg font-semibold text-gray-600 mb-2">No hay cursos disponibles</h3>
+      <p class="text-gray-500">Los cursos estarán disponibles pronto.</p>
     </div>
   {% endfor %}
 </div>
+
+<script>
+// Filtrar cursos
+function filterCourses(filter) {
+  const cards = document.querySelectorAll('.course-card');
+  const buttons = document.querySelectorAll('.filter-btn');
+  
+  // Actualizar botones
+  buttons.forEach(btn => {
+    btn.classList.remove('active', 'bg-blue-600', 'text-white');
+    btn.classList.add('bg-gray-200', 'text-gray-700');
+  });
+  
+  event.target.classList.add('active', 'bg-blue-600', 'text-white');
+  event.target.classList.remove('bg-gray-200', 'text-gray-700');
+  
+  // Filtrar cards
+  cards.forEach(card => {
+    if (filter === 'all') {
+      card.style.display = 'block';
+    } else if (filter === 'gratis') {
+      card.style.display = card.dataset.free === 'true' ? 'block' : 'none';
+    } else {
+      card.style.display = card.dataset.level === filter ? 'block' : 'none';
+    }
+  });
+}
+
+// Toggle favorito
+function toggleFavorito(cursoId) {
+  fetch(`/educacion-financiera/favorito/${cursoId}/`, {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(response => response.json())
+  .then(data => {
+    const btn = document.getElementById(`fav-btn-${cursoId}`);
+    const span = btn.querySelector('span');
+    
+    if (data.es_favorito) {
+      span.textContent = '❤️';
+      span.className = 'text-red-500';
+    } else {
+      span.textContent = '🤍';
+      span.className = 'text-gray-400';
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Error al actualizar favorito');
+  });
+}
+</script>
+
+<!-- CSRF Token for AJAX -->
+{% csrf_token %}
 {% endblock %}

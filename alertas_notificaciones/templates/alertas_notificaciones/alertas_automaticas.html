@@ -1,59 +1,92 @@
 {% extends "core/base_template.html" %}
-{% block title %}Alertas Automáticas | BuilderQuantum{% endblock %}
+{% block title %}Alertas Automáticas | FinGest{% endblock %}
 
 {% block content %}
-  <!-- Navigation component -->
-  <nav class="mb-6">
-    <ul class="flex gap-4 border-b pb-2 text-sm font-medium">
-      <li>
-        <a href="{% url 'configuraciones' %}" class="hover:text-blue-600">
-          ⚙️ Configuraciones
-        </a>
-      </li>
-      <li>
-        <a href="{% url 'alertas_automaticas' %}" class="hover:text-blue-600 text-blue-600 border-b-2 border-blue-600 pb-1">
-          ⚡ Alertas Automáticas
-        </a>
-      </li>
-      <li>
-        <a href="{% url 'historial' %}" class="hover:text-blue-600">
-          📜 Historial
-        </a>
-      </li>
-    </ul>
-  </nav>
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 mb-6 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold mb-2">Alertas Automáticas</h1>
+          <p class="text-blue-100">Configura alertas inteligentes para mantener el control de tus finanzas</p>
+        </div>
+        <div class="bg-white/10 p-4 rounded-xl">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+      </div>
+    </div>
 
-  <div class="max-w-4xl mx-auto space-y-6">
-    <!-- Saldo Bajo Alert Card -->
-    <div class="bg-white rounded-lg shadow-lg transition-all duration-200 ring-2 ring-blue-200 dark:ring-blue-800">
-      <div class="p-6">
-        <!-- Header -->
-        <div class="flex items-start justify-between">
-          <div class="flex items-start gap-3">
-            <div class="p-3 rounded-xl bg-blue-600 text-white shadow-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <!-- Navigation -->
+    <nav class="mb-8">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <ul class="flex gap-6 text-sm font-medium">
+          <li>
+            <a href="{% url 'alertas_notificaciones:configuraciones' %}" class="flex items-center px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 616 0z" />
               </svg>
-            </div>
-            <div class="space-y-1">
-              <h3 class="text-lg font-semibold">Alerta de Saldo Bajo</h3>
-              <p class="text-sm text-gray-600">Recibe notificaciones cuando tu saldo esté por debajo del límite establecido</p>
-              <div class="flex items-center gap-2 mt-2">
-                <svg class="h-4 w-4 text-red-500" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              Configuraciones
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'alertas_notificaciones:alertas_automaticas' %}" class="flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-lg border-2 border-blue-200">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Alertas Automáticas
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'alertas_notificaciones:historial' %}" class="flex items-center px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Historial
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="space-y-8">
+      
+      <!-- Saldo Bajo Alert Card -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-8">
+          <!-- Header -->
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex items-start gap-4">
+              <div class="p-4 rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-white shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                 </svg>
-                <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-red-100 text-red-800">
-                  Crítico
-                </span>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Alerta de Saldo Bajo</h3>
+                <p class="text-gray-600 mb-3">Recibe notificaciones cuando tu saldo esté por debajo del límite establecido</p>
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-red-100 text-red-800">
+                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Crítico
+                  </span>
+                  <span class="text-sm text-green-600 font-medium">• Activa</span>
+                </div>
               </div>
             </div>
+            <!-- Toggle Switch -->
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" checked>
+              <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
           </div>
-          <!-- Toggle Switch -->
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" class="sr-only peer" checked>
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-          </label>
-        </div>
 
         <!-- Extended Settings -->
         <div class="mt-6 space-y-6">
@@ -167,4 +200,194 @@
       </div>
     </div>
   </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Configurar sliders con valores dinámicos
+  function setupSliders() {
+    const sliders = document.querySelectorAll('input[type="range"]');
+    
+    sliders.forEach(slider => {
+      const updateValue = () => {
+        const value = slider.value;
+        const parent = slider.closest('div');
+        const valueDisplay = parent.querySelector('.font-medium');
+        
+        if (valueDisplay) {
+          if (slider.min === "0" && slider.max === "1000") {
+            valueDisplay.textContent = `S/${value}`;
+          } else if (slider.min === "50" && slider.max === "100") {
+            valueDisplay.textContent = `${value}%`;
+          } else if (slider.min === "100" && slider.max === "5000") {
+            valueDisplay.textContent = `S/${parseInt(value).toLocaleString()}`;
+          }
+        }
+        
+        // Actualizar vista previa
+        updatePreview(slider);
+      };
+      
+      slider.addEventListener('input', updateValue);
+      updateValue(); // Inicializar
+    });
+  }
+
+  // Actualizar vista previa según el tipo de alerta
+  function updatePreview(slider) {
+    const card = slider.closest('.bg-white');
+    const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
+    
+    if (!preview) return;
+    
+    const value = slider.value;
+    const previewText = preview.querySelector('p');
+    
+    if (previewText) {
+      if (slider.min === "0" && slider.max === "1000") {
+        // Saldo bajo
+        previewText.textContent = `⚠️ Tu cuenta tiene S/${Math.max(0, value - 50)}, por debajo del límite de S/${value}`;
+      } else if (slider.min === "50" && slider.max === "100") {
+        // Presupuesto
+        previewText.textContent = `⚠️ Has gastado ${value}% de tu presupuesto en Alimentación`;
+      } else if (slider.min === "100" && slider.max === "5000") {
+        // Ingresos
+        previewText.textContent = `💰 Nuevo ingreso registrado: S/${parseInt(value).toLocaleString()} (Salario)`;
+      }
+    }
+  }
+
+  // Manejar toggles de alertas
+  function setupAlertToggles() {
+    const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+    
+    toggles.forEach(toggle => {
+      toggle.addEventListener('change', function() {
+        const card = this.closest('.bg-white');
+        const isEnabled = this.checked;
+        
+        if (card) {
+          if (isEnabled) {
+            card.style.opacity = '1';
+            card.style.borderColor = '#3B82F6';
+          } else {
+            card.style.opacity = '0.6';
+            card.style.borderColor = '#D1D5DB';
+          }
+        }
+        
+        showStatusMessage(`Alerta ${isEnabled ? 'activada' : 'desactivada'}`);
+      });
+    });
+  }
+
+  // Manejar botones de prueba
+  function setupTestButtons() {
+    const testButtons = document.querySelectorAll('button:contains("Probar")');
+    
+    testButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const card = this.closest('.bg-white');
+        const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
+        
+        if (preview) {
+          // Simular notificación
+          preview.style.animation = 'pulse 0.5s ease-in-out 2';
+          
+          // Mostrar mensaje temporal
+          const originalText = this.textContent;
+          this.textContent = 'Enviando...';
+          this.disabled = true;
+          
+          setTimeout(() => {
+            this.textContent = originalText;
+            this.disabled = false;
+            showStatusMessage('📱 Notificación de prueba enviada');
+          }, 1500);
+        }
+      });
+    });
+  }
+
+  // Función para mostrar mensajes de estado
+  function showStatusMessage(message) {
+    let statusDiv = document.getElementById('status-message');
+    if (!statusDiv) {
+      statusDiv = document.createElement('div');
+      statusDiv.id = 'status-message';
+      statusDiv.className = 'fixed bottom-4 right-4 px-4 py-2 bg-green-600 text-white rounded-lg shadow-lg transition-all duration-300 transform translate-y-full opacity-0';
+      document.body.appendChild(statusDiv);
+    }
+    
+    statusDiv.textContent = message;
+    statusDiv.style.transform = 'translateY(0)';
+    statusDiv.style.opacity = '1';
+    
+    setTimeout(() => {
+      statusDiv.style.transform = 'translateY(100%)';
+      statusDiv.style.opacity = '0';
+    }, 3000);
+  }
+
+  // Manejar acciones globales
+  function setupGlobalActions() {
+    const buttons = document.querySelectorAll('button');
+    
+    buttons.forEach(button => {
+      if (button.textContent.includes('Activar Todas')) {
+        button.addEventListener('click', function() {
+          const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+          toggles.forEach(toggle => {
+            toggle.checked = true;
+            toggle.dispatchEvent(new Event('change'));
+          });
+          showStatusMessage('✅ Todas las alertas activadas');
+        });
+      } else if (button.textContent.includes('Desactivar Todas')) {
+        button.addEventListener('click', function() {
+          const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+          toggles.forEach(toggle => {
+            toggle.checked = false;
+            toggle.dispatchEvent(new Event('change'));
+          });
+          showStatusMessage('❌ Todas las alertas desactivadas');
+        });
+      } else if (button.textContent.includes('Guardar Configuración')) {
+        button.addEventListener('click', function() {
+          const originalText = this.textContent;
+          this.textContent = 'Guardando...';
+          this.disabled = true;
+          
+          setTimeout(() => {
+            this.textContent = originalText;
+            this.disabled = false;
+            showStatusMessage('💾 Configuración guardada exitosamente');
+          }, 2000);
+        });
+      }
+    });
+  }
+
+  // Inicializar todas las funcionalidades
+  setupSliders();
+  setupAlertToggles();
+  setupTestButtons();
+  setupGlobalActions();
+  
+  // Agregar CSS para animaciones
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .bg-white {
+      transition: all 0.3s ease;
+    }
+  `;
+  document.head.appendChild(style);
+});
+</script>
 {% endblock %}

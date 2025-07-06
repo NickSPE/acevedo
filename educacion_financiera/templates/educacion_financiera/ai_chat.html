@@ -1,0 +1,315 @@
+{% extends "core/base_template.html" %}
+{% block title %}Chat con IA | FinGest{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-1">💬 Chat con IA</h2>
+        <p class="text-gray-600">Pregunta lo que quieras, sin restricciones</p>
+      </div>
+      <a href="{% url 'educacion_financiera:tips' %}" 
+         class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        ← Volver a Tips
+      </a>
+    </div>
+  </div>
+
+  <!-- Chat Container -->
+  <div class="bg-white rounded-xl shadow-lg border overflow-hidden">
+    <!-- Chat Messages -->
+    <div id="chat-messages" class="h-96 overflow-y-auto p-4 space-y-4 bg-gray-50">
+      <!-- Welcome Message -->
+      <div class="flex gap-3">
+        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+          <span class="text-white text-sm">🤖</span>
+        </div>
+        <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
+          <p class="text-sm">¡Hola! 👋 Soy tu asistente de IA. Puedes preguntarme cualquier cosa que necesites saber.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="p-4 bg-white border-t">
+      <form id="chat-form" class="flex gap-3">
+        {% csrf_token %}
+        <input type="text" 
+               id="user-input" 
+               name="question"
+               placeholder="Escribe tu pregunta aquí..."
+               class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+               autocomplete="off">
+        <button type="submit" 
+                id="send-btn"
+                class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+          Enviar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quick Suggestions -->
+  <div class="mt-6">
+    <h3 class="text-sm font-medium text-gray-700 mb-3">Sugerencias rápidas:</h3>
+    <div class="flex flex-wrap gap-2">
+      <button onclick="sendQuickMessage('Hola, ¿cómo estás?')" 
+              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+        👋 Saludo
+      </button>
+      <button onclick="sendQuickMessage('¿Qué es Bitcoin?')" 
+              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+        💰 Bitcoin
+      </button>
+      <button onclick="sendQuickMessage('Consejos para ahorrar')" 
+              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+        💡 Ahorros
+      </button>
+      <button onclick="sendQuickMessage('¿Cómo invertir mi dinero?')" 
+              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+        📈 Inversiones
+      </button>
+      <button onclick="sendQuickMessage('Explícame algo interesante')" 
+              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+        🎯 Sorpréndeme
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+.ai-response h4 {
+  color: #1f2937;
+  font-weight: 600;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ai-response h4:first-child {
+  margin-top: 0;
+}
+
+.ai-response ul {
+  padding-left: 0;
+  margin: 8px 0;
+}
+
+.ai-response li {
+  margin-bottom: 4px;
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.ai-response p {
+  margin-bottom: 12px;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.ai-response p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-response strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.ai-response em {
+  color: #6b7280;
+}
+
+.ai-response code {
+  background-color: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+</style>
+
+<script>
+const chatMessages = document.getElementById('chat-messages');
+const chatForm = document.getElementById('chat-form');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+
+// Auto-scroll to bottom
+function scrollToBottom() {
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Add message to chat
+function addMessage(content, isUser = false) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'flex gap-3';
+  
+  if (isUser) {
+    messageDiv.className += ' justify-end';
+    messageDiv.innerHTML = `
+      <div class="bg-purple-600 text-white p-4 rounded-lg shadow-sm max-w-md">
+        <p class="text-sm">${content}</p>
+      </div>
+      <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+        <span class="text-white text-sm">👤</span>
+      </div>
+    `;
+  } else {
+    // Formatear el contenido de la IA para mejor estructura
+    const formattedContent = formatAIResponse(content);
+    
+    messageDiv.innerHTML = `
+      <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+        <span class="text-white text-sm">🤖</span>
+      </div>
+      <div class="bg-white p-4 rounded-lg shadow-sm max-w-2xl border border-gray-100">
+        <div class="ai-response text-sm">${formattedContent}</div>
+      </div>
+    `;
+  }
+  
+  chatMessages.appendChild(messageDiv);
+  scrollToBottom();
+}
+
+// Formatear respuesta de IA para mejor estructura
+function formatAIResponse(content) {
+  let formatted = content;
+  
+  // Convertir títulos (líneas que terminan con :)
+  formatted = formatted.replace(/^(.+):$/gm, '<h4 class="font-bold text-gray-800 mt-3 mb-2 first:mt-0">$1</h4>');
+  
+  // Convertir listas con guiones
+  formatted = formatted.replace(/^- (.+)$/gm, '<li class="ml-4 mb-1">• $1</li>');
+  
+  // Convertir listas numeradas
+  formatted = formatted.replace(/^\d+\. (.+)$/gm, '<li class="ml-4 mb-1 list-decimal">$1</li>');
+  
+  // Envolver listas en <ul>
+  formatted = formatted.replace(/(<li[^>]*>.*<\/li>\s*)+/gs, '<ul class="my-2">$&</ul>');
+  
+  // Convertir texto en negrita **texto**
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-800">$1</strong>');
+  
+  // Convertir texto en cursiva *texto*
+  formatted = formatted.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
+  
+  // Convertir párrafos (doble salto de línea)
+  formatted = formatted.replace(/\n\n/g, '</p><p class="mb-3">');
+  formatted = '<p class="mb-3">' + formatted + '</p>';
+  
+  // Limpiar párrafos vacíos
+  formatted = formatted.replace(/<p[^>]*><\/p>/g, '');
+  
+  // Convertir saltos de línea simples
+  formatted = formatted.replace(/\n/g, '<br>');
+  
+  return formatted;
+}
+
+// Show typing indicator
+function showTyping() {
+  const typingDiv = document.createElement('div');
+  typingDiv.id = 'typing-indicator';
+  typingDiv.className = 'flex gap-3';
+  typingDiv.innerHTML = `
+    <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+      <span class="text-white text-sm">🤖</span>
+    </div>
+    <div class="bg-white p-3 rounded-lg shadow-sm">
+      <div class="flex gap-1">
+        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+      </div>
+    </div>
+  `;
+  chatMessages.appendChild(typingDiv);
+  scrollToBottom();
+}
+
+// Remove typing indicator
+function removeTyping() {
+  const typing = document.getElementById('typing-indicator');
+  if (typing) typing.remove();
+}
+
+// Send message
+async function sendMessage(message) {
+  if (!message.trim()) return;
+  
+  // Add user message
+  addMessage(message, true);
+  
+  // Clear input
+  userInput.value = '';
+  
+  // Disable send button
+  sendBtn.disabled = true;
+  sendBtn.textContent = 'Enviando...';
+  
+  // Show typing
+  showTyping();
+  
+  try {
+    const formData = new FormData();
+    formData.append('question', message);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    
+    const response = await fetch(window.location.href, {
+      method: 'POST',
+      body: formData
+    });
+    
+    const data = await response.json();
+    
+    // Remove typing
+    removeTyping();
+    
+    if (data.success) {
+      addMessage(data.response);
+    } else {
+      addMessage('Lo siento, hubo un error: ' + (data.error || 'Error desconocido'));
+    }
+    
+  } catch (error) {
+    removeTyping();
+    addMessage('Error de conexión. Por favor intenta de nuevo.');
+    console.error('Error:', error);
+  }
+  
+  // Re-enable send button
+  sendBtn.disabled = false;
+  sendBtn.textContent = 'Enviar';
+  userInput.focus();
+}
+
+// Quick message function
+function sendQuickMessage(message) {
+  userInput.value = message;
+  sendMessage(message);
+}
+
+// Form submit
+chatForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  sendMessage(userInput.value);
+});
+
+// Enter key support
+userInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage(userInput.value);
+  }
+});
+
+// Focus input on load
+userInput.focus();
+</script>
+{% endblock %}

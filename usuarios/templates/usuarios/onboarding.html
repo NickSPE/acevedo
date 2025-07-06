@@ -1,0 +1,356 @@
+{% extends "core/base_template.html" %}
+
+{% block title %}Bienvenido | FinGest{% endblock %}
+
+{% block content %}
+<!-- Modal de Onboarding -->
+<div id="onboardingModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg relative animate-fade-in">
+        
+        <!-- Indicador de progreso -->
+        <div class="bg-gray-200 dark:bg-gray-700 h-2 rounded-t-2xl">
+            <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-tl-2xl transition-all duration-500" style="width: 33%"></div>
+        </div>
+
+        <!-- Contenido del modal -->
+        <div class="p-8">
+            <!-- Paso 1: Bienvenida y Configuración Básica -->
+            <div id="step1" class="step-content">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Bienvenido a FinGest, {{ user.nombres }}!</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Vamos a configurar tu cuenta en 3 pasos rápidos</p>
+                </div>
+
+                <form id="step1Form" class="space-y-4">
+                    {% csrf_token %}
+                    <!-- Saldo inicial -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">💰 Saldo inicial (opcional)</label>
+                        <input 
+                            type="number" 
+                            name="saldo_inicial" 
+                            step="0.01" 
+                            min="0"
+                            placeholder="0.00"
+                            class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Puedes dejarlo en $0 y agregarlo después</p>
+                    </div>
+
+                    <!-- Nombre de cuenta -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🏦 Nombre de tu cuenta principal</label>
+                        <input 
+                            type="text" 
+                            name="nombre_cuenta" 
+                            value="Mi Cuenta Principal"
+                            class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                    </div>
+                </form>
+
+                <div class="flex justify-between mt-8">
+                    <button onclick="skipOnboarding()" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                        Saltar por ahora
+                    </button>
+                    <button onclick="nextStep()" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso 2: PIN de Acceso Rápido -->
+            <div id="step2" class="step-content hidden">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">🔢</div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acceso Rápido con PIN</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Como Yape - configura un PIN para entrar más fácil</p>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-blue-500">ℹ️</div>
+                        <div>
+                            <p class="text-sm text-blue-800 dark:text-blue-300">Con el PIN puedes acceder rápidamente sin escribir tu email y contraseña</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="step2Form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🔐 Crea tu PIN (exactamente 6 dígitos)</label>
+                        <input 
+                            type="text" 
+                            name="pin_acceso_rapido" 
+                            placeholder="123456"
+                            maxlength="6"
+                            pattern="[0-9]{6}"
+                            class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center text-2xl tracking-wider"
+                            oninput="validatePin(this)"
+                        />
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">Solo números, exactamente 6 dígitos</p>
+                    </div>
+                </form>
+
+                <div class="flex justify-between mt-8">
+                    <button onclick="prevStep()" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                        ← Atrás
+                    </button>
+                    <div class="space-x-3">
+                        <button onclick="skipStep()" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                            Después
+                        </button>
+                        <button onclick="nextStep()" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
+                            Configurar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 3: Notificaciones -->
+            <div id="step3" class="step-content hidden">
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">🔔</div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Notificaciones</h2>
+                    <p class="text-gray-600 dark:text-gray-400">¿Quieres recibir alertas sobre tus finanzas?</p>
+                </div>
+
+                <form id="step3Form" class="space-y-4">
+                    <!-- Email notifications -->
+                    <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div>
+                            <div class="font-medium text-gray-900 dark:text-white">📧 Notificaciones por Email</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Alertas de gastos, recordatorios, etc.</div>
+                        </div>
+                        <input type="checkbox" name="notificaciones_email" checked class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    </div>
+
+                    <!-- SMS notifications -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📱 Teléfono (opcional - para SMS)</label>
+                        <div class="flex space-x-2">
+                            <select name="codigo_pais" class="w-20 p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                <option value="+51">+51</option>
+                                <option value="+1">+1</option>
+                                <option value="+54">+54</option>
+                            </select>
+                            <input 
+                                type="tel" 
+                                name="telefono" 
+                                placeholder="999999999"
+                                class="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            />
+                        </div>
+                    </div>
+                </form>
+
+                <div class="flex justify-between mt-8">
+                    <button onclick="prevStep()" class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                        ← Atrás
+                    </button>
+                    <button onclick="finishOnboarding()" class="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all">
+                        ¡Empezar! 🚀
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso final: Completado -->
+            <div id="stepFinal" class="step-content hidden text-center">
+                <div class="text-6xl mb-4">✨</div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Todo listo!</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Tu cuenta está configurada y lista para usar</p>
+                
+                <div class="space-y-3 mb-8">
+                    <div class="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400">
+                        <span>✅</span>
+                        <span>Cuenta principal creada</span>
+                    </div>
+                    <div id="pinConfigured" class="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400 hidden">
+                        <span>✅</span>
+                        <span>PIN de acceso configurado</span>
+                    </div>
+                    <div class="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400">
+                        <span>✅</span>
+                        <span>Notificaciones configuradas</span>
+                    </div>
+                </div>
+
+                <button onclick="goToDashboard()" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all text-lg">
+                    Ir al Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentStep = 1;
+const maxSteps = 3;
+
+function updateProgressBar() {
+    const progressBar = document.getElementById('progressBar');
+    const percentage = (currentStep / maxSteps) * 100;
+    progressBar.style.width = percentage + '%';
+}
+
+function showStep(step) {
+    // Hide all steps
+    document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
+    
+    // Show current step
+    if (step <= maxSteps) {
+        document.getElementById(`step${step}`).classList.remove('hidden');
+    } else {
+        document.getElementById('stepFinal').classList.remove('hidden');
+    }
+    
+    updateProgressBar();
+}
+
+function nextStep() {
+    // Validar PIN en paso 2
+    if (currentStep === 2) {
+        const pin = document.querySelector('input[name="pin_acceso_rapido"]').value;
+        if (pin && (pin.length !== 6 || !/^\d{6}$/.test(pin))) {
+            alert('El PIN debe tener exactamente 6 dígitos numéricos.');
+            return;
+        }
+    }
+    
+    if (currentStep < maxSteps) {
+        currentStep++;
+        showStep(currentStep);
+    } else {
+        finishOnboarding();
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+    }
+}
+
+function skipStep() {
+    nextStep();
+}
+
+function skipOnboarding() {
+    // Marcar onboarding como completado y ir al dashboard
+    fetch('{% url "usuarios:complete_onboarding" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            skipped: true
+        })
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '{% url "core:dashboard" %}';
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+        window.location.href = '{% url "core:dashboard" %}';
+    });
+}
+
+function finishOnboarding() {
+    currentStep = maxSteps + 1;
+    
+    // Recopilar datos de todos los pasos
+    const formData = {
+        saldo_inicial: document.querySelector('input[name="saldo_inicial"]').value || '0.00',
+        nombre_cuenta: document.querySelector('input[name="nombre_cuenta"]').value,
+        pin_acceso_rapido: document.querySelector('input[name="pin_acceso_rapido"]').value,
+        telefono: document.querySelector('input[name="telefono"]').value,
+        codigo_pais: document.querySelector('select[name="codigo_pais"]').value,
+        notificaciones_email: document.querySelector('input[name="notificaciones_email"]').checked
+    };
+
+    // Validar PIN antes de enviar
+    const pin = formData.pin_acceso_rapido;
+    if (pin && (pin.length !== 6 || !/^\d{6}$/.test(pin))) {
+        alert('El PIN debe tener exactamente 6 dígitos numéricos.');
+        showStep(2); // Volver al paso del PIN
+        return;
+    }
+
+    // Mostrar PIN configurado si existe
+    if (formData.pin_acceso_rapido) {
+        document.getElementById('pinConfigured').classList.remove('hidden');
+    }
+
+    // Enviar datos al servidor
+    fetch('{% url "usuarios:complete_onboarding" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Ir directamente al dashboard sin mostrar paso final
+            window.location.href = '{% url "core:dashboard" %}';
+        } else {
+            alert('Error al completar el onboarding. Inténtalo nuevamente.');
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+        alert('Error de conexión. Inténtalo nuevamente.');
+    });
+}
+
+function goToDashboard() {
+    window.location.href = '{% url "core:dashboard" %}';
+}
+
+// Función de validación del PIN
+function validatePin(input) {
+    // Solo permitir números
+    input.value = input.value.replace(/[^0-9]/g, '');
+    
+    // Limitar a 6 dígitos
+    if (input.value.length > 6) {
+        input.value = input.value.slice(0, 6);
+    }
+    
+    // Validar visualmente
+    const isValid = input.value.length === 6;
+    input.style.borderColor = input.value.length === 0 ? '' : (isValid ? '#10b981' : '#ef4444');
+}
+
+// Validaciones adicionales
+document.querySelector('input[name="pin_acceso_rapido"]').addEventListener('input', function(e) {
+    validatePin(e.target);
+});
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    showStep(1);
+});
+</script>
+
+<style>
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}

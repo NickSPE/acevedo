@@ -1,0 +1,405 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+
+{% block title %}Transferir entre Subcuentas - FinGest{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .subcuenta-card {
+        border-left: 4px solid;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .subcuenta-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .subcuenta-card.selected {
+        border-color: #0d6efd !important;
+        background-color: #f8f9ff;
+    }
+    .transfer-arrow {
+        font-size: 2rem;
+        color: #0d6efd;
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    .saldo-disponible {
+        color: #28a745;
+        font-weight: 600;
+    }
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    .summary-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="form-container">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 text-dark mb-0">
+                            <i class="fas fa-exchange-alt me-2"></i>
+                            Transferir entre Subcuentas
+                        </h1>
+                        <p class="text-muted mb-0">Mueve dinero de una subcuenta a otra</p>
+                    </div>
+                    <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" id="transferenciaForm">
+                            {% csrf_token %}
+                            
+                            <!-- Selección de subcuenta origen -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-upload me-2"></i>Subcuenta de Origen *
+                                </label>
+                                <small class="text-muted d-block mb-2">Selecciona de dónde saldrá el dinero</small>
+                                
+                                <div class="row" id="subcuentasOrigen">
+                                    {% for subcuenta in subcuentas_activas %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card subcuenta-card subcuenta-origen" 
+                                             style="border-left-color: {{ subcuenta.color }};"
+                                             data-id="{{ subcuenta.id }}"
+                                             data-saldo="{{ subcuenta.saldo }}">
+                                            <div class="card-body py-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1">{{ subcuenta.nombre }}</h6>
+                                                        <small class="text-muted">{{ subcuenta.get_tipo_display }}</small>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <h5 class="mb-0 saldo-disponible">${{ subcuenta.saldo|floatformat:2 }}</h5>
+                                                        <small class="text-muted">Disponible</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                {{ form.subcuenta_origen }}
+                                {% if form.subcuenta_origen.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.subcuenta_origen.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Flecha indicativa -->
+                            <div class="text-center mb-4">
+                                <i class="fas fa-arrow-down transfer-arrow"></i>
+                            </div>
+
+                            <!-- Selección de subcuenta destino -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-download me-2"></i>Subcuenta de Destino *
+                                </label>
+                                <small class="text-muted d-block mb-2">Selecciona hacia dónde irá el dinero</small>
+                                
+                                <div class="row" id="subcuentasDestino">
+                                    {% for subcuenta in subcuentas_activas %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card subcuenta-card subcuenta-destino" 
+                                             style="border-left-color: {{ subcuenta.color }};"
+                                             data-id="{{ subcuenta.id }}">
+                                            <div class="card-body py-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1">{{ subcuenta.nombre }}</h6>
+                                                        <small class="text-muted">{{ subcuenta.get_tipo_display }}</small>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <h5 class="mb-0 text-info">${{ subcuenta.saldo|floatformat:2 }}</h5>
+                                                        <small class="text-muted">Actual</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                {{ form.subcuenta_destino }}
+                                {% if form.subcuenta_destino.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.subcuenta_destino.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Monto -->
+                            <div class="mb-4">
+                                <label for="{{ form.monto.id_for_label }}" class="form-label">
+                                    <i class="fas fa-dollar-sign me-2"></i>Monto a Transferir *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    {{ form.monto }}
+                                    <button type="button" class="btn btn-outline-secondary" id="btnMaximo" disabled>
+                                        Máximo
+                                    </button>
+                                </div>
+                                {% if form.monto.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.monto.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Máximo disponible: <span id="maxDisponible">$0.00</span>
+                                </div>
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="mb-4">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                                    <i class="fas fa-comment me-2"></i>Descripción
+                                </label>
+                                {{ form.descripcion }}
+                                {% if form.descripcion.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.descripcion.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Opcional: describe el motivo de la transferencia</div>
+                            </div>
+
+                            <!-- Resumen -->
+                            <div class="mb-4" id="resumenTransferencia" style="display: none;">
+                                <div class="card summary-card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-clipboard-list me-2"></i>
+                                            Resumen de la Transferencia
+                                        </h6>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <small>De:</small>
+                                                <p class="mb-0 fw-bold" id="resumenOrigen">-</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small>Hacia:</small>
+                                                <p class="mb-0 fw-bold" id="resumenDestino">-</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <small>Monto:</small>
+                                                <p class="mb-0 fw-bold" id="resumenMonto">$0.00</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-success" id="btnTransferir" disabled>
+                                    <i class="fas fa-paper-plane me-2"></i>Realizar Transferencia
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="text-muted">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Información importante
+                        </h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-check text-success me-2"></i>Las transferencias son instantáneas</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Se registra un historial de todas las transferencias</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Solo puedes transferir el saldo disponible</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Las subcuentas deben estar activas para recibir transferencias</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('transferenciaForm');
+    const origenInput = document.getElementById('{{ form.subcuenta_origen.id_for_label }}');
+    const destinoInput = document.getElementById('{{ form.subcuenta_destino.id_for_label }}');
+    const montoInput = document.getElementById('{{ form.monto.id_for_label }}');
+    const btnMaximo = document.getElementById('btnMaximo');
+    const btnTransferir = document.getElementById('btnTransferir');
+    const maxDisponible = document.getElementById('maxDisponible');
+    const resumenDiv = document.getElementById('resumenTransferencia');
+    
+    let subcuentaOrigenSeleccionada = null;
+    let subcuentaDestinoSeleccionada = null;
+    let saldoMaximo = 0;
+
+    // Configurar selección de subcuentas origen
+    document.querySelectorAll('.subcuenta-origen').forEach(card => {
+        card.addEventListener('click', function() {
+            // Deseleccionar todas las opciones origen
+            document.querySelectorAll('.subcuenta-origen').forEach(c => c.classList.remove('selected'));
+            
+            // Seleccionar esta opción
+            this.classList.add('selected');
+            subcuentaOrigenSeleccionada = this.dataset.id;
+            saldoMaximo = parseFloat(this.dataset.saldo);
+            origenInput.value = subcuentaOrigenSeleccionada;
+            
+            // Actualizar información
+            maxDisponible.textContent = '$' + saldoMaximo.toFixed(2);
+            btnMaximo.disabled = saldoMaximo <= 0;
+            
+            // Deshabilitar la misma subcuenta en destino
+            actualizarOpcionesDestino();
+            validarFormulario();
+        });
+    });
+
+    // Configurar selección de subcuentas destino
+    document.querySelectorAll('.subcuenta-destino').forEach(card => {
+        card.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+            
+            // Deseleccionar todas las opciones destino
+            document.querySelectorAll('.subcuenta-destino').forEach(c => c.classList.remove('selected'));
+            
+            // Seleccionar esta opción
+            this.classList.add('selected');
+            subcuentaDestinoSeleccionada = this.dataset.id;
+            destinoInput.value = subcuentaDestinoSeleccionada;
+            
+            validarFormulario();
+        });
+    });
+
+    // Botón máximo
+    btnMaximo.addEventListener('click', function() {
+        if (saldoMaximo > 0) {
+            montoInput.value = saldoMaximo.toFixed(2);
+            validarFormulario();
+        }
+    });
+
+    // Validación de monto
+    montoInput.addEventListener('input', function() {
+        const valor = parseFloat(this.value) || 0;
+        if (valor > saldoMaximo) {
+            this.classList.add('is-invalid');
+            this.setCustomValidity('El monto no puede ser mayor al saldo disponible');
+        } else if (valor <= 0) {
+            this.classList.add('is-invalid');
+            this.setCustomValidity('El monto debe ser mayor a cero');
+        } else {
+            this.classList.remove('is-invalid');
+            this.setCustomValidity('');
+        }
+        validarFormulario();
+    });
+
+    function actualizarOpcionesDestino() {
+        document.querySelectorAll('.subcuenta-destino').forEach(card => {
+            if (card.dataset.id === subcuentaOrigenSeleccionada) {
+                card.classList.add('disabled');
+                card.style.opacity = '0.5';
+                card.style.pointerEvents = 'none';
+                if (card.classList.contains('selected')) {
+                    card.classList.remove('selected');
+                    subcuentaDestinoSeleccionada = null;
+                    destinoInput.value = '';
+                }
+            } else {
+                card.classList.remove('disabled');
+                card.style.opacity = '1';
+                card.style.pointerEvents = 'auto';
+            }
+        });
+    }
+
+    function validarFormulario() {
+        const origen = subcuentaOrigenSeleccionada;
+        const destino = subcuentaDestinoSeleccionada;
+        const monto = parseFloat(montoInput.value) || 0;
+        
+        const formularioValido = origen && destino && monto > 0 && monto <= saldoMaximo && origen !== destino;
+        
+        btnTransferir.disabled = !formularioValido;
+        
+        if (formularioValido) {
+            actualizarResumen();
+            resumenDiv.style.display = 'block';
+        } else {
+            resumenDiv.style.display = 'none';
+        }
+    }
+
+    function actualizarResumen() {
+        const origenCard = document.querySelector(`[data-id="${subcuentaOrigenSeleccionada}"].subcuenta-origen`);
+        const destinoCard = document.querySelector(`[data-id="${subcuentaDestinoSeleccionada}"].subcuenta-destino`);
+        const monto = parseFloat(montoInput.value) || 0;
+        
+        if (origenCard && destinoCard) {
+            document.getElementById('resumenOrigen').textContent = origenCard.querySelector('h6').textContent;
+            document.getElementById('resumenDestino').textContent = destinoCard.querySelector('h6').textContent;
+            document.getElementById('resumenMonto').textContent = '$' + monto.toFixed(2);
+        }
+    }
+
+    // Confirmación antes del envío
+    form.addEventListener('submit', function(e) {
+        const monto = parseFloat(montoInput.value) || 0;
+        if (!confirm(`¿Confirmas la transferencia de $${monto.toFixed(2)}?`)) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

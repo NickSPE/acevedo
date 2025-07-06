@@ -1,0 +1,361 @@
+{% extends 'core/base_template.html' %}
+
+{% block title %}Agregar Meta de Ahorro | FinGest{% endblock %}
+
+{% block content %}
+<!-- Modal-style Container -->
+<div class="fixed inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl border border-gray-200/50 overflow-hidden">
+    
+    <!-- Header con gradiente -->
+    <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-white">Nueva Meta de Ahorro</h2>
+            <p class="text-green-100 text-sm">Define tu próximo objetivo financiero</p>
+          </div>
+        </div>
+        <a href="{% url 'gestion_financiera_basica:savings_goals' %}" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 group">
+          <svg class="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <form method="post" class="p-6">
+      {% csrf_token %}
+      
+      <!-- Nombre de la meta -->
+      <div class="mb-4">
+        <label class="block text-sm font-bold text-gray-800 mb-2">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+            </svg>
+            {{ form.nombre.label }}
+          </span>
+        </label>
+        {% if form.nombre.errors %}
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-sm">{{ form.nombre.errors.0 }}</p>
+          </div>
+        {% endif %}
+        <div class="relative">
+          {{ form.nombre }}
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monto objetivo y Cuenta en una fila -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-bold text-gray-800 mb-2">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+              </svg>
+              {{ form.monto_objetivo.label }}
+            </span>
+          </label>
+          {% if form.monto_objetivo.errors %}
+            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p class="text-red-600 text-sm">{{ form.monto_objetivo.errors.0 }}</p>
+            </div>
+          {% endif %}
+          <div class="relative">
+            <span class="absolute left-4 top-3.5 text-gray-600 font-bold text-lg">$</span>
+            {{ form.monto_objetivo }}
+          </div>
+          {% if form.monto_objetivo.help_text %}
+            <p class="text-xs text-gray-500 mt-1">{{ form.monto_objetivo.help_text }}</p>
+          {% endif %}
+        </div>
+        
+        <div>
+          <label class="block text-sm font-bold text-gray-800 mb-2">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+              </svg>
+              {{ form.id_cuenta.label }}
+            </span>
+          </label>
+          {% if form.id_cuenta.errors %}
+            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p class="text-red-600 text-sm">{{ form.id_cuenta.errors.0 }}</p>
+            </div>
+          {% endif %}
+          <div class="relative">
+            {{ form.id_cuenta }}
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fechas de inicio y límite -->
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-bold text-gray-800 mb-2">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              {{ form.fecha_inicio.label }}
+            </span>
+          </label>
+          {% if form.fecha_inicio.errors %}
+            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p class="text-red-600 text-sm">{{ form.fecha_inicio.errors.0 }}</p>
+            </div>
+          {% endif %}
+          {{ form.fecha_inicio }}
+        </div>
+        
+        <div>
+          <label class="block text-sm font-bold text-gray-800 mb-2">
+            <span class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              {{ form.fecha_limite.label }}
+            </span>
+          </label>
+          {% if form.fecha_limite.errors %}
+            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+              <p class="text-red-600 text-sm">{{ form.fecha_limite.errors.0 }}</p>
+            </div>
+          {% endif %}
+          {{ form.fecha_limite }}
+          {% if form.fecha_limite.help_text %}
+            <p class="text-xs text-gray-500 mt-1">{{ form.fecha_limite.help_text }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Frecuencia de aporte -->
+      <div class="mb-4">
+        <label class="block text-sm font-bold text-gray-800 mb-2">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            {{ form.frecuencia_aporte.label }}
+          </span>
+        </label>
+        {% if form.frecuencia_aporte.errors %}
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-sm">{{ form.frecuencia_aporte.errors.0 }}</p>
+          </div>
+        {% endif %}
+        {{ form.frecuencia_aporte }}
+        {% if form.frecuencia_aporte.help_text %}
+          <p class="text-xs text-gray-500 mt-1">{{ form.frecuencia_aporte.help_text }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-5">
+        <label class="block text-sm font-bold text-gray-800 mb-2">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+            </svg>
+            {{ form.descripcion.label }}
+          </span>
+        </label>
+        {% if form.descripcion.errors %}
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-sm">{{ form.descripcion.errors.0 }}</p>
+          </div>
+        {% endif %}
+        {{ form.descripcion }}
+      </div>
+
+      <!-- Mostrar errores generales del formulario -->
+      {% if form.non_field_errors %}
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          {% for error in form.non_field_errors %}
+            <p class="text-red-600 text-sm">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Botones -->
+      <div class="flex gap-3 pt-2">
+        <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+           class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-bold transition-all duration-200 transform hover:scale-105">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Cancelar
+        </a>
+        <button type="submit" 
+                class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white px-6 py-3 rounded-2xl font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Crear Meta
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+/* Custom styles for better date-time picker */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+/* Animation for form elements */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Custom focus states */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Animación de entrada
+  const form = document.querySelector('form');
+  form.classList.add('animate-slide-in');
+  
+  // Auto-focus en el primer campo
+  setTimeout(() => {
+    const firstInput = document.querySelector('input[name="nombre"]');
+    if (firstInput) firstInput.focus();
+  }, 300);
+  
+  // Establecer fecha y hora actual por defecto para fecha de inicio
+  const fechaInicioInput = document.querySelector('input[name="fecha_inicio"]');
+  if (fechaInicioInput && !fechaInicioInput.value) {
+    const now = new Date();
+    const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    fechaInicioInput.value = localDateTime;
+  }
+  
+  // Validación en tiempo real del monto objetivo
+  const montoInput = document.querySelector('input[name="monto_objetivo"]');
+  if (montoInput) {
+    montoInput.addEventListener('input', function(e) {
+      let value = parseFloat(e.target.value);
+      if (value < 0) {
+        e.target.value = 0;
+      }
+      
+      // Añadir feedback visual
+      if (value > 0) {
+        e.target.classList.add('border-emerald-400', 'ring-1', 'ring-emerald-200');
+        e.target.classList.remove('border-gray-200');
+      } else {
+        e.target.classList.remove('border-emerald-400', 'ring-1', 'ring-emerald-200');
+        e.target.classList.add('border-gray-200');
+      }
+    });
+  }
+  
+  // Validación de fechas
+  const fechaInicio = document.querySelector('input[name="fecha_inicio"]');
+  const fechaLimite = document.querySelector('input[name="fecha_limite"]');
+  
+  function validarFechas() {
+    if (fechaInicio.value && fechaLimite.value) {
+      const inicio = new Date(fechaInicio.value);
+      const limite = new Date(fechaLimite.value);
+      
+      if (limite <= inicio) {
+        fechaLimite.classList.add('border-red-400', 'ring-1', 'ring-red-200');
+        fechaLimite.classList.remove('border-gray-200');
+        
+        // Mostrar mensaje de error personalizado
+        let errorMsg = fechaLimite.parentElement.querySelector('.date-error');
+        if (!errorMsg) {
+          errorMsg = document.createElement('p');
+          errorMsg.className = 'date-error text-red-500 text-xs mt-1';
+          errorMsg.textContent = 'La fecha límite debe ser posterior a la fecha de inicio';
+          fechaLimite.parentElement.appendChild(errorMsg);
+        }
+      } else {
+        fechaLimite.classList.remove('border-red-400', 'ring-1', 'ring-red-200');
+        fechaLimite.classList.add('border-gray-200');
+        
+        // Remover mensaje de error
+        const errorMsg = fechaLimite.parentElement.querySelector('.date-error');
+        if (errorMsg) {
+          errorMsg.remove();
+        }
+      }
+    }
+  }
+  
+  if (fechaInicio) fechaInicio.addEventListener('change', validarFechas);
+  if (fechaLimite) fechaLimite.addEventListener('change', validarFechas);
+  
+  // Mejorar experiencia del select de cuenta
+  const selectElement = document.querySelector('select[name="id_cuenta"]');
+  if (selectElement) {
+    selectElement.addEventListener('change', function() {
+      if (this.value) {
+        this.classList.add('border-purple-400', 'ring-1', 'ring-purple-200');
+        this.classList.remove('border-gray-200');
+      } else {
+        this.classList.remove('border-purple-400', 'ring-1', 'ring-purple-200');
+        this.classList.add('border-gray-200');
+      }
+    });
+  }
+  
+  // Feedback visual para el nombre
+  const nombreInput = document.querySelector('input[name="nombre"]');
+  if (nombreInput) {
+    nombreInput.addEventListener('input', function(e) {
+      if (e.target.value.length > 0) {
+        e.target.classList.add('border-green-400', 'ring-1', 'ring-green-200');
+        e.target.classList.remove('border-gray-200');
+      } else {
+        e.target.classList.remove('border-green-400', 'ring-1', 'ring-green-200');
+        e.target.classList.add('border-gray-200');
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

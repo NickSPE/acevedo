@@ -1,0 +1,130 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+
+{% block title %}Emails Enviados{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">📧 Emails Enviados por el Sistema</h3>
+                    <p class="mb-0">Últimos emails generados por las notificaciones</p>
+                </div>
+                
+                <div class="card-body">
+                    {% if emails %}
+                        <div class="alert alert-info">
+                            <strong>📊 Total de emails:</strong> {{ total_emails }}
+                            <br>
+                            <small>Los emails se guardan en archivos porque está configurado el backend 'filebased'. 
+                            Para envío real, configura Gmail en settings.py</small>
+                        </div>
+                        
+                        <div class="row">
+                            {% for email in emails %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card border-left-primary">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">
+                                                📧 {{ email.subject|default:"Sin asunto" }}
+                                            </h5>
+                                            
+                                            <p class="card-text">
+                                                <strong>Para:</strong> {{ email.to }}<br>
+                                                <strong>Fecha:</strong> {{ email.date }}<br>
+                                                <strong>Archivo:</strong> <code>{{ email.file }}</code>
+                                            </p>
+                                            
+                                            <div class="btn-group">
+                                                <a href="{% url 'alertas_notificaciones:ver_email_completo' email.file %}" 
+                                                   class="btn btn-primary btn-sm" target="_blank">
+                                                    👁️ Ver Email
+                                                </a>
+                                                <button class="btn btn-outline-secondary btn-sm" 
+                                                        onclick="togglePreview('{{ forloop.counter }}')">
+                                                    🔍 Preview
+                                                </button>
+                                            </div>
+                                            
+                                            <!-- Preview del email -->
+                                            <div id="preview-{{ forloop.counter }}" class="mt-3" style="display: none;">
+                                                <div class="border rounded p-2 bg-light" style="max-height: 300px; overflow-y: auto;">
+                                                    {% if email.html_content %}
+                                                        <iframe srcdoc="{{ email.html_content|escape }}" 
+                                                                width="100%" height="250" frameborder="0"></iframe>
+                                                    {% else %}
+                                                        <p class="text-muted">No se pudo extraer el contenido HTML</p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <h5>📭 No hay emails enviados aún</h5>
+                            <p>Para generar emails de prueba:</p>
+                            <ol>
+                                <li>Ve a <a href="{% url 'gestion_financiera_basica:test_notifications' %}">Pruebas de Notificaciones</a></li>
+                                <li>Crea una transacción de prueba</li>
+                                <li>Regresa aquí para ver el email generado</li>
+                            </ol>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Enlaces de navegación -->
+                    <div class="text-center mt-4">
+                        <a href="{% url 'gestion_financiera_basica:test_notifications' %}" class="btn btn-success">
+                            🧪 Generar Email de Prueba
+                        </a>
+                        <a href="{% url 'alertas_notificaciones:configuraciones' %}" class="btn btn-outline-primary">
+                            ⚙️ Configurar Notificaciones
+                        </a>
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">
+                            🏠 Volver al Dashboard
+                        </a>
+                    </div>
+                    
+                    <!-- Instrucciones para email real -->
+                    <div class="mt-4">
+                        <div class="alert alert-light">
+                            <h6><strong>💡 ¿Quieres recibir emails reales?</strong></h6>
+                            <p class="mb-2">Para recibir notificaciones en tu bandeja real:</p>
+                            <ol class="mb-0">
+                                <li>Configura una cuenta Gmail con contraseña de aplicación</li>
+                                <li>Actualiza <code>EMAIL_BACKEND</code> en <code>settings.py</code></li>
+                                <li>Reinicia el servidor</li>
+                            </ol>
+                            <small class="text-muted">
+                                Ver: <code>CONFIGURAR_EMAIL_REAL.md</code> para instrucciones detalladas
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePreview(id) {
+    const preview = document.getElementById('preview-' + id);
+    if (preview.style.display === 'none') {
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+}
+</script>
+
+<style>
+.border-left-primary {
+    border-left: 4px solid #007bff !important;
+}
+</style>
+{% endblock %}

@@ -26,9 +26,15 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     apellido_materno = models.CharField(max_length=50)
     correo = models.EmailField(unique=True, max_length=100)
     telefono = models.BigIntegerField()
+    pais = models.CharField(max_length=100, default="Peru", blank=True)
     imagen_perfil = models.BinaryField(null=True, blank=True)
-    pin_acceso_rapido = models.IntegerField()
+    pin_acceso_rapido = models.CharField(max_length=6, default='000000')  # PIN de 6 dígitos exactos
     email_verificado = models.BooleanField(default=False)
+    onboarding_completed = models.BooleanField(default=False)  # Nuevo campo para tracking de onboarding
+    
+    # Campos para recuperación de contraseña
+    codigo_recuperacion = models.CharField(max_length=6, blank=True, null=True)  # Código de 6 dígitos
+    codigo_expiracion = models.DateTimeField(blank=True, null=True)  # Cuando expira el código
     
     id_moneda = models.ForeignKey("cuentas.Moneda", on_delete=models.CASCADE)
 

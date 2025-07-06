@@ -1,0 +1,136 @@
+{% extends 'core/base_template.html' %}
+
+{% block title %}Debug - Duplicados{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2><i class="fas fa-bug"></i> Debug de Notificaciones Duplicadas</h2>
+            <p class="text-muted">Análisis de duplicados en las últimas {{ tiempo_busqueda }}</p>
+            
+            <div class="mb-3">
+                <a href="{% url 'alertas_notificaciones:admin_notificaciones' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a Admin
+                </a>
+            </div>
+
+            {% if duplicados_reales %}
+            <div class="alert alert-danger">
+                <h5><i class="fas fa-exclamation-triangle"></i> Se encontraron {{ total_grupos_duplicados }} grupos con duplicados</h5>
+            </div>
+
+            {% for key, notificaciones in duplicados_reales.items %}
+            <div class="card mb-3">
+                <div class="card-header bg-warning">
+                    <h6>Grupo Duplicado: {{ key }} ({{ notificaciones|length }} notificaciones)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Usuario</th>
+                                    <th>Título</th>
+                                    <th>Estado</th>
+                                    <th>Fecha Creación</th>
+                                    <th>Fecha Envío</th>
+                                    <th>Datos Adicionales</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for notif in notificaciones %}
+                                <tr class="{% if forloop.first %}table-success{% else %}table-danger{% endif %}">
+                                    <td>{{ notif.id }}</td>
+                                    <td>{{ notif.usuario.nombres }}</td>
+                                    <td>{{ notif.titulo }}</td>
+                                    <td>
+                                        <span class="badge {% if notif.estado == 'enviada' %}badge-success{% elif notif.estado == 'pendiente' %}badge-warning{% elif notif.estado == 'error' %}badge-danger{% else %}badge-secondary{% endif %}">
+                                            {{ notif.estado }}
+                                        </span>
+                                    </td>
+                                    <td>{{ notif.fecha_creacion|date:"Y-m-d H:i:s" }}</td>
+                                    <td>
+                                        {% if notif.fecha_envio %}
+                                            {{ notif.fecha_envio|date:"Y-m-d H:i:s" }}
+                                        {% else %}
+                                            <span class="text-muted">No enviada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if notif.datos_adicionales %}
+                                            <small>
+                                                {% for key, value in notif.datos_adicionales.items %}
+                                                    <strong>{{ key }}:</strong> {{ value|truncatechars:20 }}<br>
+                                                {% endfor %}
+                                            </small>
+                                        {% else %}
+                                            <span class="text-muted">Sin datos</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not forloop.first %}
+                                            <button class="btn btn-danger btn-sm" title="Eliminar duplicado">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        {% else %}
+                                            <span class="badge badge-success">Original</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Mostrar diferencias de tiempo -->
+                    {% if notificaciones|length > 1 %}
+                    <div class="mt-2">
+                        <small class="text-info">
+                            <strong>Diferencias de tiempo:</strong>
+                            {% for notif in notificaciones %}
+                                {% if forloop.counter > 1 %}
+                                    {% with prev=notificaciones|slice:":forloop.counter0"|last %}
+                                        Diferencia con anterior: 
+                                        {% widthratio notif.fecha_creacion.timestamp prev.fecha_creacion.timestamp 1 as diff %}
+                                        {{ diff|floatformat:2 }} segundos
+                                        {% if not forloop.last %} | {% endif %}
+                                    {% endwith %}
+                                {% endif %}
+                            {% endfor %}
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+            {% else %}
+            <div class="alert alert-success">
+                <h5><i class="fas fa-check-circle"></i> ¡Excelente!</h5>
+                <p>No se encontraron notificaciones duplicadas en las últimas {{ tiempo_busqueda }}.</p>
+                <p>El sistema de deduplicación está funcionando correctamente.</p>
+            </div>
+            {% endif %}
+
+            <!-- Consejos para prevenir duplicados -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6>Consejos para prevenir duplicados</h6>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Asegúrate de que los signals se registren solo una vez en <code>apps.py</code></li>
+                        <li>Usa verificaciones de <code>created=True</code> en los signals</li>
+                        <li>Implementa lógica de deduplicación basada en tiempo y contenido</li>
+                        <li>Verifica que no haya múltiples imports de signals</li>
+                        <li>Considera usar transacciones atómicas para operaciones críticas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

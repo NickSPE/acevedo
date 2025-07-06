@@ -36,7 +36,7 @@
     <!-- Ventana de acceso rápido -->
     <div id="quick-access-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative animate__animated animate__fadeInDown">
-        <button onclick="window.location.href='/'" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl">&times;</button>
+        <button onclick="window.location.href='{% url 'usuarios:login' %}'" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl">&times;</button>
         <h2 class="text-2xl font-bold text-green-700 mb-2 text-center">Verificacion de direccion de correo</h2>
         <p class="text-gray-500 text-sm text-center mb-6">Ingrese el PIN de 6 dígitos enviado a su correo para continuar</p>
 

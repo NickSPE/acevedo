@@ -1,0 +1,114 @@
+{% extends "core/base_template.html" %}
+{% load currency_filters %}
+
+{% block title %}Prueba de Monedas - FinGest{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-green-600 to-green-800 rounded-xl p-6 mb-6 text-white">
+      <h1 class="text-2xl font-bold mb-1">Prueba de Sistema de Monedas</h1>
+      <p class="text-green-100 text-sm">Verificando el formateo de moneda según la configuración del usuario</p>
+    </div>
+
+    <!-- Debug Info -->
+    <div class="bg-yellow-50 rounded-xl border border-yellow-200 p-6 mb-6">
+      <h2 class="text-xl font-bold text-yellow-800 mb-4">🐛 Información de Debug</h2>
+      
+      <div class="space-y-2 text-sm">
+        <p><strong>Usuario autenticado:</strong> {{ user.is_authenticated }}</p>
+        <p><strong>Nombre de usuario:</strong> {{ user.nombres }} {{ user.apellido_paterno }}</p>
+        <p><strong>Email:</strong> {{ user.correo }}</p>
+        <p><strong>Tiene id_moneda:</strong> {{ user.id_moneda|yesno:"Sí,No,Desconocido" }}</p>
+        <p><strong>Moneda ID:</strong> {{ user.id_moneda.id|default:"N/A" }}</p>
+        <p><strong>Moneda directa:</strong> {{ user.id_moneda.simbolo|default:"N/A" }} ({{ user.id_moneda.codigo|default:"N/A" }})</p>
+        <p><strong>Context processor símbolo:</strong> {{ currency_symbol }}</p>
+        <p><strong>Context processor código:</strong> {{ currency_code }}</p>
+      </div>
+    </div>
+
+    <!-- Información del usuario -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Información de Moneda del Usuario</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-blue-50 p-4 rounded-lg">
+          <h3 class="font-semibold text-blue-800">Símbolo</h3>
+          <p class="text-2xl font-bold text-blue-600">{{ currency_symbol }}</p>
+        </div>
+        
+        <div class="bg-green-50 p-4 rounded-lg">
+          <h3 class="font-semibold text-green-800">Código</h3>
+          <p class="text-2xl font-bold text-green-600">{{ currency_code }}</p>
+        </div>
+        
+        <div class="bg-purple-50 p-4 rounded-lg">
+          <h3 class="font-semibold text-purple-800">Nombre</h3>
+          <p class="text-lg font-bold text-purple-600">{{ currency_name }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ejemplos de formateo -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Ejemplos de Formateo de Moneda</h2>
+      
+      <div class="space-y-4">
+        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+          <span class="text-gray-600">Monto simple (1000):</span>
+          <span class="font-bold text-green-600">{% format_money 1000 user %}</span>
+        </div>
+        
+        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+          <span class="text-gray-600">Monto con decimales (1234.56):</span>
+          <span class="font-bold text-green-600">{% format_money 1234.56 user %}</span>
+        </div>
+        
+        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+          <span class="text-gray-600">Monto grande (50000):</span>
+          <span class="font-bold text-green-600">{% format_money 50000 user %}</span>
+        </div>
+        
+        <div class="flex justify-between items-center py-3 border-b border-gray-100">
+          <span class="text-gray-600">Usando filtro (2500.75):</span>
+          <span class="font-bold text-green-600">{{ 2500.75|format_currency:user }}</span>
+        </div>
+        
+        <div class="flex justify-between items-center py-3">
+          <span class="text-gray-600">Solo símbolo:</span>
+          <span class="font-bold text-green-600">{{ user|currency_symbol }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ejemplo en contexto de notificación -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Ejemplo en Notificación</h2>
+      
+      <div class="bg-blue-50 border-l-4 border-l-blue-500 p-4 rounded-lg">
+        <h3 class="font-semibold text-blue-800 mb-2">💸 Nuevo gasto registrado</h3>
+        <p class="text-blue-700">
+          Se ha registrado un gasto de <strong>{% format_money 125.50 user %}</strong> 
+          en tu cuenta principal.
+        </p>
+        <p class="text-blue-600 text-sm mt-2">
+          Saldo actual: <strong>{% format_money 2847.25 user %}</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Volver al historial -->
+    <div class="mt-6 text-center">
+      <a href="{% url 'alertas_notificaciones:historial' %}" 
+         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Volver al Historial
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

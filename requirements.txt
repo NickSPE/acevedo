@@ -1,0 +1,44 @@
+# ===========================
+# DEPENDENCIAS PRINCIPALES
+# ===========================
+
+# Django y dependencias core
+Django>=4.2.0,<5.3.0
+django-decouple>=2.1
+
+# Base de datos
+psycopg2-binary>=2.9.0  # PostgreSQL adapter
+
+# Procesamiento de imágenes
+Pillow>=9.0.0  # Para PIL/Image processing (usado en cuentas/views.py)
+
+# Inteligencia Artificial
+google-generativeai>=0.3.0  # Google Gemini AI (usado en educacion_financiera)
+
+# ===========================
+# DEPENDENCIAS OPCIONALES/DESARROLLO
+# ===========================
+
+# FastAPI y dependencias para test1.py (sistema de notificaciones externo)
+# fastapi>=0.100.0
+# pydantic>=2.0.0
+# google-auth>=2.0.0
+# google-auth-oauthlib>=1.0.0
+# google-auth-httplib2>=0.1.0
+
+# ===========================
+# DEPENDENCIAS DE PRODUCCIÓN
+# ===========================
+
+# Servidor WSGI para producción
+# gunicorn>=20.1.0
+
+# Servir archivos estáticos en producción
+# whitenoise>=6.0.0
+
+# ===========================
+# DEPENDENCIAS PYTHON ESTÁNDAR
+# (Ya incluidas en Python - no instalar)
+# ===========================
+# json, random, decimal, datetime, logging
+# os, sys, pathlib, base64, smtplib

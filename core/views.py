@@ -11,7 +11,8 @@ def Inicio(request):
     if(not request.user.is_authenticated):
         return render(request , 'core/index.html')
     else:
-        if(not request.session.get('pin_acceso_rapido_validado')):
+        # Solo verificar PIN si llegó por acceso rápido
+        if(request.session.get('login_method') == 'pin' and not request.session.get('pin_acceso_rapido_validado')):
             return redirect('usuarios:acceso_rapido')
         return redirect('core:dashboard')
 

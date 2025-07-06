@@ -1,0 +1,585 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | FinGest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            background-color: #f0fdf4 !important;
+            font-family: 'Inter', sans-serif;
+        }
+        .floating-label {
+            position: absolute;
+            left: 12px;
+            top: 16px;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .floating-label.active {
+            top: 6px;
+            font-size: 0.75rem;
+            color: #059669;
+            font-weight: 500;
+        }
+        .input-container {
+            position: relative;
+        }
+        .password-strength-bar {
+            height: 3px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s ease;
+            z-index: 10;
+        }
+        .password-toggle:hover {
+            color: #374151;
+        }
+        .password-input-container {
+            position: relative;
+        }
+        @media (prefers-color-scheme: dark) {
+            .glass-card {
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg bg-green-50 min-h-screen flex items-center justify-center p-4">
+    <div class="glass-card rounded-2xl shadow-2xl w-full max-w-5xl">
+        <!-- Header elegante -->
+        <div class="text-center py-8 px-8 border-b border-gray-200">
+            <div class="flex justify-center mb-6">
+                <div class="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-2xl shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                </div>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-3">Únete a FinGest</h1>
+            <p class="text-gray-600 text-lg">Comience su viaje hacia la libertad financiera</p>
+        </div>
+
+        <form method="post" class="p-8">
+            {% csrf_token %}
+
+            <!-- Grid principal de 2 columnas -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                
+                <!-- Columna izquierda - Información Personal -->
+                <div class="space-y-6">
+                    <div class="bg-white/90 rounded-xl p-6 shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            Información Personal
+                        </h3>
+                        
+                        <div class="space-y-5">
+                            <!-- Email -->
+                            <div class="input-container">
+                                <input type="email" 
+                                       id="id_correo" 
+                                       name="correo" 
+                                       class="w-full pt-6 pb-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                                       required>
+                                <label for="id_correo" class="floating-label">📧 Correo electrónico</label>
+                            </div>
+
+                            <!-- Nombres -->
+                            <div class="input-container">
+                                <input type="text" 
+                                       id="id_nombres" 
+                                       name="nombres" 
+                                       class="w-full pt-6 pb-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                                       required>
+                                <label for="id_nombres" class="floating-label">👤 Nombres</label>
+                            </div>
+
+                            <!-- Apellidos -->
+                            <div class="input-container">
+                                <input type="text" 
+                                       id="id_apellidos_completos" 
+                                       name="apellidos_completos" 
+                                       class="w-full pt-6 pb-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                                       required>
+                                <label for="id_apellidos_completos" class="floating-label">📝 Apellidos</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna derecha - Seguridad y Configuración -->
+                <div class="space-y-6">
+                    <div class="bg-white/90 rounded-xl p-6 shadow-sm border border-gray-100">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                            </div>
+                            Seguridad y Configuración
+                        </h3>
+                        
+                        <div class="space-y-5">
+                            <!-- Contraseña -->
+                            <div class="input-container">
+                                <div class="password-input-container">
+                                    <input type="password" 
+                                           id="id_contrasena" 
+                                           name="contrasena" 
+                                           class="w-full pt-6 pb-2 px-4 pr-12 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                                           required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('id_contrasena', this)">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            <path class="eye-closed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" style="display: none;"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <label for="id_contrasena" class="floating-label">🔒 Contraseña</label>
+                                <div class="password-strength-bar bg-gray-200"></div>
+                                <div id="password-feedback" class="text-xs text-gray-500 mt-2"></div>
+                            </div>
+
+                            <!-- Confirmar Contraseña -->
+                            <div class="input-container">
+                                <div class="password-input-container">
+                                    <input type="password" 
+                                           id="id_confirmar_contrasena" 
+                                           name="confirmar_contrasena" 
+                                           class="w-full pt-6 pb-2 px-4 pr-12 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                                           required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('id_confirmar_contrasena', this)">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            <path class="eye-closed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" style="display: none;"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <label for="id_confirmar_contrasena" class="floating-label">🔐 Confirmar contraseña</label>
+                                <div id="password-match-feedback" class="text-xs mt-2"></div>
+                            </div>
+
+                            <!-- Moneda -->
+                            <div class="input-container">
+                                <select id="id_moneda" 
+                                        name="id_moneda" 
+                                        class="w-full pt-6 pb-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                                        required>
+                                    <option value="">Selecciona tu moneda</option>
+                                    {% for moneda in monedas %}
+                                        <option value="{{ moneda.id }}">{{ moneda.simbolo }} - {{ moneda.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="id_moneda" class="floating-label active">💰 Moneda preferida</label>
+                            </div>
+
+                            <!-- Campo de código de verificación (inicialmente oculto) -->
+                            <div id="verification-section" class="input-container" style="display: none;">
+                                <input type="text" 
+                                       id="verification_code" 
+                                       name="codigo_verificacion" 
+                                       pattern="[0-9]{6}" 
+                                       maxlength="6"
+                                       class="w-full pt-6 pb-2 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-center text-xl tracking-widest font-mono">
+                                <label for="verification_code" class="floating-label active">📧 Código de verificación</label>
+                                <div class="flex items-center justify-between mt-2">
+                                    <p id="verification-status" class="text-xs text-emerald-600">Código enviado a tu email</p>
+                                    <button type="button" 
+                                            id="resend-code-btn"
+                                            class="text-xs text-blue-600 hover:text-blue-700 font-medium underline hover:no-underline transition-colors">
+                                        🔄 Reenviar código
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campos ocultos requeridos -->
+            <input type="hidden" name="apellido_paterno" id="apellido_paterno" />
+            <input type="hidden" name="apellido_materno" id="apellido_materno" />
+
+            <!-- Términos y condiciones -->
+            <div class="bg-white/90 rounded-xl p-6 mb-8 shadow-sm border border-gray-100">
+                <label class="flex items-start space-x-3 cursor-pointer">
+                    <input type="checkbox" 
+                           id="id_acepta_terminos" 
+                           name="acepta_terminos" 
+                           class="mt-1 h-5 w-5 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 focus:ring-2"
+                           required>
+                    <span class="text-sm text-gray-700 leading-relaxed">
+                        ✅ Acepto los <a href="#" class="text-emerald-600 hover:text-emerald-700 font-medium underline">términos y condiciones</a> 
+                        y la <a href="#" class="text-emerald-600 hover:text-emerald-700 font-medium underline">política de privacidad</a> de FinGest
+                    </span>
+                </label>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <button type="button" 
+                        id="request-code-btn"
+                        class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 px-8 rounded-xl font-semibold text-lg hover:from-blue-600 hover:to-blue-700 focus:ring-4 focus:ring-blue-500/50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                    📨 Solicitar código de verificación
+                </button>
+                <button type="submit" 
+                        id="submit-btn"
+                        class="flex-1 bg-gradient-to-r from-emerald-400 to-emerald-500 text-white py-4 px-8 rounded-xl font-semibold text-lg hover:from-emerald-500 hover:to-emerald-600 focus:ring-4 focus:ring-emerald-500/50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        style="display: none;">
+                    🚀 Crear mi cuenta
+                </button>
+                <a href="{% url 'usuarios:login' %}" 
+                   class="text-center bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-4 px-8 rounded-xl font-semibold text-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors border border-gray-300 dark:border-gray-600">
+                    Ya tengo cuenta
+                </a>
+            </div>
+        </form>
+
+        <!-- Mensajes de error -->
+        {% if form.errors %}
+        <div class="mx-8 mb-8 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-xl p-6">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-6 w-6 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800 dark:text-red-300">Por favor corrija los siguientes errores:</h3>
+                    <div class="mt-2 text-sm text-red-700 dark:text-red-400">
+                        <ul class="list-disc list-inside space-y-1">
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Función para alternar visibilidad de contraseña
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const eyeOpen = button.querySelectorAll('.eye-open');
+            const eyeClosed = button.querySelector('.eye-closed');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeOpen.forEach(path => path.style.display = 'none');
+                eyeClosed.style.display = 'block';
+            } else {
+                input.type = 'password';
+                eyeOpen.forEach(path => path.style.display = 'block');
+                eyeClosed.style.display = 'none';
+            }
+        }
+
+        // Manejo de labels flotantes
+        function setupFloatingLabels() {
+            document.querySelectorAll('input, select').forEach(input => {
+                const label = input.parentNode.querySelector('.floating-label');
+                if (!label) return;
+
+                function updateLabel() {
+                    if (input.value || input.type === 'date' || input.tagName === 'SELECT') {
+                        label.classList.add('active');
+                    } else {
+                        label.classList.remove('active');
+                    }
+                }
+
+                updateLabel(); // Estado inicial
+                input.addEventListener('focus', () => label.classList.add('active'));
+                input.addEventListener('blur', updateLabel);
+                input.addEventListener('input', updateLabel);
+            });
+        }
+
+        // Validador de contraseña
+        function setupPasswordValidator() {
+            const passwordInput = document.getElementById('id_contrasena');
+            const confirmPasswordInput = document.getElementById('id_confirmar_contrasena');
+            const strengthBar = passwordInput.parentNode.parentNode.querySelector('.password-strength-bar');
+            const feedback = document.getElementById('password-feedback');
+            const matchFeedback = document.getElementById('password-match-feedback');
+
+            function validatePasswordStrength() {
+                const password = passwordInput.value;
+                let score = 0;
+                let feedback_messages = [];
+
+                // Criterios de validación
+                if (password.length >= 8) score++; else feedback_messages.push('8+ caracteres');
+                if (/[A-Z]/.test(password)) score++; else feedback_messages.push('mayúscula');
+                if (/[a-z]/.test(password)) score++; else feedback_messages.push('minúscula');
+                if (/\d/.test(password)) score++; else feedback_messages.push('número');
+                if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++; else feedback_messages.push('símbolo');
+
+                // Colores y anchos de la barra
+                const strengthColors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-emerald-500'];
+                const strengthWidths = ['w-0', 'w-1/5', 'w-2/5', 'w-3/5', 'w-4/5', 'w-full'];
+
+                strengthBar.className = `password-strength-bar ${strengthColors[score - 1] || 'bg-gray-200'} ${strengthWidths[score]}`;
+                
+                if (feedback_messages.length === 0) {
+                    feedback.textContent = '✓ Contraseña segura';
+                    feedback.className = 'text-xs text-emerald-600 mt-2 font-medium';
+                } else {
+                    feedback.textContent = 'Requiere: ' + feedback_messages.join(', ');
+                    feedback.className = 'text-xs text-gray-500 mt-2';
+                }
+            }
+
+            function validatePasswordMatch() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword.length === 0) {
+                    matchFeedback.textContent = '';
+                    matchFeedback.className = 'text-xs mt-2';
+                } else if (password === confirmPassword) {
+                    matchFeedback.textContent = '✓ Las contraseñas coinciden';
+                    matchFeedback.className = 'text-xs text-emerald-600 mt-2 font-medium';
+                } else {
+                    matchFeedback.textContent = '❌ Las contraseñas no coinciden';
+                    matchFeedback.className = 'text-xs text-red-600 mt-2';
+                }
+            }
+
+            passwordInput.addEventListener('input', function() {
+                validatePasswordStrength();
+                validatePasswordMatch();
+            });
+
+            confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+        }
+
+        // Manejo del formulario de registro
+        function setupRegistrationForm() {
+            const form = document.querySelector('form');
+            const requestCodeBtn = document.getElementById('request-code-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const verificationSection = document.getElementById('verification-section');
+            const verificationInput = document.getElementById('verification_code');
+            const resendCodeBtn = document.getElementById('resend-code-btn');
+            const verificationStatus = document.getElementById('verification-status');
+            
+            let codeRequested = false;
+
+            // Función para dividir apellidos
+            function splitApellidos() {
+                const apellidosCompletos = document.getElementById('id_apellidos_completos').value.trim();
+                const apellidos = apellidosCompletos.split(' ');
+                
+                document.getElementById('apellido_paterno').value = apellidos[0] || '';
+                document.getElementById('apellido_materno').value = apellidos[1] || '';
+            }
+
+            // Función para solicitar código (reutilizable)
+            async function requestVerificationCode(isResend = false) {
+                const btnToDisable = isResend ? resendCodeBtn : requestCodeBtn;
+                const originalText = btnToDisable.textContent;
+                
+                if (!isResend) {
+                    // Validar campos requeridos solo en la primera solicitud
+                    const correo = document.getElementById('id_correo').value;
+                    const nombres = document.getElementById('id_nombres').value;
+                    const apellidos = document.getElementById('id_apellidos_completos').value;
+                    const contrasena = document.getElementById('id_contrasena').value;
+                    const confirmarContrasena = document.getElementById('id_confirmar_contrasena').value;
+                    const moneda = document.getElementById('id_moneda').value;
+
+                    if (!correo || !nombres || !apellidos || !contrasena || !confirmarContrasena || !moneda) {
+                        alert('Por favor completa todos los campos requeridos');
+                        return;
+                    }
+
+                    // Validar contraseña
+                    if (contrasena.length < 8) {
+                        alert('La contraseña debe tener al menos 8 caracteres');
+                        return;
+                    }
+
+                    // Validar coincidencia de contraseñas
+                    if (contrasena !== confirmarContrasena) {
+                        alert('Las contraseñas no coinciden. Por favor verifica que sean iguales.');
+                        return;
+                    }
+                }
+
+                btnToDisable.disabled = true;
+                btnToDisable.textContent = isResend ? '⏳ Reenviando...' : '⏳ Enviando código...';
+
+                try {
+                    splitApellidos();
+                    
+                    const formData = new FormData(form);
+                    formData.append('action', 'send_verification');
+
+                    const response = await fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        if (!isResend) {
+                            // Primera vez: mostrar sección de verificación
+                            verificationSection.style.display = 'block';
+                            verificationSection.scrollIntoView({ behavior: 'smooth' });
+                            
+                            // Cambiar botones
+                            requestCodeBtn.style.display = 'none';
+                            submitBtn.style.display = 'block';
+                            
+                            codeRequested = true;
+                            setTimeout(() => verificationInput.focus(), 500);
+                        } else {
+                            // Reenvío: limpiar campo y enfocar
+                            verificationInput.value = '';
+                            verificationInput.focus();
+                            verificationStatus.textContent = 'Nuevo código enviado a tu email';
+                            verificationStatus.className = 'text-xs text-emerald-600';
+                        }
+                        
+                        alert(isResend ? '✅ Nuevo código enviado a tu email' : '✅ Código enviado a tu email');
+                    } else {
+                        throw new Error(data.error || 'Error al enviar el código');
+                    }
+                } catch (error) {
+                    alert(`❌ ${error.message}`);
+                } finally {
+                    btnToDisable.disabled = false;
+                    btnToDisable.textContent = originalText;
+                }
+            }
+
+            // Solicitar código de verificación (primera vez)
+            requestCodeBtn.addEventListener('click', () => requestVerificationCode(false));
+
+            // Reenviar código de verificación
+            resendCodeBtn.addEventListener('click', () => requestVerificationCode(true));
+
+            // Envío final del formulario
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                if (!codeRequested && verificationSection.style.display === 'none') {
+                    alert('Primero debes solicitar el código de verificación');
+                    return;
+                }
+
+                const codigo = verificationInput.value;
+                if (!codigo || codigo.length !== 6) {
+                    alert('Debes ingresar el código de verificación de 6 dígitos');
+                    return;
+                }
+
+                const terminos = document.getElementById('id_acepta_terminos').checked;
+                if (!terminos) {
+                    alert('Debes aceptar los términos y condiciones');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '⏳ Creando cuenta...';
+
+                try {
+                    splitApellidos();
+                    
+                    const formData = new FormData(this);
+                    formData.append('action', 'verify_email');
+
+                    const response = await fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert('🎉 ¡Cuenta creada exitosamente!');
+                        window.location.href = data.redirect || '/dashboard/';
+                    } else {
+                        throw new Error(data.error || 'Error al crear la cuenta');
+                    }
+                } catch (error) {
+                    alert(`❌ ${error.message}`);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '🚀 Crear mi cuenta';
+                    
+                    // Si es error de código incorrecto, actualizar el estado
+                    if (error.message.includes('código') || error.message.includes('verificación')) {
+                        verificationStatus.textContent = '❌ Código incorrecto - Intenta de nuevo';
+                        verificationStatus.className = 'text-xs text-red-600';
+                        verificationInput.value = '';
+                        verificationInput.focus();
+                    }
+                }
+            });
+
+            // Auto-envío al completar el código
+            verificationInput.addEventListener('input', function() {
+                if (this.value.length === 6) {
+                    setTimeout(() => form.dispatchEvent(new Event('submit')), 500);
+                }
+            });
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFloatingLabels();
+            setupPasswordValidator();
+            setupRegistrationForm();
+        });
+    </script>
+</body>
+</html>

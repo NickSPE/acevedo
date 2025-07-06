@@ -1,28 +1,256 @@
 {% extends "core/base_template.html" %}
-{% block title %}Consejos Financieros | BuilderQuantum{% endblock %}
+{% block title %}Consejos Financieros | FinGest{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-1">Consejos Financieros</h2>
-<p class="text-sm text-gray-500 mb-6">Consejos y estrategias para mejorar tu salud financiera</p>
-
-<!-- Tabs -->
-<div class="flex space-x-4 mb-6 text-sm font-medium">
-  <a href="{% url 'tips' %}?tab=daily" class="px-4 py-2 rounded {% if tab == 'daily' %}bg-blue-100 text-blue-600{% endif %}">Diarios</a>
-  <a href="{% url 'tips' %}?tab=savings" class="px-4 py-2 rounded {% if tab == 'savings' %}bg-blue-100 text-blue-600{% endif %}">Ahorros</a>
-  <a href="{% url 'tips' %}?tab=debt" class="px-4 py-2 rounded {% if tab == 'debt' %}bg-blue-100 text-blue-600{% endif %}">Deudas</a>
-  <a href="{% url 'tips' %}?tab=investment" class="px-4 py-2 rounded {% if tab == 'investment' %}bg-blue-100 text-blue-600{% endif %}">Inversión</a>
+<div class="mb-6">
+  <h2 class="text-2xl font-bold mb-1">Consejos Financieros</h2>
+  <p class="text-sm text-gray-500">Consejos y estrategias para mejorar tu salud financiera</p>
 </div>
 
-<!-- Tips Cards -->
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-  {% for tip in tips %}
-    <div class="bg-white p-4 rounded shadow flex items-start gap-4">
-      <div class="text-2xl">{{ tip.0 }}</div>
+<!-- Control de IA -->
+<div class="mb-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="text-2xl">🤖</div>
       <div>
-        <p class="font-semibold">{{ tip.1 }}</p>
-        <p class="text-sm text-gray-500">{{ tip.2 }}</p>
+        <h3 class="font-semibold text-gray-800">Consejos con IA</h3>
+        <p class="text-sm text-gray-600">Obtén consejos personalizados generados por Inteligencia Artificial</p>
+      </div>
+    </div>
+    <div class="flex gap-2">
+      <a href="{% url 'educacion_financiera:ai_chat' %}" 
+         class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+        💬 Chat con IA
+      </a>
+      <a href="?tab={{ tab }}&ai=false" 
+         class="px-3 py-1 text-sm rounded {% if not use_ai %}bg-gray-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %} transition-colors">
+        Tradicional
+      </a>
+      <a href="?tab={{ tab }}&ai=true" 
+         class="px-3 py-1 text-sm rounded {% if use_ai %}bg-purple-600 text-white{% else %}bg-purple-200 text-purple-700 hover:bg-purple-300{% endif %} transition-colors">
+        IA ✨
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs de Categorías -->
+<div class="flex flex-wrap gap-2 mb-6 text-sm font-medium">
+  <a href="{% url 'educacion_financiera:tips' %}?tab=daily{% if use_ai %}&ai=true{% endif %}" 
+     class="px-4 py-2 rounded transition-colors {% if tab == 'daily' %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+    📱 Diarios
+  </a>
+  <a href="{% url 'educacion_financiera:tips' %}?tab=savings{% if use_ai %}&ai=true{% endif %}" 
+     class="px-4 py-2 rounded transition-colors {% if tab == 'savings' %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+    💰 Ahorros
+  </a>
+  <a href="{% url 'educacion_financiera:tips' %}?tab=debt{% if use_ai %}&ai=true{% endif %}" 
+     class="px-4 py-2 rounded transition-colors {% if tab == 'debt' %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+    📉 Deudas
+  </a>
+  <a href="{% url 'educacion_financiera:tips' %}?tab=investment{% if use_ai %}&ai=true{% endif %}" 
+     class="px-4 py-2 rounded transition-colors {% if tab == 'investment' %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+    📈 Inversión
+  </a>
+  <button onclick="showPersonalizedForm()" 
+          class="px-4 py-2 rounded transition-colors {% if tab == 'personalized' %}bg-purple-600 text-white{% else %}bg-purple-200 text-purple-700 hover:bg-purple-300{% endif %}">
+    🎯 Personalizado
+  </button>
+</div>
+
+<!-- Formulario de Consejos Personalizados -->
+<div id="personalized-form" class="mb-6 p-4 bg-purple-50 rounded-lg border {% if tab != 'personalized' %}hidden{% endif %}">
+  <h3 class="font-semibold mb-3 text-purple-800">Obtén consejos personalizados</h3>
+  <form method="GET" class="grid md:grid-cols-2 gap-4">
+    <input type="hidden" name="tab" value="personalized">
+    
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Rango de Edad</label>
+      <select name="age_range" class="w-full p-2 border rounded text-sm">
+        <option value="">Seleccionar</option>
+        <option value="18-25">18-25 años</option>
+        <option value="26-35">26-35 años</option>
+        <option value="36-45">36-45 años</option>
+        <option value="46-55">46-55 años</option>
+        <option value="55+">55+ años</option>
+      </select>
+    </div>
+    
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Situación Laboral</label>
+      <select name="employment" class="w-full p-2 border rounded text-sm">
+        <option value="">Seleccionar</option>
+        <option value="empleado">Empleado</option>
+        <option value="independiente">Trabajador Independiente</option>
+        <option value="estudiante">Estudiante</option>
+        <option value="desempleado">Desempleado</option>
+        <option value="jubilado">Jubilado</option>
+      </select>
+    </div>
+    
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Objetivo Principal</label>
+      <select name="goals" class="w-full p-2 border rounded text-sm">
+        <option value="">Seleccionar</option>
+        <option value="ahorro">Mejorar Ahorros</option>
+        <option value="deudas">Pagar Deudas</option>
+        <option value="inversion">Comenzar a Invertir</option>
+        <option value="presupuesto">Controlar Gastos</option>
+        <option value="emergencia">Fondo de Emergencia</option>
+      </select>
+    </div>
+    
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Experiencia Financiera</label>
+      <select name="experience" class="w-full p-2 border rounded text-sm">
+        <option value="">Seleccionar</option>
+        <option value="principiante">Principiante</option>
+        <option value="intermedio">Intermedio</option>
+        <option value="avanzado">Avanzado</option>
+      </select>
+    </div>
+    
+    <div class="md:col-span-2">
+      <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors">
+        🎯 Generar Consejos Personalizados
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Indicador de IA activa -->
+{% if use_ai or tab == 'personalized' %}
+<div class="mb-4 p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded border-l-4 border-green-400">
+  <div class="flex items-center gap-2">
+    <span class="text-green-600">✨</span>
+    <span class="text-sm font-medium text-green-800">
+      {% if tab == 'personalized' %}
+        Consejos personalizados generados por IA
+      {% else %}
+        Consejos dinámicos generados por IA
+      {% endif %}
+    </span>
+  </div>
+</div>
+{% endif %}
+
+<!-- Tips Cards -->
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {% for tip in tips %}
+    <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-blue-200 group">
+      <div class="flex items-start gap-4">
+        <div class="text-3xl flex-shrink-0 transform group-hover:scale-110 transition-transform duration-300">
+          {{ tip.0 }}
+        </div>
+        <div class="flex-1">
+          <h4 class="font-bold text-gray-800 mb-3 text-lg group-hover:text-blue-600 transition-colors">
+            {{ tip.1 }}
+          </h4>
+          <p class="text-sm text-gray-600 leading-relaxed">{{ tip.2 }}</p>
+          
+          <!-- Indicador de fuente -->
+          <div class="mt-3 pt-3 border-t border-gray-100">
+            <span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full
+              {% if use_ai or tab == 'personalized' %}
+                bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700
+              {% else %}
+                bg-gray-100 text-gray-600
+              {% endif %}">
+              {% if use_ai or tab == 'personalized' %}
+                ✨ Generado por IA
+              {% else %}
+                📚 Consejo Tradicional
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-span-full text-center py-16">
+      <div class="max-w-md mx-auto">
+        <div class="text-gray-300 text-8xl mb-6">💡</div>
+        <h3 class="text-xl font-bold text-gray-600 mb-4">No hay consejos disponibles</h3>
+        <p class="text-gray-500 mb-6">
+          {% if tab == 'personalized' %}
+            Complete el formulario arriba para obtener consejos personalizados generados por IA.
+          {% else %}
+            Intente con otra categoría o active los consejos con IA para obtener nuevas recomendaciones.
+          {% endif %}
+        </p>
+        {% if not use_ai and tab != 'personalized' %}
+          <a href="?tab={{ tab }}&ai=true" 
+             class="inline-flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+            ✨ Probar con IA
+          </a>
+        {% endif %}
       </div>
     </div>
   {% endfor %}
 </div>
+
+<!-- Botón de refrescar para IA -->
+{% if use_ai or tab == 'personalized' %}
+<div class="mt-8 text-center">
+  <div class="inline-flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-100">
+    <div class="text-purple-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+    </div>
+    <div class="flex-1 text-left">
+      <h4 class="font-semibold text-purple-800">¿Quieres nuevos consejos?</h4>
+      <p class="text-sm text-purple-600">Genera consejos diferentes usando IA</p>
+    </div>
+    <button onclick="refreshAITips()" 
+            class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 font-medium">
+      🔄 Generar Nuevos
+    </button>
+  </div>
+</div>
+{% endif %}
+
+<script>
+function showPersonalizedForm() {
+  const form = document.getElementById('personalized-form');
+  form.classList.toggle('hidden');
+  
+  // Smooth scroll to form
+  if (!form.classList.contains('hidden')) {
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function refreshAITips() {
+  // Mostrar indicador de carga
+  const button = event.target;
+  const originalText = button.innerHTML;
+  button.innerHTML = '⏳ Generando...';
+  button.disabled = true;
+  
+  // Mantener parámetros actuales pero forzar recarga
+  const currentUrl = new URL(window.location);
+  currentUrl.searchParams.set('refresh', Date.now());
+  
+  // Simular delay para mejor UX
+  setTimeout(() => {
+    window.location.href = currentUrl.toString();
+  }, 800);
+}
+
+// Animación para las cards al cargar
+document.addEventListener('DOMContentLoaded', function() {
+  const cards = document.querySelectorAll('.bg-white');
+  cards.forEach((card, index) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+      card.style.transition = 'all 0.5s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, index * 100);
+  });
+});
+</script>
 {% endblock %}

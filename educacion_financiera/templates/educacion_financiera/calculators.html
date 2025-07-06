@@ -1,91 +1,487 @@
 {% extends "core/base_template.html" %}
-{% block title %}Calculadoras | BuilderQuantum{% endblock %}
+{% block title %}Calculadoras Financieras | FinGest{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-1">Calculadoras</h2>
-<p class="text-sm text-gray-500 mb-6">Herramientas para planificar tus finanzas y visualizar tu situación económica</p>
-
-<!-- Tabs -->
-<div class="flex space-x-4 mb-6 text-sm font-medium">
-  <a href="{% url 'calculators' %}?tab=savings" class="px-4 py-2 rounded {% if tab == 'savings' %}bg-blue-100 text-blue-600{% endif %}">Ahorros</a>
-  <a href="{% url 'calculators' %}?tab=loan" class="px-4 py-2 rounded {% if tab == 'loan' %}bg-blue-100 text-blue-600{% endif %}">Préstamos</a>
+<div class="mb-6">
+  <h2 class="text-3xl font-bold text-gray-800 mb-2">🧮 Calculadoras Financieras</h2>
+  <p class="text-gray-600">Herramientas avanzadas para planificar tus finanzas con explicaciones de IA</p>
 </div>
 
-{% if tab == "savings" %}
-<div class="flex justify-center">
-  <form class="bg-white p-6 rounded shadow max-w-xl space-y-4" id="savings-form">
-    <h3 class="text-lg font-semibold">Calculadora de Ahorros</h3>
-    <p class="text-sm text-gray-500">Calcula cuánto ahorrarás con depósitos regulares e interés compuesto</p>
-
-    <div>
-      <label for="tiempo">Elige la unidad de tiempo:</label>
-      <select id="tiempo" class="border p-2 rounded">
-        <option value="Año">Año</option>
-        <option value="Mes">Mes</option>
-        <option value="Semana">Semana</option>
-      </select>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="text-sm" for="capital">Cantidad inicial (€)</label>
-        <input type="number" id="capital" min="0" class="w-full border p-2 rounded" required />
-      </div>
-      <div>
-        <label class="text-sm" for="aporte">  (€)</label>
-        <input type="number" id="aporte" min="0" class="w-full border p-2 rounded" required />
-      </div>
-      <div>
-        <label class="text-sm" for="tasa">Tasa de interés anual (%)</label>
-        <input type="number" id="tasa" min="0" step="0.01" class="w-full border p-2 rounded" required />
-      </div>
-      <div>
-        <label class="text-sm" id="duracion-label" for="duracion"> </label>
-        <input type="number" id="duracion" min="1" class="w-full border p-2 rounded" required />
-      </div>
-    </div>
-
-    <button type="submit" class="bg-gray-900 text-white w-full py-2 rounded">Calcular</button>
-    <div id="resultado" class="mt-4 font-semibold text-blue-600"></div>
-  </form>
+<!-- Navegación de Tabs Mejorada -->
+<div class="mb-8">
+  <div class="flex flex-wrap gap-2 bg-gray-100 p-2 rounded-xl">
+    <a href="{% url 'educacion_financiera:calculators' %}?tab=savings" 
+       class="flex items-center gap-2 px-4 py-3 rounded-lg transition-all {% if tab == 'savings' %}bg-white shadow-md text-blue-600 font-semibold{% else %}text-gray-600 hover:bg-gray-200{% endif %}">
+      💰 Ahorros
+    </a>
+    <a href="{% url 'educacion_financiera:calculators' %}?tab=loan" 
+       class="flex items-center gap-2 px-4 py-3 rounded-lg transition-all {% if tab == 'loan' %}bg-white shadow-md text-blue-600 font-semibold{% else %}text-gray-600 hover:bg-gray-200{% endif %}">
+      🏦 Préstamos
+    </a>
+    <a href="{% url 'educacion_financiera:calculators' %}?tab=budget" 
+       class="flex items-center gap-2 px-4 py-3 rounded-lg transition-all {% if tab == 'budget' %}bg-white shadow-md text-blue-600 font-semibold{% else %}text-gray-600 hover:bg-gray-200{% endif %}">
+      📊 Presupuesto
+    </a>
+    <a href="{% url 'educacion_financiera:calculators' %}?tab=retirement" 
+       class="flex items-center gap-2 px-4 py-3 rounded-lg transition-all {% if tab == 'retirement' %}bg-white shadow-md text-blue-600 font-semibold{% else %}text-gray-600 hover:bg-gray-200{% endif %}">
+      🏖️ Jubilación
+    </a>
+    <a href="{% url 'educacion_financiera:calculators' %}?tab=investment" 
+       class="flex items-center gap-2 px-4 py-3 rounded-lg transition-all {% if tab == 'investment' %}bg-white shadow-md text-blue-600 font-semibold{% else %}text-gray-600 hover:bg-gray-200{% endif %}">
+      📈 Inversión
+    </a>
+  </div>
 </div>
 
-{% elif tab == "loan" %}
-<div class="flex justify-center">
-  <form class="bg-white p-6 rounded shadow max-w-xl space-y-4" id="loan-form">
-    <h3 class="text-lg font-semibold">Calculadora de Préstamos</h3>
-    <p class="text-sm text-gray-500">Calcula tu pago semanal, mensual o anual e interés total</p>
+<!-- Contenedor Principal -->
+<div class="grid lg:grid-cols-3 gap-8">
+  <!-- Columna de Calculadora -->
+  <div class="lg:col-span-2">
+    
+    <!-- Calculadora de Ahorros -->
+    {% if tab == "savings" %}
+    <div class="bg-white rounded-xl shadow-lg p-6 border">
+      <div class="mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">💰 Calculadora de Ahorros</h3>
+        <p class="text-gray-600">Descubre cuánto crecerán tus ahorros con el poder del interés compuesto</p>
+      </div>
 
-    <div>
-      <label for="unidad-prestamo">Elige la unidad de tiempo:</label>
-      <select name="unidad-prestamo" id="unidad-prestamo" class="border p-2 rounded">
-        <option value="Año">Año</option>
-        <option value="Mes">Mes</option>
-        <option value="Semana">Semana</option>
-      </select>
+      <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        <input type="hidden" name="tab" value="savings">
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Capital Inicial ($)</label>
+            <input type="number" name="initial" min="0" step="0.01" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="10,000" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Aporte Mensual ($)</label>
+            <input type="number" name="monthly" min="0" step="0.01" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tasa de Interés Anual (%)</label>
+            <input type="number" name="rate" min="0" step="0.1" max="100" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="5.0" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Período (años)</label>
+            <input type="number" name="years" min="1" max="50" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="10" required>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-105">
+          🧮 Calcular Ahorros
+        </button>
+      </form>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label class="text-sm" for="monto">Cantidad del préstamo (€)</label>
-        <input type="number" id="monto" min="1" class="w-full border p-2 rounded" required />
+    <!-- Calculadora de Préstamos -->
+    {% elif tab == "loan" %}
+    <div class="bg-white rounded-xl shadow-lg p-6 border">
+      <div class="mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">🏦 Calculadora de Préstamos</h3>
+        <p class="text-gray-600">Calcula tu pago mensual y el costo total de tu préstamo</p>
       </div>
-      <div>
-        <label class="text-sm" for="interes">Tasa de interés anual (%)</label>
-        <input type="number" id="interes" min="0" step="0.01" class="w-full border p-2 rounded" required />
-      </div>
-      <div>
-        <label class="text-sm" id="plazo-label" for="plazo">Cantidad de años</label>
-        <input type="number" id="plazo" min="1" class="w-full border p-2 rounded" required />
-      </div>
+
+      <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        <input type="hidden" name="tab" value="loan">
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Monto del Préstamo ($)</label>
+            <input type="number" name="amount" min="1" step="0.01" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="200,000" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tasa de Interés Anual (%)</label>
+            <input type="number" name="rate" min="0" step="0.1" max="100" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="3.5" required>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Plazo (años)</label>
+            <input type="number" name="years" min="1" max="50" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="30" required>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white font-semibold py-4 rounded-lg hover:from-green-700 hover:to-blue-700 transition-all transform hover:scale-105">
+          🏦 Calcular Préstamo
+        </button>
+      </form>
     </div>
 
-    <button type="submit" class="bg-gray-900 text-white w-full py-2 rounded">Calcular</button>
-    <div id="resultado-prestamo" class="mt-4 font-semibold text-blue-600"></div>
-  </form>
+    <!-- Calculadora de Presupuesto -->
+    {% elif tab == "budget" %}
+    <div class="bg-white rounded-xl shadow-lg p-6 border">
+      <div class="mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">📊 Calculadora de Presupuesto</h3>
+        <p class="text-gray-600">Analiza tu presupuesto según la regla 50/30/20</p>
+      </div>
+
+      <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        <input type="hidden" name="tab" value="budget">
+        
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Ingresos Mensuales ($)</label>
+            <input type="number" name="income" min="0" step="0.01" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="5,000" required>
+          </div>
+          
+          <div class="grid md:grid-cols-3 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Necesidades ($)</label>
+              <input type="number" name="needs" min="0" step="0.01" 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                     placeholder="2,500">
+              <p class="text-xs text-gray-500 mt-1">Vivienda, comida, transporte</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Deseos ($)</label>
+              <input type="number" name="wants" min="0" step="0.01" 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                     placeholder="1,500">
+              <p class="text-xs text-gray-500 mt-1">Entretenimiento, comidas fuera</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Ahorros ($)</label>
+              <input type="number" name="savings" min="0" step="0.01" 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                     placeholder="1,000">
+              <p class="text-xs text-gray-500 mt-1">Ahorro e inversiones</p>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-4 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
+          📊 Analizar Presupuesto
+        </button>
+      </form>
+    </div>
+
+    <!-- Calculadora de Jubilación -->
+    {% elif tab == "retirement" %}
+    <div class="bg-white rounded-xl shadow-lg p-6 border">
+      <div class="mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">🏖️ Calculadora de Jubilación</h3>
+        <p class="text-gray-600">Planifica tu jubilación y calcula cuánto necesitas ahorrar</p>
+      </div>
+
+      <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        <input type="hidden" name="tab" value="retirement">
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Edad Actual</label>
+            <input type="number" name="current_age" min="18" max="80" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="30" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Edad de Jubilación</label>
+            <input type="number" name="retirement_age" min="50" max="80" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="65" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Ahorros Actuales ($)</label>
+            <input type="number" name="current_savings" min="0" step="0.01" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="50,000" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Aporte Mensual ($)</label>
+            <input type="number" name="monthly_contribution" min="0" step="0.01" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="1,000" required>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Retorno Anual Esperado (%)</label>
+            <input type="number" name="expected_return" min="0" step="0.1" max="20" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="7.0" required>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white font-semibold py-4 rounded-lg hover:from-orange-700 hover:to-red-700 transition-all transform hover:scale-105">
+          🏖️ Calcular Jubilación
+        </button>
+      </form>
+    </div>
+
+    <!-- Calculadora de Inversión -->
+    {% elif tab == "investment" %}
+    <div class="bg-white rounded-xl shadow-lg p-6 border">
+      <div class="mb-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">📈 Calculadora de Inversión</h3>
+        <p class="text-gray-600">Calcula el retorno de tus inversiones y analiza el ROI</p>
+      </div>
+
+      <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        <input type="hidden" name="tab" value="investment">
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Inversión Inicial ($)</label>
+            <input type="number" name="initial_investment" min="0" step="0.01" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="10,000" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Inversión Mensual ($)</label>
+            <input type="number" name="monthly_investment" min="0" step="0.01" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="500" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Retorno Anual Esperado (%)</label>
+            <input type="number" name="annual_return" min="0" step="0.1" max="50" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="8.0" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Período (años)</label>
+            <input type="number" name="investment_years" min="1" max="50" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="15" required>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold py-4 rounded-lg hover:from-green-700 hover:to-teal-700 transition-all transform hover:scale-105">
+          📈 Calcular Inversión
+        </button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Columna de Resultados y IA -->
+  <div class="lg:col-span-1">
+    {% if result %}
+      {% if not result.error %}
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 border border-blue-200 mb-6">
+          <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            📊 Resultados
+          </h4>
+          
+          <!-- Resultados específicos por tipo -->
+          {% if result.type == "savings" %}
+            <div class="space-y-3">
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Valor Futuro</p>
+                <p class="text-xl font-bold text-green-600">${{ result.future_value|floatformat:2 }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Total Contribuido</p>
+                <p class="text-lg font-semibold text-blue-600">${{ result.total_contributed|floatformat:2 }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Intereses Ganados</p>
+                <p class="text-lg font-semibold text-purple-600">${{ result.interest_earned|floatformat:2 }}</p>
+              </div>
+            </div>
+          
+          {% elif result.type == "loan" %}
+            <div class="space-y-3">
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Pago Mensual</p>
+                <p class="text-xl font-bold text-red-600">${{ result.monthly_payment|floatformat:2 }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Pago Total</p>
+                <p class="text-lg font-semibold text-orange-600">${{ result.total_payment|floatformat:2 }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Interés Total</p>
+                <p class="text-lg font-semibold text-red-600">${{ result.total_interest|floatformat:2 }}</p>
+              </div>
+            </div>
+          
+          {% elif result.type == "budget" %}
+            <div class="space-y-3">
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Balance</p>
+                <p class="text-xl font-bold {% if result.remaining >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                  ${{ result.remaining|floatformat:2 }}
+                </p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-xs text-gray-500 mb-2">Distribución Actual vs Recomendada</p>
+                <div class="space-y-2">
+                  <div class="flex justify-between text-sm">
+                    <span>Necesidades:</span>
+                    <span class="{% if result.needs_pct <= 50 %}text-green-600{% else %}text-red-600{% endif %}">
+                      {{ result.needs_pct }}% (50%)
+                    </span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span>Deseos:</span>
+                    <span class="{% if result.wants_pct <= 30 %}text-green-600{% else %}text-red-600{% endif %}">
+                      {{ result.wants_pct }}% (30%)
+                    </span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span>Ahorros:</span>
+                    <span class="{% if result.savings_pct >= 20 %}text-green-600{% else %}text-red-600{% endif %}">
+                      {{ result.savings_pct }}% (20%)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          {% elif result.type == "retirement" %}
+            <div class="space-y-3">
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Valor al Jubilarse</p>
+                <p class="text-xl font-bold text-green-600">${{ result.future_value|floatformat:2 }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Ingreso Mensual Estimado</p>
+                <p class="text-lg font-semibold text-blue-600">${{ result.monthly_income_estimate|floatformat:2 }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Años hasta Jubilación</p>
+                <p class="text-lg font-semibold text-purple-600">{{ result.years_to_retirement }} años</p>
+              </div>
+            </div>
+          
+          {% elif result.type == "investment" %}
+            <div class="space-y-3">
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Valor Futuro</p>
+                <p class="text-xl font-bold text-green-600">${{ result.future_value|floatformat:2 }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">ROI</p>
+                <p class="text-lg font-semibold text-blue-600">{{ result.roi_percentage|floatformat:1 }}%</p>
+              </div>
+              <div class="bg-white p-3 rounded-lg">
+                <p class="text-sm text-gray-600">Ganancia</p>
+                <p class="text-lg font-semibold text-purple-600">${{ result.total_return|floatformat:2 }}</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Explicación de IA -->
+        {% if ai_explanation %}
+        <div class="bg-gradient-to-br from-purple-50 to-pink-100 rounded-xl p-6 border border-purple-200">
+          <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            🤖 Análisis con IA
+          </h4>
+          <div class="ai-analysis text-sm text-gray-700 leading-relaxed">
+            {{ ai_explanation|linebreaks }}
+          </div>
+        </div>
+        {% else %}
+        <div class="bg-yellow-50 rounded-xl p-6 border border-yellow-200">
+          <h4 class="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+            ⚠️ IA No Disponible
+          </h4>
+          <p class="text-gray-600 text-sm">El análisis con IA no está disponible en este momento, pero tus cálculos son correctos.</p>
+        </div>
+        {% endif %}
+      {% else %}
+        <div class="bg-red-50 rounded-xl p-6 border border-red-200">
+          <h4 class="text-lg font-bold text-red-800 mb-2">❌ Error</h4>
+          <p class="text-red-600">{{ result.error }}</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <!-- Información de la calculadora actual -->
+      <div class="bg-gray-50 rounded-xl p-6 border">
+        <h4 class="text-lg font-bold text-gray-800 mb-4">💡 Sobre esta calculadora</h4>
+        
+        {% if tab == "savings" %}
+          <p class="text-gray-600 text-sm mb-4">La calculadora de ahorros usa la fórmula de interés compuesto para mostrar cómo crecen tus ahorros con el tiempo.</p>
+          <div class="space-y-2 text-xs text-gray-500">
+            <p>• El interés compuesto hace que tu dinero crezca exponencialmente</p>
+            <p>• Los aportes regulares aceleran significativamente el crecimiento</p>
+            <p>• Comenzar temprano es clave para maximizar los resultados</p>
+          </div>
+        {% elif tab == "loan" %}
+          <p class="text-gray-600 text-sm mb-4">Calcula tu pago mensual usando la fórmula estándar de amortización de préstamos.</p>
+          <div class="space-y-2 text-xs text-gray-500">
+            <p>• Tasas más bajas = pagos mensuales menores</p>
+            <p>• Plazos más largos = pagos menores pero más interés total</p>
+            <p>• Considera el costo total, no solo el pago mensual</p>
+          </div>
+        {% elif tab == "budget" %}
+          <p class="text-gray-600 text-sm mb-4">Analiza tu presupuesto usando la popular regla 50/30/20 para una distribución saludable del dinero.</p>
+          <div class="space-y-2 text-xs text-gray-500">
+            <p>• 50% para necesidades (vivienda, comida, transporte)</p>
+            <p>• 30% para deseos (entretenimiento, hobbies)</p>
+            <p>• 20% para ahorros e inversiones</p>
+          </div>
+        {% elif tab == "retirement" %}
+          <p class="text-gray-600 text-sm mb-4">Planifica tu jubilación usando proyecciones de crecimiento de inversiones y la regla del 4%.</p>
+          <div class="space-y-2 text-xs text-gray-500">
+            <p>• La regla del 4% sugiere retirar 4% anualmente en jubilación</p>
+            <p>• Comenzar temprano es crucial por el interés compuesto</p>
+            <p>• Considera la inflación en tus planes a largo plazo</p>
+          </div>
+        {% elif tab == "investment" %}
+          <p class="text-gray-600 text-sm mb-4">Calcula el retorno de tus inversiones y analiza si cumplen tus objetivos financieros.</p>
+          <div class="space-y-2 text-xs text-gray-500">
+            <p>• El ROI te ayuda a comparar diferentes inversiones</p>
+            <p>• Considera los riesgos junto con los retornos esperados</p>
+            <p>• La diversificación reduce el riesgo total</p>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
 </div>
-{% endif %}
 
+<style>
+.prose {
+  max-width: none;
+}
+.prose p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+.prose h4 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.ai-analysis {
+  line-height: 1.6;
+}
+
+.ai-analysis p {
+  margin-bottom: 0.5rem;
+}
+
+/* Formatear listas numeradas de la IA */
+.ai-analysis p:contains("1."),
+.ai-analysis p:contains("2."),
+.ai-analysis p:contains("3.") {
+  margin-bottom: 0.75rem;
+  padding-left: 0.5rem;
+  border-left: 3px solid #a855f7;
+  background-color: rgba(168, 85, 247, 0.05);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+}
+</style>
 {% endblock %}
-
-<!-- Script -->

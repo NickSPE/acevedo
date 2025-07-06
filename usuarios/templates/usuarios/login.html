@@ -15,7 +15,7 @@
     <!-- Modal flotante de login -->
     <div id="modal-login" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative animate__animated animate__fadeInDown">
-        <button onclick="window.location.href='/'" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl">&times;</button>
+        <button onclick="window.location.href='{% url 'core:index' %}'" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl">&times;</button>
         <h2 class="text-2xl font-bold text-blue-700 mb-6 text-center">Iniciar Sesión</h2>        {% if message_error %}
           <div class="mb-4 text-red-600 text-center font-semibold bg-red-100 rounded p-2">{{ message_error }}</div>
         {% endif %}
@@ -55,10 +55,18 @@
             class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-lg shadow hover:scale-105 transition">Ingresar</button>
         </form>
         <div class="mt-6 text-center text-sm text-gray-500">
-          ¿No tienes una cuenta? <a href="{% url 'usuarios:register' %}" class="text-blue-600 hover:underline">Regístrate</a>
+          ¿No tienes una cuenta? <a href="{% url 'usuarios:register_new' %}" class="text-blue-600 hover:underline">Regístrate</a>
+        </div>
+        
+        <!-- Opción de PIN si ya está configurado -->
+        <div class="mt-4 text-center">
+          <a href="{% url 'usuarios:pin_login' %}" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 underline">
+            🔢 Acceso directo con PIN
+          </a>
+          <p class="text-xs text-gray-500 mt-1">Tu PIN personal accede directamente a tu cuenta</p>
         </div>
         <div class="mt-6 text-center text-sm text-gray-500">
-          <a href="{% url 'usuarios:register' %}" class="text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
+          <a href="{% url 'usuarios:password_reset_request' %}" class="text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
         </div>
       </div>
     </div>    <!-- Scripts -->

@@ -1,0 +1,74 @@
+{% extends "core/base_template.html" %}
+{% load currency_filters %}
+
+{% block title %}Debug Simple - FinGest{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-6">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 mb-6 text-white">
+      <h1 class="text-2xl font-bold mb-1">Debug Simple - Sistema de Monedas</h1>
+      <p class="text-blue-100 text-sm">Verificación básica del sistema</p>
+    </div>
+
+    <!-- Información básica -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Información del Usuario</h2>
+      
+      <div class="space-y-3">
+        <p><strong>Nombre:</strong> {{ user_name }}</p>
+        <p><strong>Email:</strong> {{ user_email }}</p>
+        <p><strong>Moneda desde vista:</strong> {{ user_currency }}</p>
+      </div>
+    </div>
+
+    <!-- Context Processor -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Context Processor</h2>
+      
+      <div class="space-y-3">
+        <p><strong>currency_symbol:</strong> "{{ currency_symbol }}"</p>
+        <p><strong>currency_code:</strong> "{{ currency_code }}"</p>
+        <p><strong>currency_name:</strong> "{{ currency_name }}"</p>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Filtros de Moneda</h2>
+      
+      <div class="space-y-3">
+        <p><strong>user|currency_symbol:</strong> "{{ user|currency_symbol }}"</p>
+        <p><strong>format_money 1000:</strong> "{% format_money 1000 user %}"</p>
+        <p><strong>1000|format_currency:user:</strong> "{{ 1000|format_currency:user }}"</p>
+      </div>
+    </div>
+
+    <!-- Usuario directo -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Acceso Directo al Usuario</h2>
+      
+      <div class="space-y-3">
+        <p><strong>user.id_moneda:</strong> {{ user.id_moneda|default:"None" }}</p>
+        {% if user.id_moneda %}
+          <p><strong>user.id_moneda.simbolo:</strong> "{{ user.id_moneda.simbolo }}"</p>
+          <p><strong>user.id_moneda.codigo:</strong> "{{ user.id_moneda.codigo }}"</p>
+          <p><strong>user.id_moneda.nombre:</strong> "{{ user.id_moneda.nombre }}"</p>
+        {% else %}
+          <p class="text-red-600"><strong>El usuario NO tiene moneda asignada</strong></p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Volver -->
+    <div class="mt-6 text-center">
+      <a href="{% url 'core:dashboard' %}" 
+         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        Volver al Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

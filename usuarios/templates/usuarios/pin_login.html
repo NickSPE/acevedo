@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>PIN de Acceso | FinGest</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900 min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Fondo decorativo animado -->
+    <div class="absolute inset-0 pointer-events-none z-0">
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-400 dark:bg-blue-600 opacity-20 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-0 right-0 w-80 h-80 bg-indigo-400 dark:bg-indigo-600 opacity-20 rounded-full blur-2xl animate-pulse delay-200"></div>
+    </div>
+
+    <!-- Modal de PIN -->
+    <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm relative">
+            <button onclick="window.location.href='{% url 'usuarios:login' %}'" class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl transition-colors">&times;</button>
+            
+            <!-- Header -->
+            <div class="text-center p-8 pb-4">
+                <div class="text-5xl mb-4">🔢</div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acceso Rápido</h2>
+                <p class="text-gray-600 dark:text-gray-400">Ingresa tu PIN de 6 dígitos</p>
+                <p class="text-sm text-blue-600 dark:text-blue-400 mt-2">Cada PIN accede directamente a su cuenta</p>
+            </div>
+
+            {% if error_message %}
+                <div class="mx-8 mb-4 text-red-600 text-center font-semibold bg-red-100 dark:bg-red-900/30 rounded-lg p-3">{{ error_message }}</div>
+            {% endif %}
+
+            <div class="px-8 pb-8">
+                <!-- Indicador visual del PIN -->
+                <div class="flex justify-center space-x-3 mb-8">
+                    <div id="pin-dot-1" class="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-200"></div>
+                    <div id="pin-dot-2" class="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-200"></div>
+                    <div id="pin-dot-3" class="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-200"></div>
+                    <div id="pin-dot-4" class="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-200"></div>
+                    <div id="pin-dot-5" class="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-200"></div>
+                    <div id="pin-dot-6" class="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-200"></div>
+                </div>
+
+                <form method="post" id="pinForm">
+                    {% csrf_token %}
+                    
+                    <!-- Input para PC/Desktop (invisible para móvil) -->
+                    <div id="desktop-input" class="hidden lg:block mb-6">
+                        <input 
+                            type="text" 
+                            name="pin_input" 
+                            id="pinInput"
+                            maxlength="6"
+                            pattern="[0-9]{6}"
+                            placeholder="Ingresa tu PIN"
+                            class="w-full p-4 text-center text-2xl tracking-widest border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            autofocus
+                        />
+                    </div>
+
+                    <!-- Teclado táctil para móvil (invisible para desktop) -->
+                    <div id="mobile-keyboard" class="lg:hidden">
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <!-- Fila 1 -->
+                            <button type="button" onclick="addDigit('1')" class="pin-key">1</button>
+                            <button type="button" onclick="addDigit('2')" class="pin-key">2</button>
+                            <button type="button" onclick="addDigit('3')" class="pin-key">3</button>
+                            
+                            <!-- Fila 2 -->
+                            <button type="button" onclick="addDigit('4')" class="pin-key">4</button>
+                            <button type="button" onclick="addDigit('5')" class="pin-key">5</button>
+                            <button type="button" onclick="addDigit('6')" class="pin-key">6</button>
+                            
+                            <!-- Fila 3 -->
+                            <button type="button" onclick="addDigit('7')" class="pin-key">7</button>
+                            <button type="button" onclick="addDigit('8')" class="pin-key">8</button>
+                            <button type="button" onclick="addDigit('9')" class="pin-key">9</button>
+                            
+                            <!-- Fila 4 -->
+                            <button type="button" onclick="clearPin()" class="pin-key-special">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z"></path>
+                                </svg>
+                            </button>
+                            <button type="button" onclick="addDigit('0')" class="pin-key">0</button>
+                            <button type="button" onclick="submitPin()" class="pin-key-special">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Campo oculto para enviar PIN desde móvil -->
+                    <input type="hidden" name="pin_input" id="pinHidden" />
+                </form>
+
+                <!-- Botón para volver al login normal -->
+                <div class="text-center">
+                    <a href="{% url 'usuarios:login' %}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+                        ← Usar email y contraseña
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .pin-key {
+            @apply w-16 h-16 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-xl font-semibold text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 active:bg-gray-100 dark:active:bg-gray-500 transition-all duration-150 shadow-md hover:shadow-lg transform active:scale-95;
+        }
+        
+        .pin-key-special {
+            @apply w-16 h-16 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white rounded-xl transition-all duration-150 shadow-md hover:shadow-lg transform active:scale-95 flex items-center justify-center;
+        }
+    </style>
+
+    <script>
+        let currentPin = '';
+        const maxPinLength = 6;
+
+        function updatePinDisplay() {
+            for (let i = 1; i <= maxPinLength; i++) {
+                const dot = document.getElementById(`pin-dot-${i}`);
+                if (i <= currentPin.length) {
+                    dot.classList.remove('bg-gray-300', 'dark:bg-gray-600');
+                    dot.classList.add('bg-blue-500', 'dark:bg-blue-400');
+                } else {
+                    dot.classList.remove('bg-blue-500', 'dark:bg-blue-400');
+                    dot.classList.add('bg-gray-300', 'dark:bg-gray-600');
+                }
+            }
+        }
+
+        function addDigit(digit) {
+            if (currentPin.length < maxPinLength) {
+                currentPin += digit;
+                updatePinDisplay();
+                document.getElementById('pinHidden').value = currentPin;
+                
+                // Auto-submit cuando se completa el PIN
+                if (currentPin.length === maxPinLength) {
+                    setTimeout(submitPin, 300);
+                }
+            }
+        }
+
+        function clearPin() {
+            if (currentPin.length > 0) {
+                currentPin = currentPin.slice(0, -1);
+                updatePinDisplay();
+                document.getElementById('pinHidden').value = currentPin;
+            }
+        }
+
+        function submitPin() {
+            if (currentPin.length >= 4) {
+                document.getElementById('pinForm').submit();
+            }
+        }
+
+        // Manejo del input de desktop
+        document.getElementById('pinInput')?.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Solo números
+            if (value.length > maxPinLength) {
+                value = value.slice(0, maxPinLength);
+            }
+            e.target.value = value;
+            currentPin = value;
+            updatePinDisplay();
+            
+            // Asegurar que el valor se envíe correctamente
+            document.getElementById('pinHidden').value = value;
+            
+            // Auto-submit en desktop también
+            if (value.length === maxPinLength) {
+                setTimeout(() => {
+                    document.getElementById('pinForm').submit();
+                }, 300);
+            }
+        });
+
+        // Manejar envío del formulario para asegurar el valor correcto
+        document.getElementById('pinForm').addEventListener('submit', function(e) {
+            const desktopInput = document.getElementById('pinInput');
+            const hiddenInput = document.getElementById('pinHidden');
+            
+            // Si estamos en desktop y hay valor en el input principal
+            if (desktopInput && !desktopInput.classList.contains('hidden') && desktopInput.value) {
+                // Asegurar que el campo oculto tenga el valor correcto
+                hiddenInput.value = desktopInput.value;
+                console.log('Enviando PIN desde desktop:', desktopInput.value);
+            } else if (currentPin) {
+                // Si estamos en móvil, usar currentPin
+                hiddenInput.value = currentPin;
+                console.log('Enviando PIN desde móvil:', currentPin);
+            }
+            
+            console.log('Valor final enviado:', hiddenInput.value);
+        });
+
+        // Manejo de teclas en desktop
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && currentPin.length >= 4) {
+                submitPin();
+            } else if (e.key === 'Escape') {
+                window.location.href = '{% url "usuarios:login" %}';
+            } else if (e.key === 'Backspace' && document.getElementById('mobile-keyboard').classList.contains('lg:hidden')) {
+                // Solo en móvil, en desktop el input maneja esto
+                clearPin();
+            }
+        });
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePinDisplay();
+            
+            // Vibración en móvil al tocar botones (si está soportado)
+            if ('vibrate' in navigator) {
+                document.querySelectorAll('.pin-key, .pin-key-special').forEach(button => {
+                    button.addEventListener('touchstart', () => {
+                        navigator.vibrate(50);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

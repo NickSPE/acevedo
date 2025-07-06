@@ -1,0 +1,673 @@
+{% extends "core/base_template.html" %}
+{% load static %}
+
+{% block title %}{{ reporte.titulo }} - FinGest{% endblock %}
+
+{% block extra_css %}
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .container-fluid {
+        width: 100%;
+        padding: 1rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .report-header {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .report-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #6C5CE7;
+        margin-bottom: 0.5rem;
+        margin-top: 0;
+    }
+    
+    .report-subtitle {
+        font-size: 1.1rem;
+        color: #636e72;
+        margin: 0;
+    }
+    
+    .report-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, #e17055, #fd79a8);
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #00b894, #00cec9);
+    }
+    
+    .btn-warning {
+        background: linear-gradient(135deg, #fdcb6e, #e17055);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .chart-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .chart-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .chart-canvas {
+        position: relative;
+        height: 400px;
+        margin-bottom: 2rem;
+    }
+    
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        text-align: left;
+    }
+    
+    .info-label {
+        font-size: 0.9rem;
+        color: #636e72;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+    
+    .info-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin: 0;
+    }
+    
+    .data-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .data-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 2rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .data-table th {
+        background: #6C5CE7;
+        color: white;
+        font-weight: 600;
+    }
+    
+    .data-table tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .no-data {
+        text-align: center;
+        color: #636e72;
+        font-style: italic;
+        padding: 3rem;
+        background: #f8f9fa;
+        border-radius: 15px;
+        margin: 2rem 0;
+    }
+    
+    @media (max-width: 768px) {
+        .report-header {
+            text-align: center;
+        }
+        
+        .report-title {
+            font-size: 2rem;
+        }
+        
+        .report-actions {
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .info-card {
+            text-align: center;
+        }
+        
+        .chart-canvas {
+            height: 300px;
+        }
+    }
+    
+    /* Modo Oscuro */
+    .dark body {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    }
+    
+    .dark .container-fluid {
+        color: #F9FAFB;
+    }
+    
+    .dark .report-header {
+        background: #374151;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .dark .report-title {
+        color: #A78BFA;
+    }
+    
+    .dark .report-subtitle {
+        color: #9CA3AF;
+    }
+
+    .dark .btn-primary {
+        background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+    }
+    
+    .dark .btn-danger {
+        background: linear-gradient(135deg, #f97316, #fdba74);
+    }
+    
+    .dark .btn-success {
+        background: linear-gradient(135deg, #22c55e, #86efac);
+    }
+    
+    .dark .btn-warning {
+        background: linear-gradient(135deg, #fbbf24, #f97316);
+    }
+    
+    .dark .chart-container {
+        background: #374151;
+    }
+    
+    .dark .data-container {
+        background: #374151;
+    }
+    
+    .dark .data-table th {
+        background: #6B7280;
+        color: white;
+    }
+    
+    .dark .data-table tr:hover {
+        background: #4b5563;
+    }
+    
+    .dark .no-data {
+        background: #4b5563;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header del Reporte -->
+    <div class="report-header">
+        <div>
+            <h1 class="report-title">{{ reporte.titulo }}</h1>
+            <p class="report-subtitle">
+                <i class="fas fa-calendar"></i>
+                Generado el {{ reporte.fecha_creacion|date:"d/m/Y H:i" }}
+            </p>
+        </div>
+        <div class="report-actions">
+            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'pdf' %}" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'excel' %}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'csv' %}" class="btn btn-warning">
+                <i class="fas fa-file-csv"></i> CSV
+            </a>
+            <a href="{% url 'analisis_reportes:reports' %}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Información del Reporte -->
+    <div class="info-cards">
+        <div class="info-card">
+            <p class="info-label">Período</p>
+            <p class="info-value">
+                <i class="fas fa-calendar-alt"></i>
+                {{ reporte.fecha_inicio|date:"d/m/Y" }} - {{ reporte.fecha_fin|date:"d/m/Y" }}
+            </p>
+        </div>
+        <div class="info-card">
+            <p class="info-label">Fecha de Creación</p>
+            <p class="info-value">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</p>
+        </div>
+        <div class="info-card">
+            <p class="info-label">Tipo de Reporte</p>
+            <p class="info-value">{{ reporte.get_tipo_reporte_display }}</p>
+        </div>
+    </div>
+
+    <!-- Contenido del Reporte -->
+    <div class="data-container">
+        {% if datos_procesados %}
+            {% if datos_procesados.tipo == 'gastos_categoria' %}
+                <div class="chart-container">
+                    <h3 class="chart-title">Análisis de Gastos por Categoría</h3>
+                    <div class="chart-canvas">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                    
+                    {% if datos_procesados.items %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Categoría</th>
+                                <th>Monto</th>
+                                <th>Cantidad</th>
+                                <th>Porcentaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in datos_procesados.items %}
+                            <tr>
+                                <td>{{ item.categoria }}</td>
+                                <td>${{ item.monto|floatformat:2 }}</td>
+                                <td>{{ item.cantidad }}</td>
+                                <td>{{ item.porcentaje|floatformat:1 }}%</td>
+                            </tr>
+                            {% endfor %}
+                            <tr style="font-weight: bold; background: #f1f3f4;">
+                                <td>TOTAL</td>
+                                <td>${{ datos_procesados.total|floatformat:2 }}</td>
+                                <td>{{ datos_procesados.total_cantidad }}</td>
+                                <td>100.0%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+                
+            {% elif datos_procesados.tipo == 'ingresos_egresos' %}
+                <div class="chart-container">
+                    <h3 class="chart-title">Comparación de Ingresos vs Egresos</h3>
+                    <div class="chart-canvas">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th>Porcentaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ingresos</td>
+                                <td style="color: #00b894;">${{ datos_procesados.ingresos|floatformat:2 }}</td>
+                                <td>100.0%</td>
+                            </tr>
+                            <tr>
+                                <td>Egresos</td>
+                                <td style="color: #e17055;">${{ datos_procesados.egresos|floatformat:2 }}</td>
+                                <td>{{ datos_procesados.porcentaje_egresos|floatformat:1 }}%</td>
+                            </tr>
+                            <tr style="font-weight: bold; background: #f8f9fa;">
+                                <td>Balance</td>
+                                <td style="color: {% if datos_procesados.balance >= 0 %}#00b894{% else %}#e17055{% endif %};">
+                                    ${{ datos_procesados.balance|floatformat:2 }}
+                                </td>
+                                <td>{{ datos_procesados.porcentaje_balance|floatformat:1 }}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            {% elif datos_procesados.tipo == 'subcuentas_analisis' %}
+                <div class="chart-container">
+                    <h3 class="chart-title">Análisis de Subcuentas</h3>
+                    <div class="chart-canvas">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                    
+                    {% if datos_procesados.items %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo de Subcuenta</th>
+                                <th>Saldo Total</th>
+                                <th>Cantidad</th>
+                                <th>Promedio por Subcuenta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in datos_procesados.items %}
+                            <tr>
+                                <td>{{ item.tipo }}</td>
+                                <td>${{ item.saldo|floatformat:2 }}</td>
+                                <td>{{ item.cantidad }}</td>
+                                <td>${{ item.promedio|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr style="font-weight: bold; background: #f1f3f4;">
+                                <td>TOTAL</td>
+                                <td>${{ datos_procesados.total_saldo|floatformat:2 }}</td>
+                                <td>{{ datos_procesados.total_cantidad }}</td>
+                                <td>
+                                    {% if datos_procesados.total_cantidad and datos_procesados.total_cantidad > 0 %}
+                                        ${{ datos_procesados.promedio_total|floatformat:2 }}
+                                    {% else %}
+                                        $0.00
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+                
+            {% elif datos_procesados.tipo == 'flujo_efectivo' %}
+                <div class="chart-container">
+                    <h3 class="chart-title">Flujo de Efectivo</h3>
+                    <div class="chart-canvas">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                    
+                    {% if datos_procesados.items %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Período</th>
+                                <th>Ingresos</th>
+                                <th>Egresos</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in datos_procesados.items %}
+                            <tr>
+                                <td>{{ item.periodo }}</td>
+                                <td style="color: #00b894;">${{ item.ingresos|floatformat:2 }}</td>
+                                <td style="color: #e17055;">${{ item.egresos|floatformat:2 }}</td>
+                                <td style="color: {% if item.balance >= 0 %}#00b894{% else %}#e17055{% endif %};">
+                                    ${{ item.balance|floatformat:2 }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+                
+            {% else %}
+                <div class="chart-container">
+                    <h3 class="chart-title">Datos del Reporte</h3>
+                    <div class="chart-canvas">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="no-data">
+                <i class="fas fa-chart-line fa-3x" style="color: #636e72; margin-bottom: 1rem;"></i>
+                <p>No hay datos disponibles para este reporte.</p>
+                <p>Es posible que no haya transacciones en el período seleccionado.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Validar que tenemos datos antes de crear gráficos
+{% if datos and datos_procesados %}
+    // Configuración de colores
+    const colors = {
+        primary: '#6C5CE7',
+        success: '#00b894',
+        danger: '#e17055',
+        warning: '#fdcb6e',
+        info: '#74b9ff',
+        secondary: '#636e72'
+    };
+    
+    // Datos del reporte - con validación adicional
+    let reportData;
+    try {
+        reportData = {{ datos|safe }};
+    } catch (e) {
+        console.error('Error parsing report data:', e);
+        reportData = {};
+    }
+    
+    const reportType = '{{ reporte.tipo_reporte }}';
+    
+    // Solo crear gráfico si tenemos datos válidos
+    if (reportData && Object.keys(reportData).length > 0) {
+        // Crear gráfico según el tipo de reporte
+        if (reportType === 'gastos_categoria' && reportData.labels && reportData.data) {
+            new Chart(document.getElementById('reportChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: reportData.labels,
+                    datasets: [{
+                        data: reportData.data,
+                        backgroundColor: [
+                            colors.primary,
+                            colors.success,
+                            colors.danger,
+                            colors.warning,
+                            colors.info,
+                            colors.secondary
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        } else if (reportType === 'ingresos_egresos' && reportData.labels && reportData.data) {
+            new Chart(document.getElementById('reportChart'), {
+                type: 'bar',
+                data: {
+                    labels: reportData.labels,
+                    datasets: [{
+                        data: reportData.data,
+                        backgroundColor: [colors.success, colors.danger],
+                        borderColor: [colors.success, colors.danger],
+                        borderWidth: 2,
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else if (reportType === 'subcuentas_analisis' && reportData.labels && reportData.saldos) {
+            new Chart(document.getElementById('reportChart'), {
+                type: 'polarArea',
+                data: {
+                    labels: reportData.labels,
+                    datasets: [{
+                        data: reportData.saldos,
+                        backgroundColor: [
+                            colors.primary + '80',
+                            colors.success + '80',
+                            colors.danger + '80',
+                            colors.warning + '80',
+                            colors.info + '80'
+                        ],
+                        borderColor: [
+                            colors.primary,
+                            colors.success,
+                            colors.danger,
+                            colors.warning,
+                            colors.info
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        } else if (reportType === 'flujo_efectivo' && reportData.labels && reportData.ingresos && reportData.egresos) {
+            new Chart(document.getElementById('reportChart'), {
+                type: 'line',
+                data: {
+                    labels: reportData.labels,
+                    datasets: [{
+                        label: 'Ingresos',
+                        data: reportData.ingresos,
+                        borderColor: colors.success,
+                        backgroundColor: colors.success + '20',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Egresos',
+                        data: reportData.egresos,
+                        borderColor: colors.danger,
+                        backgroundColor: colors.danger + '20',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    } else {
+        console.warn('No valid report data available for chart generation');
+    }
+{% else %}
+    console.log('No data available for chart generation');
+{% endif %}
+</script>
+{% endblock %}

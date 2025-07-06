@@ -1,0 +1,353 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+
+{% block title %}Depositar en Subcuenta - FinGest{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .subcuenta-info {
+        border-left: 4px solid;
+        background: linear-gradient(135deg, #667eea15, #764ba215);
+    }
+    .cuenta-info {
+        background: linear-gradient(135deg, #10b98115, #059e6915);
+    }
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    .preview-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    .balance-card {
+        transition: all 0.3s ease;
+    }
+    .balance-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="form-container">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 text-dark mb-0">
+                            <i class="fas fa-plus-circle me-2"></i>
+                            Depositar en Subcuenta
+                        </h1>
+                        <p class="text-muted mb-0">Transfiere dinero desde la cuenta principal</p>
+                    </div>
+                    <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de la subcuenta -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card subcuenta-info" style="border-left-color: {{ subcuenta.color }};">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-layer-group me-2"></i>
+                            {{ subcuenta.nombre }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6 class="text-muted">Saldo Actual</h6>
+                                <h4 class="text-success mb-0">${{ subcuenta.saldo|floatformat:2 }}</h4>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted">Tipo</h6>
+                                <span class="badge" style="background-color: {{ subcuenta.color }}15; color: {{ subcuenta.color }};">
+                                    {{ subcuenta.get_tipo_display }}
+                                </span>
+                            </div>
+                            <div class="col-md-4">
+                                <h6 class="text-muted">Cuenta Principal</h6>
+                                <p class="mb-0 fw-bold">{{ subcuenta.id_cuenta.nombre }}</p>
+                            </div>
+                        </div>
+                        {% if subcuenta.descripcion %}
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h6 class="text-muted">Descripción</h6>
+                                <p class="mb-0">{{ subcuenta.descripcion }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de la cuenta principal -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card cuenta-info">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Saldo Total de la Cuenta</h6>
+                                <h4 class="text-primary mb-0">${{ cuenta.saldo_cuenta|floatformat:2 }}</h4>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Saldo Disponible para Depósito</h6>
+                                <h4 class="text-warning mb-0">${{ cuenta.saldo_disponible|floatformat:2 }}</h4>
+                                <small class="text-muted">Después de otras subcuentas</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form method="post" id="depositoForm">
+                            {% csrf_token %}
+                            
+                            <!-- Monto -->
+                            <div class="mb-4">
+                                <label for="{{ form.monto.id_for_label }}" class="form-label">
+                                    <i class="fas fa-dollar-sign me-2"></i>Monto a Depositar *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    {{ form.monto }}
+                                    <button type="button" class="btn btn-outline-secondary" id="btnMaximo">
+                                        Máximo
+                                    </button>
+                                </div>
+                                {% if form.monto.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.monto.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Máximo disponible: <strong>${{ cuenta.saldo_disponible|floatformat:2 }}</strong>
+                                </div>
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="mb-4">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                                    <i class="fas fa-comment me-2"></i>Descripción
+                                </label>
+                                {{ form.descripcion }}
+                                {% if form.descripcion.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.descripcion.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Opcional: describe el motivo del depósito</div>
+                            </div>
+
+                            <!-- Vista previa -->
+                            <div class="mb-4" id="vistaPreviaDiv" style="display: none;">
+                                <label class="form-label">Vista Previa del Depósito</label>
+                                <div class="card preview-card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h6 class="mb-1">Saldo Actual</h6>
+                                                <h4 class="mb-0">${{ subcuenta.saldo|floatformat:2 }}</h4>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h6 class="mb-1">Nuevo Saldo</h6>
+                                                <h4 class="mb-0" id="nuevoSaldo">${{ subcuenta.saldo|floatformat:2 }}</h4>
+                                            </div>
+                                        </div>
+                                        <hr class="my-3">
+                                        <div class="text-center">
+                                            <i class="fas fa-plus-circle fa-2x mb-2"></i>
+                                            <h5 class="mb-0">Depósito: <span id="montoDeposito">$0.00</span></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="d-flex justify-content-between">
+                                <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
+                                    <i class="fas fa-times me-2"></i>Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-success" id="btnDepositar" disabled>
+                                    <i class="fas fa-plus-circle me-2"></i>Realizar Depósito
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Montos sugeridos -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            Montos Sugeridos
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100 monto-sugerido" data-monto="100">
+                                    $100.00
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100 monto-sugerido" data-monto="250">
+                                    $250.00
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100 monto-sugerido" data-monto="500">
+                                    $500.00
+                                </button>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <button type="button" class="btn btn-outline-primary w-100 monto-sugerido" data-monto="1000">
+                                    $1,000.00
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6 class="text-muted">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Información importante
+                        </h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-check text-success me-2"></i>El depósito se realiza desde la cuenta principal</li>
+                            <li><i class="fas fa-check text-success me-2"></i>El dinero se transferirá instantáneamente</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Se registrará la operación en el historial</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Solo puedes depositar el saldo disponible de la cuenta</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('depositoForm');
+    const montoInput = document.getElementById('{{ form.monto.id_for_label }}');
+    const btnMaximo = document.getElementById('btnMaximo');
+    const btnDepositar = document.getElementById('btnDepositar');
+    const vistaPreviaDiv = document.getElementById('vistaPreviaDiv');
+    const nuevoSaldo = document.getElementById('nuevoSaldo');
+    const montoDeposito = document.getElementById('montoDeposito');
+    
+    const saldoActual = {{ subcuenta.saldo }};
+    const saldoDisponible = {{ cuenta.saldo_disponible }};
+    
+    // Botones de montos sugeridos
+    document.querySelectorAll('.monto-sugerido').forEach(btn => {
+        const monto = parseFloat(btn.dataset.monto);
+        if (monto > saldoDisponible) {
+            btn.disabled = true;
+            btn.classList.add('disabled');
+        }
+        
+        btn.addEventListener('click', function() {
+            if (!this.disabled) {
+                montoInput.value = monto.toFixed(2);
+                validarFormulario();
+            }
+        });
+    });
+    
+    // Botón máximo
+    btnMaximo.addEventListener('click', function() {
+        if (saldoDisponible > 0) {
+            montoInput.value = saldoDisponible.toFixed(2);
+            validarFormulario();
+        }
+    });
+    
+    // Validación de monto
+    montoInput.addEventListener('input', function() {
+        const valor = parseFloat(this.value) || 0;
+        if (valor > saldoDisponible) {
+            this.classList.add('is-invalid');
+            this.setCustomValidity('El monto no puede ser mayor al saldo disponible');
+        } else if (valor <= 0) {
+            this.classList.add('is-invalid');
+            this.setCustomValidity('El monto debe ser mayor a cero');
+        } else {
+            this.classList.remove('is-invalid');
+            this.setCustomValidity('');
+        }
+        validarFormulario();
+    });
+    
+    function validarFormulario() {
+        const monto = parseFloat(montoInput.value) || 0;
+        const formularioValido = monto > 0 && monto <= saldoDisponible;
+        
+        btnDepositar.disabled = !formularioValido;
+        
+        if (formularioValido && monto > 0) {
+            actualizarVistaPrevia(monto);
+            vistaPreviaDiv.style.display = 'block';
+        } else {
+            vistaPreviaDiv.style.display = 'none';
+        }
+    }
+    
+    function actualizarVistaPrevia(monto) {
+        const nuevo = saldoActual + monto;
+        nuevoSaldo.textContent = '$' + nuevo.toFixed(2);
+        montoDeposito.textContent = '$' + monto.toFixed(2);
+    }
+    
+    // Confirmación antes del envío
+    form.addEventListener('submit', function(e) {
+        const monto = parseFloat(montoInput.value) || 0;
+        if (!confirm(`¿Confirmas el depósito de $${monto.toFixed(2)} en la subcuenta "${subcuenta.nombre}"?`)) {
+            e.preventDefault();
+        }
+    });
+    
+    // Validación inicial
+    validarFormulario();
+});
+</script>
+{% endblock %}

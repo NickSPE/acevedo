@@ -1,27 +1,1307 @@
 {% extends "core/base_template.html" %}
+{% load static %}
 
-{% block title %}Reportes | BuilderQuantum{% endblock %}
+{% block title %}Análisis y Reportes Financieros - FinGest{% endblock %}
+
+{% block extra_css %}
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .dark body {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    }
+    
+    .container-fluid {
+        width: 100%;
+        padding: 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .main-header {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .dark .main-header {
+        background: #374151;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .main-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #6C5CE7;
+        margin-bottom: 0.5rem;
+        margin-top: 0;
+    }
+    
+    .dark .main-title {
+        color: #A78BFA;
+    }
+    
+    .main-subtitle {
+        font-size: 1.1rem;
+        color: #636e72;
+        margin: 0;
+    }
+    
+    .dark .main-subtitle {
+        color: #9CA3AF;
+    }
+        margin: 0;
+    }
+    
+    .filters-section {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .dark .filters-section {
+        background: #374151;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .filter-label {
+        font-weight: 600;
+        color: #2d3436;
+        font-size: 0.9rem;
+    }
+    
+    .dark .filter-label {
+        color: #F9FAFB;
+    }
+    
+    .filter-select, .filter-input {
+        padding: 0.75rem 1rem;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        min-width: 150px;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .filter-select,
+    .dark .filter-input {
+        background: #4B5563;
+        color: #F9FAFB;
+        border-color: #6B7280;
+    }
+    
+    .filter-select:focus, .filter-input:focus {
+        border-color: #6C5CE7;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+    }
+    
+    .btn-apply-filters {
+        background: linear-gradient(45deg, #6C5CE7, #A29BFE);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-apply-filters:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-left: 5px solid;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dark .stats-grid .stat-card {
+        background: #374151;
+        color: #F9FAFB;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        opacity: 0.1;
+        transform: translate(30px, -30px);
+    }
+    
+    .stat-card.balance { border-left-color: #6C5CE7; }
+    .stat-card.balance::before { background: #6C5CE7; }
+    
+    .stat-card.ingresos { border-left-color: #00b894; }
+    .stat-card.ingresos::before { background: #00b894; }
+    
+    .stat-card.gastos { border-left-color: #e17055; }
+    .stat-card.gastos::before { background: #e17055; }
+    
+    .stat-card.transacciones { border-left-color: #74b9ff; }
+    .stat-card.transacciones::before { background: #74b9ff; }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 2;
+        margin-top: 0;
+    }
+    
+    .stat-label {
+        color: #636e72;
+        font-weight: 500;
+        margin-bottom: 0;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .dark .stat-label {
+        color: #D1D5DB;
+    }
+    
+    .stat-sublabel {
+        color: #b2bec3;
+        font-size: 0.9rem;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .dark .stat-sublabel {
+        color: #9CA3AF;
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        position: relative;
+    }
+    
+    .dark .chart-card {
+        background: #374151;
+    }
+    
+    .chart-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    
+    .dark .chart-title {
+        color: #F9FAFB;
+    }
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+    
+    .actions-section {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .dark .actions-section {
+        background: #374151;
+    }
+    
+    .actions-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+    }
+    
+    .dark .actions-title {
+        color: #F9FAFB;
+    }
+    
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .action-btn {
+        background: linear-gradient(45deg, #74b9ff, #0984e3);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+        display: block;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(116, 185, 255, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .action-btn.secondary {
+        background: linear-gradient(45deg, #636e72, #2d3436);
+    }
+    
+    .action-btn.success {
+        background: linear-gradient(45deg, #00b894, #00cec9);
+    }
+    
+    .action-btn.warning {
+        background: linear-gradient(45deg, #fdcb6e, #e17055);
+    }
+    
+    .recent-reports {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .dark .recent-reports {
+        background: #374151;
+    }
+    
+    .reports-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 1.5rem;
+    }
+    
+    .dark .reports-title {
+        color: #F9FAFB;
+    }
+    
+    .report-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .report-item {
+        background: #4B5563;
+    }
+    
+    .report-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+    
+    .dark .report-item:hover {
+        background: #6B7280;
+    }
+    
+    .report-info h4 {
+        margin: 0 0 0.5rem 0;
+        color: #2d3436;
+        font-size: 1rem;
+    }
+    
+    .dark .report-info h4 {
+        color: #F9FAFB;
+    }
+    
+    .report-info small {
+        color: #636e72;
+    }
+    
+    .dark .report-info small {
+        color: #D1D5DB;
+    }
+    
+    .report-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .btn-small {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-view {
+        background: #74b9ff;
+        color: white;
+    }
+    
+    .btn-export {
+        background: #00b894;
+        color: white;
+    }
+    
+    .btn-small:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    
+    .dark .modal-content {
+        background: #374151;
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin: 0;
+    }
+    
+    .dark .modal-title {
+        color: #F9FAFB;
+    }
+    
+    .close {
+        color: #636e72;
+        font-size: 2rem;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+        background: none;
+    }
+    
+    .close:hover {
+        color: #2d3436;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #2d3436;
+    }
+    
+    .dark .form-label {
+        color: #F9FAFB;
+    }
+    
+    .form-input, .form-select, .form-textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .dark .form-input,
+    .dark .form-select,
+    .dark .form-textarea {
+        background: #4B5563;
+        color: #F9FAFB;
+        border-color: #6B7280;
+    }
+    
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+        border-color: #6C5CE7;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+    }
+    
+    .form-textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #6C5CE7, #A29BFE);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+    }
+    
+    /* Estilos para menú desplegable de exportación */
+    .export-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .export-menu {
+        display: none;
+        position: absolute;
+        background: white;
+        min-width: 120px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        z-index: 1000;
+        top: 100%;
+        right: 0;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+    }
+    
+    .export-menu.show {
+        display: block;
+        animation: fadeInDown 0.3s ease;
+    }
+    
+    .export-option {
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+        color: #2d3436;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 3px;
+    }
+    
+    .export-option:hover {
+        background: #6C5CE7;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .export-option i {
+        margin-right: 8px;
+        width: 16px;
+    }
+    
+    .dropdown-toggle i.fa-chevron-down {
+        font-size: 0.8rem;
+        margin-left: 5px;
+        transition: transform 0.3s ease;
+    }
+    
+    .dropdown-toggle.active i.fa-chevron-down {
+        transform: rotate(180deg);
+    }
+    
+    /* Sistema de notificaciones */
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #00b894, #00cec9);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        z-index: 9999;
+        transform: translateX(400px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        max-width: 300px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .notification.show {
+        transform: translateX(0);
+    }
+    
+    .notification.success {
+        background: linear-gradient(135deg, #00b894, #00cec9);
+    }
+    
+    .notification.warning {
+        background: linear-gradient(135deg, #fdcb6e, #e17055);
+    }
+    
+    .notification.error {
+        background: linear-gradient(135deg, #e17055, #d63031);
+    }
+    
+    .notification .notification-icon {
+        font-size: 1.2rem;
+        animation: pulse 2s infinite;
+    }
+    
+    .notification .notification-text {
+        flex: 1;
+        font-weight: 500;
+    }
+    
+    .notification .notification-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+    
+    .notification .notification-close:hover {
+        opacity: 1;
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translate3d(0, -20px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+    
+    /* Indicador de descarga */
+    .download-indicator {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #6C5CE7, #8B5CF6);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
+        z-index: 9999;
+        transform: translateY(100px);
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+    }
+    
+    .download-indicator.show {
+        transform: translateY(0);
+    }
+    
+    .download-indicator .spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+        .main-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .filters-section {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filter-group {
+            width: 100%;
+        }
+        
+        .stats-grid, .charts-grid, .actions-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .chart-container {
+            height: 250px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<h2 class="text-xl font-semibold mb-4">Reportes Financieros</h2>
-
-<div class="bg-white p-4 rounded-lg shadow mb-6">
-  <label for="periodo" class="block mb-2 text-sm font-medium text-gray-700">Periodo:</label>
-  <select id="periodo" class="w-full border p-2 rounded">
-    <option>Última semana</option>
-    <option>Último mes</option>
-    <option>Últimos 3 meses</option>
-  </select>
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="main-header">
+        <div>
+            <h1 class="main-title">Análisis y Reportes</h1>
+            <p class="main-subtitle">Dashboard completo de análisis financiero con gráficos interactivos</p>
+        </div>
+        <div>
+            <button class="action-btn" onclick="openModal('generateReportModal')">
+                <i class="fas fa-chart-line me-2"></i>Generar Reporte
+            </button>
+        </div>
+    </div>
+    
+    <!-- Filtros -->
+    <div class="filters-section">
+        <div class="filter-group">
+            <label class="filter-label">Período</label>
+            <select id="periodoSelect" class="filter-select">
+                <option value="semana_actual" {% if periodo_actual == 'semana_actual' %}selected{% endif %}>Esta semana</option>
+                <option value="mes_actual" {% if periodo_actual == 'mes_actual' %}selected{% endif %}>Este mes</option>
+                <option value="trimestre_actual" {% if periodo_actual == 'trimestre_actual' %}selected{% endif %}>Este trimestre</option>
+                <option value="año_actual" {% if periodo_actual == 'año_actual' %}selected{% endif %}>Este año</option>
+                <option value="ultimos_30_dias" {% if periodo_actual == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
+                <option value="ultimos_90_dias" {% if periodo_actual == 'ultimos_90_dias' %}selected{% endif %}>Últimos 90 días</option>
+                <option value="personalizado">Personalizado</option>
+            </select>
+        </div>
+        
+        <div class="filter-group" id="fechaPersonalizadaGroup" style="display: none;">
+            <label class="filter-label">Fecha Inicio</label>
+            <input type="date" id="fechaInicio" class="filter-input" value="{{ fecha_inicio }}">
+        </div>
+        
+        <div class="filter-group" id="fechaPersonalizadaGroup2" style="display: none;">
+            <label class="filter-label">Fecha Fin</label>
+            <input type="date" id="fechaFin" class="filter-input" value="{{ fecha_fin }}">
+        </div>
+        
+        <div class="filter-group">
+            <button class="btn-apply-filters" onclick="aplicarFiltros()">
+                <i class="fas fa-filter me-2"></i>Aplicar Filtros
+            </button>
+        </div>
+    </div>
+    
+    <!-- Estadísticas Generales -->
+    <div class="stats-grid">
+        <div class="stat-card balance">
+            <h2 class="stat-value" style="color: #6C5CE7;">${{ stats.balance_total|floatformat:2 }}</h2>
+            <p class="stat-label">Balance Total</p>
+            <p class="stat-sublabel">En {{ stats.num_cuentas }} cuenta{{ stats.num_cuentas|pluralize }}</p>
+        </div>
+        
+        <div class="stat-card ingresos">
+            <h2 class="stat-value" style="color: #00b894;">${{ stats.ingresos_periodo|floatformat:2 }}</h2>
+            <p class="stat-label">Ingresos del Período</p>
+            <p class="stat-sublabel">{{ stats.total_transacciones }} transaccion{{ stats.total_transacciones|pluralize:"es" }}</p>
+        </div>
+        
+        <div class="stat-card gastos">
+            <h2 class="stat-value" style="color: #e17055;">${{ stats.gastos_periodo|floatformat:2 }}</h2>
+            <p class="stat-label">Gastos del Período</p>
+            <p class="stat-sublabel">Promedio: ${{ stats.promedio_transaccion|floatformat:2 }}</p>
+        </div>
+        
+        <div class="stat-card transacciones">
+            <h2 class="stat-value" style="color: #74b9ff;">${{ stats.total_subcuentas|floatformat:2 }}</h2>
+            <p class="stat-label">En Subcuentas</p>
+            <p class="stat-sublabel">{{ stats.num_subcuentas }} subcuenta{{ stats.num_subcuentas|pluralize }}</p>
+        </div>
+    </div>
+    
+    <!-- Gráficos -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3 class="chart-title">Gastos por Categoría</h3>
+            <div class="chart-container">
+                <canvas id="gastosChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <h3 class="chart-title">Ingresos vs Egresos</h3>
+            <div class="chart-container">
+                <canvas id="ingresosEgresosChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <h3 class="chart-title">Distribución de Subcuentas</h3>
+            <div class="chart-container">
+                <canvas id="subcuentasChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <h3 class="chart-title">Flujo de Efectivo Mensual</h3>
+            <div class="chart-container">
+                <canvas id="flujoChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Acciones Rápidas -->
+    <div class="actions-section">
+        <h3 class="actions-title">Acciones Rápidas</h3>
+        <div class="actions-grid">
+            <button class="action-btn" onclick="generarReporteRapido('gastos_categoria')">
+                <i class="fas fa-chart-pie me-2"></i>Reporte de Gastos
+            </button>
+            <button class="action-btn secondary" onclick="generarReporteRapido('ingresos_egresos')">
+                <i class="fas fa-chart-bar me-2"></i>Ingresos vs Egresos
+            </button>
+            <button class="action-btn success" onclick="generarReporteRapido('subcuentas_analisis')">
+                <i class="fas fa-layer-group me-2"></i>Análisis Subcuentas
+            </button>
+            <button class="action-btn warning" onclick="generarReporteRapido('balance_general')">
+                <i class="fas fa-balance-scale me-2"></i>Balance General
+            </button>
+        </div>
+    </div>
+    
+    <!-- Reportes Recientes -->
+    <div class="recent-reports">
+        <h3 class="reports-title">Reportes Recientes</h3>
+        {% if reportes_recientes %}
+            {% for reporte in reportes_recientes %}
+            <div class="report-item">
+                <div class="report-info">
+                    <h4>{{ reporte.titulo }}</h4>
+                    <small>{{ reporte.get_tipo_reporte_display }} - {{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                </div>
+                <div class="report-actions">
+                    <a href="{% url 'analisis_reportes:ver_reporte' reporte.id %}" class="btn-small btn-view">
+                        <i class="fas fa-eye"></i> Ver
+                    </a>
+                    <div class="export-dropdown">
+                        <button class="btn-small btn-export dropdown-toggle" onclick="toggleExportMenu({{ reporte.id }})">
+                            <i class="fas fa-download"></i> Exportar <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="export-menu" id="exportMenu{{ reporte.id }}">
+                            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'pdf' %}" class="export-option" onclick="showDownloadNotification('PDF')">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </a>
+                            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'excel' %}" class="export-option" onclick="showDownloadNotification('Excel')">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </a>
+                            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'csv' %}" class="export-option" onclick="showDownloadNotification('CSV')">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: #636e72; text-align: center; padding: 2rem;">
+                No hay reportes generados aún. ¡Crea tu primer reporte!
+            </p>
+        {% endif %}
+    </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-  <div class="bg-white p-4 rounded-lg shadow">
-    <h3 class="font-semibold mb-2">Gastos por categoría</h3>
-    <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-400">[Gráfico de barras]</div>
-  </div>
-  <div class="bg-white p-4 rounded-lg shadow">
-    <h3 class="font-semibold mb-2">Ingresos vs Egresos</h3>
-    <div class="h-40 bg-gray-100 flex items-center justify-center text-gray-400">[Gráfico comparativo]</div>
-  </div>
+<!-- Modal para Generar Reporte -->
+<div id="generateReportModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Generar Nuevo Reporte</h2>
+            <button class="close" onclick="closeModal('generateReportModal')">&times;</button>
+        </div>
+        <form method="post" action="{% url 'analisis_reportes:generar_reporte' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Tipo de Reporte</label>
+                <select name="tipo_reporte" class="form-select" required>
+                    <option value="gastos_categoria">Gastos por Categoría</option>
+                    <option value="ingresos_egresos">Ingresos vs Egresos</option>
+                    <option value="subcuentas_analisis">Análisis de Subcuentas</option>
+                    <option value="balance_general">Balance General</option>
+                    <option value="flujo_efectivo">Flujo de Efectivo</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Título del Reporte</label>
+                <input type="text" name="titulo" class="form-input" placeholder="Ej: Análisis Mensual Diciembre 2024" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Descripción (Opcional)</label>
+                <textarea name="descripcion" class="form-textarea" placeholder="Describe el propósito de este reporte..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Fecha Inicio</label>
+                <input type="date" name="fecha_inicio" class="form-input" value="{{ fecha_inicio }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Fecha Fin</label>
+                <input type="date" name="fecha_fin" class="form-input" value="{{ fecha_fin }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Exportar inmediatamente como:</label>
+                <select name="formato_export" class="form-select">
+                    <option value="">No exportar ahora</option>
+                    <option value="pdf">PDF</option>
+                    <option value="excel">Excel</option>
+                    <option value="csv">CSV</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-chart-line me-2"></i>Generar Reporte
+            </button>
+        </form>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Datos de los gráficos desde Django
+const gastosData = {{ gastos_categoria|safe }};
+const ingresosEgresosData = {{ ingresos_egresos|safe }};
+const subcuentasData = {{ subcuentas_data|safe }};
+const flujoData = {{ flujo_mensual|safe }};
+
+// Configuración de colores
+const colors = {
+    primary: '#6C5CE7',
+    success: '#00b894',
+    danger: '#e17055',
+    warning: '#fdcb6e',
+    info: '#74b9ff',
+    secondary: '#636e72'
+};
+
+// Gráfico de Gastos por Categoría
+const gastosChart = new Chart(document.getElementById('gastosChart'), {
+    type: 'doughnut',
+    data: {
+        labels: gastosData.labels,
+        datasets: [{
+            data: gastosData.data,
+            backgroundColor: [
+                colors.primary,
+                colors.success,
+                colors.danger,
+                colors.warning,
+                colors.info,
+                colors.secondary,
+                '#a29bfe',
+                '#fd79a8',
+                '#55efc4'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 20,
+                    usePointStyle: true
+                }
+            }
+        }
+    }
+});
+
+// Gráfico de Ingresos vs Egresos
+const ingresosEgresosChart = new Chart(document.getElementById('ingresosEgresosChart'), {
+    type: 'bar',
+    data: {
+        labels: ingresosEgresosData.labels,
+        datasets: [{
+            data: ingresosEgresosData.data,
+            backgroundColor: [colors.success, colors.danger],
+            borderColor: [colors.success, colors.danger],
+            borderWidth: 2,
+            borderRadius: 10
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '$' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Gráfico de Subcuentas
+const subcuentasChart = new Chart(document.getElementById('subcuentasChart'), {
+    type: 'polarArea',
+    data: {
+        labels: subcuentasData.labels,
+        datasets: [{
+            data: subcuentasData.saldos,
+            backgroundColor: [
+                colors.primary + '80',
+                colors.success + '80',
+                colors.danger + '80',
+                colors.warning + '80',
+                colors.info + '80'
+            ],
+            borderColor: [
+                colors.primary,
+                colors.success,
+                colors.danger,
+                colors.warning,
+                colors.info
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Gráfico de Flujo Mensual
+const flujoChart = new Chart(document.getElementById('flujoChart'), {
+    type: 'line',
+    data: {
+        labels: flujoData.labels,
+        datasets: [{
+            label: 'Ingresos',
+            data: flujoData.ingresos,
+            borderColor: colors.success,
+            backgroundColor: colors.success + '20',
+            fill: true,
+            tension: 0.4
+        }, {
+            label: 'Egresos',
+            data: flujoData.egresos,
+            borderColor: colors.danger,
+            backgroundColor: colors.danger + '20',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '$' + value.toLocaleString();
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Funciones de UI
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function aplicarFiltros() {
+    const periodo = document.getElementById('periodoSelect').value;
+    let url = `?periodo=${periodo}`;
+    
+    if (periodo === 'personalizado') {
+        const fechaInicio = document.getElementById('fechaInicio').value;
+        const fechaFin = document.getElementById('fechaFin').value;
+        url += `&fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`;
+    }
+    
+    window.location.href = url;
+}
+
+// Funciones para menú desplegable de exportación
+function toggleExportMenu(reporteId) {
+    const menu = document.getElementById(`exportMenu${reporteId}`);
+    const button = menu.previousElementSibling;
+    
+    // Cerrar otros menús abiertos
+    document.querySelectorAll('.export-menu.show').forEach(m => {
+        if (m !== menu) {
+            m.classList.remove('show');
+            m.previousElementSibling.classList.remove('active');
+        }
+    });
+    
+    // Toggle current menu
+    menu.classList.toggle('show');
+    button.classList.toggle('active');
+}
+
+// Sistema de notificaciones
+function showNotification(message, type = 'success', duration = 4000) {
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    
+    const iconClass = {
+        'success': 'fas fa-check-circle',
+        'warning': 'fas fa-exclamation-triangle',
+        'error': 'fas fa-times-circle',
+        'info': 'fas fa-info-circle'
+    }[type] || 'fas fa-check-circle';
+    
+    notification.innerHTML = `
+        <i class="${iconClass} notification-icon"></i>
+        <span class="notification-text">${message}</span>
+        <button class="notification-close" onclick="hideNotification(this.parentElement)">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Mostrar notificación
+    setTimeout(() => notification.classList.add('show'), 100);
+    
+    // Auto-ocultar después del tiempo especificado
+    setTimeout(() => hideNotification(notification), duration);
+}
+
+function hideNotification(notification) {
+    notification.classList.remove('show');
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.parentElement.removeChild(notification);
+        }
+    }, 400);
+}
+
+// Indicador de descarga
+function showDownloadIndicator(format) {
+    const indicator = document.createElement('div');
+    indicator.className = 'download-indicator';
+    indicator.innerHTML = `
+        <div class="spinner"></div>
+        <span>Preparando ${format}...</span>
+    `;
+    
+    document.body.appendChild(indicator);
+    
+    setTimeout(() => indicator.classList.add('show'), 100);
+    
+    // Simular tiempo de descarga
+    setTimeout(() => {
+        indicator.innerHTML = `
+            <i class="fas fa-check"></i>
+            <span>${format} listo</span>
+        `;
+        
+        setTimeout(() => {
+            indicator.classList.remove('show');
+            setTimeout(() => {
+                if (indicator.parentElement) {
+                    indicator.parentElement.removeChild(indicator);
+                }
+            }, 400);
+        }, 2000);
+    }, 1500);
+}
+
+// Función para mostrar notificación de descarga
+function showDownloadNotification(format) {
+    showDownloadIndicator(format);
+    showNotification(`Descargando reporte en formato ${format}...`, 'info', 3000);
+    
+    // Cerrar menú desplegable
+    document.querySelectorAll('.export-menu.show').forEach(menu => {
+        menu.classList.remove('show');
+        menu.previousElementSibling.classList.remove('active');
+    });
+}
+
+// Mejorar la función de generar reporte rápido con feedback
+function generarReporteRapido(tipo) {
+    // Mostrar notificación de inicio
+    showNotification('Generando reporte...', 'info', 2000);
+    
+    // Mostrar indicador de carga
+    showDownloadIndicator('PDF');
+    
+    // Crear un formulario temporal para enviar los datos
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = '{% url "analisis_reportes:generar_reporte" %}';
+    
+    // Agregar CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    form.innerHTML = `
+        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+        <input type="hidden" name="tipo_reporte" value="${tipo}">
+        <input type="hidden" name="titulo" value="Reporte ${tipo} - ${new Date().toLocaleDateString()}">
+        <input type="hidden" name="fecha_inicio" value="{{ fecha_inicio }}">
+        <input type="hidden" name="fecha_fin" value="{{ fecha_fin }}">
+        <input type="hidden" name="formato_export" value="pdf">
+    `;
+    
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+}
+
+// Mostrar/ocultar campos de fecha personalizada
+document.getElementById('periodoSelect').addEventListener('change', function() {
+    const personalizado = this.value === 'personalizado';
+    document.getElementById('fechaPersonalizadaGroup').style.display = personalizado ? 'flex' : 'none';
+    document.getElementById('fechaPersonalizadaGroup2').style.display = personalizado ? 'flex' : 'none';
+});
+
+// Cerrar modal y menús desplegables al hacer clic fuera
+window.addEventListener('click', function(event) {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // Cerrar menús desplegables si se hace clic fuera
+    if (!event.target.closest('.export-dropdown')) {
+        document.querySelectorAll('.export-menu.show').forEach(menu => {
+            menu.classList.remove('show');
+            menu.previousElementSibling.classList.remove('active');
+        });
+    }
+});
+
+// Actualizar gráficos dinámicamente
+function actualizarGraficos() {
+    // Esta función se puede usar para actualizar los gráficos via AJAX
+    // sin recargar la página completa
+}
+</script>
 {% endblock %}

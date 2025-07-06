@@ -1,0 +1,276 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+
+{% block title %}Pruebas de Notificaciones{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">🧪 Sistema de Pruebas de Notificaciones</h3>
+                    <p class="mb-0">Utiliza estas opciones para probar el sistema de notificaciones por email</p>
+                </div>
+                
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <!-- Información del Usuario -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">👤 Información del Usuario</h5>
+                                    <p><strong>Nombre:</strong> {{ user.nombres }} {{ user.apellidos }}</p>
+                                    <p><strong>Email:</strong> {{ user.correo }}</p>
+                                    <p><strong>Metas de Ahorro:</strong> {{ metas.count }}</p>
+                                    <p><strong>Cuentas:</strong> {{ cuentas.count }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <h5 class="card-title">📧 Estado de Notificaciones</h5>
+                                    <p>Las notificaciones se enviarán al email: <strong>{{ user.correo }}</strong></p>
+                                    <p>Revisa tu bandeja de entrada y spam después de cada prueba.</p>
+                                    <a href="{% url 'alertas_notificaciones:configuraciones' %}" class="btn btn-light btn-sm">
+                                        ⚙️ Configurar Notificaciones
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pruebas de Aporte a Meta -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">💰 Prueba: Aporte a Meta</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Simula un aporte a una meta de ahorro existente.</p>
+                                    
+                                    {% if metas %}
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="test_type" value="aporte_meta">
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">Meta de Ahorro:</label>
+                                                <select name="meta_id" class="form-select" required>
+                                                    <option value="">Seleccionar meta...</option>
+                                                    {% for meta in metas %}
+                                                        <option value="{{ meta.id }}">
+                                                            {{ meta.nombre }} - ${{ meta.monto_objetivo|floatformat:2 }}
+                                                            ({{ meta.porcentaje_progreso|floatformat:1 }}% completado)
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">Monto del Aporte:</label>
+                                                <input type="number" name="monto" class="form-control" 
+                                                       value="100" min="1" step="0.01" required>
+                                            </div>
+                                            
+                                            <button type="submit" class="btn btn-success">
+                                                💰 Simular Aporte
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <div class="alert alert-warning">
+                                            No tienes metas de ahorro creadas. 
+                                            <a href="{% url 'gestion_financiera_basica:test_notifications' %}" class="btn btn-sm btn-warning">
+                                                Crear Meta de Prueba
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Pruebas de Movimientos -->
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">💵 Prueba: Movimientos</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if cuentas %}
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="test_type" value="movimiento_ingreso">
+                                                    
+                                                    <h6 class="text-success">💵 Ingreso</h6>
+                                                    
+                                                    <div class="mb-2">
+                                                        <select name="cuenta_id" class="form-select form-select-sm" required>
+                                                            <option value="">Seleccionar cuenta...</option>
+                                                            {% for cuenta in cuentas %}
+                                                                <option value="{{ cuenta.id }}">
+                                                                    {{ cuenta.nombre }} (${{ cuenta.saldo_cuenta|floatformat:2 }})
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="mb-2">
+                                                        <input type="number" name="monto" class="form-control form-control-sm" 
+                                                               value="500" min="1" step="0.01" placeholder="Monto" required>
+                                                    </div>
+                                                    
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        💵 Simular Ingreso
+                                                    </button>
+                                                </form>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="test_type" value="movimiento_egreso">
+                                                    
+                                                    <h6 class="text-danger">💸 Gasto</h6>
+                                                    
+                                                    <div class="mb-2">
+                                                        <select name="cuenta_id" class="form-select form-select-sm" required>
+                                                            <option value="">Seleccionar cuenta...</option>
+                                                            {% for cuenta in cuentas %}
+                                                                <option value="{{ cuenta.id }}">
+                                                                    {{ cuenta.nombre }} (${{ cuenta.saldo_cuenta|floatformat:2 }})
+                                                                </option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <div class="mb-2">
+                                                        <input type="number" name="monto" class="form-control form-control-sm" 
+                                                               value="200" min="1" step="0.01" placeholder="Monto" required>
+                                                    </div>
+                                                    
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        💸 Simular Gasto
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="alert alert-warning">
+                                            No tienes cuentas creadas.
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pruebas de Alertas -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0">⚠️ Prueba: Saldo Bajo</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Simula una alerta de saldo bajo estableciendo el saldo en $25.</p>
+                                    
+                                    {% if cuentas %}
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="test_type" value="saldo_bajo">
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">Cuenta:</label>
+                                                <select name="cuenta_id" class="form-select" required>
+                                                    <option value="">Seleccionar cuenta...</option>
+                                                    {% for cuenta in cuentas %}
+                                                        <option value="{{ cuenta.id }}">
+                                                            {{ cuenta.nombre }} - Saldo actual: ${{ cuenta.saldo_cuenta|floatformat:2 }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            
+                                            <button type="submit" class="btn btn-warning">
+                                                ⚠️ Simular Saldo Bajo
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <div class="alert alert-warning">
+                                            No tienes cuentas creadas.
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card border-info">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">🎯 Prueba: Nueva Meta</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p>Simula la creación de una nueva meta de ahorro.</p>
+                                    
+                                    {% if cuentas %}
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="test_type" value="nueva_meta">
+                                            
+                                            <div class="mb-3">
+                                                <label class="form-label">Cuenta para la Meta:</label>
+                                                <select name="cuenta_id" class="form-select" required>
+                                                    <option value="">Seleccionar cuenta...</option>
+                                                    {% for cuenta in cuentas %}
+                                                        <option value="{{ cuenta.id }}">
+                                                            {{ cuenta.nombre }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            
+                                            <button type="submit" class="btn btn-info">
+                                                🎯 Crear Meta de Prueba
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <div class="alert alert-warning">
+                                            No tienes cuentas creadas.
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enlaces de Navegación -->
+                    <div class="text-center">
+                        <a href="{% url 'alertas_notificaciones:historial' %}" class="btn btn-outline-primary">
+                            📋 Ver Historial de Notificaciones
+                        </a>
+                        <a href="{% url 'alertas_notificaciones:configuraciones' %}" class="btn btn-outline-secondary">
+                            ⚙️ Configurar Notificaciones
+                        </a>
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-dark">
+                            🏠 Volver al Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

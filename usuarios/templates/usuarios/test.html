@@ -1,0 +1,31 @@
+{% extends 'core/base_template.html' %}
+
+{% block title %}Test - FinGest{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-md p-6">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">🧪 Página de Prueba</h2>
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                <p class="text-green-800">
+                    <strong>✅ Estado:</strong> {{ message }}
+                </p>
+                {% if user %}
+                <p class="text-green-700 mt-2">
+                    Usuario logueado: {{ user.nombres }} {{ user.apellidos_completos }}
+                </p>
+                {% else %}
+                <p class="text-gray-600 mt-2">
+                    No hay usuario logueado
+                </p>
+                {% endif %}
+            </div>
+            <a href="{% url 'core:dashboard' %}" 
+               class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                Ir al Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

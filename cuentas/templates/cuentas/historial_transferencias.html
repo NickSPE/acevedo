@@ -1,0 +1,400 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+
+{% block title %}Historial de Transferencias - FinGest{% endblock %}
+
+{% block extra_css %}
+<style>
+    .transfer-card {
+        border-left: 4px solid #0d6efd;
+        transition: all 0.3s ease;
+    }
+    .transfer-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .subcuenta-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    .monto-positivo {
+        color: #059669;
+        font-weight: 600;
+    }
+    .monto-negativo {
+        color: #DC2626;
+        font-weight: 600;
+    }
+    .filter-card {
+        background: linear-gradient(135deg, #667eea15, #764ba215);
+    }
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 text-dark mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        Historial de Transferencias
+                    </h1>
+                    <p class="text-muted mb-0">Registro completo de movimientos entre subcuentas</p>
+                </div>
+                <div>
+                    <a href="{% url 'cuentas:transferir_subcuentas' %}" class="btn btn-success me-2">
+                        <i class="fas fa-plus me-2"></i>Nueva Transferencia
+                    </a>
+                    <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stats-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-exchange-alt fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ total_transferencias }}</h3>
+                    <p class="mb-0">Total Transferencias</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                    <h3 class="mb-0">${{ monto_total|floatformat:2 }}</h3>
+                    <p class="mb-0">Monto Total</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar fa-2x mb-2"></i>
+                    <h3 class="mb-0">{{ transferencias_mes }}</h3>
+                    <p class="mb-0">Este Mes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                    <h3 class="mb-0">${{ promedio_monto|floatformat:2 }}</h3>
+                    <p class="mb-0">Promedio</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card filter-card">
+                <div class="card-body">
+                    <form method="get" class="row g-3" id="filtrosForm">
+                        <div class="col-md-3">
+                            <label for="fecha_desde" class="form-label">Desde</label>
+                            <input type="date" class="form-control" name="fecha_desde" id="fecha_desde" 
+                                   value="{{ request.GET.fecha_desde }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="fecha_hasta" class="form-label">Hasta</label>
+                            <input type="date" class="form-control" name="fecha_hasta" id="fecha_hasta" 
+                                   value="{{ request.GET.fecha_hasta }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="subcuenta" class="form-label">Subcuenta</label>
+                            <select class="form-select" name="subcuenta" id="subcuenta">
+                                <option value="">Todas las subcuentas</option>
+                                {% for subcuenta in todas_subcuentas %}
+                                <option value="{{ subcuenta.id }}" 
+                                        {% if request.GET.subcuenta == subcuenta.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ subcuenta.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="monto_min" class="form-label">Monto mínimo</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" name="monto_min" id="monto_min" 
+                                       step="0.01" value="{{ request.GET.monto_min }}" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter me-2"></i>Filtrar
+                                </button>
+                                <a href="{% url 'cuentas:historial_transferencias' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-times me-2"></i>Limpiar
+                                </a>
+                                <button type="button" class="btn btn-outline-info" id="btnExportar">
+                                    <i class="fas fa-download me-2"></i>Exportar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de transferencias -->
+    <div class="row">
+        <div class="col-12">
+            {% if transferencias %}
+                <!-- Vista de tarjetas en móvil -->
+                <div class="d-md-none">
+                    {% for transferencia in transferencias %}
+                    <div class="card transfer-card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1">{{ transferencia.fecha_transferencia|date:'d/m/Y H:i' }}</h6>
+                                    <p class="mb-0 text-muted small">{{ transferencia.descripcion|default:'Sin descripción' }}</p>
+                                </div>
+                                <h5 class="mb-0 monto-positivo">${{ transferencia.monto|floatformat:2 }}</h5>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="subcuenta-badge me-2" style="background-color: #dc354515; color: #dc3545;">
+                                        {{ transferencia.subcuenta_origen.nombre }}
+                                    </span>
+                                    <i class="fas fa-arrow-right text-muted"></i>
+                                    <span class="subcuenta-badge ms-2" style="background-color: #05966915; color: #059669;">
+                                        {{ transferencia.subcuenta_destino.nombre }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Vista de tabla en desktop -->
+                <div class="d-none d-md-block">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <a href="?{% if request.GET.orden == 'fecha' %}-{% endif %}fecha{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" 
+                                                   class="text-decoration-none">
+                                                    Fecha
+                                                    {% if request.GET.orden == 'fecha' %}
+                                                        <i class="fas fa-sort-up"></i>
+                                                    {% elif request.GET.orden == '-fecha' %}
+                                                        <i class="fas fa-sort-down"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-sort"></i>
+                                                    {% endif %}
+                                                </a>
+                                            </th>
+                                            <th>Desde</th>
+                                            <th>Hacia</th>
+                                            <th>
+                                                <a href="?{% if request.GET.orden == 'monto' %}-{% endif %}monto{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" 
+                                                   class="text-decoration-none">
+                                                    Monto
+                                                    {% if request.GET.orden == 'monto' %}
+                                                        <i class="fas fa-sort-up"></i>
+                                                    {% elif request.GET.orden == '-monto' %}
+                                                        <i class="fas fa-sort-down"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-sort"></i>
+                                                    {% endif %}
+                                                </a>
+                                            </th>
+                                            <th>Descripción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for transferencia in transferencias %}
+                                        <tr>
+                                            <td>
+                                                <div>
+                                                    <strong>{{ transferencia.fecha_transferencia|date:'d/m/Y' }}</strong>
+                                                    <br>
+                                                    <small class="text-muted">{{ transferencia.fecha_transferencia|date:'H:i' }}</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="subcuenta-badge" style="background-color: #dc354515; color: #dc3545;">
+                                                    <i class="fas fa-minus-circle me-1"></i>
+                                                    {{ transferencia.subcuenta_origen.nombre }}
+                                                </span>
+                                                <br>
+                                                <small class="text-muted">{{ transferencia.subcuenta_origen.get_tipo_display }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="subcuenta-badge" style="background-color: #05966915; color: #059669;">
+                                                    <i class="fas fa-plus-circle me-1"></i>
+                                                    {{ transferencia.subcuenta_destino.nombre }}
+                                                </span>
+                                                <br>
+                                                <small class="text-muted">{{ transferencia.subcuenta_destino.get_tipo_display }}</small>
+                                            </td>
+                                            <td>
+                                                <h5 class="mb-0 monto-positivo">${{ transferencia.monto|floatformat:2 }}</h5>
+                                            </td>
+                                            <td>
+                                                <div>{{ transferencia.descripcion|default:'Sin descripción' }}</div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paginación -->
+                {% if is_paginated %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <nav aria-label="Navegación de páginas">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">
+                                            <i class="fas fa-angle-double-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">
+                                            <i class="fas fa-angle-left"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                <li class="page-item active">
+                                    <span class="page-link">
+                                        {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                                    </span>
+                                </li>
+                                
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">
+                                            <i class="fas fa-angle-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">
+                                            <i class="fas fa-angle-double-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                {% endif %}
+
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay transferencias registradas</h5>
+                        <p class="text-muted">
+                            {% if request.GET %}
+                                No se encontraron transferencias con los filtros aplicados.
+                            {% else %}
+                                Aún no has realizado transferencias entre subcuentas.
+                            {% endif %}
+                        </p>
+                        <div class="mt-3">
+                            {% if request.GET %}
+                                <a href="{% url 'cuentas:historial_transferencias' %}" class="btn btn-outline-primary me-2">
+                                    <i class="fas fa-times me-2"></i>Limpiar Filtros
+                                </a>
+                            {% endif %}
+                            <a href="{% url 'cuentas:transferir_subcuentas' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Realizar Primera Transferencia
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Función para exportar datos
+    document.getElementById('btnExportar').addEventListener('click', function() {
+        // Crear tabla CSV
+        let csv = 'Fecha,Hora,Desde,Hacia,Monto,Descripción\n';
+        
+        {% for transferencia in transferencias %}
+        csv += '"{{ transferencia.fecha_transferencia|date:"d/m/Y" }}","{{ transferencia.fecha_transferencia|date:"H:i" }}","{{ transferencia.subcuenta_origen.nombre }}","{{ transferencia.subcuenta_destino.nombre }}","{{ transferencia.monto }}","{{ transferencia.descripcion|default:"Sin descripción" }}"\n';
+        {% endfor %}
+        
+        // Crear y descargar archivo
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'historial_transferencias_' + new Date().toISOString().split('T')[0] + '.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    
+    // Auto-submit de filtros cuando cambian los valores
+    const filtros = ['fecha_desde', 'fecha_hasta', 'subcuenta', 'monto_min'];
+    filtros.forEach(filtroId => {
+        const elemento = document.getElementById(filtroId);
+        if (elemento) {
+            elemento.addEventListener('change', function() {
+                // Pequeño delay para mejorar UX
+                setTimeout(() => {
+                    document.getElementById('filtrosForm').submit();
+                }, 300);
+            });
+        }
+    });
+    
+    // Configurar fechas por defecto si están vacías
+    const fechaDesde = document.getElementById('fecha_desde');
+    const fechaHasta = document.getElementById('fecha_hasta');
+    
+    if (!fechaDesde.value) {
+        const hace30Dias = new Date();
+        hace30Dias.setDate(hace30Dias.getDate() - 30);
+        fechaDesde.value = hace30Dias.toISOString().split('T')[0];
+    }
+    
+    if (!fechaHasta.value) {
+        const hoy = new Date();
+        fechaHasta.value = hoy.toISOString().split('T')[0];
+    }
+});
+</script>
+{% endblock %}

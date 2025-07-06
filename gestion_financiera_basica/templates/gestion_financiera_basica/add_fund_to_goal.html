@@ -1,0 +1,147 @@
+{% extends 'core/base_template.html' %}
+
+{% block title %}Aportar a Meta de Ahorro{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">💰 Aportar a Meta de Ahorro</h1>
+            <p class="text-gray-600">Agrega fondos a tu meta: <span class="font-semibold text-blue-600">{{ meta.nombre }}</span></p>
+        </div>
+
+        <!-- Meta Info Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">{{ meta.nombre }}</h3>
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    {{ meta.porcentaje_progreso|floatformat:1 }}%
+                </span>
+            </div>
+            
+            <div class="mb-4">
+                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Progreso</span>
+                    <span>${{ meta.monto_ahorrado|floatformat:2 }} / ${{ meta.monto_objetivo|floatformat:2 }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-300" 
+                         style="width: {{ meta.porcentaje_progreso }}%"></div>
+                </div>
+            </div>
+            
+            <div class="text-sm text-gray-600">
+                <p><strong>Meta:</strong> ${{ meta.monto_objetivo|floatformat:2 }}</p>
+                <p><strong>Ahorrado:</strong> ${{ meta.monto_ahorrado|floatformat:2 }}</p>
+                <p><strong>Falta:</strong> ${{ meta.falta_por_ahorrar|floatformat:2 }}</p>
+                <p><strong>Fecha límite:</strong> {{ meta.fecha_limite|date:"d/m/Y" }}</p>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Non-field errors -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                {% for error in form.non_field_errors %}
+                                    <p class="text-sm text-red-800">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Monto Field -->
+                <div>
+                    {% if form.monto.errors %}
+                        <div class="mb-2">
+                            {% for error in form.monto.errors %}
+                                <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                    <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <label for="{{ form.monto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.monto.label }}
+                    </label>
+                    {{ form.monto }}
+                    {% if form.monto.help_text %}
+                        <p class="mt-2 text-sm text-gray-500">{{ form.monto.help_text }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Descripción Field -->
+                <div>
+                    {% if form.descripcion.errors %}
+                        <div class="mb-2">
+                            {% for error in form.descripcion.errors %}
+                                <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                    <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.descripcion.label }}
+                    </label>
+                    {{ form.descripcion }}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg font-medium hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                        💰 Agregar Aporte
+                    </button>
+                    
+                    <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+                       class="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transform hover:scale-105 transition-all duration-200 text-center">
+                        ← Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">💡 Consejos para Ahorrar</h3>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div class="flex items-start space-x-3">
+                    <span class="text-green-500 text-xl">🎯</span>
+                    <div>
+                        <h4 class="font-medium text-gray-800">Aportes Regulares</h4>
+                        <p class="text-sm text-gray-600">Realiza aportes pequeños y constantes en lugar de grandes aportes esporádicos.</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <span class="text-blue-500 text-xl">📅</span>
+                    <div>
+                        <h4 class="font-medium text-gray-800">Automatiza</h4>
+                        <p class="text-sm text-gray-600">Establece recordatorios para hacer aportes según tu frecuencia planificada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

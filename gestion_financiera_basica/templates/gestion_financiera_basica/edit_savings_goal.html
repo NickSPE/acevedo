@@ -1,0 +1,229 @@
+{% extends 'core/base_template.html' %}
+
+{% block title %}Editar Meta de Ahorro{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">✏️ Editar Meta de Ahorro</h1>
+            <p class="text-gray-600">Modifica los detalles de tu meta de ahorro</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Non-field errors -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                {% for error in form.non_field_errors %}
+                                    <p class="text-sm text-red-800">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Form Fields in Grid -->
+                <div class="grid gap-6 md:grid-cols-2">
+                    <!-- Nombre Field -->
+                    <div class="md:col-span-2">
+                        {% if form.nombre.errors %}
+                            <div class="mb-2">
+                                {% for error in form.nombre.errors %}
+                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.nombre.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.nombre }}
+                    </div>
+
+                    <!-- Monto Objetivo Field -->
+                    <div>
+                        {% if form.monto_objetivo.errors %}
+                            <div class="mb-2">
+                                {% for error in form.monto_objetivo.errors %}
+                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <label for="{{ form.monto_objetivo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.monto_objetivo.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.monto_objetivo }}
+                        {% if form.monto_objetivo.help_text %}
+                            <p class="mt-2 text-sm text-gray-500">{{ form.monto_objetivo.help_text }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Frecuencia Aporte Field -->
+                    <div>
+                        {% if form.frecuencia_aporte.errors %}
+                            <div class="mb-2">
+                                {% for error in form.frecuencia_aporte.errors %}
+                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <label for="{{ form.frecuencia_aporte.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.frecuencia_aporte.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.frecuencia_aporte }}
+                        {% if form.frecuencia_aporte.help_text %}
+                            <p class="mt-2 text-sm text-gray-500">{{ form.frecuencia_aporte.help_text }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Fecha Inicio Field -->
+                    <div>
+                        {% if form.fecha_inicio.errors %}
+                            <div class="mb-2">
+                                {% for error in form.fecha_inicio.errors %}
+                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <label for="{{ form.fecha_inicio.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.fecha_inicio.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.fecha_inicio }}
+                    </div>
+
+                    <!-- Fecha Límite Field -->
+                    <div>
+                        {% if form.fecha_limite.errors %}
+                            <div class="mb-2">
+                                {% for error in form.fecha_limite.errors %}
+                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <label for="{{ form.fecha_limite.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.fecha_limite.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.fecha_limite }}
+                        {% if form.fecha_limite.help_text %}
+                            <p class="mt-2 text-sm text-gray-500">{{ form.fecha_limite.help_text }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Cuenta Field -->
+                    <div class="md:col-span-2">
+                        {% if form.id_cuenta.errors %}
+                            <div class="mb-2">
+                                {% for error in form.id_cuenta.errors %}
+                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <label for="{{ form.id_cuenta.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.id_cuenta.label }} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.id_cuenta }}
+                    </div>
+
+                    <!-- Descripción Field -->
+                    <div class="md:col-span-2">
+                        {% if form.descripcion.errors %}
+                            <div class="mb-2">
+                                {% for error in form.descripcion.errors %}
+                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ form.descripcion.label }}
+                        </label>
+                        {{ form.descripcion }}
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                        ✏️ Guardar Cambios
+                    </button>
+                    
+                    <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+                       class="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transform hover:scale-105 transition-all duration-200 text-center">
+                        ← Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Current Progress Info -->
+        <div class="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+            <div class="flex items-start space-x-3">
+                <span class="text-yellow-500 text-xl">⚠️</span>
+                <div>
+                    <h4 class="font-medium text-yellow-800">Información Importante</h4>
+                    <p class="text-sm text-yellow-700 mt-1">
+                        Los aportes ya realizados a esta meta no se verán afectados por los cambios. 
+                        Solo se modificarán los datos generales de la meta (nombre, objetivo, fechas, etc.).
+                    </p>
+                    <p class="text-sm text-yellow-700 mt-2">
+                        <strong>Progreso actual:</strong> ${{ meta.monto_ahorrado|floatformat:2 }} de ${{ meta.monto_objetivo|floatformat:2 }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

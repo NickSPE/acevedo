@@ -1,51 +1,415 @@
 {% extends "core/base_template.html" %}
-{% block title %}Metas de Ahorro | BuilderQuantum{% endblock %}
+{% load currency_filters %}
+{% block title %}Metas de Ahorro | FinGest{% endblock %}
 
 {% block content %}
-<div class="flex justify-between items-center mb-6">
-  <div>
-    <h2 class="text-2xl font-bold mb-1">Savings Goals</h2>
-    <p class="text-sm text-gray-500">Track and manage your financial targets</p>
-  </div>
-  <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">+ New Savings Goal</button>
-</div>
-
-<!-- Metas -->
-<div class="grid md:grid-cols-3 gap-6 mb-8">
-  {% for goal in goals %}
-    <div class="bg-white p-4 rounded shadow">
-      <h3 class="text-lg font-semibold">{{ goal.0 }}</h3>
-      <p class="text-sm text-gray-500">{{ goal.4 }}</p>
-      <p class="text-xs text-gray-400 mb-1">{{ goal.1 }}</p>
-      <div class="w-full bg-gray-200 h-2 rounded mb-2">
-        <div class="bg-blue-600 h-2 rounded" style="width: {{ goal.2 }}"></div>
-      </div>
-      <p class="text-xs text-gray-400 mb-3">Target Date: {{ goal.3 }}</p>
-      <div class="flex gap-2">
-        <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm">Add Funds</button>
-        <button class="border px-3 py-1 rounded text-sm">Edit</button>
-      </div>
-    </div>
-  {% endfor %}
-
-  <div class="flex items-center justify-center flex-col border-dashed border-2 rounded text-gray-400 h-48 cursor-pointer">
-    <span class="text-2xl">📈</span>
-    <p class="font-semibold">Add New Goal</p>
-    <p class="text-xs text-gray-500">Set a new savings target</p>
-  </div>
-</div>
-
-<!-- Tips -->
-<h3 class="text-lg font-semibold mb-3">Savings Tips</h3>
-<div class="grid md:grid-cols-2 gap-4">
-  {% for tip in tips %}
-    <div class="bg-white p-4 rounded shadow flex items-start gap-4">
-      <div class="text-2xl">{{ tip.0 }}</div>
-      <div>
-        <p class="font-semibold">{{ tip.1 }}</p>
-        <p class="text-sm text-gray-500">{{ tip.2 }}</p>
+<!-- Header con gradiente y botón de acción -->
+<div class="max-w-7xl mx-auto">
+  <div class="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 dark:from-green-700 dark:via-emerald-700 dark:to-teal-700 rounded-3xl shadow-2xl p-6 mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="text-white">
+        <h1 class="text-3xl font-bold mb-2 flex items-center gap-3">
+          <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+              </svg>
+            </div>
+            Metas de Ahorro
+          </h1>
+          <p class="text-green-100 text-lg">Alcanza tus objetivos financieros con constancia y planificación</p>
+        </div>
+        <a href="{% url 'gestion_financiera_basica:agregar_meta_ahorro' %}" 
+           class="flex items-center gap-2 bg-white text-green-600 px-6 py-3 rounded-2xl font-bold hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>
+          Nueva Meta
+        </a>
       </div>
     </div>
-  {% endfor %}
-</div>
+
+    <!-- Metas de Ahorro -->
+    {% if goals %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {% for goal in goals %}
+          <div class="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:scale-105 border border-gray-100">
+            <!-- Header de la meta -->
+            <div class="bg-gradient-to-r from-green-400 to-emerald-500 p-5">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xl font-bold text-white truncate">{{ goal.nombre }}</h3>
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="text-white/90 text-sm">
+                <p class="font-medium">{{ goal.progreso }}</p>
+                <p class="text-white/70">{{ goal.porcentaje }} completado</p>
+              </div>
+            </div>
+            
+            <!-- Cuerpo de la meta -->
+            <div class="p-5">
+              <!-- Barra de progreso moderna -->
+              <div class="mb-4">
+                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                  <div class="bg-gradient-to-r from-green-400 to-emerald-500 h-full rounded-full transition-all duration-500 shadow-sm"
+                       style="width: {{ goal.porcentaje_num }}%">
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Descripción -->
+              {% if goal.descripcion %}
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{{ goal.descripcion }}</p>
+              {% endif %}
+              
+              <!-- Fecha límite -->
+              <div class="flex items-center gap-2 text-gray-500 text-sm mb-4">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span>Meta: {{ goal.fecha_limite }}</span>
+              </div>
+              
+              <!-- Botones de acción -->
+              <div class="flex gap-2">
+                <a href="{% url 'gestion_financiera_basica:aportar_meta_ahorro' goal.id %}" 
+                   class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-xl font-medium hover:from-green-600 hover:to-emerald-600 transition-all duration-200 transform hover:scale-105 shadow-md text-center">
+                  <span class="flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    Aportar
+                  </span>
+                </a>
+                <a href="{% url 'gestion_financiera_basica:editar_meta_ahorro' goal.id %}" 
+                   class="px-4 py-2 border border-gray-300 text-gray-600 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 transform hover:scale-105 flex items-center justify-center">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        
+        <!-- Tarjeta para agregar nueva meta -->
+        <div class="bg-white rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:scale-105 border-2 border-dashed border-gray-200 hover:border-green-300">
+          <a href="{% url 'gestion_financiera_basica:agregar_meta_ahorro' %}" class="flex items-center justify-center flex-col h-full p-8 text-gray-400 hover:text-green-500 transition-colors duration-200 min-h-[300px]">
+            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+              </svg>
+            </div>
+            <p class="font-bold text-lg mb-2">Agregar Nueva Meta</p>
+            <p class="text-sm text-center">Define un nuevo objetivo de ahorro y comienza a trabajar hacia él</p>
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <!-- Estado vacío cuando no hay metas -->
+      <div class="bg-white rounded-3xl shadow-xl p-12 text-center mb-8">
+        <div class="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+          <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-3">¡Comienza a Ahorrar!</h3>
+        <p class="text-gray-600 mb-6 max-w-md mx-auto">
+          Aún no tienes metas de ahorro definidas. Crear objetivos específicos te ayudará a mantener la motivación y alcanzar tus sueños financieros.
+        </p>
+        <a href="{% url 'gestion_financiera_basica:agregar_meta_ahorro' %}" 
+           class="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-2xl font-bold hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>
+          Crear Mi Primera Meta
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Dashboard de Progreso General -->
+    {% if goals %}
+      <div class="bg-white rounded-3xl shadow-xl p-8 mb-8">
+        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          Mi Progreso General
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border border-green-100">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium text-green-600">Total Ahorrado</h4>
+              <span class="text-2xl">💰</span>
+            </div>
+            <p class="text-2xl font-bold text-green-700">{% format_money estadisticas.total_ahorrado user %}</p>
+            <p class="text-xs text-green-600">de {% format_money estadisticas.total_objetivo user %}</p>
+          </div>
+          
+          <div class="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border border-blue-100">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium text-blue-600">Progreso General</h4>
+              <span class="text-2xl">📊</span>
+            </div>
+            <p class="text-2xl font-bold text-blue-700">{{ estadisticas.porcentaje_total|floatformat:1 }}%</p>
+            <p class="text-xs text-blue-600">promedio de todas las metas</p>
+          </div>
+          
+          <div class="bg-gradient-to-br from-purple-50 to-violet-50 p-6 rounded-2xl border border-purple-100">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium text-purple-600">Metas Activas</h4>
+              <span class="text-2xl">🎯</span>
+            </div>
+            <p class="text-2xl font-bold text-purple-700">{{ estadisticas.total_metas }}</p>
+            <p class="text-xs text-purple-600">{{ estadisticas.metas_completadas }} completadas</p>
+          </div>
+          
+          <div class="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-2xl border border-yellow-100">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium text-yellow-600">Falta Ahorrar</h4>
+              <span class="text-2xl">🚀</span>
+            </div>
+            <p class="text-2xl font-bold text-yellow-700">{% format_money estadisticas.falta_ahorrar user %}</p>
+            <p class="text-xs text-yellow-600">para completar todas las metas</p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Consejos Dinámicos Personalizados -->
+    {% if tips_dinamicos %}
+      <div class="bg-white rounded-3xl shadow-xl p-8 mb-8">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-2xl font-bold text-gray-800">Consejos Personalizados</h3>
+            <p class="text-gray-600">Recomendaciones basadas en tu progreso actual</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {% for consejo in tips_dinamicos %}
+            <div class="bg-gradient-to-r {{ consejo.color }} p-1 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+              <div class="bg-white p-6 rounded-2xl h-full">
+                <div class="flex items-start gap-4">
+                  <div class="text-4xl">{{ consejo.emoji }}</div>
+                  <div class="flex-1">
+                    <h4 class="font-bold text-gray-800 mb-2 text-lg">{{ consejo.titulo }}</h4>
+                    <p class="text-gray-600 text-sm mb-3 leading-relaxed">{{ consejo.mensaje }}</p>
+                    <div class="bg-gray-50 p-3 rounded-lg border-l-4 border-blue-400">
+                      <p class="text-xs font-medium text-gray-700">💡 Acción recomendada:</p>
+                      <p class="text-sm text-gray-600">{{ consejo.accion }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Consejos de Ahorro Base -->
+    <div class="bg-white rounded-3xl shadow-xl p-8">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-2xl font-bold text-gray-800">Estrategias Comprobadas</h3>
+          <p class="text-gray-600">Técnicas fundamentales para ahorrar exitosamente</p>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for tip in tips %}
+          <div class="bg-gradient-to-r from-gray-50 to-blue-50 p-6 rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer" onclick="expandirTip(this)">
+            <div class="flex items-start gap-4">
+              <div class="text-3xl">{{ tip.0 }}</div>
+              <div class="flex-1">
+                <h4 class="font-bold text-gray-800 mb-2">{{ tip.1 }}</h4>
+                <p class="text-gray-600 text-sm leading-relaxed">{{ tip.2 }}</p>
+                <div class="hidden mt-3 p-3 bg-white rounded-lg border border-blue-200" data-expanded-content>
+                  <p class="text-xs text-blue-600 font-medium">💡 Tip adicional: <span class="tip-extra"></span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+<style>
+/* Animaciones personalizadas */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Línea limitada para texto */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Efectos hover mejorados */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Agregar animaciones escalonadas a las tarjetas
+  const cards = document.querySelectorAll('.grid > div');
+  cards.forEach((card, index) => {
+    card.style.animationDelay = `${index * 0.1}s`;
+    card.classList.add('animate-fade-in-up');
+  });
+  
+  // Animación de las barras de progreso
+  const progressBars = document.querySelectorAll('[style*="width:"]');
+  progressBars.forEach(bar => {
+    const targetWidth = bar.style.width;
+    bar.style.width = '0%';
+    
+    setTimeout(() => {
+      bar.style.width = targetWidth;
+    }, 500);
+  });
+  
+  // Efectos hover para las tarjetas
+  const goalCards = document.querySelectorAll('.bg-white.rounded-3xl');
+  goalCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.classList.add('hover-lift');
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.classList.remove('hover-lift');
+    });
+  });
+});
+
+// Expandir tips con contenido adicional
+function expandirTip(elemento) {
+  const contenidoExpandido = elemento.querySelector('[data-expanded-content]');
+  const esVisible = !contenidoExpandido.classList.contains('hidden');
+  
+  // Consejos adicionales para cada tip
+  const consejosAdicionales = {
+    'Regla 50/30/20': 'Ajusta estos porcentajes según tu situación. Si tienes deudas, considera destinar más del 20% a ahorros y pagos.',
+    'Págrate Primero': 'Configura transferencias automáticas el día que recibes tu salario. Así ahorras antes de tener la tentación de gastar.',
+    'Metas Específicas': 'En lugar de "ahorrar dinero", di "ahorrar $5,000 para emergencias en 10 meses". La especificidad aumenta el éxito.',
+    'Revisa Regularmente': 'Programa una cita mensual contigo mismo para revisar tus finanzas. Celebra los logros y ajusta lo que no funciona.'
+  };
+  
+  const titulo = elemento.querySelector('h4').textContent;
+  const consejoExtra = consejosAdicionales[titulo] || 'Mantén la consistencia y celebra cada pequeño logro en tu camino al ahorro.';
+  
+  elemento.querySelector('.tip-extra').textContent = consejoExtra;
+  
+  if (esVisible) {
+    contenidoExpandido.classList.add('hidden');
+    elemento.classList.remove('ring-2', 'ring-blue-300');
+  } else {
+    contenidoExpandido.classList.remove('hidden');
+    elemento.classList.add('ring-2', 'ring-blue-300');
+    
+    // Animación de entrada
+    contenidoExpandido.style.opacity = '0';
+    contenidoExpandido.style.transform = 'translateY(-10px)';
+    
+    setTimeout(() => {
+      contenidoExpandido.style.transition = 'all 0.3s ease';
+      contenidoExpandido.style.opacity = '1';
+      contenidoExpandido.style.transform = 'translateY(0)';
+    }, 50);
+  }
+}
+
+// Efectos de partículas para celebrar logros
+function celebrarLogro() {
+  const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b'];
+  
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+      createConfetti(colors[Math.floor(Math.random() * colors.length)]);
+    }, i * 50);
+  }
+}
+
+function createConfetti(color) {
+  const confetti = document.createElement('div');
+  confetti.style.cssText = `
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: ${color};
+    top: -10px;
+    left: ${Math.random() * window.innerWidth}px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    animation: fall 3s linear forwards;
+  `;
+  
+  document.body.appendChild(confetti);
+  
+  setTimeout(() => {
+    confetti.remove();
+  }, 3000);
+}
+
+// CSS para la animación de confetti
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes fall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+`;
+document.head.appendChild(style);
+
+// Verificar si hay metas completadas al cargar para celebrar
+{% if estadisticas.metas_completadas > 0 %}
+  setTimeout(celebrarLogro, 1000);
+{% endif %}
+</script>
 {% endblock %}
