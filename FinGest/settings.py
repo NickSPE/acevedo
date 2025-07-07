@@ -18,10 +18,17 @@ from decouple import config  # Para leer el archivo .env
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SESSION_COOKIE_AGE = 3600
+SESSION_COOKIE_AGE = 3600  # 1 hora
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_SAVE_EVERY_REQUEST = True
+# Configuración mejorada de sesiones
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # ✅ Expira al cerrar navegador
+SESSION_SAVE_EVERY_REQUEST = True  # Renueva en cada request
+SESSION_COOKIE_SECURE = False  # En desarrollo, cambiar a True en producción con HTTPS
+SESSION_COOKIE_HTTPONLY = True  # Prevenir acceso desde JavaScript
+SESSION_COOKIE_SAMESITE = 'Lax'  # Protección CSRF
+
+# Configuración adicional para desarrollo
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Usar base de datos
 
 LOGIN_URL = 'usuarios:login'
 LOGIN_REDIRECT_URL = 'core:dashboard'
@@ -76,6 +83,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "core.middleware.ServerRestartSessionMiddleware",  # ✅ Limpia sesiones al reiniciar
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

@@ -403,7 +403,7 @@ def pin_login(request):
     """Login directo usando solo PIN"""
     if request.method == "POST":
         # Intentar obtener PIN de diferentes formatos posibles
-        pin_input = request.POST.get('pin_input', '')  # Formato del template actual
+        pin_input = request.POST.get('pin_input', '').strip()
         
         # Si no viene en pin_input, intentar formato individual (pin0, pin1, etc.)
         if not pin_input:
@@ -411,31 +411,66 @@ def pin_login(request):
                 request.POST.get(f'pin{i}', '') for i in range(6)
             ])
         
+        print(f"🔍 DEBUG PIN_LOGIN: Método: {request.method}")
         print(f"🔍 DEBUG PIN_LOGIN: Todos los datos POST: {dict(request.POST)}")
-        print(f"🔍 DEBUG PIN_LOGIN: PIN obtenido: '{pin_input}'")
+        print(f"🔍 DEBUG PIN_LOGIN: PIN obtenido: '{pin_input}' (longitud: {len(pin_input)})")
         
-        if not pin_input.isdigit() or len(pin_input) != 6:
-            error_message = f"PIN inválido. Recibido: '{pin_input}' (longitud: {len(pin_input)})"
+        if not pin_input:
+            error_message = "No se recibió ningún PIN."
+            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
+        
+        if not pin_input.isdigit():
+            error_message = f"PIN inválido. Solo se permiten números. Recibido: '{pin_input}'"
+            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
+            
+        if len(pin_input) != 6:
+            error_message = f"PIN inválido. Debe tener exactamente 6 dígitos. Recibido: '{pin_input}' (longitud: {len(pin_input)})"
             return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
         
         try:
             # Buscar usuario por PIN
-            print(f"🔍 DEBUG PIN_LOGIN: Buscando usuario con PIN como string: '{pin_input}'")
+            print(f"🔍 DEBUG PIN_LOGIN: Buscando usuario con PIN: '{pin_input}'")
             
-            # Buscar por PIN como string (no como int)
-            usuario = Usuario.objects.get(pin_acceso_rapido=pin_input)
-            print(f"🔍 DEBUG PIN_LOGIN: Usuario encontrado: {usuario.correo}")
+            # Buscar exactamente por el PIN como string
+            usuario = Usuario.objects.filter(pin_acceso_rapido=pin_input).first()
             
-            # Autenticar y hacer login
-            login(request, usuario, backend='usuarios.backends.EmailBackend')
-            request.session['pin_acceso_rapido_validado'] = True
+            if usuario:
+                print(f"✅ DEBUG PIN_LOGIN: Usuario encontrado: {usuario.correo} (ID: {usuario.id})")
+                
+                # Verificar si el usuario está activo
+                if not usuario.is_active:
+                    error_message = "Esta cuenta está desactivada."
+                    return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
+                
+                # Autenticar y hacer login
+                login(request, usuario, backend='usuarios.backends.EmailBackend')
+                request.session['pin_acceso_rapido_validado'] = True
+                
+                print(f"✅ DEBUG PIN_LOGIN: Login exitoso para {usuario.correo}")
+                
+                # Verificar si necesita onboarding
+                if not usuario.onboarding_completed:
+                    print("🔍 DEBUG PIN_LOGIN: Redirigiendo a onboarding")
+                    return redirect('usuarios:onboarding')
+                
+                print("🔍 DEBUG PIN_LOGIN: Redirigiendo a dashboard")
+                return redirect('core:dashboard')
+            else:
+                print(f"❌ DEBUG PIN_LOGIN: No se encontró usuario con PIN '{pin_input}'")
+                
+                # Debug: Mostrar todos los PINs existentes
+                all_pins = Usuario.objects.values_list('pin_acceso_rapido', 'correo')
+                print(f"🔍 DEBUG PIN_LOGIN: PINs existentes en BD:")
+                for pin, email in all_pins:
+                    print(f"   PIN: '{pin}' -> {email}")
+                
+                error_message = "PIN incorrecto. No se encontró ningún usuario con ese PIN."
+                return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
             
-            return redirect('core:dashboard')
-            
-        except Usuario.DoesNotExist:
-            error_message = "PIN incorrecto. No se encontró ningún usuario con ese PIN."
-            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
         except Exception as e:
+            print(f"❌ DEBUG PIN_LOGIN: Error inesperado: {str(e)}")
+            import traceback
+            traceback.print_exc()
             error_message = f"Error al procesar el PIN: {str(e)}"
             return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
     

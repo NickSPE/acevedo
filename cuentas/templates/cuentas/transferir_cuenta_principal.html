@@ -1,0 +1,342 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+
+{% block title %}Transferir a Cuenta Principal - FinGest{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .transfer-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .card-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    
+    .card-header p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .account-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 15px;
+    }
+    
+    .account-card {
+        text-align: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .account-card h3 {
+        margin: 0 0 0.5rem 0;
+        color: #374151;
+        font-size: 1.2rem;
+    }
+    
+    .account-name {
+        font-weight: bold;
+        color: #6366f1;
+        margin-bottom: 0.5rem;
+    }
+    
+    .account-balance {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #059669;
+    }
+    
+    .transfer-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #6366f1;
+        margin: 1rem 0;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        flex: 1;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #6366f1, #8b5cf6);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    }
+    
+    .btn-secondary {
+        background: #6b7280;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #4b5563;
+        transform: translateY(-2px);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .alert {
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+    
+    .alert-info {
+        background: #dbeafe;
+        border-left: 4px solid #3b82f6;
+        color: #1e40af;
+    }
+    
+    .transfer-type-info {
+        background: #f0f9ff;
+        border: 2px solid #0ea5e9;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .transfer-type-info h4 {
+        margin: 0 0 0.5rem 0;
+        color: #0369a1;
+        font-size: 1.1rem;
+    }
+    
+    .transfer-type-info p {
+        margin: 0;
+        color: #0284c7;
+        font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+        .account-info {
+            grid-template-columns: 1fr;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+        }
+        
+        .container {
+            padding: 0 0.5rem;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="transfer-card">
+        <div class="card-header">
+            <h1>💰 Transferir a Cuenta Principal</h1>
+            <p>Mueve dinero entre tu subcuenta y cuenta principal</p>
+        </div>
+        
+        <div class="card-body">
+            <div class="account-info">
+                <div class="account-card">
+                    <h3>📋 Subcuenta</h3>
+                    <div class="account-name">{{ subcuenta.nombre }}</div>
+                    <div class="account-balance">${{ subcuenta.saldo|floatformat:2 }}</div>
+                    {% if subcuenta.descripcion %}
+                        <small style="color: #6b7280;">{{ subcuenta.descripcion }}</small>
+                    {% endif %}
+                </div>
+                
+                <div class="account-card">
+                    <h3>🏦 Cuenta Principal</h3>
+                    <div class="account-name">{{ cuenta_principal.nombre_cuenta }}</div>
+                    <div class="account-balance">${{ cuenta_principal.saldo_cuenta|floatformat:2 }}</div>
+                </div>
+            </div>
+            
+            <div class="transfer-arrow">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="transfer-type-info">
+                    <h4>📤 Transferencia hacia Cuenta Principal</h4>
+                    <p>El dinero se transferirá desde tu subcuenta hacia tu cuenta principal</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.monto.id_for_label }}">
+                        💵 {{ form.monto.label }}
+                    </label>
+                    {{ form.monto }}
+                    {% if form.monto.help_text %}
+                        <small class="form-text text-muted">{{ form.monto.help_text }}</small>
+                    {% endif %}
+                    {% if form.monto.errors %}
+                        <div class="text-danger">
+                            {% for error in form.monto.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.descripcion.id_for_label }}">
+                        📝 {{ form.descripcion.label }}
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.help_text %}
+                        <small class="form-text text-muted">{{ form.descripcion.help_text }}</small>
+                    {% endif %}
+                    {% if form.descripcion.errors %}
+                        <div class="text-danger">
+                            {% for error in form.descripcion.errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Campo tipo oculto -->
+                <input type="hidden" name="tipo" value="deposito">
+                
+                <div class="alert alert-info">
+                    <strong>💡 Información importante:</strong><br>
+                    • El monto se deducirá de tu subcuenta<br>
+                    • Se agregará a tu cuenta principal<br>
+                    • La transferencia es inmediata<br>
+                    • Puedes ver el historial en tu dashboard
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Realizar Transferencia
+                    </button>
+                    <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const montoInput = document.getElementById('{{ form.monto.id_for_label }}');
+    const maxSaldo = parseFloat('{{ subcuenta.saldo }}');
+    
+    if (montoInput) {
+        montoInput.addEventListener('input', function() {
+            const valor = parseFloat(this.value);
+            
+            if (valor > maxSaldo) {
+                this.style.borderColor = '#ef4444';
+                this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+            } else if (valor > 0) {
+                this.style.borderColor = '#10b981';
+                this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
+            } else {
+                this.style.borderColor = '#e5e7eb';
+                this.style.boxShadow = 'none';
+            }
+        });
+        
+        // Formatear el input con dos decimales cuando pierde el foco
+        montoInput.addEventListener('blur', function() {
+            const valor = parseFloat(this.value);
+            if (!isNaN(valor) && valor > 0) {
+                this.value = valor.toFixed(2);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

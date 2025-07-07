@@ -6,8 +6,8 @@ from django.db import transaction
 from django.db.models import Q, Sum
 from django.urls import reverse
 from usuarios.models import Usuario
-from .models import Cuenta, SubCuenta, TransferenciaSubCuenta
-from .forms import SubCuentaForm, TransferenciaSubCuentaForm, DepositoSubCuentaForm, RetiroSubCuentaForm
+from .models import Cuenta, SubCuenta, TransferenciaSubCuenta, TransferenciaCuentaPrincipal
+from .forms import SubCuentaForm, TransferenciaSubCuentaForm, DepositoSubCuentaForm, RetiroSubCuentaForm, TransferenciaCuentaPrincipalForm
 from core.decorators import fast_access_pin_verified
 
 import base64
@@ -104,6 +104,66 @@ def profile(request):
                 messages.error(request, "La contraseña actual es incorrecta.")
                 return redirect(reverse("cuentas:profile") + "?tab=security")
         
+        # Si se está cambiando el PIN
+        if action == "change_pin":
+            # Construir el PIN actual desde los inputs individuales
+            current_pin = ""
+            for i in range(6):
+                digit = request.POST.get(f"current_pin_{i}", "")
+                current_pin += digit
+            
+            # Construir el nuevo PIN desde los inputs individuales
+            new_pin = ""
+            for i in range(6):
+                digit = request.POST.get(f"new_pin_{i}", "")
+                new_pin += digit
+            
+            # Construir el PIN de confirmación desde los inputs individuales
+            confirm_pin = ""
+            for i in range(6):
+                digit = request.POST.get(f"confirm_pin_{i}", "")
+                confirm_pin += digit
+            
+            print(f"🔍 DEBUG PIN CHANGE: Current: '{current_pin}', New: '{new_pin}', Confirm: '{confirm_pin}'")
+            print(f"🔍 DEBUG PIN CHANGE: Usuario PIN actual: '{usuario.pin_acceso_rapido}'")
+            
+            # Validaciones
+            if len(current_pin) != 6 or len(new_pin) != 6 or len(confirm_pin) != 6:
+                messages.error(request, "Todos los PINs deben tener exactamente 6 dígitos.")
+                return redirect(reverse("cuentas:profile") + "?tab=security")
+            
+            if not current_pin.isdigit() or not new_pin.isdigit() or not confirm_pin.isdigit():
+                messages.error(request, "Los PINs solo pueden contener números.")
+                return redirect(reverse("cuentas:profile") + "?tab=security")
+            
+            # Verificar que el PIN actual sea correcto
+            if str(usuario.pin_acceso_rapido) != current_pin:
+                messages.error(request, "El PIN actual es incorrecto.")
+                return redirect(reverse("cuentas:profile") + "?tab=security")
+            
+            # Verificar que el nuevo PIN y la confirmación coincidan
+            if new_pin != confirm_pin:
+                messages.error(request, "El nuevo PIN y la confirmación no coinciden.")
+                return redirect(reverse("cuentas:profile") + "?tab=security")
+            
+            # Verificar que el nuevo PIN sea diferente al actual
+            if current_pin == new_pin:
+                messages.warning(request, "El nuevo PIN debe ser diferente al actual.")
+                return redirect(reverse("cuentas:profile") + "?tab=security")
+            
+            # Verificar que el nuevo PIN no esté siendo usado por otro usuario
+            if Usuario.objects.filter(pin_acceso_rapido=new_pin).exclude(id=usuario.id).exists():
+                messages.error(request, "Este PIN ya está siendo usado por otro usuario. Por favor, elige uno diferente.")
+                return redirect(reverse("cuentas:profile") + "?tab=security")
+            
+            # Actualizar el PIN
+            usuario.pin_acceso_rapido = new_pin
+            usuario.save()
+            
+            print(f"✅ DEBUG PIN CHANGE: PIN actualizado exitosamente de '{current_pin}' a '{new_pin}'")
+            messages.success(request, "PIN de acceso rápido actualizado correctamente.")
+            return redirect(reverse("cuentas:profile") + "?tab=security")
+        
         return redirect("cuentas:profile")
 
     usuario = Usuario.objects.get(id=user_id)
@@ -151,12 +211,25 @@ def subcuentas_dashboard(request):
     # Obtener todas las cuentas del usuario
     cuentas = Cuenta.objects.filter(id_usuario=request.user)
     
-    # Obtener estadísticas generales
-    total_subcuentas = SubCuenta.objects.filter(id_cuenta__id_usuario=request.user, activa=True).count()
-    total_subcuentas_inactivas = SubCuenta.objects.filter(id_cuenta__id_usuario=request.user, activa=False).count()
-    total_saldo_subcuentas = sum([cuenta.saldo_total_subcuentas() for cuenta in cuentas])
+    # Obtener estadísticas generales (incluir subcuentas independientes)
+    total_subcuentas_vinculadas = SubCuenta.objects.filter(id_cuenta__id_usuario=request.user, activa=True).count()
+    total_subcuentas_independientes = SubCuenta.objects.filter(propietario=request.user, id_cuenta__isnull=True, activa=True).count()
+    total_subcuentas = total_subcuentas_vinculadas + total_subcuentas_independientes
     
-    # Obtener subcuentas por cuenta (TODAS, activas e inactivas)
+    total_subcuentas_inactivas_vinculadas = SubCuenta.objects.filter(id_cuenta__id_usuario=request.user, activa=False).count()
+    total_subcuentas_inactivas_independientes = SubCuenta.objects.filter(propietario=request.user, id_cuenta__isnull=True, activa=False).count()
+    total_subcuentas_inactivas = total_subcuentas_inactivas_vinculadas + total_subcuentas_inactivas_independientes
+    
+    # Saldo total en subcuentas vinculadas
+    total_saldo_subcuentas_vinculadas = sum([cuenta.saldo_total_subcuentas() for cuenta in cuentas])
+    
+    # Saldo total en subcuentas independientes
+    subcuentas_independientes = SubCuenta.objects.filter(propietario=request.user, id_cuenta__isnull=True)
+    total_saldo_subcuentas_independientes = sum([subcuenta.saldo for subcuenta in subcuentas_independientes])
+    
+    total_saldo_subcuentas = total_saldo_subcuentas_vinculadas + total_saldo_subcuentas_independientes
+    
+    # Obtener subcuentas por cuenta (vinculadas)
     cuentas_con_subcuentas = []
     for cuenta in cuentas:
         subcuentas_activas = SubCuenta.objects.filter(id_cuenta=cuenta, activa=True)
@@ -169,37 +242,81 @@ def subcuentas_dashboard(request):
             'saldo_disponible': cuenta.saldo_disponible()
         })
     
-    # Obtener transferencias recientes
+    # Obtener subcuentas independientes
+    subcuentas_independientes_activas = SubCuenta.objects.filter(
+        propietario=request.user, 
+        id_cuenta__isnull=True, 
+        activa=True
+    )
+    subcuentas_independientes_inactivas = SubCuenta.objects.filter(
+        propietario=request.user, 
+        id_cuenta__isnull=True, 
+        activa=False
+    )
+    
+    # Obtener transferencias recientes (incluir todos los tipos)
     transferencias_recientes = TransferenciaSubCuenta.objects.filter(
         id_usuario=request.user
     )[:10]
     
     return render(request, 'cuentas/subcuentas_dashboard_new.html', {
         'cuentas_con_subcuentas': cuentas_con_subcuentas,
+        'subcuentas_independientes_activas': subcuentas_independientes_activas,
+        'subcuentas_independientes_inactivas': subcuentas_independientes_inactivas,
         'total_subcuentas': total_subcuentas,
+        'total_subcuentas_vinculadas': total_subcuentas_vinculadas,
+        'total_subcuentas_independientes': total_subcuentas_independientes,
         'total_subcuentas_inactivas': total_subcuentas_inactivas,
         'total_saldo_subcuentas': total_saldo_subcuentas,
+        'total_saldo_subcuentas_vinculadas': total_saldo_subcuentas_vinculadas,
+        'total_saldo_subcuentas_independientes': total_saldo_subcuentas_independientes,
         'transferencias_recientes': transferencias_recientes,
     })
 
 
 @login_required
 @fast_access_pin_verified
-def crear_subcuenta(request, cuenta_id):
+def crear_subcuenta(request, cuenta_id=None):
     """Vista para crear una nueva subcuenta"""
-    cuenta = get_object_or_404(Cuenta, id=cuenta_id, id_usuario=request.user)
+    cuenta = None
+    if cuenta_id:
+        cuenta = get_object_or_404(Cuenta, id=cuenta_id, id_usuario=request.user)
     
     if request.method == 'POST':
-        form = SubCuentaForm(request.POST)
+        form = SubCuentaForm(request.POST, user=request.user)
         if form.is_valid():
             subcuenta = form.save(commit=False)
-            subcuenta.id_cuenta = cuenta
+            
+            tipo_subcuenta_base = form.cleaned_data['tipo_subcuenta_base']
+            
+            if tipo_subcuenta_base == 'negocio':
+                # Subcuenta de negocio independiente
+                subcuenta.propietario = request.user
+                subcuenta.id_cuenta = None
+                subcuenta.es_negocio = True
+                tipo_msg = "de negocio independiente"
+            else:
+                # Subcuenta personal vinculada a cuenta principal
+                if not cuenta:
+                    # Si no hay cuenta especificada, usar la primera cuenta del usuario
+                    cuenta = request.user.cuenta_set.first()
+                    if not cuenta:
+                        messages.error(request, 'Necesitas tener una cuenta principal para crear subcuentas personales.')
+                        return redirect('cuentas:subcuentas_dashboard')
+                
+                subcuenta.id_cuenta = cuenta
+                subcuenta.propietario = None
+                subcuenta.es_negocio = False
+                tipo_msg = "personal vinculada a cuenta principal"
+            
+            # Asegurar que la subcuenta se cree como activa por defecto
+            subcuenta.activa = True
             subcuenta.save()
             
-            messages.success(request, f'SubCuenta "{subcuenta.nombre}" creada exitosamente.')
+            messages.success(request, f'SubCuenta "{subcuenta.nombre}" creada exitosamente como {tipo_msg}.')
             return redirect('cuentas:subcuentas_dashboard')
     else:
-        form = SubCuentaForm()
+        form = SubCuentaForm(user=request.user)
     
     return render(request, 'cuentas/crear_subcuenta.html', {
         'form': form,
@@ -474,4 +591,202 @@ def activar_subcuenta(request, subcuenta_id):
     
     return render(request, 'cuentas/activar_subcuenta.html', {
         'subcuenta': subcuenta
+    })
+
+
+@login_required
+@fast_access_pin_verified
+def transferir_a_cuenta_principal(request, subcuenta_id):
+    """Vista para transferir dinero desde una subcuenta independiente a la cuenta principal"""
+    # Obtener la subcuenta (puede ser independiente o vinculada)
+    subcuenta = get_object_or_404(
+        SubCuenta, 
+        id=subcuenta_id
+    )
+    
+    # Verificar que el usuario tiene permisos sobre esta subcuenta
+    if not (subcuenta.propietario == request.user or 
+            (subcuenta.id_cuenta and subcuenta.id_cuenta.id_usuario == request.user)):
+        messages.error(request, 'No tienes permisos para acceder a esta subcuenta.')
+        return redirect('cuentas:subcuentas_dashboard')
+    
+    # Obtener la cuenta principal del usuario
+    cuenta_principal = request.user.cuenta_set.first()
+    if not cuenta_principal:
+        messages.error(request, 'Necesitas tener una cuenta principal para recibir transferencias.')
+        return redirect('cuentas:subcuentas_dashboard')
+    
+    if request.method == 'POST':
+        form = TransferenciaCuentaPrincipalForm(request.POST, subcuenta=subcuenta)
+        if form.is_valid():
+            with transaction.atomic():
+                transferencia = form.save(commit=False)
+                transferencia.subcuenta = subcuenta
+                transferencia.cuenta_destino = cuenta_principal
+                transferencia.id_usuario = request.user
+                
+                monto = transferencia.monto
+                
+                # Realizar la transferencia
+                if transferencia.tipo == 'deposito':
+                    # Transferir de subcuenta a cuenta principal
+                    subcuenta.saldo -= monto
+                    cuenta_principal.saldo_cuenta += monto
+                    mensaje = f'Transferencia de ${monto:.2f} realizada exitosamente desde "{subcuenta.nombre}" a tu cuenta principal.'
+                else:
+                    # Transferir de cuenta principal a subcuenta
+                    if cuenta_principal.saldo_disponible() >= monto:
+                        cuenta_principal.saldo_cuenta -= monto
+                        subcuenta.saldo += monto
+                        mensaje = f'Transferencia de ${monto:.2f} realizada exitosamente desde tu cuenta principal a "{subcuenta.nombre}".'
+                    else:
+                        messages.error(request, 'No hay saldo suficiente en la cuenta principal.')
+                        return render(request, 'cuentas/transferir_cuenta_principal.html', {
+                            'form': form,
+                            'subcuenta': subcuenta,
+                            'cuenta_principal': cuenta_principal
+                        })
+                
+                subcuenta.save()
+                cuenta_principal.save()
+                transferencia.save()
+                
+                messages.success(request, mensaje)
+                return redirect('cuentas:subcuentas_dashboard')
+    else:
+        form = TransferenciaCuentaPrincipalForm(subcuenta=subcuenta)
+    
+    return render(request, 'cuentas/transferir_cuenta_principal.html', {
+        'form': form,
+        'subcuenta': subcuenta,
+        'cuenta_principal': cuenta_principal
+    })
+
+
+@login_required
+@fast_access_pin_verified
+def historial_transferencias_cuenta_principal(request):
+    """Vista para ver el historial completo de transferencias del usuario"""
+    from datetime import datetime
+    from django.core.paginator import Paginator
+    from django.db.models import Q
+    
+    # Obtener todas las transferencias del usuario (tanto entre subcuentas como con cuenta principal)
+    transferencias_subcuentas = TransferenciaSubCuenta.objects.filter(
+        id_usuario=request.user
+    ).select_related('subcuenta_origen', 'subcuenta_destino')
+    
+    transferencias_principal = TransferenciaCuentaPrincipal.objects.filter(
+        id_usuario=request.user
+    ).select_related('subcuenta', 'cuenta_destino')
+    
+    # Filtros
+    fecha_desde = request.GET.get('fecha_desde')
+    fecha_hasta = request.GET.get('fecha_hasta')
+    subcuenta_id = request.GET.get('subcuenta')
+    tipo_transferencia = request.GET.get('tipo')
+    orden = request.GET.get('orden', '-fecha_transferencia')
+    
+    if fecha_desde:
+        try:
+            fecha_desde_dt = datetime.strptime(fecha_desde, '%Y-%m-%d').date()
+            transferencias_subcuentas = transferencias_subcuentas.filter(fecha_transferencia__date__gte=fecha_desde_dt)
+            transferencias_principal = transferencias_principal.filter(fecha_transferencia__date__gte=fecha_desde_dt)
+        except ValueError:
+            pass
+    
+    if fecha_hasta:
+        try:
+            fecha_hasta_dt = datetime.strptime(fecha_hasta, '%Y-%m-%d').date()
+            transferencias_subcuentas = transferencias_subcuentas.filter(fecha_transferencia__date__lte=fecha_hasta_dt)
+            transferencias_principal = transferencias_principal.filter(fecha_transferencia__date__lte=fecha_hasta_dt)
+        except ValueError:
+            pass
+    
+    if subcuenta_id:
+        try:
+            subcuenta_id = int(subcuenta_id)
+            # Filtrar transferencias entre subcuentas que involucren la subcuenta específica
+            transferencias_subcuentas = transferencias_subcuentas.filter(
+                Q(subcuenta_origen_id=subcuenta_id) | Q(subcuenta_destino_id=subcuenta_id)
+            )
+            # Filtrar transferencias con cuenta principal de la subcuenta específica
+            transferencias_principal = transferencias_principal.filter(subcuenta_id=subcuenta_id)
+        except ValueError:
+            pass
+    
+    if tipo_transferencia:
+        if tipo_transferencia == 'entre_subcuentas':
+            transferencias_principal = TransferenciaCuentaPrincipal.objects.none()
+        elif tipo_transferencia == 'con_principal':
+            transferencias_subcuentas = TransferenciaSubCuenta.objects.none()
+        elif tipo_transferencia in ['deposito', 'retiro']:
+            transferencias_principal = transferencias_principal.filter(tipo=tipo_transferencia)
+            transferencias_subcuentas = TransferenciaSubCuenta.objects.none()
+    
+    # Combinar y ordenar todas las transferencias
+    todas_transferencias = []
+    
+    # Añadir transferencias entre subcuentas
+    for trans in transferencias_subcuentas:
+        todas_transferencias.append({
+            'tipo': 'entre_subcuentas',
+            'fecha': trans.fecha_transferencia,
+            'monto': trans.monto,
+            'descripcion': trans.descripcion or 'Transferencia entre subcuentas',
+            'origen': trans.subcuenta_origen.nombre,
+            'destino': trans.subcuenta_destino.nombre,
+            'subcuenta_origen': trans.subcuenta_origen,
+            'subcuenta_destino': trans.subcuenta_destino,
+            'objeto': trans
+        })
+    
+    # Añadir transferencias con cuenta principal
+    for trans in transferencias_principal:
+        direccion = "hacia cuenta principal" if trans.tipo == 'deposito' else "desde cuenta principal"
+        todas_transferencias.append({
+            'tipo': 'con_principal',
+            'fecha': trans.fecha_transferencia,
+            'monto': trans.monto,
+            'descripcion': trans.descripcion or f'Transferencia {direccion}',
+            'origen': trans.subcuenta.nombre if trans.tipo == 'deposito' else trans.cuenta_destino.nombre,
+            'destino': trans.cuenta_destino.nombre if trans.tipo == 'deposito' else trans.subcuenta.nombre,
+            'subcuenta': trans.subcuenta,
+            'cuenta': trans.cuenta_destino,
+            'tipo_transferencia': trans.tipo,
+            'objeto': trans
+        })
+    
+    # Ordenamiento
+    reverse_order = orden.startswith('-')
+    orden_campo = orden.lstrip('-')
+    
+    if orden_campo == 'fecha_transferencia':
+        todas_transferencias.sort(key=lambda x: x['fecha'], reverse=reverse_order)
+    elif orden_campo == 'monto':
+        todas_transferencias.sort(key=lambda x: x['monto'], reverse=reverse_order)
+    else:
+        todas_transferencias.sort(key=lambda x: x['fecha'], reverse=True)
+    
+    # Estadísticas
+    total_transferencias = len(todas_transferencias)
+    monto_total = sum(trans['monto'] for trans in todas_transferencias)
+    
+    # Paginación manual
+    paginator = Paginator(todas_transferencias, 20)
+    page_number = request.GET.get('page')
+    transferencias_paginadas = paginator.get_page(page_number)
+    
+    # Obtener todas las subcuentas para el filtro
+    todas_subcuentas = SubCuenta.objects.filter(
+        Q(propietario=request.user) | Q(id_cuenta__id_usuario=request.user)
+    )
+    
+    return render(request, 'cuentas/historial_transferencias_cuenta_principal.html', {
+        'transferencias': transferencias_paginadas,
+        'total_transferencias': total_transferencias,
+        'monto_total': monto_total,
+        'todas_subcuentas': todas_subcuentas,
+        'is_paginated': transferencias_paginadas.has_other_pages(),
+        'page_obj': transferencias_paginadas,
     })

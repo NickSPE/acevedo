@@ -257,19 +257,30 @@ def agregar_movimiento(request):
                 form.add_error('id_cuenta', 'La cuenta seleccionada no existe.')
                 return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
 
-            # Si el tipo es "ingreso", aumentar el saldo
-            if tipo == 'ingreso':
-                cuenta.saldo_cuenta += monto  # Aumentar el saldo
-            elif tipo == 'egreso':
-                cuenta.saldo_cuenta -= monto  # Reducir el saldo
+            # ⚠️ CORRECCIÓN: NO modificar el saldo de la cuenta
+            # El saldo_cuenta debe mantenerse como saldo inicial
+            # Los movimientos se registran independientemente para calcular el balance total
             
-            # Verificar que el saldo no sea negativo (si es necesario)
-            if cuenta.saldo_cuenta < 0 and tipo == 'egreso':
-                form.add_error('monto', 'El saldo no puede ser negativo. Saldo actual: ${}'.format(cuenta.saldo_cuenta + monto))
+            # Verificación opcional: alertar si el balance resultante sería negativo
+            from django.db.models import Sum
+            total_ingresos = Movimiento.objects.filter(
+                id_cuenta=cuenta, tipo="ingreso"
+            ).aggregate(total=Sum('monto'))['total'] or 0
+            
+            total_egresos = Movimiento.objects.filter(
+                id_cuenta=cuenta, tipo="egreso"
+            ).aggregate(total=Sum('monto'))['total'] or 0
+            
+            # Simular el nuevo balance después de este movimiento
+            if tipo == 'egreso':
+                nuevo_balance = float(cuenta.saldo_cuenta) + float(total_ingresos) - (float(total_egresos) + float(monto))
+            else:
+                nuevo_balance = float(cuenta.saldo_cuenta) + (float(total_ingresos) + float(monto)) - float(total_egresos)
+            
+            # Advertir si el balance sería negativo (opcional, no bloquear)
+            if nuevo_balance < 0 and tipo == 'egreso':
+                form.add_error('monto', f'Advertencia: Este gasto resultaría en un balance negativo (${nuevo_balance:.2f}). Balance actual: ${float(cuenta.saldo_cuenta) + float(total_ingresos) - float(total_egresos):.2f}')
                 return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
-
-            # Guardar la cuenta actualizada
-            cuenta.save()
 
             # Ahora guardar el movimiento
             movimiento.save()
@@ -335,15 +346,59 @@ def aportar_meta_ahorro(request, meta_id):
         form = AporteMetaAhorroForm(request.POST, meta_ahorro=meta)
         
         if form.is_valid():
+            # Verificar que el usuario tenga suficiente balance
+            from django.db.models import Sum
+            user_id = request.user.id
+            
+            # Calcular balance total actual
+            total_ingresos = Movimiento.objects.filter(
+                id_cuenta__id_usuario=user_id, tipo="ingreso"
+            ).aggregate(total=Sum('monto'))['total'] or 0
+            
+            total_egresos = Movimiento.objects.filter(
+                id_cuenta__id_usuario=user_id, tipo="egreso"
+            ).aggregate(total=Sum('monto'))['total'] or 0
+            
+            saldo_inicial_cuentas = Cuenta.objects.filter(
+                id_usuario=user_id
+            ).aggregate(total=Sum('saldo_cuenta'))['total'] or 0
+            
+            balance_actual = float(saldo_inicial_cuentas) + float(total_ingresos) - float(total_egresos)
+            monto_aporte = float(form.cleaned_data['monto'])
+            
+            # Verificar si hay suficiente balance
+            if balance_actual < monto_aporte:
+                form.add_error('monto', f'Balance insuficiente. Tu balance actual es ${balance_actual:.2f} y quieres aportar ${monto_aporte:.2f}')
+                return render(request, 'gestion_financiera_basica/add_fund_to_goal.html', {
+                    'form': form, 
+                    'meta': meta
+                })
+            
             # Guardar el aporte sin commit
             aporte = form.save(commit=False)
-            
-            # Establecer la meta de ahorro y el usuario
             aporte.id_meta_ahorro = meta
             aporte.id_usuario = request.user
-            
-            # Guardar el aporte
             aporte.save()
+            
+            # 🔥 NUEVO: Crear movimiento de egreso para descontar del balance total
+            # Obtener la cuenta principal del usuario (primera cuenta disponible)
+            cuenta_usuario = Cuenta.objects.filter(id_usuario=request.user).first()
+            
+            if cuenta_usuario:
+                # Crear movimiento de egreso para reflejar el aporte en el balance
+                movimiento_aporte = Movimiento.objects.create(
+                    nombre=f"Aporte a meta: {meta.nombre}",
+                    tipo="egreso",
+                    categoria="ahorros",  # Categoría específica para aportes a metas
+                    monto=monto_aporte,
+                    fecha_movimiento=aporte.fecha_aporte,
+                    descripcion=f"Transferencia a meta de ahorro '{meta.nombre}'. {aporte.descripcion or ''}".strip(),
+                    id_cuenta=cuenta_usuario,
+                    id_usuario=request.user
+                )
+                
+                print(f"✅ Aporte registrado: ${monto_aporte} a meta '{meta.nombre}'")
+                print(f"✅ Movimiento creado: Egreso de ${monto_aporte} de cuenta '{cuenta_usuario.nombre}'")
             
             # Redirigir de vuelta a las metas de ahorro
             return redirect('gestion_financiera_basica:savings_goals')

@@ -1,0 +1,463 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+
+{% block title %}Historial de Transferencias - Cuenta Principal{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .header-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    
+    .header-card h1 {
+        margin: 0 0 0.5rem 0;
+        color: #374151;
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    
+    .header-card p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 1.1rem;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        text-align: center;
+        border-left: 4px solid #6366f1;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .filters-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .filter-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-control {
+        padding: 0.5rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .filter-control:focus {
+        outline: none;
+        border-color: #6366f1;
+    }
+    
+    .btn-filter {
+        background: #6366f1;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-filter:hover {
+        background: #4f46e5;
+        transform: translateY(-1px);
+    }
+    
+    .transfers-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    .transfers-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .transfers-table th {
+        background: #f8f9fa;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .transfers-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+        vertical-align: middle;
+    }
+    
+    .transfers-table tr:hover {
+        background: #f9fafb;
+    }
+    
+    .transfer-row {
+        transition: all 0.2s ease;
+    }
+    
+    .amount-deposito {
+        color: #059669;
+        font-weight: bold;
+    }
+    
+    .amount-retiro {
+        color: #dc2626;
+        font-weight: bold;
+    }
+    
+    .amount-neutral {
+        color: #374151;
+        font-weight: bold;
+    }
+    
+    .transfer-type {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .type-deposito {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .type-retiro {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .type-subcuenta {
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+    
+    .subcuenta-name {
+        font-weight: 600;
+        color: #6366f1;
+    }
+    
+    .description {
+        color: #6b7280;
+        font-style: italic;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 2rem;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 0.5rem 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #374151;
+        transition: all 0.2s ease;
+    }
+    
+    .pagination a:hover {
+        background: #6366f1;
+        color: white;
+        border-color: #6366f1;
+    }
+    
+    .pagination .current {
+        background: #6366f1;
+        color: white;
+        border-color: #6366f1;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #6b7280;
+    }
+    
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .transfers-table {
+            font-size: 0.8rem;
+        }
+        
+        .transfers-table th,
+        .transfers-table td {
+            padding: 0.5rem;
+        }
+        
+        .description {
+            max-width: 100px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header-card">
+        <h1>📊 Historial de Transferencias</h1>
+        <p>Cuenta Principal - Subcuentas</p>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_transferencias }}</div>
+            <div class="stat-label">Total Transferencias</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">${{ monto_total|floatformat:2 }}</div>
+            <div class="stat-label">Monto Total</div>
+        </div>
+    </div>
+    
+    <div class="filters-card">
+        <h3 style="margin-top: 0; color: #374151;">🔍 Filtros</h3>
+        <form method="get">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Fecha Desde</label>
+                    <input type="date" name="fecha_desde" value="{{ request.GET.fecha_desde }}" class="filter-control">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Fecha Hasta</label>
+                    <input type="date" name="fecha_hasta" value="{{ request.GET.fecha_hasta }}" class="filter-control">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Subcuenta</label>
+                    <select name="subcuenta" class="filter-control">
+                        <option value="">Todas las subcuentas</option>
+                        {% for subcuenta in todas_subcuentas %}
+                            <option value="{{ subcuenta.id }}" 
+                                {% if request.GET.subcuenta == subcuenta.id|stringformat:"s" %}selected{% endif %}>
+                                {{ subcuenta.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Tipo</label>
+                    <select name="tipo" class="filter-control">
+                        <option value="">Todos los tipos</option>
+                        <option value="entre_subcuentas" {% if request.GET.tipo == "entre_subcuentas" %}selected{% endif %}>
+                            Entre SubCuentas
+                        </option>
+                        <option value="con_principal" {% if request.GET.tipo == "con_principal" %}selected{% endif %}>
+                            Con Cuenta Principal
+                        </option>
+                        <option value="deposito" {% if request.GET.tipo == "deposito" %}selected{% endif %}>
+                            Depósito a Principal
+                        </option>
+                        <option value="retiro" {% if request.GET.tipo == "retiro" %}selected{% endif %}>
+                            Retiro de Principal
+                        </option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Ordenar por</label>
+                    <select name="orden" class="filter-control">
+                        <option value="-fecha_transferencia" {% if request.GET.orden == "-fecha_transferencia" %}selected{% endif %}>
+                            Más recientes
+                        </option>
+                        <option value="fecha_transferencia" {% if request.GET.orden == "fecha_transferencia" %}selected{% endif %}>
+                            Más antiguos
+                        </option>
+                        <option value="-monto" {% if request.GET.orden == "-monto" %}selected{% endif %}>
+                            Mayor monto
+                        </option>
+                        <option value="monto" {% if request.GET.orden == "monto" %}selected{% endif %}>
+                            Menor monto
+                        </option>
+                    </select>
+                </div>
+                <div class="filter-group" style="display: flex; align-items: end;">
+                    <button type="submit" class="btn-filter">Aplicar Filtros</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <div class="transfers-card">
+        {% if transferencias %}
+            <div class="table-container">
+                <table class="transfers-table">
+                    <thead>
+                        <tr>
+                            <th>📅 Fecha</th>
+                            <th>🏦 Origen</th>
+                            <th>🎯 Destino</th>
+                            <th>� Tipo</th>
+                            <th>💰 Monto</th>
+                            <th>📝 Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transferencia in transferencias %}
+                            <tr class="transfer-row">
+                                <td>
+                                    <div style="font-weight: 600;">
+                                        {{ transferencia.fecha|date:"d/m/Y" }}
+                                    </div>
+                                    <small style="color: #6b7280;">
+                                        {{ transferencia.fecha|time:"H:i" }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <div class="subcuenta-name">{{ transferencia.origen }}</div>
+                                    {% if transferencia.tipo == 'entre_subcuentas' %}
+                                        <small style="color: #6b7280;">{{ transferencia.subcuenta_origen.get_tipo_display }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="subcuenta-name">{{ transferencia.destino }}</div>
+                                    {% if transferencia.tipo == 'entre_subcuentas' %}
+                                        <small style="color: #6b7280;">{{ transferencia.subcuenta_destino.get_tipo_display }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transferencia.tipo == 'entre_subcuentas' %}
+                                        <span class="transfer-type type-subcuenta">
+                                            🔄 Entre SubCuentas
+                                        </span>
+                                    {% elif transferencia.tipo_transferencia == 'deposito' %}
+                                        <span class="transfer-type type-deposito">
+                                            📤 A Principal
+                                        </span>
+                                    {% else %}
+                                        <span class="transfer-type type-retiro">
+                                            📥 A Subcuenta
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="amount-neutral">
+                                        ${{ transferencia.monto|floatformat:2 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if transferencia.descripcion %}
+                                        <div class="description">{{ transferencia.descripcion }}</div>
+                                    {% else %}
+                                        <span style="color: #9ca3af; font-style: italic;">Sin descripción</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if is_paginated %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">&laquo; Anterior</a>
+                    {% endif %}
+                    
+                    <span class="current">
+                        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">Siguiente &raquo;</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-exchange-alt"></i>
+                <h3>No hay transferencias</h3>
+                <p>Aún no has realizado transferencias entre tus subcuentas y cuenta principal.</p>
+                <a href="{% url 'cuentas:subcuentas_dashboard' %}" style="color: #6366f1; text-decoration: none;">
+                    ← Volver al Dashboard
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

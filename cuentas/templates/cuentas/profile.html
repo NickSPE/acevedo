@@ -418,6 +418,152 @@
                   </button>
                 </div>
               </form>
+
+              <!-- Separador -->
+              <div class="my-8 border-t border-gray-200"></div>
+
+              <!-- Sección PIN de Acceso Rápido -->
+              <div class="mt-8">
+                <div class="flex items-center mb-6">
+                  <div class="bg-blue-50 p-2 rounded-lg mr-3">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-bold text-gray-900">PIN de Acceso Rápido</h2>
+                    <p class="text-sm text-gray-600">Cambia tu PIN de 6 dígitos para acceso rápido</p>
+                  </div>
+                </div>
+                
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                  <div class="flex items-start">
+                    <svg class="h-4 w-4 text-green-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    <div>
+                      <p class="text-sm text-green-800">
+                        <strong>PIN actual:</strong> ••••••
+                      </p>
+                      <p class="text-xs text-green-700 mt-1">
+                        Tu PIN permite acceso rápido sin necesidad de escribir tu email y contraseña.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <form method="post" class="space-y-4" id="pinForm">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="change_pin">
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                      <label for="current_pin" class="block text-sm font-medium text-gray-700">
+                        PIN Actual <span class="text-red-500">*</span>
+                      </label>
+                      <div class="flex justify-center gap-2">
+                        <input type="text" inputmode="numeric" name="current_pin_0" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'current', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="current_pin_1" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'current', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="current_pin_2" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'current', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="current_pin_3" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'current', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="current_pin_4" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'current', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="current_pin_5" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'current', 0)" pattern="[0-9]" />
+                      </div>
+                    </div>
+
+                    <div class="space-y-2">
+                      <label for="new_pin" class="block text-sm font-medium text-gray-700">
+                        Nuevo PIN <span class="text-red-500">*</span>
+                      </label>
+                      <div class="flex justify-center gap-2">
+                        <input type="text" inputmode="numeric" name="new_pin_0" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'new', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="new_pin_1" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'new', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="new_pin_2" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'new', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="new_pin_3" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'new', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="new_pin_4" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'new', 1)" pattern="[0-9]" />
+                        <input type="text" inputmode="numeric" name="new_pin_5" maxlength="1" autocomplete="off"
+                               class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                               oninput="movePinFocus(this, 'new', 0)" pattern="[0-9]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label for="confirm_pin" class="block text-sm font-medium text-gray-700">
+                      Confirmar Nuevo PIN <span class="text-red-500">*</span>
+                    </label>
+                    <div class="flex justify-center gap-2">
+                      <input type="text" inputmode="numeric" name="confirm_pin_0" maxlength="1" autocomplete="off"
+                             class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                             oninput="movePinFocus(this, 'confirm', 1)" pattern="[0-9]" />
+                      <input type="text" inputmode="numeric" name="confirm_pin_1" maxlength="1" autocomplete="off"
+                             class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                             oninput="movePinFocus(this, 'confirm', 1)" pattern="[0-9]" />
+                      <input type="text" inputmode="numeric" name="confirm_pin_2" maxlength="1" autocomplete="off"
+                             class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                             oninput="movePinFocus(this, 'confirm', 1)" pattern="[0-9]" />
+                      <input type="text" inputmode="numeric" name="confirm_pin_3" maxlength="1" autocomplete="off"
+                             class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                             oninput="movePinFocus(this, 'confirm', 1)" pattern="[0-9]" />
+                      <input type="text" inputmode="numeric" name="confirm_pin_4" maxlength="1" autocomplete="off"
+                             class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                             oninput="movePinFocus(this, 'confirm', 1)" pattern="[0-9]" />
+                      <input type="text" inputmode="numeric" name="confirm_pin_5" maxlength="1" autocomplete="off"
+                             class="w-10 h-10 text-center text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" 
+                             oninput="movePinFocus(this, 'confirm', 0)" pattern="[0-9]" />
+                    </div>
+                    
+                    <!-- Indicadores de validación del PIN -->
+                    <div class="flex items-center justify-center space-x-4 text-xs mt-2">
+                      <div class="flex items-center text-gray-400" id="pin-complete-check">
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>6 dígitos completos</span>
+                      </div>
+                      <div class="flex items-center text-gray-400" id="pin-match-check">
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>PINs coinciden</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="flex justify-end pt-4">
+                    <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:ring-blue-200 transition-all duration-200 shadow-md hover:shadow-lg" id="changePinBtn" disabled>
+                      <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                        Cambiar PIN
+                      </span>
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
             {% endif %}
           </div>
@@ -432,6 +578,91 @@ function togglePassword(fieldId) {
   const field = document.getElementById(fieldId);
   const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
   field.setAttribute('type', type);
+}
+
+// Función para mover el foco entre campos de PIN
+function movePinFocus(input, type, direction) {
+  // Limpiar caracteres no numéricos
+  input.value = input.value.replace(/[^0-9]/g, '');
+  
+  // Si se ingresó más de un carácter, tomar solo el último
+  if (input.value.length > 1) {
+    input.value = input.value.slice(-1);
+  }
+  
+  const inputs = Array.from(document.querySelectorAll(`input[name^="${type}_pin_"]`));
+  const index = inputs.indexOf(input);
+  
+  if (input.value.length === 1 && direction === 1 && index < inputs.length - 1) {
+    inputs[index + 1].focus();
+  } else if (direction === 0 && input.value.length === 1) {
+    input.blur(); // último input
+  }
+  
+  // Validar PINs después de cada cambio
+  validatePins();
+}
+
+// Validación de PINs en tiempo real
+function validatePins() {
+  const currentPinInputs = Array.from(document.querySelectorAll('input[name^="current_pin_"]'));
+  const newPinInputs = Array.from(document.querySelectorAll('input[name^="new_pin_"]'));
+  const confirmPinInputs = Array.from(document.querySelectorAll('input[name^="confirm_pin_"]'));
+  
+  const currentPin = currentPinInputs.map(input => input.value).join('');
+  const newPin = newPinInputs.map(input => input.value).join('');
+  const confirmPin = confirmPinInputs.map(input => input.value).join('');
+  
+  const pinCompleteCheck = document.getElementById('pin-complete-check');
+  const pinMatchCheck = document.getElementById('pin-match-check');
+  const changePinBtn = document.getElementById('changePinBtn');
+  
+  // Verificar si todos los PINs están completos (6 dígitos)
+  const allComplete = currentPin.length === 6 && newPin.length === 6 && confirmPin.length === 6;
+  
+  if (allComplete) {
+    pinCompleteCheck.classList.remove('text-gray-400');
+    pinCompleteCheck.classList.add('text-green-600');
+    pinCompleteCheck.querySelector('svg').classList.remove('text-gray-400');
+    pinCompleteCheck.querySelector('svg').classList.add('text-green-600');
+  } else {
+    pinCompleteCheck.classList.remove('text-green-600');
+    pinCompleteCheck.classList.add('text-gray-400');
+    pinCompleteCheck.querySelector('svg').classList.remove('text-green-600');
+    pinCompleteCheck.querySelector('svg').classList.add('text-gray-400');
+  }
+  
+  // Verificar si new PIN y confirm PIN coinciden
+  const pinsMatch = newPin.length === 6 && confirmPin.length === 6 && newPin === confirmPin;
+  
+  if (pinsMatch) {
+    pinMatchCheck.classList.remove('text-gray-400', 'text-red-600');
+    pinMatchCheck.classList.add('text-green-600');
+    pinMatchCheck.querySelector('svg').classList.remove('text-gray-400', 'text-red-600');
+    pinMatchCheck.querySelector('svg').classList.add('text-green-600');
+  } else if (confirmPin.length > 0) {
+    pinMatchCheck.classList.remove('text-gray-400', 'text-green-600');
+    pinMatchCheck.classList.add('text-red-600');
+    pinMatchCheck.querySelector('svg').classList.remove('text-gray-400', 'text-green-600');
+    pinMatchCheck.querySelector('svg').classList.add('text-red-600');
+  } else {
+    pinMatchCheck.classList.remove('text-green-600', 'text-red-600');
+    pinMatchCheck.classList.add('text-gray-400');
+    pinMatchCheck.querySelector('svg').classList.remove('text-green-600', 'text-red-600');
+    pinMatchCheck.querySelector('svg').classList.add('text-gray-400');
+  }
+  
+  // Habilitar/deshabilitar botón
+  const isValid = allComplete && pinsMatch;
+  if (changePinBtn) {
+    changePinBtn.disabled = !isValid;
+    
+    if (isValid) {
+      changePinBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else {
+      changePinBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+  }
 }
 
 // Validación de contraseña en tiempo real
@@ -495,6 +726,62 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmPassword.addEventListener('input', validatePasswords);
     actualPassword.addEventListener('input', validatePasswords);
   }
+
+  // Agregar listeners para validación de PIN
+  const pinInputs = document.querySelectorAll('input[name^="current_pin_"], input[name^="new_pin_"], input[name^="confirm_pin_"]');
+  pinInputs.forEach(input => {
+    // Validación en tiempo real
+    input.addEventListener('input', validatePins);
+    
+    // Limpiar campo al hacer focus para evitar cache
+    input.addEventListener('focus', function() {
+      this.value = '';
+    });
+    
+    // Prevenir entrada de caracteres no numéricos
+    input.addEventListener('keypress', function(e) {
+      if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+      }
+    });
+    
+    // Prevenir pegar contenido no numérico
+    input.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text');
+      if (/^[0-9]$/.test(paste)) {
+        this.value = paste;
+        movePinFocus(this, this.name.split('_')[0], 1);
+      }
+    });
+  });
 });
 </script>
+
+<!-- CSS adicional para asegurar que no aparezcan flechitas -->
+<style>
+/* Ocultar flechitas en campos numéricos para todos los navegadores */
+input[type="text"][inputmode="numeric"]::-webkit-outer-spin-button,
+input[type="text"][inputmode="numeric"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="text"][inputmode="numeric"] {
+  -moz-appearance: textfield;
+}
+
+/* Estilo adicional para los campos de PIN */
+input[name^="current_pin_"],
+input[name^="new_pin_"], 
+input[name^="confirm_pin_"] {
+  caret-color: transparent; /* Ocultar cursor parpadeante para mejor UX */
+}
+
+input[name^="current_pin_"]:focus,
+input[name^="new_pin_"]:focus, 
+input[name^="confirm_pin_"]:focus {
+  caret-color: auto; /* Mostrar cursor cuando está en focus */
+}
+</style>
 {% endblock %}

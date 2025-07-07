@@ -64,6 +64,7 @@
         text-decoration: none;
         display: inline-block;
         cursor: pointer;
+        margin: 0 0.5rem;
     }
     
     .btn-new-subcuenta:hover {
@@ -86,984 +87,233 @@
         border-radius: 20px;
         padding: 2rem;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border-left: 5px solid;
+        border-left: 5px solid #6366f1;
         transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        opacity: 0.1;
-        transform: translate(30px, -30px);
-    }
-    
-    .stat-card.balance-total {
-        border-left-color: #6C5CE7;
-    }
-    
-    .stat-card.balance-total::before {
-        background: #6C5CE7;
-    }
-    
-    .stat-card.ahorros {
-        border-left-color: #00b894;
-    }
-    
-    .stat-card.ahorros::before {
-        background: #00b894;
-    }
-    
-    .stat-card.inversiones {
-        border-left-color: #a29bfe;
-    }
-    
-    .stat-card.inversiones::before {
-        background: #a29bfe;
-    }
-    
-    .stat-card.objetivos {
-        border-left-color: #74b9ff;
-    }
-    
-    .stat-card.objetivos::before {
-        background: #74b9ff;
+        text-align: center;
     }
     
     .stat-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
     }
     
     .stat-value {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #374151;
         margin-bottom: 0.5rem;
-        position: relative;
-        z-index: 2;
-        margin-top: 0;
     }
     
     .stat-label {
-        color: #636e72;
-        font-weight: 500;
-        margin-bottom: 0;
-        position: relative;
-        z-index: 2;
+        color: #6b7280;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
     }
     
     .stat-sublabel {
-        color: #b2bec3;
-        font-size: 0.9rem;
-        position: relative;
-        z-index: 2;
+        color: #9ca3af;
+        font-size: 0.8rem;
     }
     
-    .subcuentas-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-    
-    .subcuenta-card {
+    .subcuentas-section {
         background: white;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border: none;
-        transition: all 0.3s ease;
-        overflow: hidden;
-        position: relative;
-        margin-bottom: 2rem;
-    }
-    
-    .subcuenta-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px;
-        background: linear-gradient(90deg, var(--card-color, #6C5CE7), var(--card-color-light, #A29BFE));
-    }
-    
-    .subcuenta-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-    }
-    
-    .subcuenta-header {
-        padding: 1.5rem 1.5rem 0 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-    
-    .subcuenta-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 0.5rem;
-        margin-top: 0;
-    }
-    
-    .subcuenta-type {
-        display: inline-block;
-        padding: 0.4rem 1rem;
-        border-radius: 25px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 1rem;
-    }
-    
-    .type-emergencia { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
-    .type-objetivos { background: rgba(255, 184, 77, 0.15); color: #ffb84d; }
-    .type-inversion { background: rgba(116, 185, 255, 0.15); color: #74b9ff; }
-    .type-gastos { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
-    .type-ahorro { background: rgba(0, 184, 148, 0.15); color: #00b894; }
-    .type-entretenimiento { background: rgba(162, 155, 254, 0.15); color: #a29bfe; }
-    .type-transporte { background: rgba(253, 121, 168, 0.15); color: #fd79a8; }
-    .type-alimentacion { background: rgba(225, 112, 85, 0.15); color: #e17055; }
-    .type-salud { background: rgba(85, 239, 196, 0.15); color: #55efc4; }
-    .type-educacion { background: rgba(108, 92, 231, 0.15); color: #6c5ce7; }
-    .type-otros { background: rgba(99, 110, 114, 0.15); color: #636e72; }
-    
-    .subcuenta-amount {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 0.5rem;
-    }
-    
-    .subcuenta-date {
-        color: #636e72;
-        font-size: 0.9rem;
-    }
-    
-    .subcuenta-description {
-        padding: 0 1.5rem;
-        color: #636e72;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }
-    
-    .subcuenta-content {
-        padding: 0 1.5rem 1rem 1.5rem;
-    }
-    
-    .subcuenta-actions {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #f8f9fa;
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-    
-    .btn-action {
-        flex: 1;
-        min-width: 80px;
-        padding: 0.5rem 1rem;
-        border-radius: 10px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-decoration: none;
-        text-align: center;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        display: inline-block;
-    }
-    
-    .btn-pause {
-        background: rgba(253, 203, 110, 0.15);
-        color: #fdcb6e;
-    }
-    
-    .btn-pause:hover {
-        background: rgba(253, 203, 110, 0.25);
-        color: #e17055;
-        text-decoration: none;
-    }
-    
-    .btn-transfer {
-        background: rgba(116, 185, 255, 0.15);
-        color: #74b9ff;
-    }
-    
-    .btn-transfer:hover {
-        background: rgba(116, 185, 255, 0.25);
-        color: #0984e3;
-        text-decoration: none;
-    }
-    
-    .btn-edit {
-        background: rgba(108, 92, 231, 0.15);
-        color: #6c5ce7;
-    }
-    
-    .btn-edit:hover {
-        background: rgba(108, 92, 231, 0.25);
-        color: #5f3dc4;
-        text-decoration: none;
-    }
-    
-    .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-    
-    .dropdown-toggle {
-        background: none;
-        border: none;
-        color: #636e72;
-        font-size: 1.2rem;
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-    }
-    
-    .dropdown-toggle:hover {
-        background: #f8f9fa;
-        color: #2d3436;
-    }
-    
-    .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: white;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        border-radius: 12px;
-        padding: 0.5rem 0;
-        min-width: 160px;
-        z-index: 1000;
-        display: none;
-    }
-    
-    .dropdown-menu.show {
-        display: block;
-    }
-    
-    .dropdown-item {
-        display: block;
-        padding: 0.75rem 1.5rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        color: #2d3436;
-        text-decoration: none;
-        border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
-        cursor: pointer;
-    }
-    
-    .dropdown-item:hover {
-        background: #f8f9fa;
-        transform: translateX(5px);
-        color: #2d3436;
-        text-decoration: none;
-    }
-    
-    .dropdown-item.text-danger {
-        color: #e17055;
-    }
-    
-    .dropdown-item.text-danger:hover {
-        color: #d63031;
-        background: rgba(255, 107, 107, 0.1);
-    }
-    
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    
-    .empty-state-icon {
-        font-size: 4rem;
-        color: #ddd;
-        margin-bottom: 2rem;
-    }
-    
-    .empty-state-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #636e72;
-        margin-bottom: 1rem;
-    }
-    
-    .empty-state-text {
-        color: #b2bec3;
-        margin-bottom: 2rem;
-        line-height: 1.6;
-    }
-    
-    .text-primary { color: #6C5CE7; }
-    .text-success { color: #00b894; }
-    .text-muted { color: #636e72; }
-    .text-danger { color: #e17055; }
-    
-    .me-2 { margin-right: 0.5rem; }
-    .mb-0 { margin-bottom: 0; }
-    .mb-3 { margin-bottom: 1rem; }
-    .small { font-size: 0.875rem; }
-    
-    .fas {
-        font-family: "Font Awesome 6 Free";
-        font-weight: 900;
-    }
-    
-    @media (max-width: 768px) {
-        .main-header {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .subcuentas-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .subcuenta-actions {
-            flex-direction: column;
-        }
-        
-        .btn-action {
-            margin-bottom: 0.5rem;
-        }
-    }
-    
-    /* Modo oscuro */
-    .dark body {
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-    }
-    
-    .dark .container-fluid {
-        color: #F9FAFB;
-    }
-    
-    .dark .main-header {
-        background: #374151;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    
-    .dark .main-title {
-        color: #A78BFA;
-    }
-    
-    .dark .main-subtitle {
-        color: #9CA3AF;
-    }
-
-    .dark .stat-card {
-        background: #1f2937;
-        border-left: 5px solid transparent;
-    }
-    
-    .dark .stat-card.balance-total {
-        border-left-color: #6C5CE7;
-    }
-    
-    .dark .stat-card.balance-total::before {
-        background: #6C5CE7;
-    }
-    
-    .dark .stat-card.ahorros {
-        border-left-color: #00b894;
-    }
-    
-    .dark .stat-card.ahorros::before {
-        background: #00b894;
-    }
-    
-    .dark .stat-card.inversiones {
-        border-left-color: #a29bfe;
-    }
-    
-    .dark .stat-card.inversiones::before {
-        background: #a29bfe;
-    }
-    
-    .dark .stat-card.objetivos {
-        border-left-color: #74b9ff;
-    }
-    
-    .dark .stat-card.objetivos::before {
-        background: #74b9ff;
-    }
-    
-    .dark .subcuenta-card {
-        background: #1f2937;
-        border: none;
-        transition: all 0.3s ease;
-        overflow: hidden;
-        position: relative;
-        margin-bottom: 2rem;
-    }
-    
-    .dark .subcuenta-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px;
-        background: linear-gradient(90deg, var(--card-color, #6C5CE7), var(--card-color-light, #A29BFE));
-    }
-    
-    .dark .subcuenta-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-    }
-    
-    .dark .subcuenta-header {
-        padding: 1.5rem 1.5rem 0 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-    
-    .dark .subcuenta-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #F9FAFB;
-        margin-bottom: 0.5rem;
-        margin-top: 0;
-    }
-    
-    .dark .subcuenta-type {
-        display: inline-block;
-        padding: 0.4rem 1rem;
-        border-radius: 25px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 1rem;
-    }
-    
-    .dark .subcuenta-amount {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #F9FAFB;
-        margin-bottom: 0.5rem;
-    }
-    
-    .dark .subcuenta-date {
-        color: #9CA3AF;
-        font-size: 0.9rem;
-    }
-    
-    .dark .subcuenta-description {
-        padding: 0 1.5rem;
-        color: #9CA3AF;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }
-    
-    .dark .subcuenta-content {
-        padding: 0 1.5rem 1rem 1.5rem;
-    }
-    
-    .dark .subcuenta-actions {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #374151;
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-    
-    .dark .btn-action {
-        background: #374151;
-        color: #F9FAFB;
-        border: none;
-        transition: all 0.3s ease;
-        padding: 0.5rem 1rem;
-        border-radius: 10px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-decoration: none;
-        text-align: center;
-        cursor: pointer;
-        display: inline-block;
-    }
-    
-    .dark .btn-action:hover {
-        background: #475569;
-        color: #F9FAFB;
-        text-decoration: none;
-    }
-    
-    .dark .dropdown-toggle {
-        color: #9CA3AF;
-    }
-    
-    .dark .dropdown-toggle:hover {
-        background: #475569;
-        color: #F9FAFB;
-    }
-    
-    .dark .dropdown-menu {
-        background: #374151;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        border-radius: 12px;
-        padding: 0.5rem 0;
-        min-width: 160px;
-        z-index: 1000;
-        display: none;
-    }
-    
-    .dark .dropdown-menu.show {
-        display: block;
-    }
-    
-    .dark .dropdown-item {
-        color: #F9FAFB;
-    }
-    
-    .dark .dropdown-item:hover {
-        background: #475569;
-        color: #F9FAFB;
-        transform: translateX(5px);
-        text-decoration: none;
-    }
-    
-    .dark .empty-state {
-        background: #374151;
-        color: #F9FAFB;
-    }
-    
-    .dark .empty-state-icon {
-        color: #555;
-    }
-    
-    .dark .empty-state-title {
-        color: #F9FAFB;
-    }
-    
-    .dark .empty-state-text {
-        color: #9CA3AF;
-    }
-
-    /* Modo Oscuro - Subcuentas */
-    .dark .stats-grid .stat-card {
-        background: #374151;
-        color: #F9FAFB;
-    }
-    
-    .dark .subcuentas-grid .subcuenta-card {
-        background: #374151;
-        border-color: #4B5563;
-    }
-    
-    .dark .subcuenta-header h3 {
-        color: #F9FAFB;
-    }
-    
-    .dark .subcuenta-saldo {
-        color: #F9FAFB;
-    }
-    
-    .dark .subcuenta-info span {
-        color: #D1D5DB;
-    }
-    
-    .dark .account-section {
-        background: #374151;
-    }
-    
-    .dark .account-title {
-        color: #F9FAFB;
-    }
-    
-    .dark .stat-label {
-        color: #D1D5DB;
-    }
-    
-    .dark .modal-content {
-        background: #374151;
-    }
-    
-    .dark .modal-title {
-        color: #F9FAFB;
-    }
-    
-    .dark .form-label {
-        color: #F9FAFB;
-    }
-    
-    .dark .form-input,
-    .dark .form-select {
-        background: #4B5563;
-        color: #F9FAFB;
-        border-color: #6B7280;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .stat-card {
-        background: white;
-        border-radius: 20px;
         padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border-left: 5px solid;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
+        margin-bottom: 2rem;
     }
     
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        opacity: 0.1;
-        transform: translate(30px, -30px);
-    }
-    
-    .stat-card.balance-total {
-        border-left-color: #6C5CE7;
-    }
-    
-    .stat-card.balance-total::before {
-        background: #6C5CE7;
-    }
-    
-    .stat-card.ahorros {
-        border-left-color: #00b894;
-    }
-    
-    .stat-card.ahorros::before {
-        background: #00b894;
-    }
-    
-    .stat-card.inversiones {
-        border-left-color: #a29bfe;
-    }
-    
-    .stat-card.inversiones::before {
-        background: #a29bfe;
-    }
-    
-    .stat-card.objetivos {
-        border-left-color: #74b9ff;
-    }
-    
-    .stat-card.objetivos::before {
-        background: #74b9ff;
-    }
-    
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    }
-    
-    .stat-value {
-        font-size: 2.5rem;
+    .section-title {
+        font-size: 1.5rem;
         font-weight: 700;
-        margin-bottom: 0.5rem;
-        position: relative;
-        z-index: 2;
-        margin-top: 0;
-    }
-    
-    .stat-label {
-        color: #636e72;
-        font-weight: 500;
-        margin-bottom: 0;
-        position: relative;
-        z-index: 2;
-    }
-    
-    .stat-sublabel {
-        color: #b2bec3;
-        font-size: 0.9rem;
-        position: relative;
-        z-index: 2;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
     }
     
     .subcuentas-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
+        gap: 1.5rem;
     }
     
     .subcuenta-card {
         background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border: none;
+        border-radius: 15px;
+        border: 2px solid #e5e7eb;
+        padding: 1.5rem;
         transition: all 0.3s ease;
-        overflow: hidden;
         position: relative;
-        margin-bottom: 2rem;
-    }
-    
-    .subcuenta-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px;
-        background: linear-gradient(90deg, var(--card-color, #6C5CE7), var(--card-color-light, #A29BFE));
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
     
     .subcuenta-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        border-color: #6366f1;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(99, 102, 241, 0.15);
     }
     
     .subcuenta-header {
-        padding: 1.5rem 1.5rem 0 1.5rem;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        margin-bottom: 1rem;
     }
     
-    .subcuenta-title {
+    .subcuenta-name {
         font-size: 1.25rem;
         font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 0.5rem;
-        margin-top: 0;
+        color: #374151;
+        margin: 0 0 0.25rem 0;
     }
     
     .subcuenta-type {
-        display: inline-block;
-        padding: 0.4rem 1rem;
-        border-radius: 25px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+        background: #f3f4f6;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
     }
     
-    .type-emergencia { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
-    .type-objetivos { background: rgba(255, 184, 77, 0.15); color: #ffb84d; }
-    .type-inversion { background: rgba(116, 185, 255, 0.15); color: #74b9ff; }
-    .type-gastos { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; }
-    .type-ahorro { background: rgba(0, 184, 148, 0.15); color: #00b894; }
-    .type-entretenimiento { background: rgba(162, 155, 254, 0.15); color: #a29bfe; }
-    .type-transporte { background: rgba(253, 121, 168, 0.15); color: #fd79a8; }
-    .type-alimentacion { background: rgba(225, 112, 85, 0.15); color: #e17055; }
-    .type-salud { background: rgba(85, 239, 196, 0.15); color: #55efc4; }
-    .type-educacion { background: rgba(108, 92, 231, 0.15); color: #6c5ce7; }
-    .type-otros { background: rgba(99, 110, 114, 0.15); color: #636e72; }
+    .subcuenta-balance {
+        margin-bottom: 1.5rem;
+    }
     
-    .subcuenta-amount {
+    .balance-amount {
         font-size: 2rem;
-        font-weight: 700;
-        color: #2d3436;
+        font-weight: bold;
+        color: #059669;
+        display: block;
         margin-bottom: 0.5rem;
     }
     
-    .subcuenta-date {
-        color: #636e72;
-        font-size: 0.9rem;
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(45deg, #10b981, #34d399);
+        transition: width 0.3s ease;
+    }
+    
+    .balance-meta {
+        font-size: 0.875rem;
+        color: #6b7280;
     }
     
     .subcuenta-description {
-        padding: 0 1.5rem;
-        color: #636e72;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
     }
     
-    .subcuenta-content {
-        padding: 0 1.5rem 1rem 1.5rem;
+    .subcuenta-description p {
+        color: #6b7280;
+        font-style: italic;
+        margin: 0;
     }
     
     .subcuenta-actions {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #f8f9fa;
         display: flex;
-        gap: 0.5rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
     }
     
     .btn-action {
-        flex: 1;
-        min-width: 80px;
         padding: 0.5rem 1rem;
-        border-radius: 10px;
-        font-size: 0.8rem;
-        font-weight: 600;
+        border-radius: 8px;
         text-decoration: none;
-        text-align: center;
+        font-weight: 600;
+        font-size: 0.875rem;
         transition: all 0.3s ease;
         border: none;
         cursor: pointer;
-        display: inline-block;
-    }
-    
-    .btn-pause {
-        background: rgba(253, 203, 110, 0.15);
-        color: #fdcb6e;
-    }
-    
-    .btn-pause:hover {
-        background: rgba(253, 203, 110, 0.25);
-        color: #e17055;
-        text-decoration: none;
-    }
-    
-    .btn-transfer {
-        background: rgba(116, 185, 255, 0.15);
-        color: #74b9ff;
-    }
-    
-    .btn-transfer:hover {
-        background: rgba(116, 185, 255, 0.25);
-        color: #0984e3;
-        text-decoration: none;
+        flex: 1;
+        text-align: center;
+        min-width: 80px;
     }
     
     .btn-edit {
-        background: rgba(108, 92, 231, 0.15);
-        color: #6c5ce7;
+        background: #f59e0b;
+        color: white;
     }
     
     .btn-edit:hover {
-        background: rgba(108, 92, 231, 0.25);
-        color: #5f3dc4;
+        background: #d97706;
+        color: white;
         text-decoration: none;
+        transform: translateY(-2px);
     }
     
-    .dropdown {
-        position: relative;
-        display: inline-block;
+    .btn-transfer {
+        background: #8b5cf6;
+        color: white;
     }
     
-    .dropdown-toggle {
-        background: none;
-        border: none;
-        color: #636e72;
-        font-size: 1.2rem;
-        cursor: pointer;
-        padding: 0.5rem;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-    }
-    
-    .dropdown-toggle:hover {
-        background: #f8f9fa;
-        color: #2d3436;
-    }
-    
-    .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: white;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        border-radius: 12px;
-        padding: 0.5rem 0;
-        min-width: 160px;
-        z-index: 1000;
-        display: none;
-    }
-    
-    .dropdown-menu.show {
-        display: block;
-    }
-    
-    .dropdown-item {
-        display: block;
-        padding: 0.75rem 1.5rem;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        color: #2d3436;
+    .btn-transfer:hover {
+        background: #7c3aed;
+        color: white;
         text-decoration: none;
-        border: none;
-        background: none;
-        width: 100%;
-        text-align: left;
-        cursor: pointer;
+        transform: translateY(-2px);
     }
     
-    .dropdown-item:hover {
-        background: #f8f9fa;
-        transform: translateX(5px);
-        color: #2d3436;
+    .btn-pause {
+        background: #10b981;
+        color: white;
+    }
+    
+    .btn-pause:hover {
+        background: #059669;
+        color: white;
         text-decoration: none;
-    }
-    
-    .dropdown-item.text-danger {
-        color: #e17055;
-    }
-    
-    .dropdown-item.text-danger:hover {
-        color: #d63031;
-        background: rgba(255, 107, 107, 0.1);
+        transform: translateY(-2px);
     }
     
     .empty-state {
         text-align: center;
-        padding: 4rem 2rem;
+        padding: 4rem;
         background: white;
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
     
-    .empty-state-icon {
+    .empty-state i {
         font-size: 4rem;
-        color: #ddd;
-        margin-bottom: 2rem;
-    }
-    
-    .empty-state-title {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #636e72;
+        color: #d1d5db;
         margin-bottom: 1rem;
     }
     
-    .empty-state-text {
-        color: #b2bec3;
-        margin-bottom: 2rem;
-        line-height: 1.6;
+    .empty-state h3 {
+        color: #6b7280;
+        margin-bottom: 0.5rem;
     }
     
-    .text-primary { color: #6C5CE7; }
-    .text-success { color: #00b894; }
-    .text-muted { color: #636e72; }
-    .text-danger { color: #e17055; }
+    .empty-state p {
+        color: #9ca3af;
+        margin-bottom: 2rem;
+    }
     
-    .me-2 { margin-right: 0.5rem; }
-    .mb-0 { margin-bottom: 0; }
-    .mb-3 { margin-bottom: 1rem; }
-    .small { font-size: 0.875rem; }
+    .d-flex {
+        display: flex;
+    }
     
-    .fas {
-        font-family: "Font Awesome 6 Free";
-        font-weight: 900;
+    .gap-2 {
+        gap: 0.5rem;
+    }
+    
+    .flex-wrap {
+        flex-wrap: wrap;
+    }
+    
+    .me-2 {
+        margin-right: 0.5rem;
     }
     
     @media (max-width: 768px) {
@@ -1084,222 +334,130 @@
             flex-direction: column;
         }
         
-        .btn-action {
-            margin-bottom: 0.5rem;
+        .btn-new-subcuenta {
+            margin: 0.25rem 0;
         }
     }
     
-    /* Modo oscuro */
-    .dark body {
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-    }
-    
-    .dark .container-fluid {
-        color: #F9FAFB;
-    }
-    
-    .dark .main-header {
-        background: #374151;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    
-    .dark .main-title {
-        color: #A78BFA;
-    }
-    
-    .dark .main-subtitle {
-        color: #9CA3AF;
-    }
-
-    .dark .stat-card {
-        background: #1f2937;
-        border-left: 5px solid transparent;
-    }
-    
-    .dark .stat-card.balance-total {
-        border-left-color: #6C5CE7;
-    }
-    
-    .dark .stat-card.balance-total::before {
-        background: #6C5CE7;
-    }
-    
-    .dark .stat-card.ahorros {
-        border-left-color: #00b894;
-    }
-    
-    .dark .stat-card.ahorros::before {
-        background: #00b894;
-    }
-    
-    .dark .stat-card.inversiones {
-        border-left-color: #a29bfe;
-    }
-    
-    .dark .stat-card.inversiones::before {
-        background: #a29bfe;
-    }
-    
-    .dark .stat-card.objetivos {
-        border-left-color: #74b9ff;
-    }
-    
-    .dark .stat-card.objetivos::before {
-        background: #74b9ff;
-    }
-    
-    .dark .subcuenta-card {
-        background: #1f2937;
-        border: none;
-        transition: all 0.3s ease;
-        overflow: hidden;
-        position: relative;
+    /* Estilos para transferencias */
+    .transferencias-section {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        padding: 2rem;
         margin-bottom: 2rem;
     }
     
-    .dark .subcuenta-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 5px;
-        background: linear-gradient(90deg, var(--card-color, #6C5CE7), var(--card-color-light, #A29BFE));
-    }
-    
-    .dark .subcuenta-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-    }
-    
-    .dark .subcuenta-header {
-        padding: 1.5rem 1.5rem 0 1.5rem;
+    .section-header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: center;
+        margin-bottom: 1.5rem;
     }
     
-    .dark .subcuenta-title {
+    .btn-see-all {
+        background: linear-gradient(45deg, #74b9ff, #0984e3);
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-see-all:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .transferencias-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+    
+    .transferencia-card {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .transferencia-card:hover {
+        border-color: #3b82f6;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+    }
+    
+    .transferencia-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+    
+    .transferencia-monto {
         font-size: 1.25rem;
         font-weight: 700;
-        color: #F9FAFB;
-        margin-bottom: 0.5rem;
-        margin-top: 0;
+        color: #059669;
+        margin: 0;
     }
     
-    .dark .subcuenta-type {
-        display: inline-block;
-        padding: 0.4rem 1rem;
-        border-radius: 25px;
+    .transferencia-fecha {
         font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 1rem;
+        color: #6b7280;
+        margin: 0;
     }
     
-    .dark .subcuenta-amount {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #F9FAFB;
-        margin-bottom: 0.5rem;
-    }
-    
-    .dark .subcuenta-date {
-        color: #9CA3AF;
-        font-size: 0.9rem;
-    }
-    
-    .dark .subcuenta-description {
-        padding: 0 1.5rem;
-        color: #9CA3AF;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }
-    
-    .dark .subcuenta-content {
-        padding: 0 1.5rem 1rem 1.5rem;
-    }
-    
-    .dark .subcuenta-actions {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid #374151;
+    .transferencia-icon {
+        background: linear-gradient(45deg, #10b981, #059669);
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
         display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
     }
     
-    .dark .btn-action {
-        background: #374151;
-        color: #F9FAFB;
-        border: none;
-        transition: all 0.3s ease;
-        padding: 0.5rem 1rem;
-        border-radius: 10px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-decoration: none;
-        text-align: center;
-        cursor: pointer;
-        display: inline-block;
+    .transferencia-cuentas {
+        margin-bottom: 0.5rem;
     }
     
-    .dark .btn-action:hover {
-        background: #475569;
-        color: #F9FAFB;
-        text-decoration: none;
+    .cuenta-origen, .cuenta-destino {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.25rem;
     }
     
-    .dark .dropdown-toggle {
-        color: #9CA3AF;
+    .cuenta-emoji {
+        margin-right: 0.5rem;
+        font-size: 1rem;
     }
     
-    .dark .dropdown-toggle:hover {
-        background: #475569;
-        color: #F9FAFB;
+    .cuenta-nombre {
+        font-size: 0.9rem;
+        color: #374151;
+        font-weight: 500;
     }
     
-    .dark .dropdown-menu {
-        background: #374151;
-        border: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        border-radius: 12px;
-        padding: 0.5rem 0;
-        min-width: 160px;
-        z-index: 1000;
-        display: none;
+    .cuenta-origen {
+        opacity: 0.8;
     }
     
-    .dark .dropdown-menu.show {
-        display: block;
+    .transferencia-descripcion {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 0.5rem;
+        margin-top: 0.5rem;
     }
     
-    .dark .dropdown-item {
-        color: #F9FAFB;
-    }
-    
-    .dark .dropdown-item:hover {
-        background: #475569;
-        color: #F9FAFB;
-        transform: translateX(5px);
-        text-decoration: none;
-    }
-    
-    .dark .empty-state {
-        background: #374151;
-        color: #F9FAFB;
-    }
-    
-    .dark .empty-state-icon {
-        color: #555;
-    }
-    
-    .dark .empty-state-title {
-        color: #F9FAFB;
-    }
-    
-    .dark .empty-state-text {
-        color: #9CA3AF;
+    .transferencia-descripcion small {
+        color: #6b7280;
+        font-style: italic;
     }
 </style>
 {% endblock %}
@@ -1309,322 +467,257 @@
     <!-- Header -->
     <div class="main-header">
         <div>
-            <h1 class="main-title">Subcuentas</h1>
+            <h1 class="main-title">💳 Subcuentas</h1>
             <p class="main-subtitle">Organiza tu dinero en diferentes subcuentas para mejor control financiero</p>
         </div>
-        <div>
+        <div class="d-flex gap-2 flex-wrap">
+            <!-- Botón para historial de transferencias -->
+            <a href="{% url 'cuentas:historial_transferencias_cuenta_principal' %}" class="btn-new-subcuenta" style="background: linear-gradient(45deg, #74b9ff, #0984e3);">
+                <i class="fas fa-history me-2"></i>Historial Principal
+            </a>
+            
+            <!-- Botón para crear subcuenta independiente -->
+            <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="btn-new-subcuenta">
+                <i class="fas fa-store me-2"></i>Subcuenta de Negocio
+            </a>
+            
+            <!-- Botón para crear subcuenta vinculada -->
             {% if cuentas_con_subcuentas %}
-            <a href="{% url 'cuentas:crear_subcuenta' cuentas_con_subcuentas.0.cuenta.id %}" class="btn-new-subcuenta">
-                <i class="fas fa-plus me-2"></i>Nueva Subcuenta
-            </a>
+                <a href="{% url 'cuentas:crear_subcuenta' cuentas_con_subcuentas.0.cuenta.id %}" class="btn-new-subcuenta" style="background: linear-gradient(45deg, #00b894, #00cec9);">
+                    <i class="fas fa-plus me-2"></i>Subcuenta Personal
+                </a>
             {% else %}
-            <a href="#" onclick="alert('Primero debes crear una cuenta principal')" class="btn-new-subcuenta">
-                <i class="fas fa-plus me-2"></i>Nueva Subcuenta
-            </a>
+                <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="btn-new-subcuenta">
+                    <i class="fas fa-plus me-2"></i>Nueva Subcuenta
+                </a>
             {% endif %}
         </div>
     </div>
 
     <!-- Estadísticas generales -->
     <div class="stats-grid">
-        <div class="stat-card balance-total">
-            <h2 class="stat-value text-primary">{% format_money total_saldo_subcuentas user %}</h2>
+        <div class="stat-card">
+            <h2 class="stat-value" style="color: #6366f1;">
+                {% if total_saldo_subcuentas %}
+                    {% format_money total_saldo_subcuentas user %}
+                {% else %}
+                    $0.00
+                {% endif %}
+            </h2>
             <p class="stat-label">Balance Total</p>
-            <p class="stat-sublabel">En {{ total_subcuentas }} subcuentas activas</p>
+            <p class="stat-sublabel">En {{ total_subcuentas|default:0 }} subcuentas activas</p>
         </div>
         
-        <div class="stat-card ahorros">
-            <h2 class="stat-value text-success">
-                {% with ahorros_total=0 emergencia_count=0 %}
-                    {% for cuenta_data in cuentas_con_subcuentas %}
-                        {% for subcuenta in cuenta_data.subcuentas %}
-                            {% if subcuenta.tipo == 'emergencia' or subcuenta.tipo == 'ahorro' %}
-                                {% with ahorros_total=ahorros_total|add:subcuenta.saldo emergencia_count=emergencia_count|add:1 %}{% endwith %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                    {% format_money ahorros_total user %}
-                {% endwith %}
+        <div class="stat-card">
+            <h2 class="stat-value" style="color: #f59e0b;">
+                {% if total_saldo_subcuentas_independientes %}
+                    {% format_money total_saldo_subcuentas_independientes user %}
+                {% else %}
+                    $0.00
+                {% endif %}
             </h2>
-            <p class="stat-label">Ahorros</p>
-            <p class="stat-sublabel">{{ emergencia_count|default:0 }} cuenta{{ emergencia_count|pluralize }}</p>
+            <p class="stat-label">Subcuentas de Negocio</p>
+            <p class="stat-sublabel">{{ total_subcuentas_independientes|default:0 }} independiente{{ total_subcuentas_independientes|pluralize:"s" }}</p>
         </div>
         
-        <div class="stat-card inversiones">
-            <h2 class="stat-value" style="color: #a29bfe;">
-                {% with inversiones_total=0 inversion_count=0 %}
-                    {% for cuenta_data in cuentas_con_subcuentas %}
-                        {% for subcuenta in cuenta_data.subcuentas %}
-                            {% if subcuenta.tipo == 'inversion' %}
-                                {% with inversiones_total=inversiones_total|add:subcuenta.saldo inversion_count=inversion_count|add:1 %}{% endwith %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                    {% format_money inversiones_total user %}
-                {% endwith %}
+        <div class="stat-card">
+            <h2 class="stat-value" style="color: #06b6d4;">
+                {% if total_saldo_subcuentas_vinculadas %}
+                    {% format_money total_saldo_subcuentas_vinculadas user %}
+                {% else %}
+                    $0.00
+                {% endif %}
             </h2>
-            <p class="stat-label">Inversiones</p>
-            <p class="stat-sublabel">{{ inversion_count|default:0 }} cuenta{{ inversion_count|pluralize:" de inversión, s de inversión" }}</p>
+            <p class="stat-label">Subcuentas Personales</p>
+            <p class="stat-sublabel">{{ total_subcuentas_vinculadas|default:0 }} vinculada{{ total_subcuentas_vinculadas|pluralize:"s" }}</p>
         </div>
         
-        <div class="stat-card objetivos">
-            <h2 class="stat-value" style="color: #74b9ff;">
-                {% with objetivos_total=0 objetivos_count=0 %}
-                    {% for cuenta_data in cuentas_con_subcuentas %}
-                        {% for subcuenta in cuenta_data.subcuentas %}
-                            {% if subcuenta.tipo == 'objetivos' %}
-                                {% with objetivos_total=objetivos_total|add:subcuenta.saldo objetivos_count=objetivos_count|add:1 %}{% endwith %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                    ${{ objetivos_total|floatformat:2 }}
-                {% endwith %}
-            </h2>
-            <p class="stat-label">Objetivos</p>
-            <p class="stat-sublabel">{{ objetivos_count|default:0 }} meta{{ objetivos_count|pluralize:" activa,s activas" }}</p>
+        <div class="stat-card">
+            <h2 class="stat-value" style="color: #10b981;">{{ total_subcuentas_activas|default:0 }}</h2>
+            <p class="stat-label">Subcuentas Activas</p>
+            <p class="stat-sublabel">Total en funcionamiento</p>
         </div>
     </div>
 
-    <!-- Filtros -->
-    <div style="background: white; padding: 1rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
-        <h5 style="margin: 0; color: #2d3436;">Filtros de Subcuentas</h5>
-        <div style="display: flex; gap: 1rem; align-items: center;">
-            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                <input type="checkbox" id="mostrar-inactivas" onchange="toggleSubcuentasInactivas()" style="margin: 0;">
-                <span>Mostrar inactivas</span>
-            </label>
-            <span style="color: #636e72; font-size: 0.9rem;">
-                Activas: {{ total_subcuentas }} | 
-                Inactivas: {{ total_subcuentas_inactivas|default:0 }} | 
-                Total: <span id="total-subcuentas">{{ total_subcuentas }}</span>
-            </span>
+    <!-- Subcuentas Independientes (Negocios) -->
+    {% if subcuentas_independientes_activas %}
+    <div class="subcuentas-section">
+        <h2 class="section-title" style="color: #e17055;">
+            <i class="fas fa-store me-2"></i>Subcuentas de Negocio
+        </h2>
+        <p style="color: #636e72; margin-bottom: 1.5rem;">Subcuentas independientes para administrar tus fuentes de ingresos</p>
+        <div class="subcuentas-grid">
+            {% for subcuenta in subcuentas_independientes_activas %}
+                <div class="subcuenta-card">
+                    <div class="subcuenta-header">
+                        <div class="subcuenta-info">
+                            <h3 class="subcuenta-name">{{ subcuenta.nombre }}</h3>
+                            <span class="subcuenta-type">{{ subcuenta.get_tipo_display }}</span>
+                        </div>
+                    </div>
+
+                    <div class="subcuenta-balance">
+                        <span class="balance-amount">{% format_money subcuenta.saldo user %}</span>
+                        {% if subcuenta.meta_objetivo %}
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ subcuenta.progreso_meta }}%"></div>
+                        </div>
+                        <span class="balance-meta">Meta: {% format_money subcuenta.meta_objetivo user %} ({{ subcuenta.progreso_meta|floatformat:1 }}%)</span>
+                        {% endif %}
+                    </div>
+
+                    {% if subcuenta.descripcion %}
+                    <div class="subcuenta-description">
+                        <p>{{ subcuenta.descripcion }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="subcuenta-actions">
+                        <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-action btn-edit">✏️ Editar</a>
+                        <a href="{% url 'cuentas:transferir_a_cuenta_principal' subcuenta.id %}" class="btn-action btn-transfer">💰 A Principal</a>
+                        <a href="{% url 'cuentas:transferir_subcuentas' %}" class="btn-action btn-pause">🔄 Transferir</a>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
+    {% endif %}
 
-    <!-- Subcuentas Grid -->
+    <!-- Subcuentas Vinculadas (Activas) -->
     {% if cuentas_con_subcuentas %}
-    <div class="subcuentas-grid">
-        {% for cuenta_data in cuentas_con_subcuentas %}
-            {% for subcuenta in cuenta_data.subcuentas %}
-            <div class="subcuenta-card subcuenta-activa" style="--card-color: {{ subcuenta.get_color_tipo }}; --card-color-light: {{ subcuenta.get_color_tipo }}88;">
-                
-                <div class="subcuenta-header">
-                    <div>
-                        <h3 class="subcuenta-title">{{ subcuenta.nombre }}</h3>
-                        <span class="subcuenta-type type-{{ subcuenta.tipo }}">{{ subcuenta.get_tipo_display }}</span>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}">
-                                <i class="fas fa-edit me-2"></i>Editar
-                            </a>
-                            <a class="dropdown-item" href="{% url 'cuentas:depositar_subcuenta' subcuenta.id %}">
-                                <i class="fas fa-plus-circle me-2"></i>Depositar
-                            </a>
-                            <a class="dropdown-item" href="{% url 'cuentas:retirar_subcuenta' subcuenta.id %}">
-                                <i class="fas fa-minus-circle me-2"></i>Retirar
-                            </a>
-                            <a class="dropdown-item text-danger" href="{% url 'cuentas:eliminar_subcuenta' subcuenta.id %}">
-                                <i class="fas fa-trash me-2"></i>Eliminar
-                            </a>
+    <div class="subcuentas-section">
+        <h2 class="section-title" style="color: #00b894;">
+            <i class="fas fa-link me-2"></i>Subcuentas Vinculadas (Activas)
+        </h2>
+        <div class="subcuentas-grid">
+            {% for cuenta_data in cuentas_con_subcuentas %}
+                {% for subcuenta in cuenta_data.subcuentas %}
+                    {% if subcuenta.activa %}
+                        <div class="subcuenta-card">
+                            <div class="subcuenta-header">
+                                <div class="subcuenta-info">
+                                    <h3 class="subcuenta-name">{{ subcuenta.nombre }}</h3>
+                                    <span class="subcuenta-type">{{ subcuenta.get_tipo_display }}</span>
+                                </div>
+                            </div>
+
+                            <div class="subcuenta-balance">
+                                <span class="balance-amount">{% format_money subcuenta.saldo user %}</span>
+                                {% if subcuenta.meta_objetivo %}
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: {{ subcuenta.progreso_meta }}%"></div>
+                                </div>
+                                <span class="balance-meta">Meta: {% format_money subcuenta.meta_objetivo user %} ({{ subcuenta.progreso_meta|floatformat:1 }}%)</span>
+                                {% endif %}
+                            </div>
+
+                            {% if subcuenta.descripcion %}
+                            <div class="subcuenta-description">
+                                <p>{{ subcuenta.descripcion }}</p>
+                            </div>
+                            {% endif %}
+
+                            <div class="subcuenta-actions">
+                                <a href="{% url 'cuentas:depositar_subcuenta' subcuenta.id %}" class="btn-action btn-pause">💵 Depositar</a>
+                                <a href="{% url 'cuentas:transferir_subcuentas' %}" class="btn-action btn-transfer">🔄 Transferir</a>
+                                <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-action btn-edit">✏️ Editar</a>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                
-                {% if subcuenta.descripcion %}
-                <div class="subcuenta-description">
-                    <p class="text-muted small mb-3">{{ subcuenta.descripcion }}</p>
-                </div>
-                {% endif %}
-                
-                <div class="subcuenta-content">
-                    <div class="subcuenta-amount">${{ subcuenta.saldo|floatformat:2 }}</div>
-                    <div class="subcuenta-date">Creada el {{ subcuenta.fecha_creacion|date:"d/m/Y" }}</div>
-                </div>
-                
-                <div class="subcuenta-actions">
-                    <a href="{% url 'cuentas:depositar_subcuenta' subcuenta.id %}" class="btn-action btn-pause">Depositar</a>
-                    <a href="{% url 'cuentas:transferir_subcuentas' %}" class="btn-action btn-transfer">Transferir</a>
-                    <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-action btn-edit">Editar</a>
-                </div>
-            </div>
+                    {% endif %}
+                {% endfor %}
             {% endfor %}
-            
-            <!-- Subcuentas inactivas (ocultas por defecto) -->
-            {% for subcuenta in cuenta_data.subcuentas_inactivas %}
-            <div class="subcuenta-card subcuenta-inactiva" style="--card-color: {{ subcuenta.get_color_tipo }}; --card-color-light: {{ subcuenta.get_color_tipo }}88; display: none; opacity: 0.6;">
-                
-                <div class="subcuenta-header">
-                    <div>
-                        <h3 class="subcuenta-title">{{ subcuenta.nombre }} <span style="font-size: 0.7rem; color: #e17055; font-weight: 500;">(INACTIVA)</span></h3>
-                        <span class="subcuenta-type type-{{ subcuenta.tipo }}">{{ subcuenta.get_tipo_display }}</span>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}">
-                                <i class="fas fa-edit me-2"></i>Editar
-                            </a>
-                            <a class="dropdown-item" href="{% url 'cuentas:activar_subcuenta' subcuenta.id %}">
-                                <i class="fas fa-check-circle me-2"></i>Activar
-                            </a>
-                            <a class="dropdown-item text-danger" href="{% url 'cuentas:eliminar_subcuenta' subcuenta.id %}">
-                                <i class="fas fa-trash me-2"></i>Eliminar
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                {% if subcuenta.descripcion %}
-                <div class="subcuenta-description">
-                    <p class="text-muted small mb-3">{{ subcuenta.descripcion }}</p>
-                </div>
-                {% endif %}
-                
-                <div class="subcuenta-content">
-                    <div class="subcuenta-amount">${{ subcuenta.saldo|floatformat:2 }}</div>
-                    <div class="subcuenta-date">Creada el {{ subcuenta.fecha_creacion|date:"d/m/Y" }}</div>
-                </div>
-                
-                <div class="subcuenta-actions">
-                    <a href="{% url 'cuentas:activar_subcuenta' subcuenta.id %}" class="btn-action btn-edit">Activar</a>
-                    <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-action btn-transfer">Editar</a>
-                </div>
-            </div>
-            {% endfor %}
-        {% endfor %}
-    </div>
-    {% else %}
-    <!-- Estado vacío -->
-    <div class="empty-state">
-        <div class="empty-state-icon">
-            <i class="fas fa-layer-group"></i>
         </div>
-        <h3 class="empty-state-title">No tienes subcuentas creadas</h3>
-        <p class="empty-state-text">
-            Las subcuentas te ayudan a organizar tu dinero en diferentes categorías como ahorros, 
-            gastos, inversiones y objetivos específicos.
-        </p>
-        <a href="#" onclick="alert('Primero debes crear una cuenta principal')" class="btn-new-subcuenta">
-            <i class="fas fa-plus me-2"></i>Crear Mi Primera Subcuenta
+    </div>
+    {% endif %}
+
+    <!-- Sección de Transferencias Recientes -->
+    {% if transferencias_recientes %}
+    <div class="transferencias-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="fas fa-exchange-alt me-2"></i>Transferencias Recientes
+            </h2>
+            <a href="{% url 'cuentas:historial_transferencias' %}" class="btn-see-all">Ver Todas</a>
+        </div>
+        
+        <div class="transferencias-grid">
+            {% for transferencia in transferencias_recientes %}
+            <div class="transferencia-card">
+                <div class="transferencia-header">
+                    <div class="transferencia-info">
+                        <h4 class="transferencia-monto">${{ transferencia.monto|floatformat:2 }}</h4>
+                        <p class="transferencia-fecha">{{ transferencia.fecha_transferencia|date:"d/m/Y H:i" }}</p>
+                    </div>
+                    <div class="transferencia-icon">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="transferencia-cuentas">
+                    <div class="cuenta-origen">
+                        <span class="cuenta-emoji">💰</span>
+                        <span class="cuenta-nombre">{{ transferencia.subcuenta_origen.nombre }}</span>
+                    </div>
+                    <div class="cuenta-destino">
+                        <span class="cuenta-emoji">💰</span>
+                        <span class="cuenta-nombre">{{ transferencia.subcuenta_destino.nombre }}</span>
+                    </div>
+                </div>
+                {% if transferencia.descripcion %}
+                <div class="transferencia-descripcion">
+                    <small>{{ transferencia.descripcion }}</small>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Mensaje cuando no hay subcuentas -->
+    {% if not cuentas_con_subcuentas and not subcuentas_independientes_activas %}
+    <div class="empty-state">
+        <i class="fas fa-wallet"></i>
+        <h3>¡Comienza a organizar tu dinero!</h3>
+        <p>Crea subcuentas para separar tus ahorros, gastos y proyectos de inversión.</p>
+        <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="btn-new-subcuenta">
+            <i class="fas fa-plus me-2"></i>Crear Primera Subcuenta
         </a>
     </div>
     {% endif %}
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
-function toggleDropdown(button) {
-    const dropdown = button.nextElementSibling;
-    const isOpen = dropdown.classList.contains('show');
-    
-    // Cerrar todos los dropdowns
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        menu.classList.remove('show');
-    });
-    
-    // Si no estaba abierto, abrir este
-    if (!isOpen) {
-        dropdown.classList.add('show');
-    }
-}
-
-function toggleSubcuentasInactivas() {
-    const checkbox = document.getElementById('mostrar-inactivas');
-    const subcuentasInactivas = document.querySelectorAll('.subcuenta-inactiva');
-    
-    if (checkbox.checked) {
-        subcuentasInactivas.forEach(card => {
-            card.style.display = 'block';
-            setTimeout(() => {
-                card.style.opacity = '0.6';
-            }, 10);
-        });
-    } else {
-        subcuentasInactivas.forEach(card => {
-            card.style.display = 'none';
-        });
-    }
-    
-    // Actualizar el contador total
-    const totalActivas = document.querySelectorAll('.subcuenta-activa').length;
-    const totalInactivas = document.querySelectorAll('.subcuenta-inactiva').length;
-    const totalMostradas = checkbox.checked ? totalActivas + totalInactivas : totalActivas;
-    
-    document.getElementById('total-subcuentas').textContent = totalMostradas;
-}
-
-function activarSubcuenta(subcuentaId) {
-    // Redirigir directamente a la página de confirmación
-    window.location.href = `/cuentas/subcuentas/activar/${subcuentaId}/`;
-}
-
-// Cerrar dropdowns al hacer click fuera
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.dropdown')) {
-        document.querySelectorAll('.dropdown-menu').forEach(menu => {
-            menu.classList.remove('show');
-        });
-    }
-});
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Agregar animaciones suaves a las cards
-    const cards = document.querySelectorAll('.subcuenta-card');
+    console.log('Dashboard de subcuentas cargado correctamente');
     
-    // Animación de entrada
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'all 0.5s ease';
-            card.style.opacity = card.classList.contains('subcuenta-inactiva') ? '0.6' : '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-    
-    // Efecto hover para las estadísticas
-    const statCards = document.querySelectorAll('.stat-card');
-    statCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-8px) scale(1.02)';
-        });
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-    
-    // Efecto para los botones de acción
+    // Inicializar efectos hover
     const actionButtons = document.querySelectorAll('.btn-action');
     actionButtons.forEach(btn => {
         btn.addEventListener('mouseenter', function() {
-            if (this.classList.contains('btn-edit')) {
-                this.style.transform = 'translateY(-3px)';
-                this.style.boxShadow = '0 8px 25px rgba(45, 52, 54, 0.3)';
-            }
+            this.style.transform = 'translateY(-2px)';
         });
+        
         btn.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0)';
-            this.style.boxShadow = 'none';
         });
     });
     
-    // Animación para el botón de nueva subcuenta
-    const newSubcuentaBtn = document.querySelector('.btn-new-subcuenta');
-    if (newSubcuentaBtn) {
-        newSubcuentaBtn.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-3px) scale(1.05)';
+    // Efecto para las tarjetas de estadísticas
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
         });
-        newSubcuentaBtn.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
         });
+    });
+    
+    // Mostrar mensaje de bienvenida si es la primera vez
+    const subcuentasCount = {{ total_subcuentas|default:0 }};
+    if (subcuentasCount === 0) {
+        console.log('Primer visita a subcuentas - mostrar ayuda');
     }
 });
 </script>

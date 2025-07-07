@@ -79,9 +79,33 @@ class Movimiento(models.Model):
         ('ingreso', 'Ingreso'),
         ('egreso', 'Egreso'),
     )
+    
+    CATEGORIAS_GASTOS = (
+        ('alimentacion', '🍽️ Alimentación'),
+        ('transporte', '🚗 Transporte'),
+        ('entretenimiento', '🎬 Entretenimiento'),
+        ('salud', '🏥 Salud'),
+        ('educacion', '📚 Educación'),
+        ('compras', '🛒 Compras'),
+        ('servicios', '🔧 Servicios'),
+        ('vivienda', '🏠 Vivienda'),
+        ('trabajo', '💼 Trabajo'),
+        ('ahorros', '🎯 Ahorros/Metas'),
+        ('otros', '📦 Otros'),
+    )
+    
+    CATEGORIAS_INGRESOS = (
+        ('salario', '💰 Salario'),
+        ('freelance', '💻 Freelance'),
+        ('negocio', '🏢 Negocio'),
+        ('inversion', '📈 Inversión'),
+        ('regalo', '🎁 Regalo'),
+        ('otros', '📦 Otros'),
+    )
 
     nombre = models.CharField(max_length=50)
     tipo = models.CharField(max_length=25, choices=TIPOS_MOVIMIENTO)
+    categoria = models.CharField(max_length=25, blank=True, null=True, help_text="Categoría del movimiento")
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_movimiento = models.DateTimeField()
     descripcion = models.CharField(max_length=300, blank=True, null=True)
@@ -90,3 +114,15 @@ class Movimiento(models.Model):
 
     def __str__(self):
         return f"{self.tipo} - {self.monto}"
+    
+    def get_categoria_display_emoji(self):
+        """Retorna la categoría con emoji"""
+        if self.tipo == 'egreso':
+            for cat_key, cat_display in self.CATEGORIAS_GASTOS:
+                if cat_key == self.categoria:
+                    return cat_display
+        elif self.tipo == 'ingreso':
+            for cat_key, cat_display in self.CATEGORIAS_INGRESOS:
+                if cat_key == self.categoria:
+                    return cat_display
+        return '📦 Otros'

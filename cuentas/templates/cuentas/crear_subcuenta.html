@@ -107,10 +107,45 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Tipo -->
+                            <!-- Tipo de Subcuenta -->
                             <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-question-circle me-2"></i>{{ form.tipo_subcuenta_base.label }}
+                                </label>
+                                <div class="row">
+                                    {% for radio in form.tipo_subcuenta_base %}
+                                    <div class="col-md-6">
+                                        <div class="card h-100" style="cursor: pointer; transition: all 0.3s ease;" onclick="selectTipoSubcuenta('{{ radio.choice_value }}')">
+                                            <div class="card-body text-center">
+                                                {% if radio.choice_value == 'negocio' %}
+                                                    <i class="fas fa-briefcase fa-2x mb-2 text-warning"></i>
+                                                    <h6 class="card-title">💼 Negocio</h6>
+                                                    <p class="card-text small">Independiente, para actividades comerciales</p>
+                                                {% else %}
+                                                    <i class="fas fa-user fa-2x mb-2 text-info"></i>
+                                                    <h6 class="card-title">👤 Personal</h6>
+                                                    <p class="card-text small">Para organizar mis finanzas personales</p>
+                                                {% endif %}
+                                                {{ radio.tag }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% if form.tipo_subcuenta_base.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.tipo_subcuenta_base.errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">{{ form.tipo_subcuenta_base.help_text }}</div>
+                            </div>
+
+                            <!-- Categoría (dinámico según personal o negocio) -->
+                            <div class="mb-3" id="categoria-container">
                                 <label for="{{ form.tipo.id_for_label }}" class="form-label">
-                                    <i class="fas fa-folder me-2"></i>Tipo de Subcuenta *
+                                    <i class="fas fa-folder me-2"></i><span id="categoria-label">{{ form.tipo.label }}</span> *
                                 </label>
                                 {{ form.tipo }}
                                 {% if form.tipo.errors %}
@@ -120,6 +155,7 @@
                                         {% endfor %}
                                     </div>
                                 {% endif %}
+                                <div class="form-text" id="categoria-help">{{ form.tipo.help_text }}</div>
                             </div>
 
                             <!-- Descripción -->
@@ -303,6 +339,76 @@ document.addEventListener('DOMContentLoaded', function() {
             saldoInput.focus();
         }
     });
+});
+
+// Función para seleccionar tipo de subcuenta
+function selectTipoSubcuenta(tipo) {
+    // Quitar selección anterior
+    document.querySelectorAll('[onclick*="selectTipoSubcuenta"]').forEach(card => {
+        card.style.borderColor = '#dee2e6';
+        card.style.backgroundColor = '#fff';
+    });
+    
+    // Seleccionar el nuevo tipo
+    const selectedCard = document.querySelector(`[onclick*="${tipo}"]`);
+    selectedCard.style.borderColor = '#0d6efd';
+    selectedCard.style.backgroundColor = '#f8f9ff';
+    
+    // Marcar el radio button correspondiente
+    const radio = document.querySelector(`input[value="${tipo}"]`);
+    if (radio) {
+        radio.checked = true;
+    }
+    
+    // Cambiar las opciones de categoría dinámicamente
+    const tipoSelect = document.getElementById('id_tipo');
+    const categoriaLabel = document.getElementById('categoria-label');
+    const categoriaHelp = document.getElementById('categoria-help');
+    
+    if (tipo === 'negocio') {
+        // Opciones para subcuentas de negocio
+        tipoSelect.innerHTML = `
+            <option value="tienda_online">Tienda Online</option>
+            <option value="tienda_fisica">Tienda Física</option>
+            <option value="servicios_profesionales">Servicios Profesionales</option>
+            <option value="freelance">Trabajo Freelance</option>
+            <option value="negocio_propio">Negocio Propio</option>
+            <option value="ingresos_pasivos">Ingresos Pasivos</option>
+            <option value="ventas_productos">Ventas de Productos</option>
+            <option value="consultoria">Consultoría</option>
+            <option value="alquiler_propiedades">Alquiler de Propiedades</option>
+        `;
+        categoriaLabel.textContent = 'Categoría de Negocio';
+        categoriaHelp.textContent = 'Selecciona la categoría comercial que mejor describe tu actividad';
+    } else {
+        // Opciones para subcuentas personales
+        tipoSelect.innerHTML = `
+            <option value="ahorro_meta">Ahorro para Meta</option>
+            <option value="emergencia">Fondo de Emergencia</option>
+            <option value="inversion">Inversiones</option>
+            <option value="gastos_fijos">Gastos Fijos</option>
+            <option value="gastos_variables">Gastos Variables</option>
+            <option value="entretenimiento">Entretenimiento</option>
+            <option value="viajes">Viajes y Vacaciones</option>
+            <option value="educacion">Educación y Cursos</option>
+            <option value="salud">Salud y Bienestar</option>
+            <option value="familia">Gastos Familiares</option>
+            <option value="otros">Otros</option>
+        `;
+        categoriaLabel.textContent = 'Categoría Personal';
+        categoriaHelp.textContent = 'Selecciona la categoría que mejor describe esta subcuenta personal';
+    }
+    
+    // Actualizar la vista previa
+    updatePreview();
+}
+
+// Establecer selección inicial
+document.addEventListener('DOMContentLoaded', function() {
+    const checkedRadio = document.querySelector('input[name="tipo_subcuenta_base"]:checked');
+    if (checkedRadio) {
+        selectTipoSubcuenta(checkedRadio.value);
+    }
 });
 </script>
 {% endblock %}

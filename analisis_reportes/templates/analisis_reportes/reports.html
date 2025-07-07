@@ -827,6 +827,11 @@
             <h3 class="chart-title">Distribución de Subcuentas</h3>
             <div class="chart-container">
                 <canvas id="subcuentasChart"></canvas>
+                <div id="subcuentasNoData" style="display: none; text-align: center; padding: 40px; color: #666;">
+                    <i class="fas fa-chart-pie fa-3x mb-3" style="opacity: 0.3;"></i>
+                    <p>No hay datos de subcuentas para mostrar</p>
+                    <p><small>Crea tu primera subcuenta para ver la distribución aquí</small></p>
+                </div>
             </div>
         </div>
         
@@ -957,191 +962,705 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script>
-// Datos de los gráficos desde Django
-const gastosData = {{ gastos_categoria|safe }};
-const ingresosEgresosData = {{ ingresos_egresos|safe }};
-const subcuentasData = {{ subcuentas_data|safe }};
-const flujoData = {{ flujo_mensual|safe }};
+// Registrar plugins
+Chart.register(ChartDataLabels);
 
-// Configuración de colores
+// Datos de los gráficos desde Django
+let gastosData = {{ gastos_categoria|safe }};
+let ingresosEgresosData = {{ ingresos_egresos|safe }};
+let subcuentasData = {{ subcuentas_data|safe }};
+let flujoData = {{ flujo_mensual|safe }};
+
+// DEBUG: Verificar inmediatamente los datos cargados
+console.log('🔍 DATOS CARGADOS DESDE DJANGO:');
+console.log('gastosData:', gastosData);
+console.log('ingresosEgresosData:', ingresosEgresosData);
+console.log('subcuentasData:', subcuentasData);
+console.log('flujoData:', flujoData);
+
+// Verificación específica para subcuentas
+if (subcuentasData) {
+    console.log('📋 VERIFICACIÓN SUBCUENTAS:');
+    console.log('- Tipo:', typeof subcuentasData);
+    console.log('- Es array:', Array.isArray(subcuentasData));
+    console.log('- Tiene labels:', 'labels' in subcuentasData);
+    console.log('- Tiene saldos:', 'saldos' in subcuentasData);
+    if (subcuentasData.labels) {
+        console.log('- Cantidad labels:', subcuentasData.labels.length);
+        console.log('- Labels:', subcuentasData.labels);
+    }
+    if (subcuentasData.saldos) {
+        console.log('- Cantidad saldos:', subcuentasData.saldos.length);
+        console.log('- Saldos:', subcuentasData.saldos);
+    }
+} else {
+    console.error('❌ subcuentasData es null, undefined o vacío');
+}
+
+// Configuración de colores mejorada
 const colors = {
     primary: '#6C5CE7',
     success: '#00b894',
     danger: '#e17055',
     warning: '#fdcb6e',
     info: '#74b9ff',
-    secondary: '#636e72'
+    secondary: '#636e72',
+    palette: [
+        '#6C5CE7', '#00b894', '#e17055', '#fdcb6e', '#74b9ff', '#636e72',
+        '#a29bfe', '#fd79a8', '#55efc4', '#fab1a0', '#ff7675', '#fdcb6e',
+        '#6c5ce7', '#a29bfe', '#fd79a8', '#fdcb6e', '#00b894', '#00cec9'
+    ]
 };
 
-// Gráfico de Gastos por Categoría
-const gastosChart = new Chart(document.getElementById('gastosChart'), {
-    type: 'doughnut',
-    data: {
-        labels: gastosData.labels,
-        datasets: [{
-            data: gastosData.data,
-            backgroundColor: [
-                colors.primary,
-                colors.success,
-                colors.danger,
-                colors.warning,
-                colors.info,
-                colors.secondary,
-                '#a29bfe',
-                '#fd79a8',
-                '#55efc4'
-            ],
-            borderWidth: 2,
-            borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    padding: 20,
-                    usePointStyle: true
+// Variables globales para los gráficos
+let gastosChart, ingresosEgresosChart, subcuentasChart, flujoChart;
+
+// Configuración global de Chart.js
+Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#2d3436';
+
+// Función para crear gráfico de gastos por categoría mejorado
+function crearGraficoGastos() {
+    const ctx = document.getElementById('gastosChart');
+    
+    gastosChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: gastosData.labels,
+            datasets: [{
+                data: gastosData.data,
+                backgroundColor: colors.palette.slice(0, gastosData.labels.length),
+                borderWidth: 0,
+                hoverBorderWidth: 3,
+                hoverBorderColor: '#fff',
+                hoverOffset: 15,
+                cutout: '60%'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 11,
+                            weight: '500'
+                        },
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map((label, i) => {
+                                    const meta = chart.getDatasetMeta(0);
+                                    const style = meta.controller.getStyle(i);
+                                    const value = data.datasets[0].data[i];
+                                    const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    
+                                    return {
+                                        text: `${label} (${percentage}%)`,
+                                        fillStyle: style.backgroundColor,
+                                        strokeStyle: style.borderColor,
+                                        lineWidth: style.borderWidth,
+                                        pointStyle: 'circle',
+                                        hidden: isNaN(data.datasets[0].data[i]) || meta.data[i].hidden,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: colors.primary,
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((context.parsed / total) * 100).toFixed(1);
+                            return `${context.label}: $${context.parsed.toLocaleString()} (${percentage}%)`;
+                        }
+                    }
+                },
+                datalabels: {
+                    display: function(context) {
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = (context.parsed / total) * 100;
+                        return percentage > 5; // Solo mostrar si es mayor al 5%
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 11
+                    },
+                    formatter: function(value, context) {
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((value / total) * 100).toFixed(1);
+                        return `${percentage}%`;
+                    }
                 }
+            },
+            animation: {
+                animateRotate: true,
+                duration: 1500,
+                easing: 'easeInOutCubic'
             }
         }
-    }
-});
+    });
+}
 
-// Gráfico de Ingresos vs Egresos
-const ingresosEgresosChart = new Chart(document.getElementById('ingresosEgresosChart'), {
-    type: 'bar',
-    data: {
-        labels: ingresosEgresosData.labels,
-        datasets: [{
-            data: ingresosEgresosData.data,
-            backgroundColor: [colors.success, colors.danger],
-            borderColor: [colors.success, colors.danger],
-            borderWidth: 2,
-            borderRadius: 10
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
+// Función para crear gráfico de ingresos vs egresos mejorado
+function crearGraficoIngresosEgresos() {
+    const ctx = document.getElementById('ingresosEgresosChart');
+    
+    ingresosEgresosChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ingresosEgresosData.labels,
+            datasets: [{
+                label: 'Monto',
+                data: ingresosEgresosData.data,
+                backgroundColor: [
+                    colors.success + '90',
+                    colors.danger + '90'
+                ],
+                borderColor: [colors.success, colors.danger],
+                borderWidth: 2,
+                borderRadius: 12,
+                borderSkipped: false,
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: colors.primary,
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: $${context.parsed.y.toLocaleString()}`;
+                        }
+                    }
+                },
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#2d3436',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    },
+                    formatter: function(value) {
                         return '$' + value.toLocaleString();
                     }
                 }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        },
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11,
+                            weight: '500'
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 1500,
+                easing: 'easeInOutCubic'
             }
         }
-    }
-});
+    });
+}
 
-// Gráfico de Subcuentas
-const subcuentasChart = new Chart(document.getElementById('subcuentasChart'), {
-    type: 'polarArea',
-    data: {
-        labels: subcuentasData.labels,
-        datasets: [{
-            data: subcuentasData.saldos,
-            backgroundColor: [
-                colors.primary + '80',
-                colors.success + '80',
-                colors.danger + '80',
-                colors.warning + '80',
-                colors.info + '80'
-            ],
-            borderColor: [
-                colors.primary,
-                colors.success,
-                colors.danger,
-                colors.warning,
-                colors.info
-            ],
-            borderWidth: 2
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            }
-        }
+// Función para crear gráfico de subcuentas mejorado
+function crearGraficoSubcuentas() {
+    console.log('=== DEBUG GRÁFICO SUBCUENTAS ===');
+    console.log('subcuentasData:', subcuentasData);
+    
+    const ctx = document.getElementById('subcuentasChart');
+    const noDataDiv = document.getElementById('subcuentasNoData');
+    console.log('Canvas element:', ctx);
+    
+    if (!subcuentasData || !subcuentasData.labels || subcuentasData.labels.length === 0) {
+        console.log('❌ No hay datos de subcuentas o están vacíos');
+        ctx.style.display = 'none';
+        noDataDiv.style.display = 'block';
+        return;
     }
-});
-
-// Gráfico de Flujo Mensual
-const flujoChart = new Chart(document.getElementById('flujoChart'), {
-    type: 'line',
-    data: {
-        labels: flujoData.labels,
-        datasets: [{
-            label: 'Ingresos',
-            data: flujoData.ingresos,
-            borderColor: colors.success,
-            backgroundColor: colors.success + '20',
-            fill: true,
-            tension: 0.4
-        }, {
-            label: 'Egresos',
-            data: flujoData.egresos,
-            borderColor: colors.danger,
-            backgroundColor: colors.danger + '20',
-            fill: true,
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            intersect: false,
-            mode: 'index'
+    
+    // Verificar si hay datos válidos
+    const hasValidData = subcuentasData.saldos.some(saldo => saldo > 0);
+    if (!hasValidData) {
+        console.log('❌ No hay saldos válidos para mostrar');
+        ctx.style.display = 'none';
+        noDataDiv.style.display = 'block';
+        noDataDiv.innerHTML = `
+            <i class="fas fa-chart-pie fa-3x mb-3" style="opacity: 0.3;"></i>
+            <p>Todas las subcuentas tienen saldo $0</p>
+            <p><small>Agrega dinero a tus subcuentas para ver la distribución</small></p>
+        `;
+        return;
+    }
+    
+    // Si llegamos aquí, hay datos válidos
+    console.log('✅ Creando gráfico con datos válidos');
+    console.log('Labels:', subcuentasData.labels);
+    console.log('Saldos:', subcuentasData.saldos);
+    
+    ctx.style.display = 'block';
+    noDataDiv.style.display = 'none';
+    
+    subcuentasChart = new Chart(ctx, {
+        type: 'polarArea',
+        data: {
+            labels: subcuentasData.labels,
+            datasets: [{
+                data: subcuentasData.saldos,
+                backgroundColor: colors.palette.slice(0, subcuentasData.labels.length).map(color => color + '70'),
+                borderColor: colors.palette.slice(0, subcuentasData.labels.length),
+                borderWidth: 2
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: colors.primary,
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: $${context.parsed.r.toLocaleString()}`;
+                        }
+                    }
+                },
+                datalabels: {
+                    display: function(context) {
+                        return context.parsed.r > 0;
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 10
+                    },
+                    formatter: function(value) {
                         return '$' + value.toLocaleString();
                     }
                 }
+            },
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    ticks: {
+                        display: false
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    }
+                }
+            },
+            animation: {
+                duration: 1500,
+                easing: 'easeInOutCubic'
             }
         }
+    });
+}
+
+// Función para crear gráfico de flujo mensual mejorado
+function crearGraficoFlujo() {
+    const ctx = document.getElementById('flujoChart');
+    
+    flujoChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: flujoData.labels,
+            datasets: [{
+                label: 'Ingresos',
+                data: flujoData.ingresos,
+                borderColor: colors.success,
+                backgroundColor: colors.success + '20',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: colors.success,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }, {
+                label: 'Egresos',
+                data: flujoData.egresos,
+                borderColor: colors.danger,
+                backgroundColor: colors.danger + '20',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: colors.danger,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        },
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    borderColor: colors.primary,
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: $${context.parsed.y.toLocaleString()}`;
+                        }
+                    }
+                },
+                datalabels: {
+                    display: false // Desactivar para líneas, puede ser muy cluttered
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        },
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 1500,
+                easing: 'easeInOutCubic'
+            }
+        }
+    });
+}
+
+// Inicializar todos los gráficos cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 DOM Content Loaded - Inicializando gráficos...');
+    
+    // Verificar que Chart.js esté disponible
+    if (typeof Chart === 'undefined') {
+        console.error('❌ Chart.js no está cargado!');
+        return;
     }
+    console.log('✅ Chart.js está disponible');
+    
+    // Verificar que los datos estén disponibles
+    console.log('📊 Verificando datos...');
+    console.log('gastosData:', typeof gastosData !== 'undefined' ? gastosData : 'NO DEFINIDO');
+    console.log('ingresosEgresosData:', typeof ingresosEgresosData !== 'undefined' ? ingresosEgresosData : 'NO DEFINIDO');
+    console.log('subcuentasData:', typeof subcuentasData !== 'undefined' ? subcuentasData : 'NO DEFINIDO');
+    console.log('flujoData:', typeof flujoData !== 'undefined' ? flujoData : 'NO DEFINIDO');
+    
+    try {
+        console.log('🔵 Creando gráfico de gastos...');
+        crearGraficoGastos();
+        console.log('✅ Gráfico de gastos creado');
+    } catch (error) {
+        console.error('❌ Error creando gráfico de gastos:', error);
+    }
+    
+    try {
+        console.log('🟢 Creando gráfico de ingresos vs egresos...');
+        crearGraficoIngresosEgresos();
+        console.log('✅ Gráfico de ingresos vs egresos creado');
+    } catch (error) {
+        console.error('❌ Error creando gráfico de ingresos vs egresos:', error);
+    }
+    
+    try {
+        console.log('🟡 Creando gráfico de subcuentas...');
+        crearGraficoSubcuentas();
+        console.log('✅ Gráfico de subcuentas creado');
+    } catch (error) {
+        console.error('❌ Error creando gráfico de subcuentas:', error);
+    }
+    
+    try {
+        console.log('🟣 Creando gráfico de flujo...');
+        crearGraficoFlujo();
+        console.log('✅ Gráfico de flujo creado');
+    } catch (error) {
+        console.error('❌ Error creando gráfico de flujo:', error);
+    }
+    
+    console.log('🎯 Inicialización de gráficos completada');
 });
 
-// Funciones de UI
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'block';
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
-
+// Función mejorada para aplicar filtros con AJAX
 function aplicarFiltros() {
     const periodo = document.getElementById('periodoSelect').value;
-    let url = `?periodo=${periodo}`;
+    let url = `{% url 'analisis_reportes:reports' %}?periodo=${periodo}`;
     
     if (periodo === 'personalizado') {
         const fechaInicio = document.getElementById('fechaInicio').value;
         const fechaFin = document.getElementById('fechaFin').value;
+        
+        if (!fechaInicio || !fechaFin) {
+            showNotification('Por favor selecciona fechas de inicio y fin', 'warning');
+            return;
+        }
+        
+        if (new Date(fechaInicio) > new Date(fechaFin)) {
+            showNotification('La fecha de inicio no puede ser posterior a la fecha de fin', 'error');
+            return;
+        }
+        
         url += `&fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`;
     }
     
-    window.location.href = url;
+    // Mostrar indicador de carga
+    showLoadingIndicator(true);
+    
+    // Hacer petición AJAX
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        
+        // Actualizar estadísticas
+        actualizarEstadisticas(data.stats);
+        
+        // Actualizar datos globales
+        gastosData = data.gastos_categoria;
+        ingresosEgresosData = data.ingresos_egresos;
+        subcuentasData = data.subcuentas_data;
+        flujoData = data.flujo_mensual;
+        
+        // Actualizar gráficos
+        actualizarGraficos(data);
+        
+        // Mostrar notificación de éxito
+        showNotification('Datos actualizados correctamente', 'success');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error al actualizar los datos', 'error');
+    })
+    .finally(() => {
+        showLoadingIndicator(false);
+    });
+}
+
+// Función mejorada para actualizar estadísticas
+function actualizarEstadisticas(stats) {
+    const animateValue = (element, start, end, duration) => {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const value = progress * (end - start) + start;
+            element.textContent = '$' + value.toLocaleString('es-MX', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    };
+
+    // Obtener valores actuales para animación
+    const balanceElement = document.querySelector('.stat-card.balance .stat-value');
+    const ingresosElement = document.querySelector('.stat-card.ingresos .stat-value');
+    const gastosElement = document.querySelector('.stat-card.gastos .stat-value');
+    const subcuentasElement = document.querySelector('.stat-card.transacciones .stat-value');
+
+    const currentBalance = parseFloat(balanceElement.textContent.replace(/[^0-9.-]/g, ''));
+    const currentIngresos = parseFloat(ingresosElement.textContent.replace(/[^0-9.-]/g, ''));
+    const currentGastos = parseFloat(gastosElement.textContent.replace(/[^0-9.-]/g, ''));
+    const currentSubcuentas = parseFloat(subcuentasElement.textContent.replace(/[^0-9.-]/g, ''));
+
+    // Animar valores
+    animateValue(balanceElement, currentBalance || 0, stats.balance_total, 1000);
+    animateValue(ingresosElement, currentIngresos || 0, stats.ingresos_periodo, 1000);
+    animateValue(gastosElement, currentGastos || 0, stats.gastos_periodo, 1000);
+    animateValue(subcuentasElement, currentSubcuentas || 0, stats.total_subcuentas, 1000);
+
+    // Actualizar sublabels
+    document.querySelector('.stat-card.balance .stat-sublabel').textContent = `En ${stats.num_cuentas} cuenta${stats.num_cuentas !== 1 ? 's' : ''}`;
+    document.querySelector('.stat-card.ingresos .stat-sublabel').textContent = `${stats.total_transacciones} transaccion${stats.total_transacciones !== 1 ? 'es' : ''}`;
+    document.querySelector('.stat-card.gastos .stat-sublabel').textContent = `Promedio: $${stats.promedio_transaccion.toLocaleString()}`;
+    document.querySelector('.stat-card.transacciones .stat-sublabel').textContent = `${stats.num_subcuentas} subcuenta${stats.num_subcuentas !== 1 ? 's' : ''}`;
+}
+
+// Función mejorada para actualizar todos los gráficos
+function actualizarGraficos(data) {
+    // Destruir gráficos existentes antes de recrearlos
+    if (gastosChart) {
+        gastosChart.destroy();
+    }
+    if (ingresosEgresosChart) {
+        ingresosEgresosChart.destroy();
+    }
+    if (subcuentasChart) {
+        subcuentasChart.destroy();
+    }
+    if (flujoChart) {
+        flujoChart.destroy();
+    }
+
+    // Recrear gráficos con datos actualizados
+    setTimeout(() => {
+        crearGraficoGastos();
+        crearGraficoIngresosEgresos();
+        crearGraficoSubcuentas();
+        crearGraficoFlujo();
+    }, 100);
+}
+
+// Funciones de UI mejoradas
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'block';
+    modal.style.opacity = '0';
+    modal.style.transform = 'scale(0.9)';
+    
+    setTimeout(() => {
+        modal.style.transition = 'all 0.3s ease';
+        modal.style.opacity = '1';
+        modal.style.transform = 'scale(1)';
+    }, 10);
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.transition = 'all 0.3s ease';
+    modal.style.opacity = '0';
+    modal.style.transform = 'scale(0.9)';
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+}
+
+// Función mejorada para mostrar/ocultar indicador de carga
+function showLoadingIndicator(show) {
+    const button = document.querySelector('.btn-apply-filters');
+    const icon = button.querySelector('i');
+    
+    if (show) {
+        button.disabled = true;
+        button.style.opacity = '0.7';
+        icon.className = 'fas fa-spinner fa-spin me-2';
+        button.innerHTML = icon.outerHTML + 'Actualizando...';
+    } else {
+        button.disabled = false;
+        button.style.opacity = '1';
+        icon.className = 'fas fa-filter me-2';
+        button.innerHTML = icon.outerHTML + 'Aplicar Filtros';
+    }
 }
 
 // Funciones para menú desplegable de exportación
@@ -1162,7 +1681,7 @@ function toggleExportMenu(reporteId) {
     button.classList.toggle('active');
 }
 
-// Sistema de notificaciones
+// Sistema de notificaciones mejorado
 function showNotification(message, type = 'success', duration = 4000) {
     // Crear elemento de notificación
     const notification = document.createElement('div');
@@ -1185,14 +1704,18 @@ function showNotification(message, type = 'success', duration = 4000) {
     
     document.body.appendChild(notification);
     
-    // Mostrar notificación
-    setTimeout(() => notification.classList.add('show'), 100);
+    // Mostrar notificación con animación
+    setTimeout(() => {
+        notification.classList.add('show');
+        notification.style.animation = 'slideInRight 0.4s ease';
+    }, 100);
     
     // Auto-ocultar después del tiempo especificado
     setTimeout(() => hideNotification(notification), duration);
 }
 
 function hideNotification(notification) {
+    notification.style.animation = 'slideOutRight 0.4s ease';
     notification.classList.remove('show');
     setTimeout(() => {
         if (notification.parentElement) {
@@ -1201,7 +1724,7 @@ function hideNotification(notification) {
     }, 400);
 }
 
-// Indicador de descarga
+// Indicador de descarga mejorado
 function showDownloadIndicator(format) {
     const indicator = document.createElement('div');
     indicator.className = 'download-indicator';
@@ -1273,11 +1796,64 @@ function generarReporteRapido(tipo) {
     document.body.removeChild(form);
 }
 
-// Mostrar/ocultar campos de fecha personalizada
-document.getElementById('periodoSelect').addEventListener('change', function() {
-    const personalizado = this.value === 'personalizado';
-    document.getElementById('fechaPersonalizadaGroup').style.display = personalizado ? 'flex' : 'none';
-    document.getElementById('fechaPersonalizadaGroup2').style.display = personalizado ? 'flex' : 'none';
+// Función para actualizar filtros dinámicamente
+function actualizarFiltros() {
+    const periodoSelect = document.getElementById('periodoSelect');
+    const fechaPersonalizadaGroup = document.getElementById('fechaPersonalizadaGroup');
+    const fechaPersonalizadaGroup2 = document.getElementById('fechaPersonalizadaGroup2');
+    
+    if (periodoSelect.value === 'personalizado') {
+        fechaPersonalizadaGroup.style.display = 'flex';
+        fechaPersonalizadaGroup2.style.display = 'flex';
+        
+        // Animar entrada
+        fechaPersonalizadaGroup.style.opacity = '0';
+        fechaPersonalizadaGroup2.style.opacity = '0';
+        setTimeout(() => {
+            fechaPersonalizadaGroup.style.transition = 'opacity 0.3s ease';
+            fechaPersonalizadaGroup2.style.transition = 'opacity 0.3s ease';
+            fechaPersonalizadaGroup.style.opacity = '1';
+            fechaPersonalizadaGroup2.style.opacity = '1';
+        }, 50);
+    } else {
+        fechaPersonalizadaGroup.style.transition = 'opacity 0.3s ease';
+        fechaPersonalizadaGroup2.style.transition = 'opacity 0.3s ease';
+        fechaPersonalizadaGroup.style.opacity = '0';
+        fechaPersonalizadaGroup2.style.opacity = '0';
+        
+        setTimeout(() => {
+            fechaPersonalizadaGroup.style.display = 'none';
+            fechaPersonalizadaGroup2.style.display = 'none';
+        }, 300);
+    }
+}
+
+// Event listeners mejorados
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener para cambio de período
+    document.getElementById('periodoSelect').addEventListener('change', actualizarFiltros);
+    
+    // Event listener para aplicar filtros automáticamente en algunos casos
+    document.getElementById('periodoSelect').addEventListener('change', function() {
+        if (this.value !== 'personalizado') {
+            setTimeout(() => aplicarFiltros(), 500);
+        }
+    });
+    
+    // Event listeners para fechas personalizadas
+    document.getElementById('fechaInicio').addEventListener('change', function() {
+        if (document.getElementById('periodoSelect').value === 'personalizado' && 
+            document.getElementById('fechaFin').value) {
+            setTimeout(() => aplicarFiltros(), 500);
+        }
+    });
+    
+    document.getElementById('fechaFin').addEventListener('change', function() {
+        if (document.getElementById('periodoSelect').value === 'personalizado' && 
+            document.getElementById('fechaInicio').value) {
+            setTimeout(() => aplicarFiltros(), 500);
+        }
+    });
 });
 
 // Cerrar modal y menús desplegables al hacer clic fuera
@@ -1285,7 +1861,7 @@ window.addEventListener('click', function(event) {
     const modals = document.querySelectorAll('.modal');
     modals.forEach(modal => {
         if (event.target === modal) {
-            modal.style.display = 'none';
+            closeModal(modal.id);
         }
     });
     
@@ -1298,10 +1874,64 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// Actualizar gráficos dinámicamente
-function actualizarGraficos() {
-    // Esta función se puede usar para actualizar los gráficos via AJAX
-    // sin recargar la página completa
+// Agregar animaciones CSS adicionales
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    
+    .chart-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .chart-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+`;
+document.head.appendChild(style);
+
+// Función de depuración para verificar datos
+function debugChartData() {
+    console.log('=== DEBUG: Datos de Gráficos ===');
+    console.log('Gastos Data:', gastosData);
+    console.log('Ingresos/Egresos Data:', ingresosEgresosData);
+    console.log('Subcuentas Data:', subcuentasData);
+    console.log('Flujo Data:', flujoData);
+    console.log('===============================');
+}
+
+// Ejecutar debug si está en modo desarrollo
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    debugChartData();
 }
 </script>
 {% endblock %}

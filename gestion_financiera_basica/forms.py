@@ -8,7 +8,7 @@ from usuarios.models import Usuario
 class MovimientoForm(forms.ModelForm):
     class Meta:
         model = Movimiento
-        fields = ['nombre', 'tipo', 'monto', 'fecha_movimiento', 'descripcion', 'id_cuenta']
+        fields = ['nombre', 'tipo', 'categoria', 'monto', 'fecha_movimiento', 'descripcion', 'id_cuenta']
         widgets = {
             'nombre': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
@@ -29,6 +29,10 @@ class MovimientoForm(forms.ModelForm):
                 'placeholder': 'Descripción opcional...'
             }),
             'tipo': forms.RadioSelect(),
+            'categoria': forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                'id': 'id_categoria'
+            }),
             'id_cuenta': forms.Select(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
             }),
@@ -41,6 +45,11 @@ class MovimientoForm(forms.ModelForm):
         # Hacer la descripción explícitamente opcional
         self.fields['descripcion'].required = False
         self.fields['descripcion'].help_text = 'Este campo es opcional'
+        
+        # Configurar el campo de categoría - NO asignar choices aquí
+        # El JavaScript se encargará de llenar las opciones dinámicamente
+        self.fields['categoria'].required = False
+        self.fields['categoria'].widget.choices = [('', 'Seleccionar categoría...')]
         
         # Si hay un usuario, filtrar las cuentas por ese usuario
         if user:

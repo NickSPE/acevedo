@@ -1,52 +1,120 @@
 # cuentas/forms.py
 from django import forms
-from .models import SubCuenta, TransferenciaSubCuenta
+from .models import SubCuenta, TransferenciaSubCuenta, TransferenciaCuentaPrincipal
 
 
 class SubCuentaForm(forms.ModelForm):
+    # Campo adicional para elegir si es subcuenta personal o de negocio
+    TIPO_SUBCUENTA_BASE = (
+        ('personal', '👤 Subcuenta Personal - Para organizar mis finanzas personales'),
+        ('negocio', '💼 Subcuenta de Negocio - Independiente, para actividades comerciales'),
+    )
+    
+    tipo_subcuenta_base = forms.ChoiceField(
+        choices=TIPO_SUBCUENTA_BASE,
+        initial='personal',
+        widget=forms.RadioSelect(attrs={
+            'class': 'form-check-input'
+        }),
+        label='¿Qué tipo de subcuenta deseas crear?',
+        help_text='• Personal: Se vincula a tu cuenta principal para organizar gastos, ahorros, metas.\n• Negocio: Completamente independiente, para tiendas, freelance, ingresos comerciales.'
+    )
+    
     class Meta:
         model = SubCuenta
-        fields = ['nombre', 'descripcion', 'saldo', 'tipo', 'color', 'activa']
+        fields = ['nombre', 'descripcion', 'saldo', 'tipo', 'color', 'meta_objetivo', 'fecha_meta']
         widgets = {
             'nombre': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-                'placeholder': 'Nombre de la subcuenta'
+                'class': 'form-control',
+                'placeholder': 'Ej: Mi Tienda Online, Fondo de Emergencia...'
             }),
             'descripcion': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                'class': 'form-control',
                 'rows': 3,
                 'placeholder': 'Describe el propósito de esta subcuenta...'
             }),
             'saldo': forms.NumberInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                'class': 'form-control',
                 'step': '0.01',
                 'min': '0',
                 'placeholder': '0.00'
             }),
             'tipo': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                'class': 'form-control'
             }),
             'color': forms.HiddenInput(),
-            'activa': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
+            'meta_objetivo': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'min': '0',
+                'placeholder': '0.00'
+            }),
+            'fecha_meta': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
             }),
         }
         
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         
         # Hacer campos opcionales
         self.fields['descripcion'].required = False
+        self.fields['meta_objetivo'].required = False
+        self.fields['fecha_meta'].required = False
         
         # Agregar etiquetas personalizadas
         self.fields['nombre'].label = 'Nombre de la SubCuenta'
         self.fields['descripcion'].label = 'Descripción (Opcional)'
-        self.fields['tipo'].label = 'Tipo de SubCuenta'
         self.fields['color'].label = 'Color'
+        self.fields['meta_objetivo'].label = 'Meta de Ahorro/Ingreso (Opcional)'
+        self.fields['fecha_meta'].label = 'Fecha Meta (Opcional)'
         
         # Agregar help_text
-        self.fields['tipo'].help_text = 'Categoría que mejor describe esta subcuenta'
-        self.fields['color'].help_text = 'Color para identificar fácilmente esta subcuenta'
+        self.fields['color'].help_text = 'Se asignará automáticamente según el tipo'
+        self.fields['saldo'].help_text = 'Saldo inicial de la subcuenta'
+        self.fields['meta_objetivo'].help_text = 'Monto que quieres alcanzar (opcional)'
+        
+        # Separar opciones de tipo según personal vs negocio
+        tipos_personales = [
+            ('ahorro_meta', 'Ahorro para Meta'),
+            ('emergencia', 'Fondo de Emergencia'),
+            ('inversion', 'Inversiones'),
+            ('gastos_fijos', 'Gastos Fijos'),
+            ('gastos_variables', 'Gastos Variables'),
+            ('entretenimiento', 'Entretenimiento'),
+            ('viajes', 'Viajes y Vacaciones'),
+            ('educacion', 'Educación y Cursos'),
+            ('salud', 'Salud y Bienestar'),
+            ('familia', 'Gastos Familiares'),
+            ('otros', 'Otros'),
+        ]
+        
+        tipos_negocio = [
+            ('tienda_online', 'Tienda Online'),
+            ('tienda_fisica', 'Tienda Física'),
+            ('servicios_profesionales', 'Servicios Profesionales'),
+            ('freelance', 'Trabajo Freelance'),
+            ('negocio_propio', 'Negocio Propio'),
+            ('ingresos_pasivos', 'Ingresos Pasivos'),
+            ('ventas_productos', 'Ventas de Productos'),
+            ('consultoria', 'Consultoría'),
+            ('alquiler_propiedades', 'Alquiler de Propiedades'),
+        ]
+        
+        # Por defecto mostrar tipos personales
+        self.fields['tipo'].choices = tipos_personales
+        self.fields['tipo'].label = 'Categoría Personal'
+        self.fields['tipo'].help_text = 'Selecciona la categoría que mejor describe esta subcuenta personal'
+        
+        # Si estamos editando, establecer el tipo de subcuenta base actual
+        if self.instance and self.instance.pk:
+            if self.instance.es_negocio:
+                self.fields['tipo_subcuenta_base'].initial = 'negocio'
+                self.fields['tipo'].choices = tipos_negocio
+                self.fields['tipo'].label = 'Categoría de Negocio'
+                self.fields['tipo'].help_text = 'Selecciona la categoría comercial que mejor describe tu actividad'
     
     def clean(self):
         cleaned_data = super().clean()
@@ -228,3 +296,56 @@ class RetiroSubCuentaForm(forms.Form):
                 raise forms.ValidationError(f'Saldo insuficiente en {subcuenta.nombre}. Saldo disponible: ${subcuenta.saldo:.2f}')
         
         return cleaned_data
+
+
+class TransferenciaCuentaPrincipalForm(forms.ModelForm):
+    """Formulario para transferencias desde subcuentas hacia cuenta principal"""
+    class Meta:
+        model = TransferenciaCuentaPrincipal
+        fields = ['monto', 'tipo', 'descripcion']
+        widgets = {
+            'monto': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'min': '0.01',
+                'placeholder': '0.00',
+                'required': True
+            }),
+            'tipo': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Descripción de la transferencia (opcional)...',
+                'maxlength': 300
+            }),
+        }
+        labels = {
+            'monto': 'Monto a transferir',
+            'tipo': 'Tipo de transferencia',
+            'descripcion': 'Descripción'
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.subcuenta = kwargs.pop('subcuenta', None)
+        super().__init__(*args, **kwargs)
+        
+        # Personalizar el campo tipo según el contexto
+        if self.subcuenta:
+            # Para transferencias desde subcuenta independiente
+            self.fields['tipo'].choices = [
+                ('deposito', 'Transferir a cuenta principal'),
+            ]
+            self.fields['tipo'].initial = 'deposito'
+
+    def clean_monto(self):
+        monto = self.cleaned_data.get('monto')
+        if self.subcuenta and monto:
+            if monto > self.subcuenta.saldo:
+                raise forms.ValidationError(
+                    f'No puedes transferir más de {self.subcuenta.saldo} (saldo disponible)'
+                )
+            if monto <= 0:
+                raise forms.ValidationError('El monto debe ser mayor a 0')
+        return monto

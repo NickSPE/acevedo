@@ -8,26 +8,6 @@
 <div class="mb-8">
   <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Panel Principal</h1>
   <p class="text-lg text-gray-500 dark:text-gray-400">Resumen general de su situación financiera</p>
-  
-  <!-- Enlace temporal para pruebas de notificaciones -->
-  <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
-    <div class="flex items-center justify-between">
-      <div>
-        <h4 class="text-sm font-medium text-blue-800 dark:text-blue-300">🧪 Sistema de Notificaciones</h4>
-        <p class="text-xs text-blue-600 dark:text-blue-400">Prueba y revisa las notificaciones por email</p>
-      </div>
-      <div class="flex space-x-2">
-        <a href="{% url 'alertas_notificaciones:ver_emails' %}" 
-           class="bg-green-600 dark:bg-green-700 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-700 dark:hover:bg-green-600 transition-colors">
-          📧 Ver Emails
-        </a>
-        <a href="{% url 'gestion_financiera_basica:test_notifications' %}" 
-           class="bg-blue-600 dark:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors">
-          🧪 Probar
-        </a>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- Tabs -->
@@ -58,7 +38,7 @@
           <div>
             <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Balance Total</p>
             <p class="text-2xl font-bold text-gray-900 dark:text-white">{% format_money total_balance user %}</p>
-            <p class="text-sm text-green-600 dark:text-green-400 mt-1">+5.2% desde el mes pasado</p>
+            <p class="text-sm text-blue-600 dark:text-blue-400 mt-1">Saldo inicial + ingresos - gastos</p>
           </div>
           <div class="h-12 w-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
             <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,17 +80,17 @@
         </div>
       </div>
 
-      <!-- Savings Progress -->
+      <!-- Initial Balance -->
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Progreso de Ahorros</p>
-            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">45.8%</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Hacia sus metas de ahorro</p>
+            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Saldo Inicial</p>
+            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{% format_money saldo_inicial_cuentas user %}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Base de sus cuentas</p>
           </div>
           <div class="h-12 w-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
             <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
             </svg>
           </div>
         </div>
@@ -163,78 +143,166 @@
         </div>
       </div>
 
-      <!-- Alerts & Reminders -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-xl transition-shadow">
-        <div class="p-6 border-b border-gray-100 dark:border-gray-700">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Alertas y Recordatorios</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Notificaciones importantes sobre sus finanzas</p>
-        </div>
-        <div class="p-6">
-          <div class="space-y-4">
-            <!-- Low Balance Alert -->
-            <div class="flex items-start space-x-3 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors">
-              <div class="flex-shrink-0">
-                <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.634 0L4.182 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-medium text-red-800 dark:text-red-300">Su balance está por debajo de {{ currency_symbol }}500</p>
-                <p class="text-xs text-red-600 dark:text-red-400 mt-1">22 Jul, 2023</p>
-              </div>
-            </div>
 
-            <!-- Emergency Fund Goal -->
-            <div class="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">
-              <div class="flex-shrink-0">
-                <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-medium text-green-800 dark:text-green-300">¡Ha alcanzado el 60% de su meta de Fondo de Emergencia!</p>
-                <p class="text-xs text-green-600 dark:text-green-400 mt-1">21 Jul, 2023</p>
-              </div>
-            </div>
-
-            <!-- Bill Due -->
-            <div class="flex items-start space-x-3 p-4 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
-              <div class="flex-shrink-0">
-                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-              </div>
-              <div>
-                <p class="text-sm font-medium text-blue-800 dark:text-blue-300">Factura de electricidad vence en 3 días</p>
-                <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">20 Jul, 2023</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
 {% elif tab == "analytics" %}
   <!-- 📊 Analytics -->
   <div class="grid md:grid-cols-2 gap-8">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Desglose de Gastos</h3>
-      <div class="h-40 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 border border-gray-100">
-        <div class="text-center">
-          <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
-          </svg>
-          <p class="text-sm">Gráfico de dona</p>
+    <!-- Gráfico de Gastos por Categoría -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Desglose de Gastos</h3>
+      {% if gastos_por_categoria %}
+        <div class="relative h-64 mb-4">
+          <canvas id="gastosChart"></canvas>
+        </div>
+        <div class="space-y-2">
+          <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
+            Distribución de tus gastos por categoría
+          </p>
+          <!-- Leyenda personalizada -->
+          <div class="grid grid-cols-2 gap-2 mt-4" id="chartLegend">
+            <!-- Se llena dinámicamente con JavaScript -->
+          </div>
+        </div>
+      {% else %}
+        <div class="h-64 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 dark:text-gray-500 border border-gray-100 dark:border-gray-600">
+          <div class="text-center">
+            <svg class="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+            </svg>
+            <p class="text-sm font-medium">Sin gastos registrados</p>
+            <p class="text-xs mt-1">Agrega algunos gastos para ver el análisis</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Salud Financiera -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 text-center hover:shadow-md dark:hover:shadow-xl transition-shadow">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Salud Financiera</h3>
+      {% if total_egresos > 0 and total_ingresos > 0 %}
+        {% with score=porcentaje_de_ingresos_para_egresos|floatformat:0 %}
+          <div class="text-5xl font-bold mb-2 {% if score <= 30 %}text-green-600 dark:text-green-400{% elif score <= 70 %}text-yellow-600 dark:text-yellow-400{% else %}text-red-600 dark:text-red-400{% endif %}">
+            {% if score <= 30 %}95{% elif score <= 70 %}75{% else %}45{% endif %}
+          </div>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            {% if score <= 30 %}
+              ¡Excelente! Gastas solo el {{ score }}% de tus ingresos
+            {% elif score <= 70 %}
+              Bueno. Gastas el {{ score }}% de tus ingresos
+            {% else %}
+              Atención. Gastas el {{ score }}% de tus ingresos
+            {% endif %}
+          </p>
+        {% endwith %}
+      {% else %}
+        <div class="text-5xl font-bold text-gray-400 dark:text-gray-600 mb-2">--</div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Necesitas ingresos y gastos para calcular</p>
+      {% endif %}
+      
+      <!-- Indicadores rápidos -->
+      <div class="grid grid-cols-2 gap-4 mt-6">
+        <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3">
+          <div class="text-sm font-medium text-blue-600 dark:text-blue-400">Balance</div>
+          <div class="text-lg font-bold text-blue-700 dark:text-blue-300">{% format_money total_balance user %}</div>
+        </div>
+        <div class="bg-green-50 dark:bg-green-900/30 rounded-lg p-3">
+          <div class="text-sm font-medium text-green-600 dark:text-green-400">Ahorro</div>
+          <div class="text-lg font-bold text-green-700 dark:text-green-300">{% format_money saldo_inicial_cuentas user %}</div>
         </div>
       </div>
     </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition-shadow">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Salud Financiera</h3>
-      <div class="text-5xl font-bold text-green-600 mb-2">82</div>
-      <p class="text-sm text-gray-500">Su puntuación financiera es mejor que el 75% de los usuarios</p>
-    </div>
   </div>
+
+  <!-- Script para el gráfico -->
+  {% if gastos_por_categoria %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Datos del gráfico desde Django
+      const gastosData = [
+        {% for gasto in gastos_por_categoria %}
+        {
+          categoria: "{{ gasto.categoria|escapejs }}",
+          monto: {{ gasto.monto }},
+          porcentaje: {{ gasto.porcentaje }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ];
+      
+      // Colores para el gráfico
+      const colores = [
+        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+        '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF',
+        '#4BC0C0', '#FF6384'
+      ];
+      
+      // Preparar datos para Chart.js
+      const labels = gastosData.map(item => item.categoria);
+      const montos = gastosData.map(item => item.monto);
+      const porcentajes = gastosData.map(item => item.porcentaje);
+      
+      // Configuración del gráfico
+      const ctx = document.getElementById('gastosChart').getContext('2d');
+      const chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: montos,
+            backgroundColor: colores.slice(0, labels.length),
+            borderColor: '#ffffff',
+            borderWidth: 2,
+            hoverBorderWidth: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false // Usaremos leyenda personalizada
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#ffffff',
+              borderWidth: 1,
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.parsed;
+                  const percentage = porcentajes[context.dataIndex];
+                  return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                }
+              }
+            }
+          },
+          cutout: '60%',
+          animation: {
+            animateRotate: true,
+            duration: 1000
+          }
+        }
+      });
+      
+      // Crear leyenda personalizada
+      const legendContainer = document.getElementById('chartLegend');
+      gastosData.forEach((item, index) => {
+        const legendItem = document.createElement('div');
+        legendItem.className = 'flex items-center space-x-2 text-xs';
+        legendItem.innerHTML = `
+          <div class="w-3 h-3 rounded-full" style="background-color: ${colores[index]}"></div>
+          <span class="text-gray-700 dark:text-gray-300 truncate">${item.categoria}</span>
+          <span class="text-gray-500 dark:text-gray-400 ml-auto">${item.porcentaje}%</span>
+        `;
+        legendContainer.appendChild(legendItem);
+      });
+    });
+  </script>
+  {% endif %}
 
 {% elif tab == "savings" %}
   <!-- 🏦 Savings Goals -->
