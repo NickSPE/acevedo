@@ -3,268 +3,170 @@
 {% block title %}Agregar Meta de Ahorro | FinGest{% endblock %}
 
 {% block content %}
-<!-- Modal-style Container -->
-<div class="fixed inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-pink-900/20 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl border border-gray-200/50 overflow-hidden">
-    
-    <!-- Header con gradiente -->
-    <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-            </svg>
-          </div>
-          <div>
-            <h2 class="text-xl font-bold text-white">Nueva Meta de Ahorro</h2>
-            <p class="text-green-100 text-sm">Define tu próximo objetivo financiero</p>
-          </div>
-        </div>
-        <a href="{% url 'gestion_financiera_basica:savings_goals' %}" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/20 transition-all duration-200 group">
-          <svg class="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
           </svg>
-        </a>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Nueva Meta de Ahorro</h2>
+          <p class="text-gray-600 dark:text-gray-300">Define tu próximo objetivo financiero</p>
+        </div>
       </div>
+      <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+         class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </a>
     </div>
+  </div>
 
-    <!-- Formulario -->
-    <form method="post" class="p-6">
+  <!-- Formulario -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+    <form method="post">
       {% csrf_token %}
       
       <!-- Nombre de la meta -->
-      <div class="mb-4">
-        <label class="block text-sm font-bold text-gray-800 mb-2">
-          <span class="flex items-center gap-2">
-            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-            </svg>
-            {{ form.nombre.label }}
-          </span>
+      <div class="mb-6">
+        <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Nombre de la Meta
         </label>
         {% if form.nombre.errors %}
-          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-            <p class="text-red-600 text-sm">{{ form.nombre.errors.0 }}</p>
+          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.nombre.errors.0 }}</p>
           </div>
         {% endif %}
-        <div class="relative">
-          {{ form.nombre }}
-          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          </div>
-        </div>
+        {{ form.nombre }}
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ejemplo: "Vacaciones en Europa", "Fondo de emergencia", "Carro nuevo"</p>
       </div>
 
-      <!-- Monto objetivo y Cuenta en una fila -->
-      <div class="grid grid-cols-2 gap-4 mb-4">
+      <!-- Monto objetivo y Cuenta -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
-          <label class="block text-sm font-bold text-gray-800 mb-2">
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-              </svg>
-              {{ form.monto_objetivo.label }}
-            </span>
+          <label for="{{ form.monto_objetivo.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Monto Objetivo
           </label>
           {% if form.monto_objetivo.errors %}
-            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-              <p class="text-red-600 text-sm">{{ form.monto_objetivo.errors.0 }}</p>
+            <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-600 dark:text-red-400 text-sm">{{ form.monto_objetivo.errors.0 }}</p>
             </div>
           {% endif %}
           <div class="relative">
-            <span class="absolute left-4 top-3.5 text-gray-600 font-bold text-lg">$</span>
+            <span class="absolute left-3 top-3 text-gray-500 dark:text-gray-400">$</span>
             {{ form.monto_objetivo }}
           </div>
-          {% if form.monto_objetivo.help_text %}
-            <p class="text-xs text-gray-500 mt-1">{{ form.monto_objetivo.help_text }}</p>
-          {% endif %}
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">¿Cuánto dinero necesitas ahorrar?</p>
         </div>
         
         <div>
-          <label class="block text-sm font-bold text-gray-800 mb-2">
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-              </svg>
-              {{ form.id_cuenta.label }}
-            </span>
+          <label for="{{ form.id_cuenta.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Cuenta para Ahorrar
           </label>
           {% if form.id_cuenta.errors %}
-            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-              <p class="text-red-600 text-sm">{{ form.id_cuenta.errors.0 }}</p>
+            <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-600 dark:text-red-400 text-sm">{{ form.id_cuenta.errors.0 }}</p>
             </div>
           {% endif %}
-          <div class="relative">
-            {{ form.id_cuenta }}
-            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-              </svg>
-            </div>
-          </div>
+          {{ form.id_cuenta }}
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Cuenta donde se realizarán los ahorros</p>
         </div>
       </div>
 
-      <!-- Fechas de inicio y límite -->
-      <div class="grid grid-cols-2 gap-4 mb-4">
+      <!-- Fechas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
-          <label class="block text-sm font-bold text-gray-800 mb-2">
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-              {{ form.fecha_inicio.label }}
-            </span>
+          <label for="{{ form.fecha_inicio.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Fecha de Inicio
           </label>
           {% if form.fecha_inicio.errors %}
-            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-              <p class="text-red-600 text-sm">{{ form.fecha_inicio.errors.0 }}</p>
+            <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-600 dark:text-red-400 text-sm">{{ form.fecha_inicio.errors.0 }}</p>
             </div>
           {% endif %}
           {{ form.fecha_inicio }}
         </div>
         
         <div>
-          <label class="block text-sm font-bold text-gray-800 mb-2">
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              {{ form.fecha_limite.label }}
-            </span>
+          <label for="{{ form.fecha_limite.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Fecha Límite
           </label>
           {% if form.fecha_limite.errors %}
-            <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-              <p class="text-red-600 text-sm">{{ form.fecha_limite.errors.0 }}</p>
+            <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-600 dark:text-red-400 text-sm">{{ form.fecha_limite.errors.0 }}</p>
             </div>
           {% endif %}
           {{ form.fecha_limite }}
-          {% if form.fecha_limite.help_text %}
-            <p class="text-xs text-gray-500 mt-1">{{ form.fecha_limite.help_text }}</p>
-          {% endif %}
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">¿Cuándo necesitas tener el dinero?</p>
         </div>
       </div>
 
       <!-- Frecuencia de aporte -->
-      <div class="mb-4">
-        <label class="block text-sm font-bold text-gray-800 mb-2">
-          <span class="flex items-center gap-2">
-            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-            </svg>
-            {{ form.frecuencia_aporte.label }}
-          </span>
+      <div class="mb-6">
+        <label for="{{ form.frecuencia_aporte.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Frecuencia de Aporte
         </label>
         {% if form.frecuencia_aporte.errors %}
-          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-            <p class="text-red-600 text-sm">{{ form.frecuencia_aporte.errors.0 }}</p>
+          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.frecuencia_aporte.errors.0 }}</p>
           </div>
         {% endif %}
         {{ form.frecuencia_aporte }}
-        {% if form.frecuencia_aporte.help_text %}
-          <p class="text-xs text-gray-500 mt-1">{{ form.frecuencia_aporte.help_text }}</p>
-        {% endif %}
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">¿Con qué frecuencia planeas aportar dinero?</p>
       </div>
 
       <!-- Descripción -->
-      <div class="mb-5">
-        <label class="block text-sm font-bold text-gray-800 mb-2">
-          <span class="flex items-center gap-2">
-            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
-            </svg>
-            {{ form.descripcion.label }}
-          </span>
+      <div class="mb-8">
+        <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Descripción (Opcional)
         </label>
         {% if form.descripcion.errors %}
-          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
-            <p class="text-red-600 text-sm">{{ form.descripcion.errors.0 }}</p>
+          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.descripcion.errors.0 }}</p>
           </div>
         {% endif %}
         {{ form.descripcion }}
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Agrega más detalles sobre tu meta de ahorro</p>
       </div>
 
-      <!-- Mostrar errores generales del formulario -->
+      <!-- Errores generales -->
       {% if form.non_field_errors %}
-        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
           {% for error in form.non_field_errors %}
-            <p class="text-red-600 text-sm">{{ error }}</p>
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ error }}</p>
           {% endfor %}
         </div>
       {% endif %}
 
       <!-- Botones -->
-      <div class="flex gap-3 pt-2">
+      <div class="flex gap-4">
         <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
-           class="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-bold transition-all duration-200 transform hover:scale-105">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-          </svg>
+           class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors duration-200 text-center">
           Cancelar
         </a>
         <button type="submit" 
-                class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white px-6 py-3 rounded-2xl font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-          </svg>
-          Crear Meta
+                class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm hover:shadow-md">
+          Crear Meta de Ahorro
         </button>
       </div>
     </form>
   </div>
 </div>
 
-<style>
-/* Custom styles for better date-time picker */
-input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-  background: transparent;
-  bottom: 0;
-  color: transparent;
-  cursor: pointer;
-  height: auto;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: auto;
-}
-
-/* Animation for form elements */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-in {
-  animation: slideIn 0.3s ease-out;
-}
-
-/* Custom focus states */
-input:focus, select:focus, textarea:focus {
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
-}
-</style>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Animación de entrada
-  const form = document.querySelector('form');
-  form.classList.add('animate-slide-in');
-  
   // Auto-focus en el primer campo
-  setTimeout(() => {
-    const firstInput = document.querySelector('input[name="nombre"]');
-    if (firstInput) firstInput.focus();
-  }, 300);
+  const firstInput = document.querySelector('input[name="nombre"]');
+  if (firstInput) {
+    setTimeout(() => firstInput.focus(), 100);
+  }
   
-  // Establecer fecha y hora actual por defecto para fecha de inicio
+  // Establecer fecha actual por defecto para fecha de inicio
   const fechaInicioInput = document.querySelector('input[name="fecha_inicio"]');
   if (fechaInicioInput && !fechaInicioInput.value) {
     const now = new Date();
@@ -272,22 +174,13 @@ document.addEventListener('DOMContentLoaded', function() {
     fechaInicioInput.value = localDateTime;
   }
   
-  // Validación en tiempo real del monto objetivo
+  // Validación en tiempo real del monto
   const montoInput = document.querySelector('input[name="monto_objetivo"]');
   if (montoInput) {
     montoInput.addEventListener('input', function(e) {
       let value = parseFloat(e.target.value);
       if (value < 0) {
         e.target.value = 0;
-      }
-      
-      // Añadir feedback visual
-      if (value > 0) {
-        e.target.classList.add('border-emerald-400', 'ring-1', 'ring-emerald-200');
-        e.target.classList.remove('border-gray-200');
-      } else {
-        e.target.classList.remove('border-emerald-400', 'ring-1', 'ring-emerald-200');
-        e.target.classList.add('border-gray-200');
       }
     });
   }
@@ -302,10 +195,10 @@ document.addEventListener('DOMContentLoaded', function() {
       const limite = new Date(fechaLimite.value);
       
       if (limite <= inicio) {
-        fechaLimite.classList.add('border-red-400', 'ring-1', 'ring-red-200');
-        fechaLimite.classList.remove('border-gray-200');
+        fechaLimite.classList.add('border-red-500', 'focus:ring-red-500');
+        fechaLimite.classList.remove('border-gray-300', 'focus:ring-blue-500');
         
-        // Mostrar mensaje de error personalizado
+        // Mostrar mensaje de error
         let errorMsg = fechaLimite.parentElement.querySelector('.date-error');
         if (!errorMsg) {
           errorMsg = document.createElement('p');
@@ -314,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
           fechaLimite.parentElement.appendChild(errorMsg);
         }
       } else {
-        fechaLimite.classList.remove('border-red-400', 'ring-1', 'ring-red-200');
-        fechaLimite.classList.add('border-gray-200');
+        fechaLimite.classList.remove('border-red-500', 'focus:ring-red-500');
+        fechaLimite.classList.add('border-gray-300', 'focus:ring-blue-500');
         
         // Remover mensaje de error
         const errorMsg = fechaLimite.parentElement.querySelector('.date-error');
@@ -328,34 +221,6 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (fechaInicio) fechaInicio.addEventListener('change', validarFechas);
   if (fechaLimite) fechaLimite.addEventListener('change', validarFechas);
-  
-  // Mejorar experiencia del select de cuenta
-  const selectElement = document.querySelector('select[name="id_cuenta"]');
-  if (selectElement) {
-    selectElement.addEventListener('change', function() {
-      if (this.value) {
-        this.classList.add('border-purple-400', 'ring-1', 'ring-purple-200');
-        this.classList.remove('border-gray-200');
-      } else {
-        this.classList.remove('border-purple-400', 'ring-1', 'ring-purple-200');
-        this.classList.add('border-gray-200');
-      }
-    });
-  }
-  
-  // Feedback visual para el nombre
-  const nombreInput = document.querySelector('input[name="nombre"]');
-  if (nombreInput) {
-    nombreInput.addEventListener('input', function(e) {
-      if (e.target.value.length > 0) {
-        e.target.classList.add('border-green-400', 'ring-1', 'ring-green-200');
-        e.target.classList.remove('border-gray-200');
-      } else {
-        e.target.classList.remove('border-green-400', 'ring-1', 'ring-green-200');
-        e.target.classList.add('border-gray-200');
-      }
-    });
-  }
 });
 </script>
 {% endblock %}

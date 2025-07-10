@@ -15,6 +15,8 @@ class CursoExterno(models.Model):
         ('youtube', 'YouTube'),
         ('udemy', 'Udemy'),
         ('coursera', 'Coursera'),
+        ('khan_academy', 'Khan Academy'),
+        ('edx', 'edX'),
         ('platzi', 'Platzi'),
         ('otro', 'Otro'),
     ]
@@ -45,13 +47,15 @@ class CursoExterno(models.Model):
     def plataforma_icon(self):
         """Retorna el ícono correspondiente a la plataforma"""
         icons = {
-            'youtube': '🎬',
-            'udemy': '🎓',
-            'coursera': '📚',
-            'platzi': '💚',
-            'otro': '🔗'
+            'youtube': '📺',
+            'udemy': '💻',
+            'coursera': '🎓',
+            'khan_academy': '📚',
+            'edx': '🏛️',
+            'platzi': '�',
+            'otro': '🌐'
         }
-        return icons.get(self.plataforma, '🔗')
+        return icons.get(self.plataforma, '🌐')
     
     @property
     def nivel_color(self):

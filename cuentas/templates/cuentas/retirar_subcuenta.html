@@ -5,90 +5,330 @@
 
 {% block extra_css %}
 <style>
-    .form-container {
-        max-width: 600px;
+    .withdraw-container {
+        max-width: 900px;
         margin: 0 auto;
+        padding: 0 15px;
     }
-    .subcuenta-info {
-        border-left: 4px solid;
-        background: linear-gradient(135deg, #f59e0b15, #f9731615);
+    
+    .withdraw-header {
+        background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+        border-radius: 15px;
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
     }
-    .cuenta-info {
-        background: linear-gradient(135deg, #10b98115, #059e6915);
+    
+    .subcuenta-display {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
+        border-left: 4px solid rgba(255, 255, 255, 0.3);
     }
+    
+    .balance-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .balance-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .balance-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--card-color, #F59E0B);
+    }
+    
+    .balance-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .warning-alert {
+        background: linear-gradient(135deg, #FFF3CD 0%, #FFEAA7 100%);
+        border: 2px solid #F59E0B;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .withdraw-form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: none;
+        overflow: hidden;
+    }
+    
+    .form-section {
+        background: #f8f9fa;
+        margin: 0 -1.5rem 1.5rem -1.5rem;
+        padding: 1rem 1.5rem;
+        border-left: 4px solid #F59E0B;
+    }
+    
+    .form-section h6 {
+        color: #F59E0B;
+        font-weight: 600;
+        margin: 0;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .amount-section {
+        background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+    }
+    
     .form-control:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        border-color: #F59E0B;
+        box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+        transform: translateY(-1px);
     }
-    .preview-card {
-        background: linear-gradient(135deg, #f59e0b, #f97316);
+    
+    .input-group {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .input-group-text {
+        background: #F59E0B;
+        color: white;
+        border: none;
+        font-weight: 600;
+    }
+    
+    .btn-outline-secondary {
+        border-color: #F59E0B;
+        color: #F59E0B;
+        font-weight: 600;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #F59E0B;
+        border-color: #F59E0B;
+    }
+    
+    .preview-section {
+        background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+        box-shadow: 0 5px 20px rgba(245, 158, 11, 0.2);
+    }
+    
+    .negative-warning {
+        background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+        border: 2px solid #EF4444;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .quick-amounts {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-top: 2rem;
+    }
+    
+    .amount-btn {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 0.75rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: white;
+        color: #495057;
+    }
+    
+    .amount-btn:hover {
+        border-color: #F59E0B;
+        color: #F59E0B;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+    }
+    
+    .amount-btn.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    .action-buttons {
+        background: #f8f9fa;
+        margin: 0 -1.5rem -1.5rem -1.5rem;
+        padding: 1.5rem;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .btn-warning {
+        background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
         color: white;
     }
-    .warning-card {
-        border: 2px solid #ffc107;
-        background-color: #fff3cd;
+    
+    .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        color: white;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+    }
+    
+    .info-section {
+        background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .balance-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin: 0 auto 1rem;
+    }
+    
+    .current-balance-icon {
+        background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+        color: white;
+    }
+    
+    .final-balance-icon {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: white;
+    }
+    
+    .positive-balance {
+        color: #10B981 !important;
+    }
+    
+    .negative-balance {
+        color: #EF4444 !important;
+    }
+    
+    @media (max-width: 768px) {
+        .withdraw-container {
+            padding: 0 10px;
+        }
+        
+        .withdraw-header {
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .subcuenta-display {
+            padding: 1rem;
+        }
+        
+        .balance-cards {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .action-buttons {
+            padding: 1rem;
+        }
+        
+        .btn-warning, .btn-secondary {
+            padding: 0.65rem 1.5rem;
+            font-size: 0.9rem;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
-    <div class="form-container">
+    <div class="withdraw-container">
         <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h1 class="h3 text-dark mb-0">
-                            <i class="fas fa-minus-circle me-2"></i>
-                            Retirar de Subcuenta
-                        </h1>
-                        <p class="text-muted mb-0">Transfiere dinero hacia la cuenta principal</p>
-                    </div>
-                    <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-outline-secondary">
+        <div class="withdraw-header">
+            <div class="row align-items-center mb-3">
+                <div class="col">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-minus-circle me-2"></i>
+                        Retirar de Subcuenta
+                    </h1>
+                    <p class="mb-0 opacity-75">Transfiere dinero hacia tu cuenta principal</p>
+                </div>
+                <div class="col-auto">
+                    <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-light btn-sm">
                         <i class="fas fa-arrow-left me-2"></i>Volver
                     </a>
                 </div>
             </div>
-        </div>
-
-        <!-- Información de la subcuenta -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card subcuenta-info" style="border-left-color: {{ subcuenta.color }};">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-layer-group me-2"></i>
+            
+            <!-- Información de la subcuenta -->
+            <div class="subcuenta-display">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-1">
+                            <i class="fas fa-wallet me-2"></i>
                             {{ subcuenta.nombre }}
                         </h5>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="badge bg-light text-dark">{{ subcuenta.get_tipo_display }}</span>
+                            {% if subcuenta.descripcion %}
+                                <small class="opacity-75">{{ subcuenta.descripcion }}</small>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <h6 class="text-muted">Saldo Actual</h6>
-                                <h4 class="{% if subcuenta.saldo >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
-                                    ${{ subcuenta.saldo|floatformat:2 }}
-                                </h4>
-                            </div>
-                            <div class="col-md-4">
-                                <h6 class="text-muted">Tipo</h6>
-                                <span class="badge" style="background-color: {{ subcuenta.color }}15; color: {{ subcuenta.color }};">
-                                    {{ subcuenta.get_tipo_display }}
-                                </span>
-                            </div>
-                            <div class="col-md-4">
-                                <h6 class="text-muted">Cuenta Principal</h6>
-                                <p class="mb-0 fw-bold">{{ subcuenta.id_cuenta.nombre }}</p>
-                            </div>
-                        </div>
-                        {% if subcuenta.descripcion %}
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <h6 class="text-muted">Descripción</h6>
-                                <p class="mb-0">{{ subcuenta.descripcion }}</p>
-                            </div>
-                        </div>
-                        {% endif %}
+                    <div class="col-md-4 text-md-end">
+                        <h6 class="mb-1 opacity-75">Saldo Actual</h6>
+                        <h4 class="mb-0 {% if subcuenta.saldo >= 0 %}positive-balance{% else %}negative-balance{% endif %}">
+                            ${{ subcuenta.saldo|floatformat:2 }}
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -96,8 +336,249 @@
 
         <!-- Advertencia si el saldo es bajo o negativo -->
         {% if subcuenta.saldo <= 0 %}
-        <div class="row mb-4">
-            <div class="col-12">
+        <div class="warning-alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x text-warning me-3"></i>
+                <div>
+                    <h6 class="text-warning mb-1 fw-bold">
+                        {% if subcuenta.saldo == 0 %}
+                            Subcuenta sin saldo
+                        {% else %}
+                            Subcuenta con saldo negativo
+                        {% endif %}
+                    </h6>
+                    <p class="mb-0">
+                        {% if subcuenta.saldo == 0 %}
+                            Esta subcuenta no tiene saldo disponible para retirar. Cualquier retiro creará un saldo negativo.
+                        {% else %}
+                            Esta subcuenta tiene un saldo negativo. Al realizar un retiro, el saldo negativo aumentará.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Balance Cards -->
+        <div class="balance-cards">
+            <div class="balance-card" style="--card-color: #3B82F6;">
+                <div class="current-balance-icon balance-icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div class="text-center">
+                    <h6 class="text-muted mb-1">Cuenta Principal Actual</h6>
+                    <h4 class="text-primary mb-0">${{ cuenta.saldo_cuenta|floatformat:2 }}</h4>
+                    <small class="text-muted">{{ cuenta.nombre }}</small>
+                </div>
+            </div>
+            
+            <div class="balance-card" style="--card-color: #10B981;">
+                <div class="final-balance-icon balance-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="text-center">
+                    <h6 class="text-muted mb-1">Saldo Final de la Cuenta</h6>
+                    <h4 class="text-success mb-0" id="saldoFinalCuenta">
+                        ${{ cuenta.saldo_cuenta|floatformat:2 }}
+                    </h4>
+                    <small class="text-muted">Después del retiro</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario Principal -->
+        <div class="withdraw-form-card card">
+            <div class="card-body p-4">
+                <form method="post" id="retiroForm">
+                    {% csrf_token %}
+                    
+                    <!-- Monto del Retiro -->
+                    <div class="form-section">
+                        <h6><i class="fas fa-dollar-sign me-2"></i>Monto del Retiro</h6>
+                    </div>
+                    
+                    <div class="amount-section">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fas fa-money-bill-wave me-2"></i>¿Cuánto quieres retirar? *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    {{ form.monto }}
+                                    {% if subcuenta.saldo > 0 %}
+                                    <button type="button" class="btn btn-outline-secondary" id="btnMaximo">
+                                        <i class="fas fa-arrow-up me-1"></i>Todo
+                                    </button>
+                                    {% endif %}
+                                </div>
+                                {% if form.monto.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.monto.errors %}
+                                            <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text mt-1">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    {% if subcuenta.saldo > 0 %}
+                                        Máximo disponible: <strong>${{ subcuenta.saldo|floatformat:2 }}</strong>
+                                    {% else %}
+                                        Puedes retirar cualquier monto (creará o aumentará el saldo negativo)
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fas fa-comment me-2"></i>Descripción (Opcional)
+                                </label>
+                                {{ form.descripcion }}
+                                {% if form.descripcion.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.descripcion.errors %}
+                                            <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Describe el motivo del retiro</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vista Previa -->
+                    <div class="mb-4" id="vistaPreviaDiv" style="display: none;">
+                        <div class="form-section">
+                            <h6><i class="fas fa-eye me-2"></i>Vista Previa del Retiro</h6>
+                        </div>
+                        
+                        <div class="preview-section">
+                            <div class="row text-center">
+                                <div class="col-md-4 mb-3">
+                                    <i class="fas fa-wallet fa-2x mb-2 opacity-75"></i>
+                                    <h6 class="opacity-75 mb-1">Saldo Actual</h6>
+                                    <h4 class="mb-0">${{ subcuenta.saldo|floatformat:2 }}</h4>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <i class="fas fa-minus-circle fa-2x mb-2 opacity-75"></i>
+                                    <h6 class="opacity-75 mb-1">Retiro</h6>
+                                    <h4 class="mb-0" id="montoRetiro">$0.00</h4>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <i class="fas fa-piggy-bank fa-2x mb-2 opacity-75"></i>
+                                    <h6 class="opacity-75 mb-1">Nuevo Saldo</h6>
+                                    <h4 class="mb-0" id="nuevoSaldo">${{ subcuenta.saldo|floatformat:2 }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advertencia de saldo negativo -->
+                    <div class="mb-4" id="advertenciaNegativo" style="display: none;">
+                        <div class="negative-warning">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-exclamation-triangle fa-lg text-danger me-3"></i>
+                                <div>
+                                    <strong class="text-danger">Atención:</strong>
+                                    <span class="text-dark">Este retiro dejará la subcuenta con saldo negativo. Asegúrate de que esto sea intencional.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="action-buttons">
+                        <div class="d-flex justify-content-between flex-wrap gap-2">
+                            <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-warning" id="btnRetirar" disabled>
+                                <i class="fas fa-minus-circle me-2"></i>Realizar Retiro
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Montos Sugeridos -->
+        {% if subcuenta.saldo > 0 %}
+        <div class="quick-amounts card">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="fas fa-magic me-2"></i>Montos Sugeridos
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% if subcuenta.saldo >= 50 %}
+                    <div class="col-6 col-md-3">
+                        <button type="button" class="btn amount-btn w-100 monto-sugerido" data-monto="50">
+                            $50.00
+                        </button>
+                    </div>
+                    {% endif %}
+                    {% if subcuenta.saldo >= 100 %}
+                    <div class="col-6 col-md-3">
+                        <button type="button" class="btn amount-btn w-100 monto-sugerido" data-monto="100">
+                            $100.00
+                        </button>
+                    </div>
+                    {% endif %}
+                    {% if subcuenta.saldo >= 250 %}
+                    <div class="col-6 col-md-3">
+                        <button type="button" class="btn amount-btn w-100 monto-sugerido" data-monto="250">
+                            $250.00
+                        </button>
+                    </div>
+                    {% endif %}
+                    <div class="col-6 col-md-3">
+                        <button type="button" class="btn amount-btn w-100" id="btnTodo" style="border-color: #EF4444; color: #EF4444;">
+                            <i class="fas fa-trash me-1"></i>Todo (${{ subcuenta.saldo|floatformat:2 }})
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Información Importante -->
+        <div class="card mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>Información Importante
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="info-section">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-bolt text-warning me-2"></i>
+                                <span class="fw-bold">Transferencia inmediata</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-history text-warning me-2"></i>
+                                <span class="fw-bold">Registro automático en historial</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-arrow-left text-warning me-2"></i>
+                                <span class="fw-bold">Hacia cuenta principal</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-exclamation-circle text-warning me-2"></i>
+                                <span class="fw-bold">Permite saldo negativo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
                 <div class="card warning-card">
                     <div class="card-body">
                         <h6 class="text-warning">

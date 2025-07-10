@@ -108,100 +108,8 @@ def calculators(request):
                 
             except:
                 result = {"error": "Error en los valores ingresados"}
-        
-        elif tab == "retirement":
-            try:
-                current_age = int(request.POST.get("current_age", 0))
-                retirement_age = int(request.POST.get("retirement_age", 0))
-                current_savings = float(request.POST.get("current_savings", 0))
-                monthly_contribution = float(request.POST.get("monthly_contribution", 0))
-                expected_return = float(request.POST.get("expected_return", 0)) / 100
-                desired_income = float(request.POST.get("desired_income", 0))
-                
-                years_to_retirement = retirement_age - current_age
-                months_to_retirement = years_to_retirement * 12
-                
-                # Cálculo del valor futuro con aportaciones
-                if expected_return > 0:
-                    monthly_rate = expected_return / 12
-                    # Valor futuro del dinero actual
-                    future_current = current_savings * (1 + monthly_rate) ** months_to_retirement
-                    # Valor futuro de las aportaciones mensuales
-                    future_contributions = monthly_contribution * (((1 + monthly_rate) ** months_to_retirement - 1) / monthly_rate)
-                    total_at_retirement = future_current + future_contributions
-                else:
-                    total_at_retirement = current_savings + (monthly_contribution * months_to_retirement)
-                
-                # Ingreso mensual sostenible (regla del 4%)
-                monthly_income = (total_at_retirement * 0.04) / 12
-                total_contributions = current_savings + (monthly_contribution * months_to_retirement)
-                
-                result = {
-                    'total_at_retirement': round(total_at_retirement, 2),
-                    'monthly_income': round(monthly_income, 2),
-                    'total_contributions': round(total_contributions, 2),
-                    'years_to_retirement': years_to_retirement,
-                    'shortfall': round(max(0, desired_income - monthly_income), 2) if desired_income > 0 else 0,
-                    'type': 'retirement'
-                }
-                
-                # Generar explicación con IA
-                ai_explanation = generate_ai_explanation(result, tab)
-                
-            except:
-                result = {"error": "Error en los valores ingresados"}
-        
-        elif tab == "investment":
-            try:
-                initial_investment = float(request.POST.get("initial_investment", 0))
-                monthly_investment = float(request.POST.get("monthly_investment", 0))
-                annual_return = float(request.POST.get("annual_return", 0)) / 100
-                years = int(request.POST.get("years", 0))
-                inflation_rate = float(request.POST.get("inflation_rate", 3.0)) / 100
-                
-                months = years * 12
-                
-                # Cálculo del valor futuro
-                if annual_return > 0:
-                    monthly_rate = annual_return / 12
-                    # Valor futuro de la inversión inicial
-                    future_initial = initial_investment * (1 + monthly_rate) ** months
-                    # Valor futuro de las inversiones mensuales
-                    future_monthly = monthly_investment * (((1 + monthly_rate) ** months - 1) / monthly_rate)
-                    final_value = future_initial + future_monthly
-                else:
-                    final_value = initial_investment + (monthly_investment * months)
-                
-                total_invested = initial_investment + (monthly_investment * months)
-                total_profit = final_value - total_invested
-                roi_percentage = (total_profit / total_invested * 100) if total_invested > 0 else 0
-                
-                # Valor real ajustado por inflación
-                real_rate = ((1 + annual_return) / (1 + inflation_rate)) - 1
-                if real_rate > 0:
-                    real_monthly_rate = real_rate / 12
-                    real_future_initial = initial_investment * (1 + real_monthly_rate) ** months
-                    real_future_monthly = monthly_investment * (((1 + real_monthly_rate) ** months - 1) / real_monthly_rate)
-                    real_value = real_future_initial + real_future_monthly
-                else:
-                    real_value = final_value / ((1 + inflation_rate) ** years)
-                
-                result = {
-                    'final_value': round(final_value, 2),
-                    'total_profit': round(total_profit, 2),
-                    'total_invested': round(total_invested, 2),
-                    'roi_percentage': round(roi_percentage, 2),
-                    'real_value': round(real_value, 2),
-                    'type': 'investment'
-                }
-                
-                # Generar explicación con IA
-                ai_explanation = generate_ai_explanation(result, tab)
-                
-            except:
-                result = {"error": "Error en los valores ingresados"}
 
-    return render(request, 'educacion_financiera/calculators_new.html', {
+    return render(request, 'educacion_financiera/calculators.html', {
         'tab': tab,
         'result': result,
         'ai_explanation': ai_explanation
@@ -241,25 +149,6 @@ def generate_ai_explanation(result, calculation_type):
             
             Da consejos para optimizar el presupuesto.
             """
-        elif calculation_type == 'retirement':
-            prompt = f"""
-            Analiza este plan de jubilación:
-            - Total al jubilarte: ${result['total_at_retirement']:,.2f}
-            - Ingreso mensual sostenible: ${result['monthly_income']:,.2f}
-            - Años para jubilación: {result['years_to_retirement']}
-            
-            Da consejos específicos para mejorar el plan de jubilación.
-            """
-        elif calculation_type == 'investment':
-            prompt = f"""
-            Analiza esta proyección de inversión:
-            - Valor final: ${result['final_value']:,.2f}
-            - Ganancia total: ${result['total_profit']:,.2f}
-            - ROI: {result['roi_percentage']:.1f}%
-            - Valor real: ${result['real_value']:,.2f}
-            
-            Da consejos sobre estrategias de inversión y diversificación.
-            """
         
         response = model.generate_content(prompt)
         return response.text
@@ -279,6 +168,18 @@ def courses(request):
     
     for curso in cursos:
         curso.es_favorito = curso.id in favoritos_ids
+        
+        # Agregar ícono de plataforma
+        iconos_plataforma = {
+            'YouTube': '📺',
+            'Coursera': '🎓',
+            'Udemy': '💻',
+            'Khan Academy': '📚',
+            'edX': '🏛️',
+            'Platzi': '🚀',
+            'Otro': '🌐'
+        }
+        curso.plataforma_icon = iconos_plataforma.get(curso.plataforma, '🌐')
     
     return render(request, 'educacion_financiera/courses.html', {
         'courses': cursos

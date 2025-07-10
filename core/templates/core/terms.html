@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Condiciones - FinGest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            background: #fafbfc;
+            color: #0f172a;
+            line-height: 1.7;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+        
+        .content {
+            padding: 120px 0 80px;
+        }
+        
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0f172a 0%, #22c55e 50%, #3b82f6 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 18px;
+            margin-bottom: 48px;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+        
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 20px 0 12px 0;
+        }
+        
+        p {
+            color: #475569;
+            margin-bottom: 16px;
+        }
+        
+        ul {
+            color: #475569;
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #22c55e;
+            margin: 24px 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #ef4444;
+            margin: 24px 0;
+        }
+        
+        .contact-info {
+            background: linear-gradient(135deg, #f0fdf4, #eff6ff);
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 32px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-content {
+                padding: 16px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            .section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="{% url 'core:index' %}" class="logo">
+                {% load static %}
+                <img src="{% static 'images/LogoFinGest-Idx.jpg' %}" alt="FinGest" style="height: 40px; width: 40px; border-radius: 12px;">
+                FinGest
+            </a>
+            <a href="{% url 'core:index' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Volver al inicio
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <div class="container">
+            <h1>Términos y Condiciones</h1>
+            <p class="subtitle">Última actualización: 7 de julio de 2025</p>
+
+            <div class="section">
+                <h2><i class="fas fa-handshake" style="color: #22c55e;"></i> Aceptación de los Términos</h2>
+                <p>Al acceder y utilizar FinGest, confirmas que has leído, entendido y aceptas estar sujeto a estos Términos y Condiciones. Si no estás de acuerdo con alguna parte de estos términos, no debes utilizar nuestros servicios.</p>
+                
+                <div class="highlight">
+                    <strong>Importante:</strong> Estos términos constituyen un acuerdo legal vinculante entre tú y FinGest S.A.S.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-info-circle" style="color: #3b82f6;"></i> Descripción del Servicio</h2>
+                
+                <p>FinGest es una plataforma digital de gestión financiera personal que ofrece:</p>
+                
+                <ul>
+                    <li>Seguimiento y categorización de gastos e ingresos</li>
+                    <li>Generación de reportes financieros automatizados</li>
+                    <li>Alertas inteligentes sobre patrones de gasto</li>
+                    <li>Análisis predictivo y recomendaciones personalizadas</li>
+                    <li>Herramientas de presupuestación y planificación financiera</li>
+                    <li>Contenido educativo sobre finanzas personales</li>
+                </ul>
+
+                <h3>Disponibilidad del Servicio</h3>
+                <p>Nos esforzamos por mantener el servicio disponible 24/7, pero no garantizamos un tiempo de actividad del 100%. Podemos realizar mantenimientos programados con previo aviso.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-user-check" style="color: #f59e0b;"></i> Registro y Cuenta de Usuario</h2>
+                
+                <h3>Requisitos de Registro</h3>
+                <ul>
+                    <li>Ser mayor de 18 años</li>
+                    <li>Proporcionar información veraz y actualizada</li>
+                    <li>Mantener la confidencialidad de tus credenciales</li>
+                    <li>Usar la plataforma de manera responsable</li>
+                </ul>
+
+                <h3>Responsabilidades del Usuario</h3>
+                <ul>
+                    <li>Mantener actualizada tu información personal</li>
+                    <li>Notificar inmediatamente cualquier uso no autorizado</li>
+                    <li>Cumplir con todas las leyes aplicables</li>
+                    <li>No compartir tu cuenta con terceros</li>
+                </ul>
+
+                <div class="warning">
+                    <strong>Advertencia:</strong> Eres responsable de todas las actividades que ocurran bajo tu cuenta. Mantén seguras tus credenciales de acceso.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-credit-card" style="color: #8b5cf6;"></i> Planes y Pagos</h2>
+                
+                <h3>Tipos de Planes</h3>
+                <ul>
+                    <li><strong>Plan Gratuito:</strong> Funcionalidades básicas sin costo</li>
+                    <li><strong>Plan Pro:</strong> Funcionalidades avanzadas con suscripción mensual</li>
+                    <li><strong>Plan Empresarial:</strong> Soluciones personalizadas para empresas</li>
+                </ul>
+
+                <h3>Facturación y Renovación</h3>
+                <ul>
+                    <li>Los pagos se procesan de forma segura a través de proveedores certificados</li>
+                    <li>Las suscripciones se renuevan automáticamente</li>
+                    <li>Puedes cancelar en cualquier momento desde tu panel de control</li>
+                    <li>Los reembolsos se procesan según nuestra política de reembolsos</li>
+                </ul>
+
+                <h3>Política de Reembolsos</h3>
+                <p>Ofrecemos reembolsos completos dentro de los primeros 30 días para nuevas suscripciones. Los reembolsos se procesan en 5-10 días hábiles.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-ban" style="color: #ef4444;"></i> Uso Prohibido</h2>
+                
+                <p>No puedes utilizar FinGest para:</p>
+                
+                <ul>
+                    <li>Actividades ilegales o fraudulentas</li>
+                    <li>Violar derechos de propiedad intelectual</li>
+                    <li>Distribuir malware o contenido malicioso</li>
+                    <li>Realizar ingeniería inversa de la plataforma</li>
+                    <li>Acceder a datos de otros usuarios sin autorización</li>
+                    <li>Sobrecargar nuestros sistemas intencionalmente</li>
+                    <li>Crear cuentas múltiples para evadir limitaciones</li>
+                </ul>
+
+                <div class="warning">
+                    <strong>Consecuencias:</strong> El incumplimiento puede resultar en la suspensión o terminación inmediata de tu cuenta.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-shield-alt" style="color: #14b8a6;"></i> Seguridad y Privacidad</h2>
+                
+                <h3>Nuestros Compromisos</h3>
+                <ul>
+                    <li>Encriptación de extremo a extremo para datos sensibles</li>
+                    <li>Cumplimiento con estándares internacionales de seguridad</li>
+                    <li>Auditorías de seguridad regulares</li>
+                    <li>Monitoreo continuo de amenazas</li>
+                </ul>
+
+                <h3>Tus Responsabilidades</h3>
+                <ul>
+                    <li>Usar contraseñas seguras y únicas</li>
+                    <li>Habilitar la autenticación de dos factores</li>
+                    <li>Mantener actualizado tu dispositivo y navegador</li>
+                    <li>No acceder desde redes no seguras</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-copyright" style="color: #ec4899;"></i> Propiedad Intelectual</h2>
+                
+                <h3>Derechos de FinGest</h3>
+                <p>Todos los derechos de propiedad intelectual sobre la plataforma, incluyendo pero no limitado a:</p>
+                <ul>
+                    <li>Código fuente y arquitectura del software</li>
+                    <li>Diseños, interfaces y elementos gráficos</li>
+                    <li>Algoritmos y metodologías propietarias</li>
+                    <li>Marca registrada y logotipos</li>
+                    <li>Contenido educativo y documentación</li>
+                </ul>
+
+                <h3>Licencia de Uso</h3>
+                <p>Te otorgamos una licencia limitada, no exclusiva y revocable para usar FinGest según estos términos.</p>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Limitación de Responsabilidad</h2>
+                
+                <h3>Descargos de Responsabilidad</h3>
+                <ul>
+                    <li>FinGest es una herramienta de apoyo, no un asesor financiero</li>
+                    <li>No garantizamos resultados financieros específicos</li>
+                    <li>Las decisiones financieras son responsabilidad del usuario</li>
+                    <li>Recomendamos consultar profesionales para decisiones importantes</li>
+                </ul>
+
+                <h3>Limitaciones</h3>
+                <p>Nuestra responsabilidad total no excederá el monto pagado por el servicio en los últimos 12 meses. No seremos responsables por daños indirectos, incidentales o consecuenciales.</p>
+
+                <div class="warning">
+                    <strong>Importante:</strong> FinGest no se hace responsable por decisiones financieras tomadas basándose únicamente en nuestra plataforma.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-times-circle" style="color: #ef4444;"></i> Suspensión y Terminación</h2>
+                
+                <h3>Terminación por tu Parte</h3>
+                <ul>
+                    <li>Puedes cancelar tu cuenta en cualquier momento</li>
+                    <li>La cancelación es efectiva al final del período de facturación</li>
+                    <li>Tus datos se conservan según nuestra política de retención</li>
+                </ul>
+
+                <h3>Terminación por Nuestra Parte</h3>
+                <p>Podemos suspender o terminar tu cuenta por:</p>
+                <ul>
+                    <li>Violación de estos términos</li>
+                    <li>Actividad fraudulenta o sospechosa</li>
+                    <li>Falta de pago (para cuentas premium)</li>
+                    <li>Inactividad prolongada</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-gavel" style="color: #8b5cf6;"></i> Ley Aplicable y Jurisdicción</h2>
+                
+                <p>Estos términos se rigen por las leyes de la República de Colombia. Cualquier disputa será resuelta en los tribunales competentes de Bogotá, Colombia.</p>
+
+                <h3>Resolución de Disputas</h3>
+                <ul>
+                    <li>Preferimos resolver disputas de manera amigable</li>
+                    <li>Contacta primero a nuestro equipo de soporte</li>
+                    <li>Si es necesario, procederemos con mediación</li>
+                    <li>Como último recurso, acudiremos a tribunales</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2><i class="fas fa-sync-alt" style="color: #22c55e;"></i> Modificaciones</h2>
+                
+                <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios significativos serán notificados con al menos 30 días de anticipación mediante:</p>
+                
+                <ul>
+                    <li>Notificación por correo electrónico</li>
+                    <li>Aviso prominente en la plataforma</li>
+                    <li>Actualización de la fecha de "última modificación"</li>
+                </ul>
+
+                <p>El uso continuado del servicio después de los cambios constituye aceptación de los nuevos términos.</p>
+            </div>
+
+            <div class="contact-info">
+                <h3><i class="fas fa-envelope" style="color: #3b82f6;"></i> Contacto</h3>
+                <p>Para preguntas sobre estos Términos y Condiciones:</p>
+                <p><strong>Email:</strong> legal@fingest.com</p>
+                <p><strong>Dirección:</strong> FinGest S.A.S, Bogotá, Colombia</p>
+                <p><strong>Teléfono:</strong> +57 (1) 234-5678</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - FinGest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            background: #fafbfc;
+            color: #0f172a;
+            line-height: 1.7;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+        
+        .content {
+            padding: 120px 0 80px;
+        }
+        
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0f172a 0%, #22c55e 50%, #3b82f6 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 18px;
+            margin-bottom: 48px;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+        
+        .contact-info {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+        
+        .contact-form {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+        
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 20px 0 12px 0;
+        }
+        
+        p {
+            color: #475569;
+            margin-bottom: 16px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+        }
+        
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+        
+        .contact-item i {
+            font-size: 20px;
+            color: #22c55e;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .contact-item-content h4 {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        
+        .contact-item-content p {
+            color: #64748b;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(34, 197, 94, 0.1);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: #15803d;
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #dc2626;
+        }
+        
+        .faq-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 32px;
+            margin-top: 32px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+            padding: 16px 0;
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        
+        .faq-question {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .faq-answer {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-content {
+                padding: 12px 16px;
+            }
+            
+            .container {
+                padding: 0 16px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            .content {
+                padding: 100px 0 60px;
+            }
+            
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .contact-info,
+            .contact-form {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="{% url 'core:index' %}" class="logo">
+                <i class="fas fa-chart-line"></i>
+                FinGest
+            </a>
+            <a href="{% url 'core:index' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Inicio
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="content">
+            <h1>Contacto</h1>
+            <p class="subtitle">Estamos aquí para ayudarte. Contáctanos y te responderemos lo antes posible.</p>
+
+            <!-- Alertas de mensajes -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="contact-grid">
+                <!-- Información de Contacto -->
+                <div class="contact-info">
+                    <h2><i class="fas fa-info-circle"></i> Información de Contacto</h2>
+                    <p>Nuestro equipo está disponible para ayudarte con cualquier pregunta o problema que puedas tener.</p>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div class="contact-item-content">
+                            <h4>Email</h4>
+                            <p>contacto@fingest.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div class="contact-item-content">
+                            <h4>Horario de Atención</h4>
+                            <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-reply"></i>
+                        <div class="contact-item-content">
+                            <h4>Tiempo de Respuesta</h4>
+                            <p>Respondemos en menos de 24 horas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-headset"></i>
+                        <div class="contact-item-content">
+                            <h4>Soporte Técnico</h4>
+                            <p>Disponible para resolver problemas técnicos</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top: 32px; margin-bottom: 16px;">¿Necesitas ayuda inmediata?</h3>
+                    <p style="margin-bottom: 16px;">Visita nuestro centro de ayuda para encontrar respuestas a las preguntas más frecuentes.</p>
+                    <a href="{% url 'core:help' %}" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1)); color: #22c55e; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                        <i class="fas fa-question-circle"></i>
+                        Centro de Ayuda
+                    </a>
+                </div>
+
+                <!-- Formulario de Contacto -->
+                <div class="contact-form">
+                    <h2><i class="fas fa-paper-plane"></i> Envíanos un Mensaje</h2>
+                    <p>Completa el formulario y nos pondremos en contacto contigo pronto.</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="name">Nombre Completo *</label>
+                            <input type="text" id="name" name="name" required placeholder="Tu nombre completo">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required placeholder="tu@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Asunto *</label>
+                            <select id="subject" name="subject" required>
+                                <option value="">Selecciona un asunto</option>
+                                <option value="Soporte Técnico">Soporte Técnico</option>
+                                <option value="Problema con mi cuenta">Problema con mi cuenta</option>
+                                <option value="Pregunta sobre funcionalidades">Pregunta sobre funcionalidades</option>
+                                <option value="Sugerencia de mejora">Sugerencia de mejora</option>
+                                <option value="Problema de facturación">Problema de facturación</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Mensaje *</label>
+                            <textarea id="message" name="message" required placeholder="Describe tu consulta o problema de manera detallada..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preguntas Frecuentes Rápidas -->
+            <div class="faq-section">
+                <h2><i class="fas fa-lightning-bolt"></i> Preguntas Frecuentes Rápidas</h2>
+                <p>Antes de contactarnos, revisa si tu pregunta está aquí:</p>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Olvidé mi contraseña, qué hago?
+                    </div>
+                    <div class="faq-answer">
+                        Usa la opción "Olvidé mi contraseña" en la página de inicio de sesión. Te enviaremos un email para restablecerla.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Mis datos están seguros?
+                    </div>
+                    <div class="faq-answer">
+                        Sí, utilizamos encriptación de grado bancario y los más altos estándares de seguridad para proteger tu información.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Puedo cancelar mi cuenta cuando quiera?
+                    </div>
+                    <div class="faq-answer">
+                        Sí, puedes cancelar tu cuenta en cualquier momento desde la configuración de tu perfil.
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Cobran por usar FinGest?
+                    </div>
+                    <div class="faq-answer">
+                        FinGest ofrece un plan gratuito con funcionalidades básicas y planes premium con características avanzadas.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mejorar la experiencia del formulario
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const submitBtn = document.querySelector('.submit-btn');
+            
+            form.addEventListener('submit', function() {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -11,6 +11,17 @@ from alertas_notificaciones.services import NotificationService
 import random
 from datetime import datetime, timedelta
 
+def get_nombre_mes_espanol(fecha):
+    """Convierte el nombre del mes al español"""
+    meses_espanol = {
+        1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril",
+        5: "Mayo", 6: "Junio", 7: "Julio", 8: "Agosto",
+        9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"
+    }
+    mes_numero = fecha.month
+    año = fecha.year
+    return f"{meses_espanol[mes_numero]} {año}"
+
 def generar_consejos_dinamicos(goals, promedio_progreso, metas_completadas):
     """Genera consejos dinámicos basados en el progreso del usuario"""
     consejos = []
@@ -192,6 +203,10 @@ def savings_goals(request):
 @login_required
 @fast_access_pin_verified
 def transactions(request):
+    from datetime import datetime, timedelta
+    from django.utils import timezone
+    from calendar import monthrange
+    
     user_id = request.user.id
     filter_type = request.GET.get("filter", "all")
     search_query = request.GET.get("search", "").strip()
@@ -200,7 +215,56 @@ def transactions(request):
     # Obtener transacciones reales de la base de datos
     transacciones = Movimiento.objects.filter(id_cuenta__id_usuario=user_id)
 
-    # Aplicar filtros
+    # Calcular métricas del mes actual
+    now = timezone.now()
+    primer_dia_mes = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    ultimo_dia_mes = primer_dia_mes.replace(day=monthrange(now.year, now.month)[1], hour=23, minute=59, second=59)
+    
+    # Transacciones del mes actual
+    transacciones_mes = Movimiento.objects.filter(
+        id_cuenta__id_usuario=user_id,
+        fecha_movimiento__range=[primer_dia_mes, ultimo_dia_mes]
+    )
+    
+    # Métricas del mes
+    ingresos_mes = transacciones_mes.filter(tipo="ingreso").aggregate(total=Sum('monto'))['total'] or 0
+    gastos_mes = transacciones_mes.filter(tipo="egreso").aggregate(total=Sum('monto'))['total'] or 0
+    balance_mes = ingresos_mes - gastos_mes
+    total_transacciones = transacciones_mes.count()
+    
+    # Métricas de la semana actual (últimos 7 días)
+    hace_7_dias = now - timedelta(days=7)
+    transacciones_semana = Movimiento.objects.filter(
+        id_cuenta__id_usuario=user_id,
+        fecha_movimiento__gte=hace_7_dias
+    )
+    ingresos_semana = transacciones_semana.filter(tipo="ingreso").aggregate(total=Sum('monto'))['total'] or 0
+    gastos_semana = transacciones_semana.filter(tipo="egreso").aggregate(total=Sum('monto'))['total'] or 0
+    
+    # Métricas generales (histórico)
+    ingresos_total = Movimiento.objects.filter(
+        id_cuenta__id_usuario=user_id, 
+        tipo="ingreso"
+    ).aggregate(total=Sum('monto'))['total'] or 0
+    
+    gastos_total = Movimiento.objects.filter(
+        id_cuenta__id_usuario=user_id, 
+        tipo="egreso"
+    ).aggregate(total=Sum('monto'))['total'] or 0
+    
+    # Transacciones más recientes (últimas 5)
+    transacciones_recientes = Movimiento.objects.filter(
+        id_cuenta__id_usuario=user_id
+    ).order_by('-fecha_movimiento')[:5]
+    
+    # Categorías más frecuentes este mes
+    from django.db.models import Count
+    categorias_frecuentes = transacciones_mes.values('nombre').annotate(
+        cantidad=Count('nombre'),
+        total_monto=Sum('monto')
+    ).order_by('-cantidad')[:5]
+
+    # Aplicar filtros a la lista principal
     if filter_type == "income":
         transacciones = transacciones.filter(tipo="ingreso")
     elif filter_type == "expenses":
@@ -231,6 +295,19 @@ def transactions(request):
         "filter_type": filter_type,
         "search_query": search_query,
         "sort_by": sort_by,
+        # Métricas del mes
+        "total_transacciones": total_transacciones,
+        "ingresos_mes": ingresos_mes,
+        "gastos_mes": gastos_mes,
+        "balance_mes": balance_mes,
+        # Métricas adicionales
+        "ingresos_semana": ingresos_semana,
+        "gastos_semana": gastos_semana,
+        "ingresos_total": ingresos_total,
+        "gastos_total": gastos_total,
+        "transacciones_recientes": transacciones_recientes,
+        "categorias_frecuentes": categorias_frecuentes,
+        "nombre_mes": get_nombre_mes_espanol(now),
     })
     
 @login_required

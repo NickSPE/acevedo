@@ -1,103 +1,179 @@
 {% extends 'core/base_template.html' %}
 
-{% block title %}Aportar a Meta de Ahorro{% endblock %}
+{% block title %}Aportar a Meta de Ahorro | FinGest{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">💰 Aportar a Meta de Ahorro</h1>
-            <p class="text-gray-600">Agrega fondos a tu meta: <span class="font-semibold text-blue-600">{{ meta.nombre }}</span></p>
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>
         </div>
-
-        <!-- Meta Info Card -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">{{ meta.nombre }}</h3>
-                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                    {{ meta.porcentaje_progreso|floatformat:1 }}%
-                </span>
-            </div>
-            
-            <div class="mb-4">
-                <div class="flex justify-between text-sm text-gray-600 mb-2">
-                    <span>Progreso</span>
-                    <span>${{ meta.monto_ahorrado|floatformat:2 }} / ${{ meta.monto_objetivo|floatformat:2 }}</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-3">
-                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-300" 
-                         style="width: {{ meta.porcentaje_progreso }}%"></div>
-                </div>
-            </div>
-            
-            <div class="text-sm text-gray-600">
-                <p><strong>Meta:</strong> ${{ meta.monto_objetivo|floatformat:2 }}</p>
-                <p><strong>Ahorrado:</strong> ${{ meta.monto_ahorrado|floatformat:2 }}</p>
-                <p><strong>Falta:</strong> ${{ meta.falta_por_ahorrar|floatformat:2 }}</p>
-                <p><strong>Fecha límite:</strong> {{ meta.fecha_limite|date:"d/m/Y" }}</p>
-            </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Aportar a Meta de Ahorro</h2>
+          <p class="text-gray-600 dark:text-gray-300">Agrega fondos a tu meta: <span class="font-semibold text-blue-600 dark:text-blue-400">{{ meta.nombre }}</span></p>
         </div>
+      </div>
+      <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+         class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </a>
+    </div>
+  </div>
 
-        <!-- Form Card -->
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <form method="post" class="space-y-6">
-                {% csrf_token %}
-                
-                <!-- Non-field errors -->
-                {% if form.non_field_errors %}
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                {% for error in form.non_field_errors %}
-                                    <p class="text-sm text-red-800">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
+  <!-- Información de la Meta -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ meta.nombre }}</h3>
+      <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
+        {{ meta.porcentaje_progreso|floatformat:1 }}%
+      </span>
+    </div>
+    
+    <div class="mb-4">
+      <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
+        <span>Progreso</span>
+        <span>${{ meta.monto_ahorrado|floatformat:2 }} / ${{ meta.monto_objetivo|floatformat:2 }}</span>
+      </div>
+      <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+             style="width: {{ meta.porcentaje_progreso }}%"></div>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+      <div>
+        <p class="text-gray-500 dark:text-gray-400">Meta</p>
+        <p class="font-semibold text-gray-900 dark:text-white">${{ meta.monto_objetivo|floatformat:2 }}</p>
+      </div>
+      <div>
+        <p class="text-gray-500 dark:text-gray-400">Ahorrado</p>
+        <p class="font-semibold text-green-600 dark:text-green-400">${{ meta.monto_ahorrado|floatformat:2 }}</p>
+      </div>
+      <div>
+        <p class="text-gray-500 dark:text-gray-400">Falta</p>
+        <p class="font-semibold text-orange-600 dark:text-orange-400">${{ meta.falta_por_ahorrar|floatformat:2 }}</p>
+      </div>
+      <div>
+        <p class="text-gray-500 dark:text-gray-400">Fecha límite</p>
+        <p class="font-semibold text-gray-900 dark:text-white">{{ meta.fecha_limite|date:"d/m/Y" }}</p>
+      </div>
+    </div>
+  </div>
 
-                <!-- Monto Field -->
-                <div>
-                    {% if form.monto.errors %}
-                        <div class="mb-2">
-                            {% for error in form.monto.errors %}
-                                <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
-                                    <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    {{ error }}
-                                </p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    
-                    <label for="{{ form.monto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ form.monto.label }}
-                    </label>
-                    {{ form.monto }}
-                    {% if form.monto.help_text %}
-                        <p class="mt-2 text-sm text-gray-500">{{ form.monto.help_text }}</p>
-                    {% endif %}
-                </div>
+  <!-- Formulario -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+    <form method="post">
+      {% csrf_token %}
+      
+      <!-- Monto a aportar -->
+      <div class="mb-6">
+        <label for="{{ form.monto.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Monto a Aportar
+        </label>
+        {% if form.monto.errors %}
+          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.monto.errors.0 }}</p>
+          </div>
+        {% endif %}
+        <div class="relative">
+          <span class="absolute left-3 top-3 text-gray-500 dark:text-gray-400">$</span>
+          {{ form.monto }}
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">¿Cuánto dinero quieres aportar a esta meta?</p>
+      </div>
 
-                <!-- Descripción Field -->
-                <div>
-                    {% if form.descripcion.errors %}
-                        <div class="mb-2">
-                            {% for error in form.descripcion.errors %}
-                                <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
-                                    <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    {{ error }}
-                                </p>
-                            {% endfor %}
+      <!-- Descripción -->
+      <div class="mb-8">
+        <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Descripción del Aporte (Opcional)
+        </label>
+        {% if form.descripcion.errors %}
+          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.descripcion.errors.0 }}</p>
+          </div>
+        {% endif %}
+        {{ form.descripcion }}
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ejemplo: "Aporte mensual", "Bonificación", "Ahorro extra"</p>
+      </div>
+
+      <!-- Errores generales -->
+      {% if form.non_field_errors %}
+        <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          {% for error in form.non_field_errors %}
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Botones -->
+      <div class="flex gap-4">
+        <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+           class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors duration-200 text-center">
+          Cancelar
+        </a>
+        <button type="submit" 
+                class="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm hover:shadow-md">
+          Realizar Aporte
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const montoInput = document.querySelector('input[name="monto"]');
+  const metaFaltante = {{ meta.falta_por_ahorrar|floatformat:2 }};
+  
+  if (montoInput) {
+    // Auto-focus en el campo de monto
+    montoInput.focus();
+    
+    // Validación en tiempo real
+    montoInput.addEventListener('input', function(e) {
+      let value = parseFloat(e.target.value) || 0;
+      
+      // No permitir valores negativos
+      if (value < 0) {
+        e.target.value = 0;
+        return;
+      }
+      
+      // Feedback visual según el monto
+      if (value > metaFaltante) {
+        e.target.classList.add('border-yellow-500', 'focus:ring-yellow-500');
+        e.target.classList.remove('border-gray-300', 'focus:ring-blue-500');
+        
+        // Mostrar advertencia
+        let warning = e.target.parentElement.parentElement.querySelector('.amount-warning');
+        if (!warning) {
+          warning = document.createElement('p');
+          warning.className = 'amount-warning text-yellow-600 dark:text-yellow-400 text-xs mt-1';
+          warning.textContent = 'Este monto supera lo necesario para completar la meta';
+          e.target.parentElement.parentElement.appendChild(warning);
+        }
+      } else {
+        e.target.classList.remove('border-yellow-500', 'focus:ring-yellow-500');
+        e.target.classList.add('border-gray-300', 'focus:ring-blue-500');
+        
+        // Remover advertencia
+        const warning = e.target.parentElement.parentElement.querySelector('.amount-warning');
+        if (warning) {
+          warning.remove();
+        }
+      }
+    });
+  }
+});
+</script>
+{% endblock %}
                         </div>
                     {% endif %}
                     

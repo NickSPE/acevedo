@@ -22,5 +22,8 @@ urlpatterns = [
     
     # URLs para transferencias con cuenta principal
     path("subcuentas/transferir-principal/<int:subcuenta_id>/", views.transferir_a_cuenta_principal, name="transferir_a_cuenta_principal"),
+    path("subcuentas/transferir-principal-ajax/", views.transferir_a_cuenta_principal_ajax, name="transferir_a_cuenta_principal_ajax"),
+    path("subcuentas/depositar-ajax/", views.depositar_subcuenta_ajax, name="depositar_subcuenta_ajax"),
+    path("subcuentas/transferir-ajax/", views.transferir_subcuentas_ajax, name="transferir_subcuentas_ajax"),
     path("subcuentas/historial-principal/", views.historial_transferencias_cuenta_principal, name="historial_transferencias_cuenta_principal"),
 ]

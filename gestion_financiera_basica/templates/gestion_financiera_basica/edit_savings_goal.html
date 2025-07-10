@@ -1,103 +1,209 @@
 {% extends 'core/base_template.html' %}
 
-{% block title %}Editar Meta de Ahorro{% endblock %}
+{% block title %}Editar Meta de Ahorro | FinGest{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">✏️ Editar Meta de Ahorro</h1>
-            <p class="text-gray-600">Modifica los detalles de tu meta de ahorro</p>
+<div class="max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
         </div>
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Editar Meta de Ahorro</h2>
+          <p class="text-gray-600 dark:text-gray-300">Modifica los detalles de tu meta de ahorro</p>
+        </div>
+      </div>
+      <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+         class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </a>
+    </div>
+  </div>
 
-        <!-- Form Card -->
-        <div class="bg-white rounded-xl shadow-lg p-8">
-            <form method="post" class="space-y-6">
-                {% csrf_token %}
-                
-                <!-- Non-field errors -->
-                {% if form.non_field_errors %}
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                {% for error in form.non_field_errors %}
-                                    <p class="text-sm text-red-800">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
+  <!-- Formulario -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+    <form method="post">
+      {% csrf_token %}
+      
+      <!-- Nombre de la meta -->
+      <div class="mb-6">
+        <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Nombre de la Meta <span class="text-red-500">*</span>
+        </label>
+        {% if form.nombre.errors %}
+          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.nombre.errors.0 }}</p>
+          </div>
+        {% endif %}
+        {{ form.nombre }}
+      </div>
 
-                <!-- Form Fields in Grid -->
-                <div class="grid gap-6 md:grid-cols-2">
-                    <!-- Nombre Field -->
-                    <div class="md:col-span-2">
-                        {% if form.nombre.errors %}
-                            <div class="mb-2">
-                                {% for error in form.nombre.errors %}
-                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
-                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ error }}
-                                    </p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        
-                        <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ form.nombre.label }} <span class="text-red-500">*</span>
-                        </label>
-                        {{ form.nombre }}
-                    </div>
+      <!-- Monto objetivo y Frecuencia -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <label for="{{ form.monto_objetivo.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Monto Objetivo <span class="text-red-500">*</span>
+          </label>
+          {% if form.monto_objetivo.errors %}
+            <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-600 dark:text-red-400 text-sm">{{ form.monto_objetivo.errors.0 }}</p>
+            </div>
+          {% endif %}
+          <div class="relative">
+            <span class="absolute left-3 top-3 text-gray-500 dark:text-gray-400">$</span>
+            {{ form.monto_objetivo }}
+          </div>
+        </div>
+        
+        <div>
+          <label for="{{ form.frecuencia_aporte.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Frecuencia de Aporte <span class="text-red-500">*</span>
+          </label>
+          {% if form.frecuencia_aporte.errors %}
+            <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-600 dark:text-red-400 text-sm">{{ form.frecuencia_aporte.errors.0 }}</p>
+            </div>
+          {% endif %}
+          {{ form.frecuencia_aporte }}
+        </div>
+      </div>
 
-                    <!-- Monto Objetivo Field -->
-                    <div>
-                        {% if form.monto_objetivo.errors %}
-                            <div class="mb-2">
-                                {% for error in form.monto_objetivo.errors %}
-                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
-                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ error }}
-                                    </p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        
-                        <label for="{{ form.monto_objetivo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ form.monto_objetivo.label }} <span class="text-red-500">*</span>
-                        </label>
-                        {{ form.monto_objetivo }}
-                        {% if form.monto_objetivo.help_text %}
-                            <p class="mt-2 text-sm text-gray-500">{{ form.monto_objetivo.help_text }}</p>
-                        {% endif %}
-                    </div>
+      <!-- Fechas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <label for="{{ form.fecha_inicio.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Fecha de Inicio <span class="text-red-500">*</span>
+          </label>
+          {% if form.fecha_inicio.errors %}
+            <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-600 dark:text-red-400 text-sm">{{ form.fecha_inicio.errors.0 }}</p>
+            </div>
+          {% endif %}
+          {{ form.fecha_inicio }}
+        </div>
+        
+        <div>
+          <label for="{{ form.fecha_limite.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Fecha Límite <span class="text-red-500">*</span>
+          </label>
+          {% if form.fecha_limite.errors %}
+            <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p class="text-red-600 dark:text-red-400 text-sm">{{ form.fecha_limite.errors.0 }}</p>
+            </div>
+          {% endif %}
+          {{ form.fecha_limite }}
+        </div>
+      </div>
 
-                    <!-- Frecuencia Aporte Field -->
-                    <div>
-                        {% if form.frecuencia_aporte.errors %}
-                            <div class="mb-2">
-                                {% for error in form.frecuencia_aporte.errors %}
-                                    <p class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
-                                        <svg class="inline w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        {{ error }}
-                                    </p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        
-                        <label for="{{ form.frecuencia_aporte.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                            {{ form.frecuencia_aporte.label }} <span class="text-red-500">*</span>
+      <!-- Cuenta -->
+      <div class="mb-6">
+        <label for="{{ form.id_cuenta.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Cuenta para Ahorrar <span class="text-red-500">*</span>
+        </label>
+        {% if form.id_cuenta.errors %}
+          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.id_cuenta.errors.0 }}</p>
+          </div>
+        {% endif %}
+        {{ form.id_cuenta }}
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-8">
+        <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Descripción (Opcional)
+        </label>
+        {% if form.descripcion.errors %}
+          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.descripcion.errors.0 }}</p>
+          </div>
+        {% endif %}
+        {{ form.descripcion }}
+      </div>
+
+      <!-- Errores generales -->
+      {% if form.non_field_errors %}
+        <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          {% for error in form.non_field_errors %}
+            <p class="text-red-600 dark:text-red-400 text-sm">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Botones -->
+      <div class="flex gap-4">
+        <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+           class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors duration-200 text-center">
+          Cancelar
+        </a>
+        <button type="submit" 
+                class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm hover:shadow-md">
+          Guardar Cambios
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Validación en tiempo real del monto
+  const montoInput = document.querySelector('input[name="monto_objetivo"]');
+  if (montoInput) {
+    montoInput.addEventListener('input', function(e) {
+      let value = parseFloat(e.target.value);
+      if (value < 0) {
+        e.target.value = 0;
+      }
+    });
+  }
+  
+  // Validación de fechas
+  const fechaInicio = document.querySelector('input[name="fecha_inicio"]');
+  const fechaLimite = document.querySelector('input[name="fecha_limite"]');
+  
+  function validarFechas() {
+    if (fechaInicio.value && fechaLimite.value) {
+      const inicio = new Date(fechaInicio.value);
+      const limite = new Date(fechaLimite.value);
+      
+      if (limite <= inicio) {
+        fechaLimite.classList.add('border-red-500', 'focus:ring-red-500');
+        fechaLimite.classList.remove('border-gray-300', 'focus:ring-blue-500');
+        
+        // Mostrar mensaje de error
+        let errorMsg = fechaLimite.parentElement.querySelector('.date-error');
+        if (!errorMsg) {
+          errorMsg = document.createElement('p');
+          errorMsg.className = 'date-error text-red-500 text-xs mt-1';
+          errorMsg.textContent = 'La fecha límite debe ser posterior a la fecha de inicio';
+          fechaLimite.parentElement.appendChild(errorMsg);
+        }
+      } else {
+        fechaLimite.classList.remove('border-red-500', 'focus:ring-red-500');
+        fechaLimite.classList.add('border-gray-300', 'focus:ring-blue-500');
+        
+        // Remover mensaje de error
+        const errorMsg = fechaLimite.parentElement.querySelector('.date-error');
+        if (errorMsg) {
+          errorMsg.remove();
+        }
+      }
+    }
+  }
+  
+  if (fechaInicio) fechaInicio.addEventListener('change', validarFechas);
+  if (fechaLimite) fechaLimite.addEventListener('change', validarFechas);
+});
+</script>
+{% endblock %}
                         </label>
                         {{ form.frecuencia_aporte }}
                         {% if form.frecuencia_aporte.help_text %}

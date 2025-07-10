@@ -2,158 +2,184 @@
 {% load static %}
 {% load currency_filters %}
 
-{% block title %}Gestión de Subcuentas - FinGest{% endblock %}
+{% block title %}Gestión de Subcuentas | FinGest{% endblock %}
 
 {% block extra_css %}
 <style>
-    * {
-        box-sizing: border-box;
-    }
-    
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        min-height: 100vh;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-    
-    .container-fluid {
-        width: 100%;
-        padding: 1rem;
+    .subcuentas-main {
         max-width: 1200px;
         margin: 0 auto;
+        padding: 0 1rem;
     }
     
-    .main-header {
-        background: #374151;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    .subcuentas-header {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
         padding: 2rem;
         margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
     }
     
-    .main-title {
-        font-size: 2.5rem;
+    .subcuentas-header h1 {
+        color: #1f2937;
+        font-size: 2rem;
         font-weight: 700;
-        color: #A78BFA;
         margin-bottom: 0.5rem;
-        margin-top: 0;
     }
     
-    .main-subtitle {
-        font-size: 1.1rem;
-        color: #9CA3AF;
-        margin: 0;
+    .subcuentas-header p {
+        color: #6b7280;
+        margin-bottom: 1.5rem;
     }
     
-    .btn-new-subcuenta {
-        background: linear-gradient(45deg, #6C5CE7, #A29BFE);
-        border: none;
-        border-radius: 15px;
-        padding: 12px 24px;
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .btn-action {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
         font-weight: 600;
-        text-transform: none;
-        transition: all 0.3s ease;
-        color: white;
         text-decoration: none;
-        display: inline-block;
+        transition: all 0.2s ease;
+        border: none;
         cursor: pointer;
-        margin: 0 0.5rem;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
-    .btn-new-subcuenta:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
-        background: linear-gradient(45deg, #5f4fd6, #9188fc);
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #2563eb;
         color: white;
         text-decoration: none;
+        transform: translateY(-1px);
     }
     
-    .stats-grid {
+    .btn-secondary {
+        background: #10b981;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #059669;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+    
+    .metrics-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;
     }
     
-    .stat-card {
+    .metric-card {
         background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border-left: 5px solid #6366f1;
-        transition: all 0.3s ease;
-        text-align: center;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
     }
     
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     }
     
-    .stat-value {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #374151;
+    .metric-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .metric-icon.blue {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+    
+    .metric-icon.green {
+        background: #d1fae5;
+        color: #047857;
+    }
+    
+    .metric-icon.purple {
+        background: #e9d5ff;
+        color: #7c3aed;
+    }
+    
+    .metric-title {
+        color: #6b7280;
+        font-size: 0.875rem;
+        font-weight: 500;
         margin-bottom: 0.5rem;
     }
     
-    .stat-label {
-        color: #6b7280;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.25rem;
-    }
-    
-    .stat-sublabel {
-        color: #9ca3af;
-        font-size: 0.8rem;
+    .metric-value {
+        color: #1f2937;
+        font-size: 1.875rem;
+        font-weight: 700;
+        margin: 0;
     }
     
     .subcuentas-section {
         background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-radius: 16px;
         padding: 2rem;
         margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e7eb;
     }
     
     .section-title {
+        color: #1f2937;
         font-size: 1.5rem;
         font-weight: 700;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-subtitle {
+        color: #6b7280;
+        margin-bottom: 1.5rem;
     }
     
     .subcuentas-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 1.5rem;
     }
     
     .subcuenta-card {
-        background: white;
-        border-radius: 15px;
-        border: 2px solid #e5e7eb;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
         padding: 1.5rem;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: all 0.2s ease;
     }
     
     .subcuenta-card:hover {
-        border-color: #6366f1;
-        transform: translateY(-3px);
-        box-shadow: 0 15px 35px rgba(99, 102, 241, 0.15);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
     }
     
     .subcuenta-header {
@@ -164,393 +190,380 @@
     }
     
     .subcuenta-name {
-        font-size: 1.25rem;
+        color: #1e293b;
+        font-size: 1.125rem;
         font-weight: 700;
-        color: #374151;
         margin: 0 0 0.25rem 0;
     }
     
     .subcuenta-type {
+        color: #64748b;
         font-size: 0.875rem;
-        color: #6b7280;
-        background: #f3f4f6;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
+        font-weight: 500;
     }
     
     .subcuenta-balance {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
     
     .balance-amount {
-        font-size: 2rem;
-        font-weight: bold;
         color: #059669;
+        font-size: 1.5rem;
+        font-weight: 700;
         display: block;
         margin-bottom: 0.5rem;
     }
     
     .progress-bar {
-        width: 100%;
-        height: 8px;
-        background: #e5e7eb;
+        background: #e2e8f0;
         border-radius: 4px;
-        overflow: hidden;
+        height: 6px;
         margin-bottom: 0.5rem;
+        overflow: hidden;
     }
     
     .progress-fill {
+        background: #10b981;
         height: 100%;
-        background: linear-gradient(45deg, #10b981, #34d399);
+        border-radius: 4px;
         transition: width 0.3s ease;
     }
     
     .balance-meta {
-        font-size: 0.875rem;
-        color: #6b7280;
+        color: #64748b;
+        font-size: 0.75rem;
     }
     
     .subcuenta-description {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
     
     .subcuenta-description p {
-        color: #6b7280;
-        font-style: italic;
+        color: #64748b;
+        font-size: 0.875rem;
         margin: 0;
+        line-height: 1.4;
     }
     
     .subcuenta-actions {
         display: flex;
-        gap: 0.75rem;
+        gap: 0.5rem;
         flex-wrap: wrap;
     }
     
-    .btn-action {
+    .btn-subcuenta {
         padding: 0.5rem 1rem;
-        border-radius: 8px;
-        text-decoration: none;
+        border-radius: 6px;
+        font-size: 0.75rem;
         font-weight: 600;
-        font-size: 0.875rem;
-        transition: all 0.3s ease;
+        text-decoration: none;
+        transition: all 0.2s ease;
         border: none;
         cursor: pointer;
-        flex: 1;
-        text-align: center;
-        min-width: 80px;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
     }
     
     .btn-edit {
-        background: #f59e0b;
-        color: white;
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
     }
     
     .btn-edit:hover {
-        background: #d97706;
-        color: white;
+        background: #e2e8f0;
+        color: #334155;
         text-decoration: none;
-        transform: translateY(-2px);
     }
     
     .btn-transfer {
-        background: #8b5cf6;
-        color: white;
+        background: #dbeafe;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
     }
     
     .btn-transfer:hover {
-        background: #7c3aed;
-        color: white;
+        background: #bfdbfe;
+        color: #1e40af;
         text-decoration: none;
-        transform: translateY(-2px);
     }
     
-    .btn-pause {
+    .btn-deposit {
+        background: #d1fae5;
+        color: #047857;
+        border: 1px solid #a7f3d0;
+    }
+    
+    .btn-deposit:hover {
+        background: #a7f3d0;
+        color: #065f46;
+        text-decoration: none;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+
+    .modal-overlay.show .modal-content {
+        transform: scale(1);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal-title {
+        color: #1f2937;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #6b7280;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+
+    .modal-close:hover {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .transfer-info {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    .transfer-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .transfer-row:last-child {
+        margin-bottom: 0;
+        font-weight: 600;
+        padding-top: 0.5rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .modal-form-group {
+        margin-bottom: 1rem;
+    }
+
+    .modal-label {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+    }
+
+    .modal-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .modal-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .modal-btn-cancel {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .modal-btn-cancel:hover {
+        background: #e5e7eb;
+    }
+
+    .modal-btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .modal-btn-primary:hover {
+        background: #2563eb;
+    }
+
+    .modal-btn-success {
         background: #10b981;
         color: white;
     }
-    
-    .btn-pause:hover {
+
+    .modal-btn-success:hover {
         background: #059669;
-        color: white;
-        text-decoration: none;
-        transform: translateY(-2px);
     }
-    
-    .empty-state {
-        text-align: center;
-        padding: 4rem;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    
-    .empty-state i {
-        font-size: 4rem;
-        color: #d1d5db;
-        margin-bottom: 1rem;
-    }
-    
-    .empty-state h3 {
-        color: #6b7280;
-        margin-bottom: 0.5rem;
-    }
-    
-    .empty-state p {
-        color: #9ca3af;
-        margin-bottom: 2rem;
-    }
-    
-    .d-flex {
-        display: flex;
-    }
-    
-    .gap-2 {
-        gap: 0.5rem;
-    }
-    
-    .flex-wrap {
-        flex-wrap: wrap;
-    }
-    
-    .me-2 {
-        margin-right: 0.5rem;
-    }
-    
+
     @media (max-width: 768px) {
-        .main-header {
-            flex-direction: column;
-            text-align: center;
+        .subcuentas-main {
+            padding: 0 0.5rem;
         }
         
-        .stats-grid {
-            grid-template-columns: 1fr;
+        .subcuentas-header {
+            padding: 1.5rem;
+        }
+        
+        .header-actions {
+            flex-direction: column;
         }
         
         .subcuentas-grid {
             grid-template-columns: 1fr;
         }
         
-        .subcuenta-actions {
-            flex-direction: column;
+        .modal-content {
+            width: 95%;
+            padding: 1.5rem;
         }
         
-        .btn-new-subcuenta {
-            margin: 0.25rem 0;
+        .modal-actions {
+            flex-direction: column;
         }
-    }
-    
-    /* Estilos para transferencias */
-    .transferencias-section {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        padding: 2rem;
-        margin-bottom: 2rem;
-    }
-    
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-    
-    .btn-see-all {
-        background: linear-gradient(45deg, #74b9ff, #0984e3);
-        color: white;
-        text-decoration: none;
-        padding: 8px 16px;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-see-all:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
-        color: white;
-        text-decoration: none;
-    }
-    
-    .transferencias-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1rem;
-    }
-    
-    .transferencia-card {
-        background: #f8fafc;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 1rem;
-        transition: all 0.3s ease;
-    }
-    
-    .transferencia-card:hover {
-        border-color: #3b82f6;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
-    }
-    
-    .transferencia-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.75rem;
-    }
-    
-    .transferencia-monto {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #059669;
-        margin: 0;
-    }
-    
-    .transferencia-fecha {
-        font-size: 0.8rem;
-        color: #6b7280;
-        margin: 0;
-    }
-    
-    .transferencia-icon {
-        background: linear-gradient(45deg, #10b981, #059669);
-        color: white;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .transferencia-cuentas {
-        margin-bottom: 0.5rem;
-    }
-    
-    .cuenta-origen, .cuenta-destino {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.25rem;
-    }
-    
-    .cuenta-emoji {
-        margin-right: 0.5rem;
-        font-size: 1rem;
-    }
-    
-    .cuenta-nombre {
-        font-size: 0.9rem;
-        color: #374151;
-        font-weight: 500;
-    }
-    
-    .cuenta-origen {
-        opacity: 0.8;
-    }
-    
-    .transferencia-descripcion {
-        border-top: 1px solid #e5e7eb;
-        padding-top: 0.5rem;
-        margin-top: 0.5rem;
-    }
-    
-    .transferencia-descripcion small {
-        color: #6b7280;
-        font-style: italic;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="main-header">
-        <div>
-            <h1 class="main-title">💳 Subcuentas</h1>
-            <p class="main-subtitle">Organiza tu dinero en diferentes subcuentas para mejor control financiero</p>
-        </div>
-        <div class="d-flex gap-2 flex-wrap">
-            <!-- Botón para historial de transferencias -->
-            <a href="{% url 'cuentas:historial_transferencias_cuenta_principal' %}" class="btn-new-subcuenta" style="background: linear-gradient(45deg, #74b9ff, #0984e3);">
-                <i class="fas fa-history me-2"></i>Historial Principal
-            </a>
-            
-            <!-- Botón para crear subcuenta independiente -->
-            <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="btn-new-subcuenta">
-                <i class="fas fa-store me-2"></i>Subcuenta de Negocio
-            </a>
-            
-            <!-- Botón para crear subcuenta vinculada -->
+<div class="subcuentas-main">
+    <div class="subcuentas-header">
+        <h1><i class="fas fa-wallet"></i> Gestión de Subcuentas</h1>
+        <p>Organiza tu dinero de manera inteligente y alcanza tus metas financieras</p>
+        
+        <div class="header-actions">
             {% if cuentas_con_subcuentas %}
-                <a href="{% url 'cuentas:crear_subcuenta' cuentas_con_subcuentas.0.cuenta.id %}" class="btn-new-subcuenta" style="background: linear-gradient(45deg, #00b894, #00cec9);">
-                    <i class="fas fa-plus me-2"></i>Subcuenta Personal
+                <a href="{% url 'cuentas:crear_subcuenta' cuentas_con_subcuentas.0.cuenta.id %}" class="btn-action btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Nueva Subcuenta
                 </a>
             {% else %}
-                <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="btn-new-subcuenta">
-                    <i class="fas fa-plus me-2"></i>Nueva Subcuenta
+                <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="btn-action btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Nueva Subcuenta
                 </a>
             {% endif %}
+            <button onclick="openTransferModal()" class="btn-action btn-secondary">
+                <i class="fas fa-exchange-alt"></i>
+                Transferir Entre Subcuentas
+            </button>
+            <a href="{% url 'cuentas:historial_transferencias_cuenta_principal' %}" class="btn-action btn-secondary">
+                <i class="fas fa-history"></i>
+                Ver Historial
+            </a>
         </div>
     </div>
 
-    <!-- Estadísticas generales -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h2 class="stat-value" style="color: #6366f1;">
-                {% if total_saldo_subcuentas %}
-                    {% format_money total_saldo_subcuentas user %}
-                {% else %}
-                    $0.00
-                {% endif %}
-            </h2>
-            <p class="stat-label">Balance Total</p>
-            <p class="stat-sublabel">En {{ total_subcuentas|default:0 }} subcuentas activas</p>
+    <!-- Métricas -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-icon blue">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="metric-title">Balance Total</div>
+            <h3 class="metric-value">{% format_money total_balance user %}</h3>
         </div>
         
-        <div class="stat-card">
-            <h2 class="stat-value" style="color: #f59e0b;">
-                {% if total_saldo_subcuentas_independientes %}
-                    {% format_money total_saldo_subcuentas_independientes user %}
-                {% else %}
-                    $0.00
-                {% endif %}
-            </h2>
-            <p class="stat-label">Subcuentas de Negocio</p>
-            <p class="stat-sublabel">{{ total_subcuentas_independientes|default:0 }} independiente{{ total_subcuentas_independientes|pluralize:"s" }}</p>
+        <div class="metric-card">
+            <div class="metric-icon green">
+                <i class="fas fa-university"></i>
+            </div>
+            <div class="metric-title">Cuenta Principal</div>
+            <h3 class="metric-value">{% if cuenta_principal %}{% format_money cuenta_principal.saldo_cuenta user %}{% else %}$0.00{% endif %}</h3>
         </div>
         
-        <div class="stat-card">
-            <h2 class="stat-value" style="color: #06b6d4;">
-                {% if total_saldo_subcuentas_vinculadas %}
-                    {% format_money total_saldo_subcuentas_vinculadas user %}
-                {% else %}
-                    $0.00
-                {% endif %}
-            </h2>
-            <p class="stat-label">Subcuentas Personales</p>
-            <p class="stat-sublabel">{{ total_subcuentas_vinculadas|default:0 }} vinculada{{ total_subcuentas_vinculadas|pluralize:"s" }}</p>
+        <div class="metric-card">
+            <div class="metric-icon green">
+                <i class="fas fa-link"></i>
+            </div>
+            <div class="metric-title">Subcuentas Personales</div>
+            <h3 class="metric-value">{% if total_saldo_subcuentas_vinculadas %}{% format_money total_saldo_subcuentas_vinculadas user %}{% else %}$0.00{% endif %}</h3>
         </div>
         
-        <div class="stat-card">
-            <h2 class="stat-value" style="color: #10b981;">{{ total_subcuentas_activas|default:0 }}</h2>
-            <p class="stat-label">Subcuentas Activas</p>
-            <p class="stat-sublabel">Total en funcionamiento</p>
+        <div class="metric-card">
+            <div class="metric-icon purple">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <div class="metric-title">Subcuentas de Negocio</div>
+            <h3 class="metric-value">{% if total_saldo_subcuentas_independientes %}{% format_money total_saldo_subcuentas_independientes user %}{% else %}$0.00{% endif %}</h3>
         </div>
     </div>
 
     <!-- Subcuentas Independientes (Negocios) -->
     {% if subcuentas_independientes_activas %}
     <div class="subcuentas-section">
-        <h2 class="section-title" style="color: #e17055;">
-            <i class="fas fa-store me-2"></i>Subcuentas de Negocio
+        <h2 class="section-title">
+            <i class="fas fa-briefcase"></i>
+            Subcuentas de Negocio
         </h2>
-        <p style="color: #636e72; margin-bottom: 1.5rem;">Subcuentas independientes para administrar tus fuentes de ingresos</p>
+        <p class="section-subtitle">Subcuentas independientes para tus negocios y proyectos</p>
+        
         <div class="subcuentas-grid">
             {% for subcuenta in subcuentas_independientes_activas %}
                 <div class="subcuenta-card">
                     <div class="subcuenta-header">
-                        <div class="subcuenta-info">
+                        <div>
                             <h3 class="subcuenta-name">{{ subcuenta.nombre }}</h3>
                             <span class="subcuenta-type">{{ subcuenta.get_tipo_display }}</span>
                         </div>
@@ -573,9 +586,15 @@
                     {% endif %}
 
                     <div class="subcuenta-actions">
-                        <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-action btn-edit">✏️ Editar</a>
-                        <a href="{% url 'cuentas:transferir_a_cuenta_principal' subcuenta.id %}" class="btn-action btn-transfer">💰 A Principal</a>
-                        <a href="{% url 'cuentas:transferir_subcuentas' %}" class="btn-action btn-pause">🔄 Transferir</a>
+                        <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-subcuenta btn-edit">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <button onclick="openTransferToPrincipalModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', {{ subcuenta.saldo }})" class="btn-subcuenta btn-transfer">
+                            <i class="fas fa-arrow-right"></i> A Principal
+                        </button>
+                        <button onclick="openDepositModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', 'negocio')" class="btn-subcuenta btn-deposit">
+                            <i class="fas fa-plus"></i> Depositar
+                        </button>
                     </div>
                 </div>
             {% endfor %}
@@ -583,19 +602,22 @@
     </div>
     {% endif %}
 
-    <!-- Subcuentas Vinculadas (Activas) -->
+    <!-- Subcuentas Vinculadas (Personales) -->
     {% if cuentas_con_subcuentas %}
     <div class="subcuentas-section">
-        <h2 class="section-title" style="color: #00b894;">
-            <i class="fas fa-link me-2"></i>Subcuentas Vinculadas (Activas)
+        <h2 class="section-title">
+            <i class="fas fa-link"></i>
+            Subcuentas Personales
         </h2>
+        <p class="section-subtitle">Subcuentas vinculadas a tu cuenta principal</p>
+        
         <div class="subcuentas-grid">
             {% for cuenta_data in cuentas_con_subcuentas %}
                 {% for subcuenta in cuenta_data.subcuentas %}
                     {% if subcuenta.activa %}
                         <div class="subcuenta-card">
                             <div class="subcuenta-header">
-                                <div class="subcuenta-info">
+                                <div>
                                     <h3 class="subcuenta-name">{{ subcuenta.nombre }}</h3>
                                     <span class="subcuenta-type">{{ subcuenta.get_tipo_display }}</span>
                                 </div>
@@ -618,9 +640,15 @@
                             {% endif %}
 
                             <div class="subcuenta-actions">
-                                <a href="{% url 'cuentas:depositar_subcuenta' subcuenta.id %}" class="btn-action btn-pause">💵 Depositar</a>
-                                <a href="{% url 'cuentas:transferir_subcuentas' %}" class="btn-action btn-transfer">🔄 Transferir</a>
-                                <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-action btn-edit">✏️ Editar</a>
+                                <button onclick="openDepositModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', 'personal')" class="btn-subcuenta btn-deposit">
+                                    <i class="fas fa-plus"></i> Depositar
+                                </button>
+                                <button onclick="openTransferModal()" class="btn-subcuenta btn-transfer">
+                                    <i class="fas fa-exchange-alt"></i> Transferir
+                                </button>
+                                <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-subcuenta btn-edit">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
                             </div>
                         </div>
                     {% endif %}
@@ -629,96 +657,394 @@
         </div>
     </div>
     {% endif %}
+</div>
 
-    <!-- Sección de Transferencias Recientes -->
-    {% if transferencias_recientes %}
-    <div class="transferencias-section">
-        <div class="section-header">
-            <h2 class="section-title">
-                <i class="fas fa-exchange-alt me-2"></i>Transferencias Recientes
-            </h2>
-            <a href="{% url 'cuentas:historial_transferencias' %}" class="btn-see-all">Ver Todas</a>
+<!-- Modal para Transferir a Cuenta Principal -->
+<div id="transferToPrincipalModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Transferir a Cuenta Principal</h3>
+            <button class="modal-close" onclick="closeModal('transferToPrincipalModal')">&times;</button>
         </div>
         
-        <div class="transferencias-grid">
-            {% for transferencia in transferencias_recientes %}
-            <div class="transferencia-card">
-                <div class="transferencia-header">
-                    <div class="transferencia-info">
-                        <h4 class="transferencia-monto">${{ transferencia.monto|floatformat:2 }}</h4>
-                        <p class="transferencia-fecha">{{ transferencia.fecha_transferencia|date:"d/m/Y H:i" }}</p>
-                    </div>
-                    <div class="transferencia-icon">
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
-                </div>
-                <div class="transferencia-cuentas">
-                    <div class="cuenta-origen">
-                        <span class="cuenta-emoji">💰</span>
-                        <span class="cuenta-nombre">{{ transferencia.subcuenta_origen.nombre }}</span>
-                    </div>
-                    <div class="cuenta-destino">
-                        <span class="cuenta-emoji">💰</span>
-                        <span class="cuenta-nombre">{{ transferencia.subcuenta_destino.nombre }}</span>
-                    </div>
-                </div>
-                {% if transferencia.descripcion %}
-                <div class="transferencia-descripcion">
-                    <small>{{ transferencia.descripcion }}</small>
-                </div>
-                {% endif %}
+        <div class="transfer-info">
+            <div class="transfer-row">
+                <span>Desde:</span>
+                <span id="fromSubcuentaName"></span>
             </div>
-            {% endfor %}
+            <div class="transfer-row">
+                <span>Hacia:</span>
+                <span>Cuenta Principal</span>
+            </div>
+            <div class="transfer-row">
+                <span>Saldo disponible:</span>
+                <span id="availableBalance"></span>
+            </div>
+            <div class="transfer-row">
+                <span>Saldo actual cuenta principal:</span>
+                <span>{% if cuenta_principal %}{% format_money cuenta_principal.saldo_cuenta user %}{% else %}$0.00{% endif %}</span>
+            </div>
         </div>
+        
+        <form id="transferToPrincipalForm">
+            {% csrf_token %}
+            <input type="hidden" id="subcuentaId" name="subcuenta_id">
+            
+            <div class="modal-form-group">
+                <label class="modal-label">Monto a transferir</label>
+                <input type="number" class="modal-input" id="transferAmount" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
+            </div>
+            
+            <div class="modal-form-group">
+                <label class="modal-label">Descripción (opcional)</label>
+                <input type="text" class="modal-input" name="descripcion" placeholder="Motivo de la transferencia">
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('transferToPrincipalModal')">
+                    Cancelar
+                </button>
+                <button type="submit" class="modal-btn modal-btn-primary">
+                    <i class="fas fa-arrow-right"></i> Transferir
+                </button>
+            </div>
+        </form>
     </div>
-    {% endif %}
+</div>
 
-    <!-- Mensaje cuando no hay subcuentas -->
-    {% if not cuentas_con_subcuentas and not subcuentas_independientes_activas %}
-    <div class="empty-state">
-        <i class="fas fa-wallet"></i>
-        <h3>¡Comienza a organizar tu dinero!</h3>
-        <p>Crea subcuentas para separar tus ahorros, gastos y proyectos de inversión.</p>
-        <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="btn-new-subcuenta">
-            <i class="fas fa-plus me-2"></i>Crear Primera Subcuenta
-        </a>
+<!-- Modal para Depositar -->
+<div id="depositModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Depositar en Subcuenta</h3>
+            <button class="modal-close" onclick="closeModal('depositModal')">&times;</button>
+        </div>
+        
+        <div class="transfer-info">
+            <div class="transfer-row">
+                <span>Desde:</span>
+                <span id="depositFromSource">Cuenta Principal</span>
+            </div>
+            <div class="transfer-row">
+                <span>Hacia:</span>
+                <span id="toSubcuentaName"></span>
+            </div>
+            <div class="transfer-row">
+                <span>Saldo total cuenta principal:</span>
+                <span>{% if cuenta_principal %}{% format_money cuenta_principal.saldo_cuenta user %}{% else %}$0.00{% endif %}</span>
+            </div>
+            <div class="transfer-row">
+                <span>Balance total disponible:</span>
+                <span>{% format_money total_balance user %}</span>
+            </div>
+        </div>
+        
+        <form id="depositForm">
+            {% csrf_token %}
+            <input type="hidden" id="depositSubcuentaId" name="subcuenta_id">
+            <input type="hidden" id="depositTipo" name="tipo_deposito" value="personal">
+            
+            <div class="modal-form-group">
+                <label class="modal-label">Monto a depositar</label>
+                <input type="number" class="modal-input" id="depositAmount" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
+            </div>
+            
+            <div class="modal-form-group">
+                <label class="modal-label">Descripción (opcional)</label>
+                <input type="text" class="modal-input" name="descripcion" placeholder="Motivo del depósito">
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('depositModal')">
+                    Cancelar
+                </button>
+                <button type="submit" class="modal-btn modal-btn-success">
+                    <i class="fas fa-plus"></i> Depositar
+                </button>
+            </div>
+        </form>
     </div>
-    {% endif %}
+</div>
+
+<!-- Modal para Transferir Entre Subcuentas -->
+<div id="transferModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Transferir Entre Subcuentas</h3>
+            <button class="modal-close" onclick="closeModal('transferModal')">&times;</button>
+        </div>
+        
+        <form id="transferForm">
+            {% csrf_token %}
+            
+            <div class="modal-form-group">
+                <label class="modal-label">Desde</label>
+                <select class="modal-input" name="subcuenta_origen" required>
+                    <option value="">Selecciona subcuenta origen</option>
+                    {% for subcuenta in subcuentas_independientes_activas %}
+                        <option value="{{ subcuenta.id }}">{{ subcuenta.nombre }} - {% format_money subcuenta.saldo user %}</option>
+                    {% endfor %}
+                    {% for cuenta_data in cuentas_con_subcuentas %}
+                        {% for subcuenta in cuenta_data.subcuentas %}
+                            {% if subcuenta.activa %}
+                                <option value="{{ subcuenta.id }}">{{ subcuenta.nombre }} - {% format_money subcuenta.saldo user %}</option>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="modal-form-group">
+                <label class="modal-label">Hacia</label>
+                <select class="modal-input" name="subcuenta_destino" required>
+                    <option value="">Selecciona subcuenta destino</option>
+                    {% for subcuenta in subcuentas_independientes_activas %}
+                        <option value="{{ subcuenta.id }}">{{ subcuenta.nombre }}</option>
+                    {% endfor %}
+                    {% for cuenta_data in cuentas_con_subcuentas %}
+                        {% for subcuenta in cuenta_data.subcuentas %}
+                            {% if subcuenta.activa %}
+                                <option value="{{ subcuenta.id }}">{{ subcuenta.nombre }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="modal-form-group">
+                <label class="modal-label">Monto</label>
+                <input type="number" class="modal-input" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
+            </div>
+            
+            <div class="modal-form-group">
+                <label class="modal-label">Descripción (opcional)</label>
+                <input type="text" class="modal-input" name="descripcion" placeholder="Motivo de la transferencia">
+            </div>
+            
+            <div class="modal-actions">
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeModal('transferModal')">
+                    Cancelar
+                </button>
+                <button type="submit" class="modal-btn modal-btn-primary">
+                    <i class="fas fa-exchange-alt"></i> Transferir
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Dashboard de subcuentas cargado correctamente');
+// Funciones para manejar modales
+function openModal(modalId) {
+    document.getElementById(modalId).classList.add('show');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('show');
+}
+
+// Abrir modal de transferir a principal
+function openTransferToPrincipalModal(subcuentaId, subcuentaName, saldoActual) {
+    document.getElementById('subcuentaId').value = subcuentaId;
+    document.getElementById('fromSubcuentaName').textContent = subcuentaName;
+    document.getElementById('availableBalance').textContent = '$' + saldoActual.toFixed(2);
+    document.getElementById('transferAmount').max = saldoActual;
+    openModal('transferToPrincipalModal');
+}
+
+// Abrir modal de depositar
+function openDepositModal(subcuentaId, subcuentaName, tipoSubcuenta) {
+    document.getElementById('depositSubcuentaId').value = subcuentaId;
+    document.getElementById('toSubcuentaName').textContent = subcuentaName;
     
-    // Inicializar efectos hover
-    const actionButtons = document.querySelectorAll('.btn-action');
-    actionButtons.forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-        });
-        
-        btn.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
+    // Determinar si es subcuenta de negocio basado en tipoSubcuenta
+    const esNegocio = tipoSubcuenta === 'negocio';
+    document.getElementById('depositTipo').value = esNegocio ? 'negocio' : 'personal';
     
-    // Efecto para las tarjetas de estadísticas
-    const statCards = document.querySelectorAll('.stat-card');
-    statCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
+    // Cambiar el título del modal
+    const modalTitle = document.querySelector('#depositModal .modal-title');
+    const montoLabel = document.querySelector('#depositModal .modal-label');
+    const montoInput = document.querySelector('#depositModal #depositAmount');
+    const descripcionInput = document.querySelector('#depositModal input[name="descripcion"]');
     
-    // Mostrar mensaje de bienvenida si es la primera vez
-    const subcuentasCount = {{ total_subcuentas|default:0 }};
-    if (subcuentasCount === 0) {
-        console.log('Primer visita a subcuentas - mostrar ayuda');
+    // Cambiar el contenido del modal según el tipo de subcuenta
+    const transferInfo = document.querySelector('#depositModal .transfer-info');
+    
+    if (esNegocio) {
+        // Para subcuentas de negocio - dinero externo
+        modalTitle.textContent = 'Registrar Ingreso al Negocio';
+        montoLabel.textContent = 'Monto del ingreso';
+        montoInput.placeholder = 'Ingreso recibido';
+        descripcionInput.placeholder = 'Fuente del ingreso (venta, servicio, etc.)';
+        transferInfo.innerHTML = `
+            <div class="transfer-row">
+                <span>Tipo:</span>
+                <span>💰 Ingreso al Negocio</span>
+            </div>
+            <div class="transfer-row">
+                <span>Hacia:</span>
+                <span>${subcuentaName}</span>
+            </div>
+            <div class="transfer-row">
+                <span>Origen:</span>
+                <span>💼 Dinero externo (ventas, servicios, etc.)</span>
+            </div>
+        `;
+    } else {
+        // Para subcuentas personales - desde cuenta principal
+        modalTitle.textContent = 'Depositar en Subcuenta';
+        montoLabel.textContent = 'Monto a depositar';
+        montoInput.placeholder = '0.00';
+        descripcionInput.placeholder = 'Motivo del depósito';
+        transferInfo.innerHTML = `
+            <div class="transfer-row">
+                <span>Desde:</span>
+                <span>🏦 Cuenta Principal</span>
+            </div>
+            <div class="transfer-row">
+                <span>Hacia:</span>
+                <span>${subcuentaName}</span>
+            </div>
+            <div class="transfer-row">
+                <span>Saldo disponible en cuenta principal:</span>
+                <span>{% if cuenta_principal %}{% format_money cuenta_principal.saldo_disponible user %}{% else %}$0.00{% endif %}</span>
+            </div>
+        `;
     }
+    
+    openModal('depositModal');
+}
+
+// Abrir modal de transferir entre subcuentas
+function openTransferModal() {
+    openModal('transferModal');
+}
+
+// Cerrar modales al hacer clic fuera
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) {
+        e.target.classList.remove('show');
+    }
+});
+
+// Manejar formulario de transferir a principal
+document.getElementById('transferToPrincipalForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+    submitBtn.disabled = true;
+    
+    fetch('{% url "cuentas:transferir_a_cuenta_principal_ajax" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeModal('transferToPrincipalModal');
+            location.reload(); // Recargar para mostrar los nuevos saldos
+        } else {
+            alert(data.error || 'Error al procesar la transferencia');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al procesar la transferencia');
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+// Manejar formulario de depositar
+document.getElementById('depositForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+    submitBtn.disabled = true;
+    
+    fetch('{% url "cuentas:depositar_subcuenta_ajax" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeModal('depositModal');
+            location.reload(); // Recargar para mostrar los nuevos saldos
+        } else {
+            alert(data.error || 'Error al procesar el depósito');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al procesar el depósito');
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+
+// Manejar formulario de transferir entre subcuentas
+document.getElementById('transferForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Validar que no sean la misma subcuenta
+    const origen = formData.get('subcuenta_origen');
+    const destino = formData.get('subcuenta_destino');
+    
+    if (origen === destino) {
+        alert('No puedes transferir a la misma subcuenta');
+        return;
+    }
+    
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+    submitBtn.disabled = true;
+    
+    fetch('{% url "cuentas:transferir_subcuentas_ajax" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            closeModal('transferModal');
+            location.reload(); // Recargar para mostrar los nuevos saldos
+        } else {
+            alert(data.error || 'Error al procesar la transferencia');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al procesar la transferencia');
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
 });
 </script>
 {% endblock %}

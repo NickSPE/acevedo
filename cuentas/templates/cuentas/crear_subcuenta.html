@@ -5,410 +5,394 @@
 
 {% block extra_css %}
 <style>
-    .form-container {
+    .create-container {
         max-width: 600px;
         margin: 0 auto;
+        padding: 20px;
     }
-    .color-picker-grid {
+    
+    .page-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .page-header h1 {
+        color: #2c3e50;
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+    
+    .page-header p {
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+    
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+    }
+    
+    .type-selector {
+        margin-bottom: 25px;
+    }
+    
+    .type-selector h6 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    .type-options {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-        gap: 10px;
-        margin-top: 10px;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
     }
-    .color-option {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 3px solid transparent;
+    
+    .type-option {
+        padding: 20px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
         cursor: pointer;
         transition: all 0.3s ease;
+        text-align: center;
+        background: #f8f9fa;
     }
-    .color-option:hover {
-        transform: scale(1.1);
-        border-color: #dee2e6;
+    
+    .type-option:hover {
+        border-color: #007bff;
+        background: #fff;
     }
-    .color-option.selected {
-        border-color: #0d6efd;
-        transform: scale(1.1);
+    
+    .type-option.selected {
+        border-color: #007bff;
+        background: #e7f3ff;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
     }
+    
+    .type-option .icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #6c757d;
+    }
+    
+    .type-option.selected .icon {
+        color: #007bff;
+    }
+    
+    .type-option h6 {
+        margin: 0 0 5px 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    .type-option p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #6c757d;
+        line-height: 1.4;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control, .form-select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+    
     .form-control:focus, .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
     }
-    .preview-card {
-        border-left: 4px solid #3B82F6;
+    
+    .form-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .saldo-inicial-section {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: none;
+    }
+    
+    .saldo-inicial-section.show {
+        display: block;
+    }
+    
+    .saldo-info {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .saldo-info .amount {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #155724;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+    
+    .btn {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
         transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+    }
+    
+    .btn-primary {
+        background: #007bff;
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background: #545b62;
+        transform: translateY(-1px);
+    }
+    
+    @media (max-width: 768px) {
+        .type-options {
+            grid-template-columns: 1fr;
+        }
+        
+        .btn-group {
+            flex-direction: column;
+        }
+        
+        .create-container {
+            padding: 15px;
+        }
+        
+        .form-card {
+            padding: 20px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="form-container">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h1 class="h3 text-dark mb-0">
-                            <i class="fas fa-plus-circle me-2"></i>
-                            Crear Nueva Subcuenta
-                        </h1>
-                        <p class="text-muted mb-0">Para la cuenta: <strong>{{ cuenta.nombre }}</strong></p>
-                    </div>
-                    <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Volver
-                    </a>
-                </div>
-            </div>
-        </div>
+<div class="create-container">
+    <div class="page-header">
+        <h1><i class="fas fa-plus-circle me-2"></i>Crear Subcuenta</h1>
+        <p>Organiza tu dinero de manera inteligente</p>
+    </div>
 
-        <!-- Información de la cuenta -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Saldo Total de la Cuenta</h6>
-                                <h4 class="text-success mb-0">${{ cuenta.saldo_cuenta|floatformat:2 }}</h4>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Saldo Disponible</h6>
-                                <h4 class="text-warning mb-0">${{ cuenta.saldo_disponible|floatformat:2 }}</h4>
-                                <small class="text-muted">Después de subcuentas existentes</small>
-                            </div>
-                        </div>
+    <div class="form-card">
+        <form method="post" id="createSubcuentaForm">
+            {% csrf_token %}
+            
+            <!-- Selección de Tipo -->
+            <div class="type-selector">
+                <h6>¿Qué tipo de subcuenta necesitas?</h6>
+                <div class="type-options">
+                    <div class="type-option personal selected" data-type="personal">
+                        <div class="icon"><i class="fas fa-user"></i></div>
+                        <h6>Personal</h6>
+                        <p>Usa el dinero de tu cuenta principal</p>
+                    </div>
+                    
+                    <div class="type-option business" data-type="business">
+                        <div class="icon"><i class="fas fa-briefcase"></i></div>
+                        <h6>Negocio</h6>
+                        <p>Cuenta independiente con su propio saldo</p>
                     </div>
                 </div>
+                <input type="hidden" name="tipo_subcuenta" id="tipo_subcuenta" value="personal">
             </div>
-        </div>
-
-        <!-- Formulario -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <form method="post" id="subcuentaForm">
-                            {% csrf_token %}
-                            
-                            <!-- Nombre -->
-                            <div class="mb-3">
-                                <label for="{{ form.nombre.id_for_label }}" class="form-label">
-                                    <i class="fas fa-tag me-2"></i>Nombre de la Subcuenta *
-                                </label>
-                                {{ form.nombre }}
-                                {% if form.nombre.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.nombre.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Tipo de Subcuenta -->
-                            <div class="mb-3">
-                                <label class="form-label">
-                                    <i class="fas fa-question-circle me-2"></i>{{ form.tipo_subcuenta_base.label }}
-                                </label>
-                                <div class="row">
-                                    {% for radio in form.tipo_subcuenta_base %}
-                                    <div class="col-md-6">
-                                        <div class="card h-100" style="cursor: pointer; transition: all 0.3s ease;" onclick="selectTipoSubcuenta('{{ radio.choice_value }}')">
-                                            <div class="card-body text-center">
-                                                {% if radio.choice_value == 'negocio' %}
-                                                    <i class="fas fa-briefcase fa-2x mb-2 text-warning"></i>
-                                                    <h6 class="card-title">💼 Negocio</h6>
-                                                    <p class="card-text small">Independiente, para actividades comerciales</p>
-                                                {% else %}
-                                                    <i class="fas fa-user fa-2x mb-2 text-info"></i>
-                                                    <h6 class="card-title">👤 Personal</h6>
-                                                    <p class="card-text small">Para organizar mis finanzas personales</p>
-                                                {% endif %}
-                                                {{ radio.tag }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                {% if form.tipo_subcuenta_base.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.tipo_subcuenta_base.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text">{{ form.tipo_subcuenta_base.help_text }}</div>
-                            </div>
-
-                            <!-- Categoría (dinámico según personal o negocio) -->
-                            <div class="mb-3" id="categoria-container">
-                                <label for="{{ form.tipo.id_for_label }}" class="form-label">
-                                    <i class="fas fa-folder me-2"></i><span id="categoria-label">{{ form.tipo.label }}</span> *
-                                </label>
-                                {{ form.tipo }}
-                                {% if form.tipo.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.tipo.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text" id="categoria-help">{{ form.tipo.help_text }}</div>
-                            </div>
-
-                            <!-- Descripción -->
-                            <div class="mb-3">
-                                <label for="{{ form.descripcion.id_for_label }}" class="form-label">
-                                    <i class="fas fa-align-left me-2"></i>Descripción
-                                </label>
-                                {{ form.descripcion }}
-                                {% if form.descripcion.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.descripcion.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text">Opcional: describe el propósito de esta subcuenta</div>
-                            </div>
-
-                            <!-- Saldo inicial -->
-                            <div class="mb-3">
-                                <label for="{{ form.saldo.id_for_label }}" class="form-label">
-                                    <i class="fas fa-dollar-sign me-2"></i>Saldo Inicial
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    {{ form.saldo }}
-                                </div>
-                                {% if form.saldo.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.saldo.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text">
-                                    Este monto se transferirá desde el saldo disponible de la cuenta principal
-                                    (máximo disponible: ${{ cuenta.saldo_disponible|floatformat:2 }})
-                                </div>
-                            </div>
-
-                            <!-- Color -->
-                            <div class="mb-4">
-                                <label class="form-label">
-                                    <i class="fas fa-palette me-2"></i>Color de Identificación
-                                </label>
-                                {{ form.color }}
-                                <div class="color-picker-grid">
-                                    <div class="color-option" data-color="#3B82F6" style="background-color: #3B82F6;"></div>
-                                    <div class="color-option" data-color="#10B981" style="background-color: #10B981;"></div>
-                                    <div class="color-option" data-color="#F59E0B" style="background-color: #F59E0B;"></div>
-                                    <div class="color-option" data-color="#EF4444" style="background-color: #EF4444;"></div>
-                                    <div class="color-option" data-color="#8B5CF6" style="background-color: #8B5CF6;"></div>
-                                    <div class="color-option" data-color="#06B6D4" style="background-color: #06B6D4;"></div>
-                                    <div class="color-option" data-color="#84CC16" style="background-color: #84CC16;"></div>
-                                    <div class="color-option" data-color="#F97316" style="background-color: #F97316;"></div>
-                                    <div class="color-option" data-color="#EC4899" style="background-color: #EC4899;"></div>
-                                    <div class="color-option" data-color="#6B7280" style="background-color: #6B7280;"></div>
-                                </div>
-                                {% if form.color.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.color.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Vista previa -->
-                            <div class="mb-4">
-                                <label class="form-label">Vista Previa</label>
-                                <div class="card preview-card" id="previewCard">
-                                    <div class="card-body">
-                                        <h6 class="card-title" id="previewName">Nombre de la subcuenta</h6>
-                                        <span class="badge" id="previewTipo">Tipo</span>
-                                        <p class="card-text text-muted small mt-2" id="previewDescripcion">Descripción de la subcuenta</p>
-                                        <h5 class="text-success mb-0" id="previewSaldo">$0.00</h5>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Botones -->
-                            <div class="d-flex justify-content-between">
-                                <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
-                                    <i class="fas fa-times me-2"></i>Cancelar
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-plus-circle me-2"></i>Crear Subcuenta
-                                </button>
-                            </div>
-                        </form>
+            
+            <!-- Información Básica -->
+            <div class="form-group">
+                <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                    Nombre de la subcuenta
+                </label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                    <div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.tipo.id_for_label }}" class="form-label">
+                    Categoría
+                </label>
+                {{ form.tipo }}
+                {% if form.tipo.errors %}
+                    <div class="text-danger small mt-1">{{ form.tipo.errors.0 }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                    Descripción (opcional)
+                </label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}
+                    <div class="text-danger small mt-1">{{ form.descripcion.errors.0 }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Información para negocios -->
+            <div class="saldo-inicial-section" id="saldo-inicial-section">
+                <h6>Subcuenta de negocio independiente</h6>
+                <div class="saldo-info">
+                    <div><i class="fas fa-info-circle me-2"></i>Tu subcuenta de negocio será completamente independiente</div>
+                    <div style="font-size: 1rem; margin-top: 10px; color: #155724;">
+                        • Empezará con $0.00<br>
+                        • No usará el dinero de tu cuenta personal<br>
+                        • Podrás agregar dinero después cuando quieras
                     </div>
                 </div>
             </div>
-        </div>
+            
+            <!-- Botones -->
+            <div class="btn-group">
+                <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Crear Subcuenta
+                </button>
+            </div>
+        </form>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('subcuentaForm');
-    const nombreInput = document.getElementById('{{ form.nombre.id_for_label }}');
-    const tipoSelect = document.getElementById('{{ form.tipo.id_for_label }}');
-    const descripcionInput = document.getElementById('{{ form.descripcion.id_for_label }}');
-    const saldoInput = document.getElementById('{{ form.saldo.id_for_label }}');
-    const colorInput = document.getElementById('{{ form.color.id_for_label }}');
+    const typeOptions = document.querySelectorAll('.type-option');
+    const tipoInput = document.getElementById('tipo_subcuenta');
+    const saldoSection = document.getElementById('saldo-inicial-section');
+    const form = document.getElementById('createSubcuentaForm');
+    const categoriaSelect = document.querySelector('[name="tipo"]');
     
-    const previewCard = document.getElementById('previewCard');
-    const previewName = document.getElementById('previewName');
-    const previewTipo = document.getElementById('previewTipo');
-    const previewDescripcion = document.getElementById('previewDescripcion');
-    const previewSaldo = document.getElementById('previewSaldo');
+    // Establecer categorías personales por defecto
+    categoriaSelect.innerHTML = `
+        <option value="">Selecciona una categoría</option>
+        <option value="ahorros">Ahorros</option>
+        <option value="emergencia">Fondo de Emergencia</option>
+        <option value="gastos_fijos">Gastos Fijos</option>
+        <option value="gastos_variables">Gastos Variables</option>
+        <option value="entretenimiento">Entretenimiento</option>
+        <option value="viajes">Viajes</option>
+        <option value="educacion">Educación</option>
+        <option value="salud">Salud</option>
+        <option value="familia">Familia</option>
+        <option value="inversion">Inversiones</option>
+        <option value="otros">Otros</option>
+    `;
     
-    // Configurar selector de color
-    const colorOptions = document.querySelectorAll('.color-option');
-    colorOptions.forEach(option => {
+    // Manejo de selección de tipo
+    typeOptions.forEach(option => {
         option.addEventListener('click', function() {
-            colorOptions.forEach(opt => opt.classList.remove('selected'));
+            // Quitar selección anterior
+            typeOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Seleccionar nueva opción
             this.classList.add('selected');
-            colorInput.value = this.dataset.color;
-            updatePreview();
+            
+            const type = this.dataset.type;
+            tipoInput.value = type;
+            
+            // Cambiar categorías según el tipo
+            const categoriaSelect = document.querySelector('[name="tipo"]');
+            
+            if (type === 'business') {
+                saldoSection.classList.add('show');
+                // Categorías para negocios
+                categoriaSelect.innerHTML = `
+                    <option value="">Selecciona una categoría</option>
+                    <option value="tienda_fisica">Tienda Física</option>
+                    <option value="tienda_online">Tienda Online</option>
+                    <option value="servicios">Servicios Profesionales</option>
+                    <option value="freelance">Trabajo Freelance</option>
+                    <option value="consultoria">Consultoría</option>
+                    <option value="ventas">Ventas</option>
+                    <option value="marketing">Marketing y Publicidad</option>
+                    <option value="inventario">Inventario</option>
+                    <option value="gastos_operativos">Gastos Operativos</option>
+                    <option value="equipamiento">Equipamiento</option>
+                    <option value="otros_negocio">Otros</option>
+                `;
+            } else {
+                saldoSection.classList.remove('show');
+                // Categorías personales
+                categoriaSelect.innerHTML = `
+                    <option value="">Selecciona una categoría</option>
+                    <option value="ahorros">Ahorros</option>
+                    <option value="emergencia">Fondo de Emergencia</option>
+                    <option value="gastos_fijos">Gastos Fijos</option>
+                    <option value="gastos_variables">Gastos Variables</option>
+                    <option value="entretenimiento">Entretenimiento</option>
+                    <option value="viajes">Viajes</option>
+                    <option value="educacion">Educación</option>
+                    <option value="salud">Salud</option>
+                    <option value="familia">Familia</option>
+                    <option value="inversion">Inversiones</option>
+                    <option value="otros">Otros</option>
+                `;
+            }
         });
     });
     
-    // Seleccionar color inicial
-    const initialColor = colorInput.value || '#3B82F6';
-    const initialColorOption = document.querySelector(`[data-color="${initialColor}"]`);
-    if (initialColorOption) {
-        initialColorOption.classList.add('selected');
-    }
-    
-    // Actualizar vista previa
-    function updatePreview() {
-        const nombre = nombreInput.value || 'Nombre de la subcuenta';
-        const tipo = tipoSelect.options[tipoSelect.selectedIndex].text || 'Tipo';
-        const descripcion = descripcionInput.value || 'Descripción de la subcuenta';
-        const saldo = saldoInput.value || '0.00';
-        const color = colorInput.value || '#3B82F6';
-        
-        previewName.textContent = nombre;
-        previewTipo.textContent = tipo;
-        previewTipo.style.backgroundColor = color + '15';
-        previewTipo.style.color = color;
-        previewDescripcion.textContent = descripcion;
-        previewSaldo.textContent = '$' + parseFloat(saldo).toFixed(2);
-        previewCard.style.borderLeftColor = color;
-    }
-    
-    // Eventos para actualizar vista previa
-    nombreInput.addEventListener('input', updatePreview);
-    tipoSelect.addEventListener('change', updatePreview);
-    descripcionInput.addEventListener('input', updatePreview);
-    saldoInput.addEventListener('input', updatePreview);
-    
-    // Validación del saldo
-    const saldoDisponible = {{ cuenta.saldo_disponible }};
-    saldoInput.addEventListener('input', function() {
-        const valor = parseFloat(this.value) || 0;
-        if (valor > saldoDisponible) {
-            this.classList.add('is-invalid');
-            this.setCustomValidity('El saldo no puede ser mayor al disponible');
-        } else if (valor < 0) {
-            this.classList.add('is-invalid');
-            this.setCustomValidity('El saldo no puede ser negativo');
-        } else {
-            this.classList.remove('is-invalid');
-            this.setCustomValidity('');
-        }
-    });
-    
-    // Actualizar vista previa inicial
-    updatePreview();
-    
     // Validación del formulario
     form.addEventListener('submit', function(e) {
-        const saldo = parseFloat(saldoInput.value) || 0;
-        if (saldo > saldoDisponible) {
+        const nombre = this.querySelector('[name="nombre"]').value.trim();
+        
+        if (!nombre) {
             e.preventDefault();
-            alert('El saldo inicial no puede ser mayor al saldo disponible de la cuenta.');
-            saldoInput.focus();
+            alert('Por favor, ingresa un nombre para la subcuenta');
+            return;
         }
+        
+        // Mostrar loading
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creando...';
+        btn.disabled = true;
     });
-});
-
-// Función para seleccionar tipo de subcuenta
-function selectTipoSubcuenta(tipo) {
-    // Quitar selección anterior
-    document.querySelectorAll('[onclick*="selectTipoSubcuenta"]').forEach(card => {
-        card.style.borderColor = '#dee2e6';
-        card.style.backgroundColor = '#fff';
-    });
-    
-    // Seleccionar el nuevo tipo
-    const selectedCard = document.querySelector(`[onclick*="${tipo}"]`);
-    selectedCard.style.borderColor = '#0d6efd';
-    selectedCard.style.backgroundColor = '#f8f9ff';
-    
-    // Marcar el radio button correspondiente
-    const radio = document.querySelector(`input[value="${tipo}"]`);
-    if (radio) {
-        radio.checked = true;
-    }
-    
-    // Cambiar las opciones de categoría dinámicamente
-    const tipoSelect = document.getElementById('id_tipo');
-    const categoriaLabel = document.getElementById('categoria-label');
-    const categoriaHelp = document.getElementById('categoria-help');
-    
-    if (tipo === 'negocio') {
-        // Opciones para subcuentas de negocio
-        tipoSelect.innerHTML = `
-            <option value="tienda_online">Tienda Online</option>
-            <option value="tienda_fisica">Tienda Física</option>
-            <option value="servicios_profesionales">Servicios Profesionales</option>
-            <option value="freelance">Trabajo Freelance</option>
-            <option value="negocio_propio">Negocio Propio</option>
-            <option value="ingresos_pasivos">Ingresos Pasivos</option>
-            <option value="ventas_productos">Ventas de Productos</option>
-            <option value="consultoria">Consultoría</option>
-            <option value="alquiler_propiedades">Alquiler de Propiedades</option>
-        `;
-        categoriaLabel.textContent = 'Categoría de Negocio';
-        categoriaHelp.textContent = 'Selecciona la categoría comercial que mejor describe tu actividad';
-    } else {
-        // Opciones para subcuentas personales
-        tipoSelect.innerHTML = `
-            <option value="ahorro_meta">Ahorro para Meta</option>
-            <option value="emergencia">Fondo de Emergencia</option>
-            <option value="inversion">Inversiones</option>
-            <option value="gastos_fijos">Gastos Fijos</option>
-            <option value="gastos_variables">Gastos Variables</option>
-            <option value="entretenimiento">Entretenimiento</option>
-            <option value="viajes">Viajes y Vacaciones</option>
-            <option value="educacion">Educación y Cursos</option>
-            <option value="salud">Salud y Bienestar</option>
-            <option value="familia">Gastos Familiares</option>
-            <option value="otros">Otros</option>
-        `;
-        categoriaLabel.textContent = 'Categoría Personal';
-        categoriaHelp.textContent = 'Selecciona la categoría que mejor describe esta subcuenta personal';
-    }
-    
-    // Actualizar la vista previa
-    updatePreview();
-}
-
-// Establecer selección inicial
-document.addEventListener('DOMContentLoaded', function() {
-    const checkedRadio = document.querySelector('input[name="tipo_subcuenta_base"]:checked');
-    if (checkedRadio) {
-        selectTipoSubcuenta(checkedRadio.value);
-    }
 });
 </script>
 {% endblock %}

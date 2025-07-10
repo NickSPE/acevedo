@@ -22,6 +22,10 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import base64
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils.dataframe import dataframe_to_rows
+from django.utils.text import slugify
 
 from core.decorators import fast_access_pin_verified
 from .models import Reporte, ConfiguracionReporte
@@ -288,80 +292,109 @@ def calcular_estadisticas_generales(usuario, fecha_inicio, fecha_fin):
         promedio=Avg('monto')
     )['promedio'] or 0
     
+    # Top gastos
+    top_gastos = transacciones_periodo.filter(tipo='egreso').order_by('-monto')[:5]
+    
+    # Información de subcuentas
+    subcuentas_info = SubCuenta.objects.filter(
+        Q(id_cuenta__id_usuario=usuario) | Q(propietario=usuario), 
+        activa=True
+    )[:5]
+    
+    # Metas de ahorro con progreso
+    from gestion_financiera_basica.models import MetaAhorro
+    metas_progreso = MetaAhorro.objects.filter(id_usuario=usuario)[:3]
+    for meta in metas_progreso:
+        if meta.monto_objetivo > 0:
+            meta.porcentaje_progreso = (float(meta.monto_ahorrado()) / float(meta.monto_objetivo)) * 100
+        else:
+            meta.porcentaje_progreso = 0
+    
     return {
         'balance_total': float(balance_total),
         'total_subcuentas': float(total_subcuentas),
-        'ingresos_periodo': float(ingresos_periodo),
-        'gastos_periodo': float(gastos_periodo),
-        'balance_periodo': float(ingresos_periodo - gastos_periodo),
+        'total_ingresos': float(ingresos_periodo),  # Cambio de nombre para el template
+        'total_egresos': float(gastos_periodo),      # Cambio de nombre para el template
+        'ahorro_neto': float(ingresos_periodo - gastos_periodo),  # Nuevo campo
         'num_cuentas': num_cuentas,
         'num_subcuentas': num_subcuentas,
         'promedio_transaccion': float(promedio_transaccion),
         'total_transacciones': transacciones_periodo.count(),
+        'top_gastos': top_gastos,
+        'subcuentas_info': subcuentas_info,
+        'metas_progreso': metas_progreso,
     }
 
 def get_gastos_por_categoria(usuario, fecha_inicio, fecha_fin):
     """Obtiene gastos agrupados por categoría de movimientos"""
-    # Obtener gastos agrupados por categoría
+    # Obtener gastos agrupados por nombre (categoría)
     gastos_por_categoria = Movimiento.objects.filter(
         id_cuenta__id_usuario=usuario,
         tipo='egreso',
         fecha_movimiento__range=[fecha_inicio, fecha_fin]
-    ).values('categoria').annotate(
+    ).values('nombre').annotate(
         total=Sum('monto'),
         count=Count('id')
-    ).order_by('-total')
+    ).order_by('-total')[:10]
     
     labels = []
-    data = []
-    counts = []
+    values = []
     
     if gastos_por_categoria.exists():
         for gasto in gastos_por_categoria:
-            categoria_key = gasto['categoria'] or 'otros'
-            
-            # Buscar el nombre con emoji para la categoría
-            nombre_categoria = 'Otros'
-            for cat_key, cat_display in Movimiento.CATEGORIAS_GASTOS:
-                if cat_key == categoria_key:
-                    nombre_categoria = cat_display
-                    break
-            
-            labels.append(nombre_categoria)
-            data.append(float(gasto['total']))
-            counts.append(gasto['count'])
+            labels.append(gasto['nombre'] or 'Sin categoría')
+            values.append(float(gasto['total']))
     else:
         # Datos por defecto si no hay gastos
         labels = ['Sin gastos registrados']
-        data = [0]
-        counts = [0]
+        values = [0]
     
     return {
         'labels': labels,
-        'data': data,
-        'counts': counts,
+        'values': values,
     }
 
 def get_ingresos_vs_egresos(usuario, fecha_inicio, fecha_fin):
-    """Obtiene comparación de ingresos vs egresos"""
-    transacciones = Movimiento.objects.filter(
-        id_cuenta__id_usuario=usuario,
-        fecha_movimiento__range=[fecha_inicio, fecha_fin]
-    )
+    """Obtiene comparación de ingresos vs egresos por mes"""
+    from datetime import datetime, timedelta
+    import calendar
     
-    ingresos = transacciones.filter(
-        tipo='ingreso'
-    ).aggregate(total=Sum('monto'))['total'] or 0
+    # Obtener datos mes por mes en el rango
+    fecha_actual = fecha_inicio.replace(day=1)
+    labels = []
+    ingresos = []
+    gastos = []
     
-    egresos = transacciones.filter(
-        tipo='egreso'
-    ).aggregate(total=Sum('monto'))['total'] or 0
+    while fecha_actual <= fecha_fin:
+        # Último día del mes
+        ultimo_dia = calendar.monthrange(fecha_actual.year, fecha_actual.month)[1]
+        fin_mes = fecha_actual.replace(day=ultimo_dia)
+        
+        # Transacciones del mes
+        transacciones_mes = Movimiento.objects.filter(
+            id_cuenta__id_usuario=usuario,
+            fecha_movimiento__range=[fecha_actual, fin_mes]
+        )
+        
+        ingresos_mes = transacciones_mes.filter(tipo='ingreso').aggregate(
+            total=Sum('monto'))['total'] or 0
+        gastos_mes = transacciones_mes.filter(tipo='egreso').aggregate(
+            total=Sum('monto'))['total'] or 0
+        
+        labels.append(fecha_actual.strftime('%b %Y'))
+        ingresos.append(float(ingresos_mes))
+        gastos.append(float(gastos_mes))
+        
+        # Siguiente mes
+        if fecha_actual.month == 12:
+            fecha_actual = fecha_actual.replace(year=fecha_actual.year + 1, month=1)
+        else:
+            fecha_actual = fecha_actual.replace(month=fecha_actual.month + 1)
     
     return {
-        'labels': ['Ingresos', 'Egresos'],
-        'data': [float(ingresos), float(egresos)],
-        'balance': float(ingresos - egresos),
-        'total_transacciones': transacciones.count(),
+        'labels': labels,
+        'ingresos': ingresos,
+        'gastos': gastos,
     }
 
 def get_estadisticas_subcuentas(usuario):
@@ -432,71 +465,49 @@ def get_estadisticas_subcuentas(usuario):
 
 def get_flujo_mensual(usuario, fecha_inicio, fecha_fin):
     """Obtiene flujo de efectivo mensual"""
-    meses = []
-    ingresos_mes = []
-    egresos_mes = []
+    from datetime import datetime, timedelta
+    import calendar
     
-    fecha_actual = fecha_inicio
+    labels = []
+    values = []
     
-    # Si el período es muy corto, mostrar por días
-    diferencia_dias = (fecha_fin - fecha_inicio).days
-    if diferencia_dias <= 7:
-        # Mostrar por días
-        while fecha_actual <= fecha_fin:
-            transacciones_dia = Movimiento.objects.filter(
-                id_cuenta__id_usuario=usuario,
-                fecha_movimiento=fecha_actual
-            )
-            
-            ingresos = transacciones_dia.filter(
-                tipo='ingreso'
-            ).aggregate(total=Sum('monto'))['total'] or 0
-            
-            egresos = transacciones_dia.filter(
-                tipo='egreso'
-            ).aggregate(total=Sum('monto'))['total'] or 0
-            
-            meses.append(fecha_actual.strftime('%d/%m'))
-            ingresos_mes.append(float(ingresos))
-            egresos_mes.append(float(egresos))
-            
-            fecha_actual += timedelta(days=1)
-    else:
-        # Mostrar por meses
-        while fecha_actual <= fecha_fin:
-            mes_inicio = fecha_actual.replace(day=1)
-            mes_fin = (mes_inicio + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-            
-            transacciones_mes = Movimiento.objects.filter(
-                id_cuenta__id_usuario=usuario,
-                fecha_movimiento__range=[mes_inicio, min(mes_fin, fecha_fin)]
-            )
-            
-            ingresos = transacciones_mes.filter(
-                tipo='ingreso'
-            ).aggregate(total=Sum('monto'))['total'] or 0
-            
-            egresos = transacciones_mes.filter(
-                tipo='egreso'
-            ).aggregate(total=Sum('monto'))['total'] or 0
-            
-            meses.append(fecha_actual.strftime('%b %Y'))
-            ingresos_mes.append(float(ingresos))
-            egresos_mes.append(float(egresos))
-            
-            # Avanzar al siguiente mes
-            fecha_actual = (fecha_actual + timedelta(days=32)).replace(day=1)
+    fecha_actual = fecha_inicio.replace(day=1)
     
-    # Si no hay datos, mostrar valores por defecto
-    if not meses:
-        meses = [fecha_inicio.strftime('%b %Y')]
-        ingresos_mes = [0]
-        egresos_mes = [0]
+    while fecha_actual <= fecha_fin:
+        # Último día del mes
+        ultimo_dia = calendar.monthrange(fecha_actual.year, fecha_actual.month)[1]
+        fin_mes = fecha_actual.replace(day=ultimo_dia)
+        
+        # Transacciones del mes
+        transacciones_mes = Movimiento.objects.filter(
+            id_cuenta__id_usuario=usuario,
+            fecha_movimiento__range=[fecha_actual, fin_mes]
+        )
+        
+        ingresos_mes = transacciones_mes.filter(tipo='ingreso').aggregate(
+            total=Sum('monto'))['total'] or 0
+        gastos_mes = transacciones_mes.filter(tipo='egreso').aggregate(
+            total=Sum('monto'))['total'] or 0
+        
+        flujo_neto = float(ingresos_mes - gastos_mes)
+        
+        labels.append(fecha_actual.strftime('%b %Y'))
+        values.append(flujo_neto)
+        
+        # Siguiente mes
+        if fecha_actual.month == 12:
+            fecha_actual = fecha_actual.replace(year=fecha_actual.year + 1, month=1)
+        else:
+            fecha_actual = fecha_actual.replace(month=fecha_actual.month + 1)
+    
+    # Si no hay datos, mostrar al menos el mes actual
+    if not labels:
+        labels = [datetime.now().strftime('%b %Y')]
+        values = [0]
     
     return {
-        'labels': meses,
-        'ingresos': ingresos_mes,
-        'egresos': egresos_mes,
+        'labels': labels,
+        'values': values,
     }
 
 def get_balance_general(usuario, fecha_inicio, fecha_fin):
@@ -841,8 +852,8 @@ def exportar_pdf(reporte, datos):
             ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
             
             # Filas de datos
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 11),
+            ('FONTNAME', (0, 1), (-1, -2), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -2), 10),
             ('ALIGN', (1, 1), (2, -1), 'CENTER'),
             ('ALIGN', (0, 1), (0, -1), 'LEFT'),
             ('ALIGN', (3, 1), (3, -1), 'CENTER'),
@@ -1079,752 +1090,521 @@ def exportar_pdf(reporte, datos):
 
 def exportar_excel(reporte, datos):
     """Exporta reporte a Excel con formato ultra profesional y limpio"""
-    from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-    from openpyxl.chart import PieChart, BarChart, Reference, LineChart
-    from openpyxl.utils import get_column_letter
+    from openpyxl import Workbook
+    from django.http import HttpResponse
+    from datetime import datetime
     
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    # Crear workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Resumen Financiero"
     
-    # Nombre de archivo descriptivo y profesional
-    tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
-    fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
-    filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.xlsx"
+    # Estilos
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    
+    # Título
+    ws['A1'] = f"Reporte Financiero - {reporte.tipo_reporte.replace('_', ' ').title()}"
+    ws['A1'].font = Font(bold=True, size=16)
+    ws.merge_cells('A1:E1')
+    
+    # Fecha del reporte
+    ws['A2'] = f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+    ws['A3'] = f"Período: {reporte.fecha_inicio.strftime('%d/%m/%Y')} - {reporte.fecha_fin.strftime('%d/%m/%Y')}"
+    
+    # Estadísticas generales
+    stats = calcular_estadisticas_generales(reporte.id_usuario, reporte.fecha_inicio, reporte.fecha_fin)
+    
+    ws['A5'] = "RESUMEN GENERAL"
+    ws['A5'].font = header_font
+    ws['A5'].fill = header_fill
+    ws.merge_cells('A5:B5')
+    
+    row = 6
+    resumen_data = [
+        ["Balance Total:", f"${stats['balance_total']:,.2f}"],
+        ["Total Ingresos:", f"${stats['total_ingresos']:,.2f}"],
+        ["Total Gastos:", f"${stats['total_egresos']:,.2f}"],
+        ["Ahorro Neto:", f"${stats['ahorro_neto']:,.2f}"],
+        ["Total Transacciones:", stats['total_transacciones']],
+    ]
+    
+    for data in resumen_data:
+        ws[f'A{row}'] = data[0]
+        ws[f'B{row}'] = data[1]
+        ws[f'A{row}'].font = Font(bold=True)
+        row += 1
+    
+    # Transacciones detalladas
+    ws['A' + str(row + 2)] = "TRANSACCIONES DETALLADAS"
+    ws['A' + str(row + 2)].font = header_font
+    ws['A' + str(row + 2)].fill = header_fill
+    ws.merge_cells(f'A{row + 2}:E{row + 2}')
+    
+    # Headers de transacciones
+    row += 4
+    headers = ['Fecha', 'Descripción', 'Tipo', 'Monto', 'Cuenta']
+    for col, header in enumerate(headers, 1):
+        cell = ws.cell(row=row, column=col, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+    
+    # Datos de transacciones
+    transacciones = Movimiento.objects.filter(
+        id_cuenta__id_usuario=reporte.id_usuario,
+        fecha_movimiento__range=[reporte.fecha_inicio, reporte.fecha_fin]
+    ).order_by('-fecha_movimiento')
+    
+    for transaccion in transacciones:
+        row += 1
+        ws[f'A{row}'] = transaccion.fecha_movimiento.strftime('%d/%m/%Y')
+        ws[f'B{row}'] = transaccion.nombre
+        ws[f'C{row}'] = transaccion.tipo.title()
+        monto = transaccion.monto if transaccion.tipo == 'ingreso' else -transaccion.monto
+        ws[f'D{row}'] = f"${monto:,.2f}"
+        ws[f'E{row}'] = transaccion.id_cuenta.nombre
+    
+    # Ajustar ancho de columnas
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Preparar respuesta
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    filename = f"reporte_financiero_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
-    with pd.ExcelWriter(response, engine='openpyxl') as writer:
-        # === HOJA 1: PORTADA EJECUTIVA ===
-        portada_data = {
-            'FINGEST - REPORTE FINANCIERO EJECUTIVO': [''],
-            '': [''],
-            'INFORMACIÓN DEL REPORTE': [''],
-            'Título': [reporte.titulo],
-            'Tipo': [reporte.get_tipo_reporte_display()],
-            'Fecha de Generación': [reporte.fecha_creacion.strftime('%d de %B de %Y a las %H:%M hrs')],
-            'Período de Análisis': [f"Del {reporte.fecha_inicio.strftime('%d/%m/%Y')} al {reporte.fecha_fin.strftime('%d/%m/%Y')}"],
-            'Usuario': [str(reporte.id_usuario) if reporte.id_usuario else 'No especificado'],
-            'Estado': ['COMPLETADO'],
-            'Confidencialidad': ['CONFIDENCIAL - Uso exclusivo del titular'],
-            '': [''],
-            'Descripción': [reporte.descripcion or 'Análisis financiero integral generado automáticamente'],
-        }
-        
-        portada_df = pd.DataFrame(portada_data)
-        portada_df.to_excel(writer, sheet_name='PORTADA EJECUTIVA', index=False, header=False)
-        
-        # Formatear portada
-        ws_portada = writer.sheets['PORTADA EJECUTIVA']
-        
-        # Título principal
-        ws_portada['A1'].font = Font(name='Arial', bold=True, size=18, color='FFFFFF')
-        ws_portada['A1'].fill = PatternFill(start_color='2C3E50', end_color='2C3E50', fill_type='solid')
-        ws_portada['A1'].alignment = Alignment(horizontal='center', vertical='center')
-        ws_portada.merge_cells('A1:B1')
-        
-        # Sección de información
-        ws_portada['A3'].font = Font(name='Arial', bold=True, size=14, color='FFFFFF')
-        ws_portada['A3'].fill = PatternFill(start_color='6C5CE7', end_color='6C5CE7', fill_type='solid')
-        ws_portada['A3'].alignment = Alignment(horizontal='center')
-        ws_portada.merge_cells('A3:B3')
-        
-        # Formatear filas de datos
-        for row in range(4, 13):
-            # Columna A (etiquetas)
-            ws_portada.cell(row=row, column=1).font = Font(name='Arial', bold=True, size=11, color='2C3E50')
-            ws_portada.cell(row=row, column=1).fill = PatternFill(start_color='ECF0F1', end_color='ECF0F1', fill_type='solid')
-            ws_portada.cell(row=row, column=1).alignment = Alignment(horizontal='left', vertical='center')
-            
-            # Columna B (valores)
-            ws_portada.cell(row=row, column=2).font = Font(name='Arial', size=11, color='34495E')
-            ws_portada.cell(row=row, column=2).alignment = Alignment(horizontal='left', vertical='center')
-        
-        # Ajustar dimensiones
-        ws_portada.column_dimensions['A'].width = 25
-        ws_portada.column_dimensions['B'].width = 50
-        ws_portada.row_dimensions[1].height = 30
-        ws_portada.row_dimensions[3].height = 25
-        
-        # === HOJA 2: DATOS ESPECÍFICOS SEGÚN TIPO DE REPORTE ===
-        if reporte.tipo_reporte == 'gastos_categoria' and 'labels' in datos:
-            # Análisis de Gastos por Categoría
-            total = sum(datos['data'])
-            total_transacciones = sum(datos.get('counts', []))
-            
-            # Crear hoja de datos principales
-            gastos_data = {
-                'Categoría': datos['labels'],
-                'Monto (MXN)': datos['data'],
-                'Cantidad de Transacciones': datos.get('counts', [0] * len(datos['labels'])),
-                'Porcentaje del Total': [(monto / total * 100) if total > 0 else 0 for monto in datos['data']],
-                'Promedio por Transacción': [monto / count if count > 0 else 0 for monto, count in zip(datos['data'], datos.get('counts', [1] * len(datos['data'])))]
-            }
-            
-            gastos_df = pd.DataFrame(gastos_data)
-            gastos_df.to_excel(writer, sheet_name='GASTOS POR CATEGORIA', index=False)
-            
-            # Formatear hoja de gastos
-            ws_gastos = writer.sheets['GASTOS POR CATEGORIA']
-            
-            # Encabezados profesionales
-            header_font = Font(name='Arial', bold=True, size=12, color='FFFFFF')
-            header_fill = PatternFill(start_color='E74C3C', end_color='E74C3C', fill_type='solid')
-            header_alignment = Alignment(horizontal='center', vertical='center')
-            
-            for col in range(1, 6):
-                cell = ws_gastos.cell(row=1, column=col)
-                cell.font = header_font
-                cell.fill = header_fill
-                cell.alignment = header_alignment
-                ws_gastos.row_dimensions[1].height = 25
-            
-            # Formatear datos con alternancia de colores
-            for row in range(2, len(gastos_df) + 2):
-                # Alternar colores de fondo
-                bg_color = 'F8F9FA' if row % 2 == 0 else 'FFFFFF'
-                
-                for col in range(1, 6):
-                    cell = ws_gastos.cell(row=row, column=col)
-                    cell.fill = PatternFill(start_color=bg_color, end_color=bg_color, fill_type='solid')
-                    cell.font = Font(name='Arial', size=10, color='2C3E50')
-                    cell.alignment = Alignment(horizontal='center' if col > 1 else 'left', vertical='center')
-                
-                # Formatear números específicamente
-                ws_gastos.cell(row=row, column=2).number_format = '"$"#,##0.00'  # Monto
-                ws_gastos.cell(row=row, column=3).number_format = '#,##0'        # Cantidad
-                ws_gastos.cell(row=row, column=4).number_format = '0.0"%"'       # Porcentaje
-                ws_gastos.cell(row=row, column=5).number_format = '"$"#,##0.00'  # Promedio
-            
-            # Fila de totales
-            total_row = len(gastos_df) + 2
-            ws_gastos.cell(row=total_row, column=1, value='TOTAL GENERAL')
-            ws_gastos.cell(row=total_row, column=2, value=total)
-            ws_gastos.cell(row=total_row, column=3, value=total_transacciones)
-            ws_gastos.cell(row=total_row, column=4, value=100.0)
-            ws_gastos.cell(row=total_row, column=5, value=total/total_transacciones if total_transacciones > 0 else 0)
-            
-            # Formatear fila de totales
-            for col in range(1, 6):
-                cell = ws_gastos.cell(row=total_row, column=col)
-                cell.font = Font(name='Arial', bold=True, size=11, color='FFFFFF')
-                cell.fill = PatternFill(start_color='27AE60', end_color='27AE60', fill_type='solid')
-                cell.alignment = Alignment(horizontal='center' if col > 1 else 'left', vertical='center')
-            
-            # Formatear números en totales
-            ws_gastos.cell(row=total_row, column=2).number_format = '"$"#,##0.00'
-            ws_gastos.cell(row=total_row, column=3).number_format = '#,##0'
-            ws_gastos.cell(row=total_row, column=4).number_format = '0.0"%"'
-            ws_gastos.cell(row=total_row, column=5).number_format = '"$"#,##0.00'
-            
-            # Ajustar anchos de columna
-            ws_gastos.column_dimensions['A'].width = 25
-            ws_gastos.column_dimensions['B'].width = 18
-            ws_gastos.column_dimensions['C'].width = 20
-            ws_gastos.column_dimensions['D'].width = 18
-            ws_gastos.column_dimensions['E'].width = 22
-            
-            # Crear gráfico de pie
-            if len(datos['labels']) > 0:
-                pie = PieChart()
-                labels = Reference(ws_gastos, min_col=1, min_row=2, max_row=len(gastos_df)+1)
-                data = Reference(ws_gastos, min_col=2, min_row=1, max_row=len(gastos_df)+1)
-                pie.add_data(data, titles_from_data=True)
-                pie.set_categories(labels)
-                pie.title = "Distribución de Gastos por Categoría"
-                pie.height = 12
-                pie.width = 20
-                ws_gastos.add_chart(pie, "H2")
-            
-            # === HOJA DE ANÁLISIS Y INSIGHTS ===
-            insights_data = {
-                'Tipo de Análisis': [
-                    'RESUMEN EJECUTIVO',
-                    'GASTO TOTAL',
-                    'TRANSACCIONES',
-                    'PROMEDIO GENERAL',
-                    'CATEGORÍA PRINCIPAL',
-                    'RECOMENDACIÓN'
-                ],
-                'Valor/Descripción': [
-                    f'Análisis de {len(datos["labels"])} categorías de gasto',
-                    f'${total:,.2f} MXN',
-                    f'{total_transacciones:,} transacciones registradas',
-                    f'${total/total_transacciones if total_transacciones > 0 else 0:,.2f} MXN por transacción',
-                    f'{datos["labels"][datos["data"].index(max(datos["data"]))] if datos["data"] else "N/A"} ({max(datos["data"])/total*100 if total > 0 else 0:.1f}%)',
-                    f'{"Revisar gastos en la categoría principal" if max(datos["data"])/total > 0.4 else "Distribución balanceada de gastos"}'
-                ]
-            }
-            
-            insights_df = pd.DataFrame(insights_data)
-            insights_df.to_excel(writer, sheet_name='ANALISIS E INSIGHTS', index=False)
-            
-            ws_insights = writer.sheets['ANALISIS E INSIGHTS']
-            
-            # Formatear insights
-            for row in range(1, len(insights_df) + 2):
-                ws_insights.cell(row=row, column=1).font = Font(name='Arial', bold=True, size=11, color='FFFFFF')
-                ws_insights.cell(row=row, column=1).fill = PatternFill(start_color='3498DB', end_color='3498DB', fill_type='solid')
-                ws_insights.cell(row=row, column=2).font = Font(name='Arial', size=11, color='2C3E50')
-                ws_insights.cell(row=row, column=2).fill = PatternFill(start_color='EBF5FF', end_color='EBF5FF', fill_type='solid')
-            
-            ws_insights.column_dimensions['A'].width = 25
-            ws_insights.column_dimensions['B'].width = 50
-            
-        elif reporte.tipo_reporte == 'ingresos_egresos':
-            # Análisis de Ingresos vs Egresos
-            ingresos = datos['data'][0] if len(datos['data']) > 0 else 0
-            egresos = datos['data'][1] if len(datos['data']) > 1 else 0
-            balance = ingresos - egresos
-            tasa_ahorro = (balance / ingresos * 100) if ingresos > 0 else 0
-            
-            ie_data = {
-                'Concepto Financiero': ['INGRESOS TOTALES', 'EGRESOS TOTALES', 'BALANCE NETO', 'TASA DE AHORRO'],
-                'Monto (MXN)': [ingresos, egresos, balance, f'{tasa_ahorro:.1f}%'],
-                'Porcentaje del Ingreso': ['100.0%', f'{(egresos/ingresos*100):.1f}%' if ingresos > 0 else '0.0%', 
-                                         f'{(balance/ingresos*100):.1f}%' if ingresos > 0 else '0.0%', '-'],
-                'Evaluación': ['Base de ingresos', 
-                             'Alto' if egresos/ingresos > 0.8 else 'Controlado' if egresos/ingresos <= 0.6 else 'Moderado',
-                             'Positivo' if balance > 0 else 'Déficit',
-                             'Excelente' if tasa_ahorro >= 20 else 'Bueno' if tasa_ahorro >= 10 else 'Bajo']
-            }
-            
-            ie_df = pd.DataFrame(ie_data)
-            ie_df.to_excel(writer, sheet_name='INGRESOS VS EGRESOS', index=False)
-            
-            # Formatear hoja
-            ws_ie = writer.sheets['INGRESOS VS EGRESOS']
-            
-            # Encabezados
-            for col in range(1, 5):
-                cell = ws_ie.cell(row=1, column=col)
-                cell.font = Font(name='Arial', bold=True, size=12, color='FFFFFF')
-                cell.fill = PatternFill(start_color='2C3E50', end_color='2C3E50', fill_type='solid')
-                cell.alignment = Alignment(horizontal='center', vertical='center')
-            
-            # Formatear filas de datos
-            for row in range(2, 6):
-                # Alternar colores
-                bg_color = 'F1C40F' if row == 2 else 'E74C3C' if row == 3 else '27AE60' if row == 4 else '3498DB'
-                text_color = 'FFFFFF'
-                
-                for col in range(1, 5):
-                    cell = ws_ie.cell(row=row, column=col)
-                    cell.font = Font(name='Arial', bold=True, size=11, color=text_color)
-                    cell.fill = PatternFill(start_color=bg_color, end_color=bg_color, fill_type='solid')
-                    cell.alignment = Alignment(horizontal='center', vertical='center')
-                
-                # Formatear números (solo las primeras 3 filas)
-                if row <= 4:
-                    if isinstance(ws_ie.cell(row=row, column=2).value, (int, float)):
-                        ws_ie.cell(row=row, column=2).number_format = '"$"#,##0.00'
-            
-            # Ajustar anchos
-            ws_ie.column_dimensions['A'].width = 25
-            ws_ie.column_dimensions['B'].width = 20
-            ws_ie.column_dimensions['C'].width = 20
-            ws_ie.column_dimensions['D'].width = 20
-            
-            # Crear gráfico de barras
-            bar_chart = BarChart()
-            bar_chart.type = "col"
-            bar_chart.style = 10
-            bar_chart.title = "Comparativo Ingresos vs Egresos"
-            bar_chart.y_axis.title = 'Monto (MXN)'
-            bar_chart.x_axis.title = 'Conceptos'
-            
-            data = Reference(ws_ie, min_col=2, min_row=2, max_row=4)
-            cats = Reference(ws_ie, min_col=1, min_row=2, max_row=4)
-            bar_chart.add_data(data)
-            bar_chart.set_categories(cats)
-            bar_chart.height = 10
-            bar_chart.width = 15
-            ws_ie.add_chart(bar_chart, "F2")
-            
-        elif reporte.tipo_reporte == 'subcuentas_analisis' and 'labels' in datos:
-            # Análisis de Subcuentas
-            total_saldo = sum(datos['saldos'])
-            total_cantidad = sum(datos['cantidades'])
-            
-            sc_data = {
-                'Tipo de Subcuenta': [f"{label}" for label in datos['labels']],
-                'Saldo Total (MXN)': datos['saldos'],
-                'Cantidad': datos['cantidades'],
-                'Porcentaje del Total': [(saldo / total_saldo * 100) if total_saldo > 0 else 0 for saldo in datos['saldos']],
-                'Promedio por Subcuenta': [saldo / cantidad if cantidad > 0 else 0 for saldo, cantidad in zip(datos['saldos'], datos['cantidades'])],
-                'Clasificación': []
-            }
-            
-            # Agregar clasificación
-            for i, saldo in enumerate(datos['saldos']):
-                porcentaje = (saldo / total_saldo * 100) if total_saldo > 0 else 0
-                if porcentaje >= 40:
-                    sc_data['Clasificación'].append('Principal')
-                elif porcentaje >= 20:
-                    sc_data['Clasificación'].append('Importante')
-                elif porcentaje >= 10:
-                    sc_data['Clasificación'].append('Activa')
-                else:
-                    sc_data['Clasificación'].append('Menor')
-            
-            sc_df = pd.DataFrame(sc_data)
-            sc_df.to_excel(writer, sheet_name='ANALISIS SUBCUENTAS', index=False)
-            
-            # Formatear hoja
-            ws_sc = writer.sheets['ANALISIS SUBCUENTAS']
-            
-            # Encabezados
-            for col in range(1, 7):
-                cell = ws_sc.cell(row=1, column=col)
-                cell.font = Font(name='Arial', bold=True, size=11, color='FFFFFF')
-                cell.fill = PatternFill(start_color='8E44AD', end_color='8E44AD', fill_type='solid')
-                cell.alignment = Alignment(horizontal='center', vertical='center')
-            
-            # Formatear filas de datos
-            for row in range(2, len(sc_df) + 2):
-                bg_color = 'F8F9FA' if row % 2 == 0 else 'FFFFFF'
-                
-                for col in range(1, 7):
-                    cell = ws_sc.cell(row=row, column=col)
-                    cell.fill = PatternFill(start_color=bg_color, end_color=bg_color, fill_type='solid')
-                    cell.font = Font(name='Arial', size=10, color='2C3E50')
-                    cell.alignment = Alignment(horizontal='center' if col > 1 else 'left', vertical='center')
-                
-                # Formatear números
-                ws_sc.cell(row=row, column=2).number_format = '"$"#,##0.00'  # Saldo
-                ws_sc.cell(row=row, column=3).number_format = '#,##0'        # Cantidad
-                ws_sc.cell(row=row, column=4).number_format = '0.0"%"'       # Porcentaje
-                ws_sc.cell(row=row, column=5).number_format = '"$"#,##0.00'  # Promedio
-            
-            # Fila de totales
-            total_row = len(sc_df) + 2
-            ws_sc.cell(row=total_row, column=1, value='TOTAL PATRIMONIAL')
-            ws_sc.cell(row=total_row, column=2, value=total_saldo)
-            ws_sc.cell(row=total_row, column=3, value=total_cantidad)
-            ws_sc.cell(row=total_row, column=4, value=100.0)
-            ws_sc.cell(row=total_row, column=5, value=total_saldo/total_cantidad if total_cantidad > 0 else 0)
-            ws_sc.cell(row=total_row, column=6, value='Resumen')
-            
-            # Formatear totales
-            for col in range(1, 7):
-                cell = ws_sc.cell(row=total_row, column=col)
-                cell.font = Font(name='Arial', bold=True, size=11, color='FFFFFF')
-                cell.fill = PatternFill(start_color='27AE60', end_color='27AE60', fill_type='solid')
-                cell.alignment = Alignment(horizontal='center' if col > 1 else 'left', vertical='center')
-            
-            ws_sc.cell(row=total_row, column=2).number_format = '"$"#,##0.00'
-            ws_sc.cell(row=total_row, column=3).number_format = '#,##0'
-            ws_sc.cell(row=total_row, column=4).number_format = '0.0"%"'
-            ws_sc.cell(row=total_row, column=5).number_format = '"$"#,##0.00'
-            
-            # Ajustar anchos
-            ws_sc.column_dimensions['A'].width = 25
-            ws_sc.column_dimensions['B'].width = 18
-            ws_sc.column_dimensions['C'].width = 12
-            ws_sc.column_dimensions['D'].width = 15
-            ws_sc.column_dimensions['E'].width = 20
-            ws_sc.column_dimensions['F'].width = 15
-        
-        # === HOJA FINAL: RESUMEN EJECUTIVO ===
-        resumen_data = {
-            'FINGEST - RESUMEN EJECUTIVO': [''],
-            '': [''],
-            'MÉTRICAS CLAVE DEL PERÍODO': [''],
-            'Tipo de Análisis': [reporte.get_tipo_reporte_display()],
-            'Período Analizado': [f"{reporte.fecha_inicio.strftime('%d/%m/%Y')} - {reporte.fecha_fin.strftime('%d/%m/%Y')}"],
-            'Fecha de Generación': [datetime.now().strftime('%d de %B de %Y')],
-            '': [''],
-            'Estado del Reporte': ['COMPLETADO'],
-            'Nivel de Confianza': ['ALTO - Datos verificados'],
-            'Recomendación': ['Revisar periódicamente para seguimiento'],
-            '': [''],
-            'PRÓXIMOS PASOS': [''],
-            '1. Monitoreo continuo': ['Establecer alertas para cambios significativos'],
-            '2. Análisis comparativo': ['Comparar con períodos anteriores'],
-            '3. Planificación estratégica': ['Usar insights para toma de decisiones'],
-        }
-        
-        resumen_df = pd.DataFrame(resumen_data)
-        resumen_df.to_excel(writer, sheet_name='RESUMEN EJECUTIVO', index=False, header=False)
-        
-        # Formatear resumen
-        ws_resumen = writer.sheets['RESUMEN EJECUTIVO']
-        
-        # Título
-        ws_resumen['A1'].font = Font(name='Arial', bold=True, size=16, color='FFFFFF')
-        ws_resumen['A1'].fill = PatternFill(start_color='2C3E50', end_color='2C3E50', fill_type='solid')
-        ws_resumen['A1'].alignment = Alignment(horizontal='center', vertical='center')
-        ws_resumen.merge_cells('A1:B1')
-        
-        # Secciones
-        section_rows = [3, 8, 12]
-        for row_num in section_rows:
-            ws_resumen.cell(row=row_num, column=1).font = Font(name='Arial', bold=True, size=12, color='FFFFFF')
-            ws_resumen.cell(row=row_num, column=1).fill = PatternFill(start_color='3498DB', end_color='3498DB', fill_type='solid')
-            ws_resumen.merge_cells(f'A{row_num}:B{row_num}')
-        
-        # Formatear datos
-        for row in range(4, 16):
-            if row not in [7, 11]:  # Skip empty rows
-                ws_resumen.cell(row=row, column=1).font = Font(name='Arial', bold=True, size=10, color='2C3E50')
-                ws_resumen.cell(row=row, column=1).fill = PatternFill(start_color='ECF0F1', end_color='ECF0F1', fill_type='solid')
-                ws_resumen.cell(row=row, column=2).font = Font(name='Arial', size=10, color='34495E')
-        
-        ws_resumen.column_dimensions['A'].width = 30
-        ws_resumen.column_dimensions['B'].width = 50
-    
+    wb.save(response)
     return response
 
 def exportar_csv(reporte, datos):
-    """Exporta reporte a CSV con formato ultra estructurado y profesional"""
+    """Exporta reporte a CSV"""
     import csv
-    from io import StringIO
     
-    response = HttpResponse(content_type='text/csv; charset=utf-8')
-    
-    # Nombre de archivo súper descriptivo
+    response = HttpResponse(content_type='text/csv')
     tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
     fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
     filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.csv"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
-    # Agregar BOM para Excel (soporte UTF-8)
-    response.write('\ufeff')
-    
     writer = csv.writer(response)
     
-    # === ENCABEZADO PROFESIONAL ===
-    writer.writerow(['=' * 80])
-    writer.writerow(['FINGEST - SISTEMA DE GESTIÓN FINANCIERA INTELIGENTE'])
-    writer.writerow(['REPORTE FINANCIERO EJECUTIVO'])
-    writer.writerow(['=' * 80])
-    writer.writerow([])
+    # Escribir encabezado
+    writer.writerow(['Reporte:', reporte.nombre])
+    writer.writerow(['Tipo:', reporte.get_tipo_reporte_display()])
+    writer.writerow(['Fecha creación:', reporte.fecha_creacion.strftime('%Y-%m-%d %H:%M')])
+    writer.writerow(['Período:', f"{reporte.fecha_inicio} - {reporte.fecha_fin}"])
+    writer.writerow([])  # Línea vacía
     
-    # === INFORMACIÓN EJECUTIVA DEL REPORTE ===
-    writer.writerow(['INFORMACIÓN EJECUTIVA DEL REPORTE'])
-    writer.writerow(['-' * 50])
-    writer.writerow(['Título del Reporte', reporte.titulo])
-    writer.writerow(['Tipo de Análisis', reporte.get_tipo_reporte_display()])
-    writer.writerow(['Fecha de Generación', reporte.fecha_creacion.strftime('%d de %B de %Y a las %H:%M hrs')])
-    writer.writerow(['Período de Análisis', f"Del {reporte.fecha_inicio.strftime('%d de %B de %Y')} al {reporte.fecha_fin.strftime('%d de %B de %Y')}"])
-    writer.writerow(['Usuario Responsable', str(reporte.id_usuario) if reporte.id_usuario else 'No especificado'])
-    writer.writerow(['Estado del Reporte', 'COMPLETADO Y VERIFICADO'])
-    writer.writerow(['Nivel de Confidencialidad', 'CONFIDENCIAL - Uso exclusivo del titular'])
-    
-    if reporte.descripcion:
-        writer.writerow(['Descripción', reporte.descripcion])
-    
-    writer.writerow([])
-    writer.writerow([])
-    
-    # === DATOS ESPECÍFICOS SEGÚN TIPO DE REPORTE ===
-    if reporte.tipo_reporte == 'gastos_categoria' and 'labels' in datos:
-        total = sum(datos['data'])
-        total_transacciones = sum(datos.get('counts', []))
-        
-        # Resumen ejecutivo
-        writer.writerow(['RESUMEN EJECUTIVO - ANÁLISIS DE GASTOS POR CATEGORÍA'])
-        writer.writerow(['=' * 60])
-        writer.writerow(['MÉTRICAS PRINCIPALES'])
-        writer.writerow(['Gasto Total del Período (MXN)', f'{total:,.2f}'])
-        writer.writerow(['Total de Transacciones', f'{total_transacciones:,}'])
-        writer.writerow(['Promedio por Transacción (MXN)', f'{total/total_transacciones if total_transacciones > 0 else 0:,.2f}'])
-        writer.writerow(['Número de Categorías Analizadas', len(datos['labels'])])
-        writer.writerow(['Promedio por Categoría (MXN)', f'{total/len(datos["labels"]) if datos["labels"] else 0:,.2f}'])
-        writer.writerow([])
-        
-        # Tabla principal detallada
-        writer.writerow(['DESGLOSE DETALLADO POR CATEGORÍA'])
-        writer.writerow(['-' * 60])
-        writer.writerow(['Categoría', 'Monto (MXN)', 'Cantidad de Transacciones', 'Porcentaje del Total (%)', 'Promedio por Transacción (MXN)', 'Clasificación'])
-        
-        for i, label in enumerate(datos['labels']):
-            monto = datos['data'][i]
-            cantidad = datos.get('counts', [0] * len(datos['labels']))[i]
-            porcentaje = (monto / total * 100) if total > 0 else 0
-            promedio_transaccion = monto / cantidad if cantidad > 0 else 0
-            
-            # Clasificación automática
-            if porcentaje >= 30:
-                clasificacion = "GASTO ALTO - Requiere atención"
-            elif porcentaje >= 15:
-                clasificacion = "GASTO MEDIO - Monitorear"
-            elif porcentaje >= 5:
-                clasificacion = "GASTO NORMAL - Controlado"
-            else:
-                clasificacion = "GASTO BAJO - Excelente"
-            
+    # Escribir datos según el tipo de reporte
+    if reporte.tipo_reporte == 'ingresos_gastos':
+        writer.writerow(['Fecha', 'Tipo', 'Descripción', 'Monto', 'Cuenta'])
+        for item in datos.get('transacciones', []):
             writer.writerow([
-                f'{label}',
-                f'{monto:,.2f}',
-                f'{cantidad:,}',
-                f'{porcentaje:.2f}',
-                f'{promedio_transaccion:,.2f}',
-                clasificacion
+                item.fecha_movimiento.strftime('%Y-%m-%d'),
+                item.tipo.title(),
+                item.nombre,
+                f"${item.monto:.2f}",
+                item.id_cuenta.nombre
+            ])
+    elif reporte.tipo_reporte == 'balance_cuentas':
+        writer.writerow(['Cuenta', 'Saldo'])
+        for item in datos.get('cuentas', []):
+            writer.writerow([item.nombre, f"${item.saldo:.2f}"])
+    elif reporte.tipo_reporte == 'gastos_categoria':
+        writer.writerow(['Categoría', 'Monto', 'Porcentaje'])
+        for item in datos.get('gastos_categoria', []):
+            writer.writerow([item['nombre'], f"${item['total']:.2f}", f"{item['porcentaje']:.1f}%"])
+    
+    return response
+
+def exportar_pdf_simple(request):
+    """Exporta un reporte simple en PDF"""
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib.utils import ImageReader
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib import colors
+    from reportlab.lib.units import inch
+    from io import BytesIO
+    from datetime import datetime
+    
+    # Obtener fechas del filtro
+    periodo = request.GET.get('periodo', 'mes_actual')
+    fecha_inicio, fecha_fin = obtener_fechas_periodo(periodo)
+    
+    # Crear buffer
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    story = []
+    
+    # Estilos
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=18,
+        spaceAfter=30,
+        alignment=1,  # Center
+    )
+    
+    # Título
+    title = Paragraph("REPORTE FINANCIERO - FINGEST", title_style)
+    story.append(title)
+    
+    # Información del período
+    period_info = Paragraph(
+        f"<b>Período:</b> {fecha_inicio.strftime('%d/%m/%Y')} - {fecha_fin.strftime('%d/%m/%Y')}<br/>"
+        f"<b>Generado:</b> {datetime.now().strftime('%d/%m/%Y %H:%M')}",
+        styles['Normal']
+    )
+    story.append(period_info)
+    story.append(Spacer(1, 20))
+    
+    # Estadísticas generales
+    stats = calcular_estadisticas_generales(request.user, fecha_inicio, fecha_fin)
+    
+    stats_data = [
+        ['RESUMEN FINANCIERO', ''],
+        ['Balance Total', f"${stats['balance_total']:,.2f}"],
+        ['Ingresos del Período', f"${stats['total_ingresos']:,.2f}"],
+        ['Gastos del Período', f"${stats['total_egresos']:,.2f}"],
+        ['Ahorro Neto', f"${stats['ahorro_neto']:,.2f}"],
+    ]
+    
+    stats_table = Table(stats_data, colWidths=[3*inch, 2*inch])
+    stats_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1,  0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+    
+    story.append(stats_table)
+    story.append(Spacer(1, 30))
+    
+    # Transacciones recientes
+    transacciones = Movimiento.objects.filter(
+        id_cuenta__id_usuario=request.user,
+        fecha_movimiento__range=[fecha_inicio, fecha_fin]
+    ).order_by('-fecha_movimiento')[:10]
+    
+    if transacciones:
+        trans_title = Paragraph("<b>TRANSACCIONES RECIENTES</b>", styles['Heading2'])
+        story.append(trans_title)
+        
+        trans_data = [['Fecha', 'Descripción', 'Tipo', 'Monto']]
+        
+        for transaccion in transacciones:
+            trans_data.append([
+                transaccion.fecha_movimiento.strftime('%d/%m/%Y'),
+                transaccion.nombre[:30],
+                transaccion.tipo.title(),
+                f"${transaccion.monto:,.2f}"
             ])
         
-        # Fila de totales
-        writer.writerow(['-' * 60])
-        writer.writerow([
-            'TOTAL GENERAL',
-            f'{total:,.2f}',
-            f'{total_transacciones:,}',
-            '100.00',
-            f'{total/total_transacciones if total_transacciones > 0 else 0:,.2f}',
-            'RESUMEN COMPLETO'
-        ])
+        trans_table = Table(trans_data, colWidths=[1.2*inch, 2.5*inch, 1*inch, 1.3*inch])
+        trans_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ]))
         
-        writer.writerow([])
-        
-        # Insights automáticos
-        writer.writerow(['INSIGHTS Y ANÁLISIS AUTOMÁTICO'])
-        writer.writerow(['-' * 60])
-        
-        if datos['data']:
-            max_gasto_idx = datos['data'].index(max(datos['data']))
-            categoria_principal = datos['labels'][max_gasto_idx]
-            porcentaje_principal = (max(datos['data']) / total * 100) if total > 0 else 0
-            
-            writer.writerow(['Categoría con Mayor Gasto', categoria_principal])
-            writer.writerow(['Monto de Categoría Principal (MXN)', f'{max(datos["data"]):,.2f}'])
-            writer.writerow(['Participación de Categoría Principal (%)', f'{porcentaje_principal:.2f}'])
-            writer.writerow(['Distribución de Gastos', 'Concentrada' if porcentaje_principal > 40 else 'Balanceada' if porcentaje_principal < 25 else 'Moderada'])
-            
-            # Recomendaciones automáticas
-            writer.writerow([])
-            writer.writerow(['RECOMENDACIONES ESTRATÉGICAS'])
-            writer.writerow(['-' * 40])
-            
-            if porcentaje_principal > 50:
-                writer.writerow(['Alerta', 'Una categoría concentra más del 50% del gasto total'])
-                writer.writerow(['Recomendación 1', 'Revisar y optimizar los gastos en la categoría principal'])
-                writer.writerow(['Recomendación 2', 'Considerar redistribuir gastos en otras categorías'])
-            elif porcentaje_principal < 15:
-                writer.writerow(['Excelente', 'Distribución muy balanceada de gastos'])
-                writer.writerow(['Recomendación', 'Mantener la estrategia actual de distribución'])
-            else:
-                writer.writerow(['Bueno', 'Distribución razonable de gastos'])
-                writer.writerow(['Recomendación', 'Monitorear tendencias y ajustar según objetivos'])
-        
-    elif reporte.tipo_reporte == 'ingresos_egresos':
-        ingresos = datos['data'][0] if len(datos['data']) > 0 else 0
-        egresos = datos['data'][1] if len(datos['data']) > 1 else 0
-        balance = ingresos - egresos
-        tasa_ahorro = (balance / ingresos * 100) if ingresos > 0 else 0
-        ratio_gastos = (egresos / ingresos * 100) if ingresos > 0 else 0
-        
-        # Dashboard financiero
-        writer.writerow(['DASHBOARD FINANCIERO EJECUTIVO'])
-        writer.writerow(['=' * 60])
-        writer.writerow(['INDICADORES CLAVE DE RENDIMIENTO (KPIs)'])
-        writer.writerow(['Total de Ingresos (MXN)', f'{ingresos:,.2f}'])
-        writer.writerow(['Total de Egresos (MXN)', f'{egresos:,.2f}'])
-        writer.writerow(['Balance Neto (MXN)', f'{balance:,.2f}'])
-        writer.writerow(['Tasa de Ahorro (%)', f'{tasa_ahorro:.2f}'])
-        writer.writerow(['Ratio de Gastos (%)', f'{ratio_gastos:.2f}'])
-        writer.writerow([])
-        
-        # Análisis comparativo
-        writer.writerow(['ANÁLISIS COMPARATIVO DETALLADO'])
-        writer.writerow(['-' * 60])
-        writer.writerow(['Concepto', 'Monto (MXN)', 'Porcentaje del Ingreso (%)', 'Evaluación Financiera', 'Meta Recomendada'])
-        
-        writer.writerow([
-            'Ingresos Totales',
-            f'{ingresos:,.2f}',
-            '100.00',
-            'Base de cálculo financiero',
-            'Incrementar anualmente'
-        ])
-        
-        evaluacion_egresos = 'CRÍTICO' if ratio_gastos > 90 else 'ALTO' if ratio_gastos > 80 else 'MODERADO' if ratio_gastos > 70 else 'CONTROLADO'
-        writer.writerow([
-            'Egresos Totales',
-            f'{egresos:,.2f}',
-            f'{ratio_gastos:.2f}',
-            evaluacion_egresos,
-            'Máximo 70% de ingresos'
-        ])
-        
-        evaluacion_balance = 'EXCELENTE' if tasa_ahorro >= 20 else 'BUENO' if tasa_ahorro >= 10 else 'BAJO' if balance > 0 else 'DÉFICIT'
-        writer.writerow([
-            'Balance Final',
-            f'{balance:,.2f}',
-            f'{tasa_ahorro:.2f}',
-            evaluacion_balance,
-            'Mínimo 15% de ahorro'
-        ])
-        
-        writer.writerow([])
-        
-        # Diagnóstico financiero
-        writer.writerow(['DIAGNÓSTICO FINANCIERO INTEGRAL'])
-        writer.writerow(['-' * 60])
-        
-        # Salud financiera
-        if balance < 0:
-            salud = "CRÍTICA - Déficit financiero"
-            color_semaforo = "ROJO"
-        elif tasa_ahorro >= 20:
-            salud = "EXCELENTE - Finanzas muy saludables"
-            color_semaforo = "VERDE"
-        elif tasa_ahorro >= 10:
-            salud = "BUENA - Finanzas estables"
-            color_semaforo = "AMARILLO"
+        story.append(trans_table)
+    
+    # Generar PDF
+    doc.build(story)
+    
+    # Preparar respuesta
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    filename = f"reporte_financiero_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response
+
+def obtener_fechas_periodo(periodo):
+    """Obtener fechas de inicio y fin según el período seleccionado"""
+    from django.utils import timezone
+    from datetime import datetime, timedelta
+    import calendar
+    
+    now = timezone.now()
+    
+    if periodo == 'mes_actual':
+        fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = calendar.monthrange(now.year, now.month)[1]
+        fecha_fin = now.replace(day=ultimo_dia, hour=23, minute=59, second=59)
+    elif periodo == 'ultimo_mes':
+        if now.month == 1:
+            mes_anterior = now.replace(year=now.year-1, month=12, day=1)
         else:
-            salud = "REGULAR - Necesita mejoras"
-            color_semaforo = "NARANJA"
+            mes_anterior = now.replace(month=now.month-1, day=1)
+        fecha_inicio = mes_anterior.replace(hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = calendar.monthrange(mes_anterior.year, mes_anterior.month)[1]
+        fecha_fin = mes_anterior.replace(day=ultimo_dia, hour=23, minute=59, second=59)
+    elif periodo == 'trimestre':
+        fecha_inicio = (now - timedelta(days=90)).replace(hour=0, minute=0, second=0, microsecond=0)
+        fecha_fin = now.replace(hour=23, minute=59, second=59)
+    elif periodo == 'ano':
+        fecha_inicio = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        fecha_fin = now.replace(hour=23, minute=59, second=59)
+    else:
+        # Por defecto mes actual
+        fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        ultimo_dia = calendar.monthrange(now.year, now.month)[1]
+        fecha_fin = now.replace(day=ultimo_dia, hour=23, minute=59, second=59)
+    
+    return fecha_inicio, fecha_fin
+
+# Funciones de exportación a Excel y PDF
+
+@login_required
+@fast_access_pin_verified
+def exportar_excel(request):
+    """Exportar datos financieros a Excel"""
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment
+    from django.http import HttpResponse
+    from datetime import datetime
+    
+    # Obtener fechas del filtro
+    periodo = request.GET.get('periodo', 'mes_actual')
+    fecha_inicio, fecha_fin = obtener_fechas_periodo(periodo)
+    
+    # Crear workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Reporte Financiero"
+    
+    # Estilos
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+    
+    # Header del reporte
+    ws['A1'] = "REPORTE FINANCIERO - FINGEST"
+    ws['A1'].font = Font(bold=True, size=16)
+    ws.merge_cells('A1:D1')
+    
+    ws['A2'] = f"Período: {fecha_inicio.strftime('%d/%m/%Y')} - {fecha_fin.strftime('%d/%m/%Y')}"
+    ws['A2'].font = Font(bold=True)
+    ws.merge_cells('A2:D2')
+    
+    ws['A3'] = f"Generado: {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+    ws.merge_cells('A3:D3')
+    
+    # Estadísticas generales
+    stats = calcular_estadisticas_generales(request.user, fecha_inicio, fecha_fin)
+    
+    row = 5
+    ws[f'A{row}'] = "RESUMEN GENERAL"
+    ws[f'A{row}'].font = header_font
+    ws[f'A{row}'].fill = header_fill
+    ws.merge_cells(f'A{row}:B{row}')
+    
+    row += 1
+    ws[f'A{row}'] = "Balance Total"
+    ws[f'B{row}'] = f"${stats['balance_total']:,.2f}"
+    
+    row += 1
+    ws[f'A{row}'] = "Ingresos del Período"
+    ws[f'B{row}'] = f"${stats['total_ingresos']:,.2f}"
+    
+    row += 1
+    ws[f'A{row}'] = "Gastos del Período"
+    ws[f'B{row}'] = f"${stats['total_egresos']:,.2f}"
+    
+    row += 1
+    ws[f'A{row}'] = "Ahorro Neto"
+    ws[f'B{row}'] = f"${stats['ahorro_neto']:,.2f}"
+    
+    # Transacciones
+    row += 3
+    ws[f'A{row}'] = "TRANSACCIONES DETALLADAS"
+    ws[f'A{row}'].font = header_font
+    ws[f'A{row}'].fill = header_fill
+    ws.merge_cells(f'A{row}:E{row}')
+    
+    row += 1
+    headers = ['Fecha', 'Descripción', 'Tipo', 'Cuenta', 'Monto']
+    for col, header in enumerate(headers, 1):
+        cell = ws.cell(row=row, column=col, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+    
+    # Obtener transacciones
+    transacciones = Movimiento.objects.filter(
+        id_cuenta__id_usuario=request.user,
+        fecha_movimiento__range=[fecha_inicio, fecha_fin]
+    ).order_by('-fecha_movimiento')
+    
+    for transaccion in transacciones:
+        row += 1
+        ws[f'A{row}'] = transaccion.fecha_movimiento.strftime('%d/%m/%Y')
+        ws[f'B{row}'] = transaccion.nombre
+        ws[f'C{row}'] = transaccion.tipo.title()
+        ws[f'D{row}'] = transaccion.id_cuenta.nombre
+        ws[f'E{row}'] = f"${transaccion.monto:,.2f}"
+    
+    # Ajustar ancho de columnas
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Preparar respuesta
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    filename = f"reporte_financiero_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    wb.save(response)
+    return response
+
+@login_required
+@fast_access_pin_verified
+def exportar_pdf_simple(request):
+    """Exportar reporte simple a PDF"""
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib.utils import ImageReader
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib import colors
+    from reportlab.lib.units import inch
+    from io import BytesIO
+    from datetime import datetime
+    
+    # Obtener fechas del filtro
+    periodo = request.GET.get('periodo', 'mes_actual')
+    fecha_inicio, fecha_fin = obtener_fechas_periodo(periodo)
+    
+    # Crear buffer
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    story = []
+    
+    # Estilos
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=18,
+        spaceAfter=30,
+        alignment=1,  # Center
+    )
+    
+    # Título
+    title = Paragraph("REPORTE FINANCIERO - FINGEST", title_style)
+    story.append(title)
+    
+    # Información del período
+    period_info = Paragraph(
+        f"<b>Período:</b> {fecha_inicio.strftime('%d/%m/%Y')} - {fecha_fin.strftime('%d/%m/%Y')}<br/>"
+        f"<b>Generado:</b> {datetime.now().strftime('%d/%m/%Y %H:%M')}",
+        styles['Normal']
+    )
+    story.append(period_info)
+    story.append(Spacer(1, 20))
+    
+    # Estadísticas generales
+    stats = calcular_estadisticas_generales(request.user, fecha_inicio, fecha_fin)
+    
+    stats_data = [
+        ['RESUMEN FINANCIERO', ''],
+        ['Balance Total', f"${stats['balance_total']:,.2f}"],
+        ['Ingresos del Período', f"${stats['total_ingresos']:,.2f}"],
+        ['Gastos del Período', f"${stats['total_egresos']:,.2f}"],
+        ['Ahorro Neto', f"${stats['ahorro_neto']:,.2f}"],
+    ]
+    
+    stats_table = Table(stats_data, colWidths=[3*inch, 2*inch])
+    stats_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1,  0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+    
+    story.append(stats_table)
+    story.append(Spacer(1, 30))
+    
+    # Transacciones recientes
+    transacciones = Movimiento.objects.filter(
+        id_cuenta__id_usuario=request.user,
+        fecha_movimiento__range=[fecha_inicio, fecha_fin]
+    ).order_by('-fecha_movimiento')[:10]
+    
+    if transacciones:
+        trans_title = Paragraph("<b>TRANSACCIONES RECIENTES</b>", styles['Heading2'])
+        story.append(trans_title)
         
-        writer.writerow(['Estado de Salud Financiera', salud])
-        writer.writerow(['Semáforo Financiero', color_semaforo])
-        writer.writerow(['Índice de Liquidez', f'{balance/egresos if egresos > 0 else 0:.2f}' + ' meses' if egresos > 0 else 'Infinito'])
+        trans_data = [['Fecha', 'Descripción', 'Tipo', 'Monto']]
         
-        writer.writerow([])
-        
-        # Recomendaciones estratégicas
-        writer.writerow(['PLAN DE ACCIÓN Y RECOMENDACIONES'])
-        writer.writerow(['-' * 60])
-        
-        if balance < 0:
-            writer.writerow(['ACCIÓN INMEDIATA 1', 'Reducir gastos no esenciales urgentemente'])
-            writer.writerow(['ACCIÓN INMEDIATA 2', 'Buscar fuentes adicionales de ingresos'])
-            writer.writerow(['PLAZO', 'Implementar en los próximos 30 días'])
-        elif tasa_ahorro < 10:
-            writer.writerow(['RECOMENDACIÓN 1', 'Incrementar tasa de ahorro al 15-20%'])
-            writer.writerow(['RECOMENDACIÓN 2', 'Revisar gastos variables y optimizar'])
-            writer.writerow(['META', 'Alcanzar en los próximos 3-6 meses'])
-        else:
-            writer.writerow(['FELICITACIONES', 'Excelente manejo financiero'])
-            writer.writerow(['SIGUIENTE NIVEL', 'Considerar opciones de inversión'])
-            writer.writerow(['OBJETIVO', 'Hacer crecer el patrimonio'])
-        
-    elif reporte.tipo_reporte == 'subcuentas_analisis' and 'labels' in datos:
-        total_saldo = sum(datos['saldos'])
-        total_cantidad = sum(datos['cantidades'])
-        promedio_general = total_saldo / total_cantidad if total_cantidad > 0 else 0
-        
-        # Resumen patrimonial
-        writer.writerow(['ANÁLISIS PATRIMONIAL INTEGRAL DE SUBCUENTAS'])
-        writer.writerow(['=' * 70])
-        writer.writerow(['RESUMEN PATRIMONIAL EJECUTIVO'])
-        writer.writerow(['Patrimonio Total (MXN)', f'{total_saldo:,.2f}'])
-        writer.writerow(['Subcuentas Activas', f'{total_cantidad:,}'])
-        writer.writerow(['Saldo Promedio por Subcuenta (MXN)', f'{promedio_general:,.2f}'])
-        writer.writerow(['Tipos de Subcuenta', len(datos['labels'])])
-        
-        # Evaluación de diversificación
-        diversificacion = "ALTA" if len(datos['labels']) >= 4 else "MEDIA" if len(datos['labels']) >= 3 else "BAJA"
-        writer.writerow(['Nivel de Diversificación', diversificacion])
-        writer.writerow([])
-        
-        # Desglose detallado
-        writer.writerow(['DESGLOSE DETALLADO POR TIPO DE SUBCUENTA'])
-        writer.writerow(['-' * 70])
-        writer.writerow(['Tipo de Subcuenta', 'Saldo Total (MXN)', 'Cantidad', '% del Total', 'Promedio (MXN)', 'Clasificación', 'Evaluación'])
-        
-        for i, label in enumerate(datos['labels']):
-            saldo = datos['saldos'][i] if i < len(datos['saldos']) else 0
-            cantidad = datos['cantidades'][i] if i < len(datos['cantidades']) else 0
-            promedio = saldo / cantidad if cantidad > 0 else 0
-            porcentaje = (saldo / total_saldo * 100) if total_saldo > 0 else 0
-            
-            # Clasificación por participación
-            if porcentaje >= 40:
-                clasificacion = "PRINCIPAL"
-                evaluacion = "Concentra la mayor parte del patrimonio"
-            elif porcentaje >= 20:
-                clasificacion = "IMPORTANTE"
-                evaluacion = "Contribución significativa al patrimonio"
-            elif porcentaje >= 10:
-                clasificacion = "ACTIVA"
-                evaluacion = "Participación relevante y saludable"
-            else:
-                clasificacion = "MENOR"
-                evaluacion = "Participación limitada, considerar optimizar"
-            
-            writer.writerow([
-                f'{label}',
-                f'{saldo:,.2f}',
-                f'{cantidad:,}',
-                f'{porcentaje:.2f}',
-                f'{promedio:,.2f}',
-                clasificacion,
-                evaluacion
+        for transaccion in transacciones:
+            trans_data.append([
+                transaccion.fecha_movimiento.strftime('%d/%m/%Y'),
+                transaccion.nombre[:30],
+                transaccion.tipo.title(),
+                f"${transaccion.monto:,.2f}"
             ])
         
-        # Totales
-        writer.writerow(['-' * 70])
-        writer.writerow([
-            'TOTAL PATRIMONIAL',
-            f'{total_saldo:,.2f}',
-            f'{total_cantidad:,}',
-            '100.00',
-            f'{promedio_general:,.2f}',
-            'CONSOLIDADO',
-            'Patrimonio total consolidado'
-        ])
+        trans_table = Table(trans_data, colWidths=[1.2*inch, 2.5*inch, 1*inch, 1.3*inch])
+        trans_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ]))
         
-        writer.writerow([])
-        
-        # Análisis estratégico
-        writer.writerow(['ANÁLISIS ESTRATÉGICO PATRIMONIAL'])
-        writer.writerow(['-' * 70])
-        
-        if datos['saldos']:
-            subcuenta_principal_idx = datos['saldos'].index(max(datos['saldos']))
-            subcuenta_principal = datos['labels'][subcuenta_principal_idx]
-            concentracion = (max(datos['saldos']) / total_saldo * 100) if total_saldo > 0 else 0
-            
-            writer.writerow(['Subcuenta Principal', subcuenta_principal])
-            writer.writerow(['Saldo Principal (MXN)', f'{max(datos["saldos"]):,.2f}'])
-            writer.writerow(['Concentración (%)', f'{concentracion:.2f}'])
-            
-            # Evaluación de concentración
-            if concentracion > 70:
-                evaluacion_concentracion = "ALTA - Riesgo de concentración"
-                recomendacion = "Diversificar en múltiples subcuentas"
-            elif concentracion > 50:
-                evaluacion_concentracion = "MODERADA - Monitorear distribución"
-                recomendacion = "Considerar rebalanceo patrimonial"
-            else:
-                evaluacion_concentracion = "BALANCEADA - Distribución saludable"
-                recomendacion = "Mantener estrategia actual"
-            
-            writer.writerow(['Evaluación de Concentración', evaluacion_concentracion])
-            writer.writerow(['Recomendación Principal', recomendacion])
-        
-        writer.writerow([])
-        
-        # Recomendaciones estratégicas
-        writer.writerow(['RECOMENDACIONES ESTRATÉGICAS PARA OPTIMIZACIÓN'])
-        writer.writerow(['-' * 70])
-        
-        if len(datos['labels']) < 3:
-            writer.writerow(['Diversificación', 'Crear subcuentas adicionales para mejor organización'])
-            writer.writerow(['Sugerencia', 'Separar fondos por propósito (ahorro, gastos, inversión)'])
-        elif concentracion > 60:
-            writer.writerow(['Rebalanceo', 'Redistribuir patrimonio para menor concentración'])
-            writer.writerow(['Acción', 'Transferir fondos a subcuentas menos concentradas'])
-        else:
-            writer.writerow(['Excelente Gestión', 'Organización patrimonial muy efectiva'])
-            writer.writerow(['Siguiente Nivel', 'Considerar estrategias de crecimiento patrimonial'])
+        story.append(trans_table)
     
-    # === PIE DE PÁGINA PROFESIONAL ===
-    writer.writerow([])
-    writer.writerow([])
-    writer.writerow(['=' * 80])
-    writer.writerow(['FINGEST - GESTIÓN FINANCIERA INTELIGENTE'])
-    writer.writerow(['Soporte Técnico: soporte@fingest.com'])
-    writer.writerow(['Atención al Cliente: +52 (55) 1234-5678'])
-    writer.writerow(['Portal Web: www.fingest.com'])
-    writer.writerow(['Descarga nuestra aplicación móvil'])
-    writer.writerow([])
-    writer.writerow(['AVISO LEGAL'])
-    writer.writerow(['Este reporte es CONFIDENCIAL y de uso exclusivo del titular de la cuenta.'])
-    writer.writerow(['Los datos presentados han sido verificados y procesados con tecnología segura.'])
-    writer.writerow(['Para consultas sobre este reporte, contacte a nuestro equipo de soporte.'])
-    writer.writerow([])
-    writer.writerow([f'Documento generado el {datetime.now().strftime("%d de %B de %Y a las %H:%M hrs")}'])
-    writer.writerow([f'ID de Seguridad: FG-{reporte.id}-{reporte.fecha_creacion.strftime("%Y%m%d%H%M")}'])
-    writer.writerow(['Tecnología FinGest - Todos los derechos reservados'])
-    writer.writerow(['=' * 80])
+    # Generar PDF
+    doc.build(story)
+    
+    # Preparar respuesta
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    filename = f"reporte_financiero_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
     return response
 

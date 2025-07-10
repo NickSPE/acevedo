@@ -56,7 +56,7 @@ FinGest es una **plataforma integral de gestión financiera** que combina herram
 > 🎯 **Alineado con los ODS**: Contribuye al ODS 1 (Fin de la pobreza) y ODS 8 (Trabajo decente y crecimiento económico)
 
 ---
-
+      
 ## 📋 Tabla de Contenido
 1. [🎯 Descripción](#-descripción)
 2. [✨ Características Principales](#-características-principales)

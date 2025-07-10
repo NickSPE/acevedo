@@ -1,1937 +1,514 @@
 {% extends "core/base_template.html" %}
 {% load static %}
 
-{% block title %}Análisis y Reportes Financieros - FinGest{% endblock %}
-
-{% block extra_css %}
-<style>
-    * {
-        box-sizing: border-box;
-    }
-    
-    body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        min-height: 100vh;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-    
-    .dark body {
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-    }
-    
-    .container-fluid {
-        width: 100%;
-        padding: 1rem;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
-    
-    .main-header {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        padding: 2rem;
-        margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-    
-    .dark .main-header {
-        background: #374151;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    
-    .main-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #6C5CE7;
-        margin-bottom: 0.5rem;
-        margin-top: 0;
-    }
-    
-    .dark .main-title {
-        color: #A78BFA;
-    }
-    
-    .main-subtitle {
-        font-size: 1.1rem;
-        color: #636e72;
-        margin: 0;
-    }
-    
-    .dark .main-subtitle {
-        color: #9CA3AF;
-    }
-        margin: 0;
-    }
-    
-    .filters-section {
-        background: white;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-    
-    .dark .filters-section {
-        background: #374151;
-    }
-    
-    .filter-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .filter-label {
-        font-weight: 600;
-        color: #2d3436;
-        font-size: 0.9rem;
-    }
-    
-    .dark .filter-label {
-        color: #F9FAFB;
-    }
-    
-    .filter-select, .filter-input {
-        padding: 0.75rem 1rem;
-        border: 2px solid #ddd;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        min-width: 150px;
-        transition: all 0.3s ease;
-    }
-    
-    .dark .filter-select,
-    .dark .filter-input {
-        background: #4B5563;
-        color: #F9FAFB;
-        border-color: #6B7280;
-    }
-    
-    .filter-select:focus, .filter-input:focus {
-        border-color: #6C5CE7;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
-    }
-    
-    .btn-apply-filters {
-        background: linear-gradient(45deg, #6C5CE7, #A29BFE);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 1.5rem;
-    }
-    
-    .btn-apply-filters:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
-    }
-    
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .stat-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border-left: 5px solid;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .dark .stats-grid .stat-card {
-        background: #374151;
-        color: #F9FAFB;
-    }
-    
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        opacity: 0.1;
-        transform: translate(30px, -30px);
-    }
-    
-    .stat-card.balance { border-left-color: #6C5CE7; }
-    .stat-card.balance::before { background: #6C5CE7; }
-    
-    .stat-card.ingresos { border-left-color: #00b894; }
-    .stat-card.ingresos::before { background: #00b894; }
-    
-    .stat-card.gastos { border-left-color: #e17055; }
-    .stat-card.gastos::before { background: #e17055; }
-    
-    .stat-card.transacciones { border-left-color: #74b9ff; }
-    .stat-card.transacciones::before { background: #74b9ff; }
-    
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    }
-    
-    .stat-value {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        position: relative;
-        z-index: 2;
-        margin-top: 0;
-    }
-    
-    .stat-label {
-        color: #636e72;
-        font-weight: 500;
-        margin-bottom: 0;
-        position: relative;
-        z-index: 2;
-    }
-    
-    .dark .stat-label {
-        color: #D1D5DB;
-    }
-    
-    .stat-sublabel {
-        color: #b2bec3;
-        font-size: 0.9rem;
-        position: relative;
-        z-index: 2;
-    }
-    
-    .dark .stat-sublabel {
-        color: #9CA3AF;
-    }
-
-    .charts-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
-    
-    .chart-card {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        position: relative;
-    }
-    
-    .dark .chart-card {
-        background: #374151;
-    }
-    
-    .chart-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 1.5rem;
-        text-align: center;
-    }
-    
-    .dark .chart-title {
-        color: #F9FAFB;
-    }
-    
-    .chart-container {
-        position: relative;
-        height: 300px;
-        width: 100%;
-    }
-    
-    .actions-section {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        margin-bottom: 2rem;
-    }
-    
-    .dark .actions-section {
-        background: #374151;
-    }
-    
-    .actions-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 1.5rem;
-    }
-    
-    .dark .actions-title {
-        color: #F9FAFB;
-    }
-    
-    .actions-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-    }
-    
-    .action-btn {
-        background: linear-gradient(45deg, #74b9ff, #0984e3);
-        color: white;
-        border: none;
-        padding: 1rem 1.5rem;
-        border-radius: 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        text-align: center;
-        display: block;
-    }
-    
-    .action-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(116, 185, 255, 0.3);
-        color: white;
-        text-decoration: none;
-    }
-    
-    .action-btn.secondary {
-        background: linear-gradient(45deg, #636e72, #2d3436);
-    }
-    
-    .action-btn.success {
-        background: linear-gradient(45deg, #00b894, #00cec9);
-    }
-    
-    .action-btn.warning {
-        background: linear-gradient(45deg, #fdcb6e, #e17055);
-    }
-    
-    .recent-reports {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    
-    .dark .recent-reports {
-        background: #374151;
-    }
-    
-    .reports-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 1.5rem;
-    }
-    
-    .dark .reports-title {
-        color: #F9FAFB;
-    }
-    
-    .report-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-        border-radius: 10px;
-        margin-bottom: 1rem;
-        background: #f8f9fa;
-        transition: all 0.3s ease;
-    }
-    
-    .dark .report-item {
-        background: #4B5563;
-    }
-    
-    .report-item:hover {
-        background: #e9ecef;
-        transform: translateX(5px);
-    }
-    
-    .dark .report-item:hover {
-        background: #6B7280;
-    }
-    
-    .report-info h4 {
-        margin: 0 0 0.5rem 0;
-        color: #2d3436;
-        font-size: 1rem;
-    }
-    
-    .dark .report-info h4 {
-        color: #F9FAFB;
-    }
-    
-    .report-info small {
-        color: #636e72;
-    }
-    
-    .dark .report-info small {
-        color: #D1D5DB;
-    }
-    
-    .report-actions {
-        display: flex;
-        gap: 0.5rem;
-    }
-    
-    .btn-small {
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
-    
-    .btn-view {
-        background: #74b9ff;
-        color: white;
-    }
-    
-    .btn-export {
-        background: #00b894;
-        color: white;
-    }
-    
-    .btn-small:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-    
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-    }
-    
-    .modal-content {
-        background-color: white;
-        margin: 5% auto;
-        padding: 2rem;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 600px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-    
-    .dark .modal-content {
-        background: #374151;
-    }
-    
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-    }
-    
-    .modal-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin: 0;
-    }
-    
-    .dark .modal-title {
-        color: #F9FAFB;
-    }
-    
-    .close {
-        color: #636e72;
-        font-size: 2rem;
-        font-weight: bold;
-        cursor: pointer;
-        border: none;
-        background: none;
-    }
-    
-    .close:hover {
-        color: #2d3436;
-    }
-    
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-        color: #2d3436;
-    }
-    
-    .dark .form-label {
-        color: #F9FAFB;
-    }
-    
-    .form-input, .form-select, .form-textarea {
-        width: 100%;
-        padding: 0.75rem;
-        border: 2px solid #ddd;
-        border-radius: 10px;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-    
-    .dark .form-input,
-    .dark .form-select,
-    .dark .form-textarea {
-        background: #4B5563;
-        color: #F9FAFB;
-        border-color: #6B7280;
-    }
-    
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-        border-color: #6C5CE7;
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
-    }
-    
-    .form-textarea {
-        min-height: 80px;
-        resize: vertical;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(45deg, #6C5CE7, #A29BFE);
-        color: white;
-        border: none;
-        padding: 0.75rem 1.5rem;
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        width: 100%;
-    }
-    
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
-    }
-    
-    /* Estilos para menú desplegable de exportación */
-    .export-dropdown {
-        position: relative;
-        display: inline-block;
-    }
-    
-    .export-menu {
-        display: none;
-        position: absolute;
-        background: white;
-        min-width: 120px;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        border-radius: 10px;
-        z-index: 1000;
-        top: 100%;
-        right: 0;
-        margin-top: 5px;
-        border: 1px solid #ddd;
-    }
-    
-    .export-menu.show {
-        display: block;
-        animation: fadeInDown 0.3s ease;
-    }
-    
-    .export-option {
-        display: block;
-        padding: 10px 15px;
-        text-decoration: none;
-        color: #2d3436;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        margin: 3px;
-    }
-    
-    .export-option:hover {
-        background: #6C5CE7;
-        color: white;
-        text-decoration: none;
-    }
-    
-    .export-option i {
-        margin-right: 8px;
-        width: 16px;
-    }
-    
-    .dropdown-toggle i.fa-chevron-down {
-        font-size: 0.8rem;
-        margin-left: 5px;
-        transition: transform 0.3s ease;
-    }
-    
-    .dropdown-toggle.active i.fa-chevron-down {
-        transform: rotate(180deg);
-    }
-    
-    /* Sistema de notificaciones */
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #00b894, #00cec9);
-        color: white;
-        padding: 15px 20px;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        z-index: 9999;
-        transform: translateX(400px);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        max-width: 300px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .notification.show {
-        transform: translateX(0);
-    }
-    
-    .notification.success {
-        background: linear-gradient(135deg, #00b894, #00cec9);
-    }
-    
-    .notification.warning {
-        background: linear-gradient(135deg, #fdcb6e, #e17055);
-    }
-    
-    .notification.error {
-        background: linear-gradient(135deg, #e17055, #d63031);
-    }
-    
-    .notification .notification-icon {
-        font-size: 1.2rem;
-        animation: pulse 2s infinite;
-    }
-    
-    .notification .notification-text {
-        flex: 1;
-        font-weight: 500;
-    }
-    
-    .notification .notification-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.2rem;
-        cursor: pointer;
-        opacity: 0.8;
-        transition: opacity 0.3s ease;
-    }
-    
-    .notification .notification-close:hover {
-        opacity: 1;
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translate3d(0, -20px, 0);
-        }
-        to {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
-    }
-    
-    @keyframes pulse {
-        0%, 100% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.1);
-        }
-    }
-    
-    /* Indicador de descarga */
-    .download-indicator {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #6C5CE7, #8B5CF6);
-        color: white;
-        padding: 15px 20px;
-        border-radius: 50px;
-        box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
-        z-index: 9999;
-        transform: translateY(100px);
-        transition: all 0.4s ease;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 500;
-    }
-    
-    .download-indicator.show {
-        transform: translateY(0);
-    }
-    
-    .download-indicator .spinner {
-        width: 20px;
-        height: 20px;
-        border: 2px solid rgba(255,255,255,0.3);
-        border-radius: 50%;
-        border-top-color: white;
-        animation: spin 1s ease-in-out infinite;
-    }
-    
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-    
-    @media (max-width: 768px) {
-        .main-header {
-            flex-direction: column;
-            text-align: center;
-        }
-        
-        .filters-section {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        
-        .filter-group {
-            width: 100%;
-        }
-        
-        .stats-grid, .charts-grid, .actions-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .chart-container {
-            height: 250px;
-        }
-    }
-</style>
-{% endblock %}
+{% block title %}Análisis y Reportes | FinGest{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="main-header">
-        <div>
-            <h1 class="main-title">Análisis y Reportes</h1>
-            <p class="main-subtitle">Dashboard completo de análisis financiero con gráficos interactivos</p>
-        </div>
-        <div>
-            <button class="action-btn" onclick="openModal('generateReportModal')">
-                <i class="fas fa-chart-line me-2"></i>Generar Reporte
-            </button>
-        </div>
+<div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Análisis y Reportes</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Visualiza y analiza tu situación financiera</p>
     </div>
-    
-    <!-- Filtros -->
-    <div class="filters-section">
-        <div class="filter-group">
-            <label class="filter-label">Período</label>
-            <select id="periodoSelect" class="filter-select">
-                <option value="semana_actual" {% if periodo_actual == 'semana_actual' %}selected{% endif %}>Esta semana</option>
-                <option value="mes_actual" {% if periodo_actual == 'mes_actual' %}selected{% endif %}>Este mes</option>
-                <option value="trimestre_actual" {% if periodo_actual == 'trimestre_actual' %}selected{% endif %}>Este trimestre</option>
-                <option value="año_actual" {% if periodo_actual == 'año_actual' %}selected{% endif %}>Este año</option>
-                <option value="ultimos_30_dias" {% if periodo_actual == 'ultimos_30_dias' %}selected{% endif %}>Últimos 30 días</option>
-                <option value="ultimos_90_dias" {% if periodo_actual == 'ultimos_90_dias' %}selected{% endif %}>Últimos 90 días</option>
-                <option value="personalizado">Personalizado</option>
-            </select>
-        </div>
-        
-        <div class="filter-group" id="fechaPersonalizadaGroup" style="display: none;">
-            <label class="filter-label">Fecha Inicio</label>
-            <input type="date" id="fechaInicio" class="filter-input" value="{{ fecha_inicio }}">
-        </div>
-        
-        <div class="filter-group" id="fechaPersonalizadaGroup2" style="display: none;">
-            <label class="filter-label">Fecha Fin</label>
-            <input type="date" id="fechaFin" class="filter-input" value="{{ fecha_fin }}">
-        </div>
-        
-        <div class="filter-group">
-            <button class="btn-apply-filters" onclick="aplicarFiltros()">
-                <i class="fas fa-filter me-2"></i>Aplicar Filtros
-            </button>
-        </div>
-    </div>
-    
-    <!-- Estadísticas Generales -->
-    <div class="stats-grid">
-        <div class="stat-card balance">
-            <h2 class="stat-value" style="color: #6C5CE7;">${{ stats.balance_total|floatformat:2 }}</h2>
-            <p class="stat-label">Balance Total</p>
-            <p class="stat-sublabel">En {{ stats.num_cuentas }} cuenta{{ stats.num_cuentas|pluralize }}</p>
-        </div>
-        
-        <div class="stat-card ingresos">
-            <h2 class="stat-value" style="color: #00b894;">${{ stats.ingresos_periodo|floatformat:2 }}</h2>
-            <p class="stat-label">Ingresos del Período</p>
-            <p class="stat-sublabel">{{ stats.total_transacciones }} transaccion{{ stats.total_transacciones|pluralize:"es" }}</p>
-        </div>
-        
-        <div class="stat-card gastos">
-            <h2 class="stat-value" style="color: #e17055;">${{ stats.gastos_periodo|floatformat:2 }}</h2>
-            <p class="stat-label">Gastos del Período</p>
-            <p class="stat-sublabel">Promedio: ${{ stats.promedio_transaccion|floatformat:2 }}</p>
-        </div>
-        
-        <div class="stat-card transacciones">
-            <h2 class="stat-value" style="color: #74b9ff;">${{ stats.total_subcuentas|floatformat:2 }}</h2>
-            <p class="stat-label">En Subcuentas</p>
-            <p class="stat-sublabel">{{ stats.num_subcuentas }} subcuenta{{ stats.num_subcuentas|pluralize }}</p>
-        </div>
-    </div>
-    
-    <!-- Gráficos -->
-    <div class="charts-grid">
-        <div class="chart-card">
-            <h3 class="chart-title">Gastos por Categoría</h3>
-            <div class="chart-container">
-                <canvas id="gastosChart"></canvas>
-            </div>
-        </div>
-        
-        <div class="chart-card">
-            <h3 class="chart-title">Ingresos vs Egresos</h3>
-            <div class="chart-container">
-                <canvas id="ingresosEgresosChart"></canvas>
-            </div>
-        </div>
-        
-        <div class="chart-card">
-            <h3 class="chart-title">Distribución de Subcuentas</h3>
-            <div class="chart-container">
-                <canvas id="subcuentasChart"></canvas>
-                <div id="subcuentasNoData" style="display: none; text-align: center; padding: 40px; color: #666;">
-                    <i class="fas fa-chart-pie fa-3x mb-3" style="opacity: 0.3;"></i>
-                    <p>No hay datos de subcuentas para mostrar</p>
-                    <p><small>Crea tu primera subcuenta para ver la distribución aquí</small></p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="chart-card">
-            <h3 class="chart-title">Flujo de Efectivo Mensual</h3>
-            <div class="chart-container">
-                <canvas id="flujoChart"></canvas>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Acciones Rápidas -->
-    <div class="actions-section">
-        <h3 class="actions-title">Acciones Rápidas</h3>
-        <div class="actions-grid">
-            <button class="action-btn" onclick="generarReporteRapido('gastos_categoria')">
-                <i class="fas fa-chart-pie me-2"></i>Reporte de Gastos
-            </button>
-            <button class="action-btn secondary" onclick="generarReporteRapido('ingresos_egresos')">
-                <i class="fas fa-chart-bar me-2"></i>Ingresos vs Egresos
-            </button>
-            <button class="action-btn success" onclick="generarReporteRapido('subcuentas_analisis')">
-                <i class="fas fa-layer-group me-2"></i>Análisis Subcuentas
-            </button>
-            <button class="action-btn warning" onclick="generarReporteRapido('balance_general')">
-                <i class="fas fa-balance-scale me-2"></i>Balance General
-            </button>
-        </div>
-    </div>
-    
-    <!-- Reportes Recientes -->
-    <div class="recent-reports">
-        <h3 class="reports-title">Reportes Recientes</h3>
-        {% if reportes_recientes %}
-            {% for reporte in reportes_recientes %}
-            <div class="report-item">
-                <div class="report-info">
-                    <h4>{{ reporte.titulo }}</h4>
-                    <small>{{ reporte.get_tipo_reporte_display }} - {{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</small>
-                </div>
-                <div class="report-actions">
-                    <a href="{% url 'analisis_reportes:ver_reporte' reporte.id %}" class="btn-small btn-view">
-                        <i class="fas fa-eye"></i> Ver
-                    </a>
-                    <div class="export-dropdown">
-                        <button class="btn-small btn-export dropdown-toggle" onclick="toggleExportMenu({{ reporte.id }})">
-                            <i class="fas fa-download"></i> Exportar <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="export-menu" id="exportMenu{{ reporte.id }}">
-                            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'pdf' %}" class="export-option" onclick="showDownloadNotification('PDF')">
-                                <i class="fas fa-file-pdf"></i> PDF
-                            </a>
-                            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'excel' %}" class="export-option" onclick="showDownloadNotification('Excel')">
-                                <i class="fas fa-file-excel"></i> Excel
-                            </a>
-                            <a href="{% url 'analisis_reportes:exportar_reporte' reporte.id 'csv' %}" class="export-option" onclick="showDownloadNotification('CSV')">
-                                <i class="fas fa-file-csv"></i> CSV
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p style="color: #636e72; text-align: center; padding: 2rem;">
-                No hay reportes generados aún. ¡Crea tu primer reporte!
-            </p>
-        {% endif %}
-    </div>
-</div>
-
-<!-- Modal para Generar Reporte -->
-<div id="generateReportModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">Generar Nuevo Reporte</h2>
-            <button class="close" onclick="closeModal('generateReportModal')">&times;</button>
-        </div>
-        <form method="post" action="{% url 'analisis_reportes:generar_reporte' %}">
-            {% csrf_token %}
-            <div class="form-group">
-                <label class="form-label">Tipo de Reporte</label>
-                <select name="tipo_reporte" class="form-select" required>
-                    <option value="gastos_categoria">Gastos por Categoría</option>
-                    <option value="ingresos_egresos">Ingresos vs Egresos</option>
-                    <option value="subcuentas_analisis">Análisis de Subcuentas</option>
-                    <option value="balance_general">Balance General</option>
-                    <option value="flujo_efectivo">Flujo de Efectivo</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Título del Reporte</label>
-                <input type="text" name="titulo" class="form-input" placeholder="Ej: Análisis Mensual Diciembre 2024" required>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Descripción (Opcional)</label>
-                <textarea name="descripcion" class="form-textarea" placeholder="Describe el propósito de este reporte..."></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Fecha Inicio</label>
-                <input type="date" name="fecha_inicio" class="form-input" value="{{ fecha_inicio }}" required>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Fecha Fin</label>
-                <input type="date" name="fecha_fin" class="form-input" value="{{ fecha_fin }}" required>
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label">Exportar inmediatamente como:</label>
-                <select name="formato_export" class="form-select">
-                    <option value="">No exportar ahora</option>
-                    <option value="pdf">PDF</option>
-                    <option value="excel">Excel</option>
-                    <option value="csv">CSV</option>
-                </select>
-            </div>
-            
-            <button type="submit" class="btn-primary">
-                <i class="fas fa-chart-line me-2"></i>Generar Reporte
-            </button>
-        </form>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-<script>
-// Registrar plugins
-Chart.register(ChartDataLabels);
-
-// Datos de los gráficos desde Django
-let gastosData = {{ gastos_categoria|safe }};
-let ingresosEgresosData = {{ ingresos_egresos|safe }};
-let subcuentasData = {{ subcuentas_data|safe }};
-let flujoData = {{ flujo_mensual|safe }};
-
-// DEBUG: Verificar inmediatamente los datos cargados
-console.log('🔍 DATOS CARGADOS DESDE DJANGO:');
-console.log('gastosData:', gastosData);
-console.log('ingresosEgresosData:', ingresosEgresosData);
-console.log('subcuentasData:', subcuentasData);
-console.log('flujoData:', flujoData);
-
-// Verificación específica para subcuentas
-if (subcuentasData) {
-    console.log('📋 VERIFICACIÓN SUBCUENTAS:');
-    console.log('- Tipo:', typeof subcuentasData);
-    console.log('- Es array:', Array.isArray(subcuentasData));
-    console.log('- Tiene labels:', 'labels' in subcuentasData);
-    console.log('- Tiene saldos:', 'saldos' in subcuentasData);
-    if (subcuentasData.labels) {
-        console.log('- Cantidad labels:', subcuentasData.labels.length);
-        console.log('- Labels:', subcuentasData.labels);
-    }
-    if (subcuentasData.saldos) {
-        console.log('- Cantidad saldos:', subcuentasData.saldos.length);
-        console.log('- Saldos:', subcuentasData.saldos);
-    }
-} else {
-    console.error('❌ subcuentasData es null, undefined o vacío');
-}
-
-// Configuración de colores mejorada
-const colors = {
-    primary: '#6C5CE7',
-    success: '#00b894',
-    danger: '#e17055',
-    warning: '#fdcb6e',
-    info: '#74b9ff',
-    secondary: '#636e72',
-    palette: [
-        '#6C5CE7', '#00b894', '#e17055', '#fdcb6e', '#74b9ff', '#636e72',
-        '#a29bfe', '#fd79a8', '#55efc4', '#fab1a0', '#ff7675', '#fdcb6e',
-        '#6c5ce7', '#a29bfe', '#fd79a8', '#fdcb6e', '#00b894', '#00cec9'
-    ]
-};
-
-// Variables globales para los gráficos
-let gastosChart, ingresosEgresosChart, subcuentasChart, flujoChart;
-
-// Configuración global de Chart.js
-Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-Chart.defaults.font.size = 12;
-Chart.defaults.color = '#2d3436';
-
-// Función para crear gráfico de gastos por categoría mejorado
-function crearGraficoGastos() {
-    const ctx = document.getElementById('gastosChart');
-    
-    gastosChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: gastosData.labels,
-            datasets: [{
-                data: gastosData.data,
-                backgroundColor: colors.palette.slice(0, gastosData.labels.length),
-                borderWidth: 0,
-                hoverBorderWidth: 3,
-                hoverBorderColor: '#fff',
-                hoverOffset: 15,
-                cutout: '60%'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                intersect: false
-            },
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        font: {
-                            size: 11,
-                            weight: '500'
-                        },
-                        generateLabels: function(chart) {
-                            const data = chart.data;
-                            if (data.labels.length && data.datasets.length) {
-                                return data.labels.map((label, i) => {
-                                    const meta = chart.getDatasetMeta(0);
-                                    const style = meta.controller.getStyle(i);
-                                    const value = data.datasets[0].data[i];
-                                    const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    
-                                    return {
-                                        text: `${label} (${percentage}%)`,
-                                        fillStyle: style.backgroundColor,
-                                        strokeStyle: style.borderColor,
-                                        lineWidth: style.borderWidth,
-                                        pointStyle: 'circle',
-                                        hidden: isNaN(data.datasets[0].data[i]) || meta.data[i].hidden,
-                                        index: i
-                                    };
-                                });
-                            }
-                            return [];
-                        }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    borderColor: colors.primary,
-                    borderWidth: 1,
-                    cornerRadius: 10,
-                    displayColors: true,
-                    callbacks: {
-                        label: function(context) {
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = ((context.parsed / total) * 100).toFixed(1);
-                            return `${context.label}: $${context.parsed.toLocaleString()} (${percentage}%)`;
-                        }
-                    }
-                },
-                datalabels: {
-                    display: function(context) {
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = (context.parsed / total) * 100;
-                        return percentage > 5; // Solo mostrar si es mayor al 5%
-                    },
-                    color: '#fff',
-                    font: {
-                        weight: 'bold',
-                        size: 11
-                    },
-                    formatter: function(value, context) {
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = ((value / total) * 100).toFixed(1);
-                        return `${percentage}%`;
-                    }
-                }
-            },
-            animation: {
-                animateRotate: true,
-                duration: 1500,
-                easing: 'easeInOutCubic'
-            }
-        }
-    });
-}
-
-// Función para crear gráfico de ingresos vs egresos mejorado
-function crearGraficoIngresosEgresos() {
-    const ctx = document.getElementById('ingresosEgresosChart');
-    
-    ingresosEgresosChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ingresosEgresosData.labels,
-            datasets: [{
-                label: 'Monto',
-                data: ingresosEgresosData.data,
-                backgroundColor: [
-                    colors.success + '90',
-                    colors.danger + '90'
-                ],
-                borderColor: [colors.success, colors.danger],
-                borderWidth: 2,
-                borderRadius: 12,
-                borderSkipped: false,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    borderColor: colors.primary,
-                    borderWidth: 1,
-                    cornerRadius: 10,
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: $${context.parsed.y.toLocaleString()}`;
-                        }
-                    }
-                },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'top',
-                    color: '#2d3436',
-                    font: {
-                        weight: 'bold',
-                        size: 12
-                    },
-                    formatter: function(value) {
-                        return '$' + value.toLocaleString();
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return '$' + value.toLocaleString();
-                        },
-                        font: {
-                            size: 11
-                        }
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 11,
-                            weight: '500'
-                        }
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutCubic'
-            }
-        }
-    });
-}
-
-// Función para crear gráfico de subcuentas mejorado
-function crearGraficoSubcuentas() {
-    console.log('=== DEBUG GRÁFICO SUBCUENTAS ===');
-    console.log('subcuentasData:', subcuentasData);
-    
-    const ctx = document.getElementById('subcuentasChart');
-    const noDataDiv = document.getElementById('subcuentasNoData');
-    console.log('Canvas element:', ctx);
-    
-    if (!subcuentasData || !subcuentasData.labels || subcuentasData.labels.length === 0) {
-        console.log('❌ No hay datos de subcuentas o están vacíos');
-        ctx.style.display = 'none';
-        noDataDiv.style.display = 'block';
-        return;
-    }
-    
-    // Verificar si hay datos válidos
-    const hasValidData = subcuentasData.saldos.some(saldo => saldo > 0);
-    if (!hasValidData) {
-        console.log('❌ No hay saldos válidos para mostrar');
-        ctx.style.display = 'none';
-        noDataDiv.style.display = 'block';
-        noDataDiv.innerHTML = `
-            <i class="fas fa-chart-pie fa-3x mb-3" style="opacity: 0.3;"></i>
-            <p>Todas las subcuentas tienen saldo $0</p>
-            <p><small>Agrega dinero a tus subcuentas para ver la distribución</small></p>
-        `;
-        return;
-    }
-    
-    // Si llegamos aquí, hay datos válidos
-    console.log('✅ Creando gráfico con datos válidos');
-    console.log('Labels:', subcuentasData.labels);
-    console.log('Saldos:', subcuentasData.saldos);
-    
-    ctx.style.display = 'block';
-    noDataDiv.style.display = 'none';
-    
-    subcuentasChart = new Chart(ctx, {
-        type: 'polarArea',
-        data: {
-            labels: subcuentasData.labels,
-            datasets: [{
-                data: subcuentasData.saldos,
-                backgroundColor: colors.palette.slice(0, subcuentasData.labels.length).map(color => color + '70'),
-                borderColor: colors.palette.slice(0, subcuentasData.labels.length),
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 15,
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        font: {
-                            size: 11
-                        }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    borderColor: colors.primary,
-                    borderWidth: 1,
-                    cornerRadius: 10,
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: $${context.parsed.r.toLocaleString()}`;
-                        }
-                    }
-                },
-                datalabels: {
-                    display: function(context) {
-                        return context.parsed.r > 0;
-                    },
-                    color: '#fff',
-                    font: {
-                        weight: 'bold',
-                        size: 10
-                    },
-                    formatter: function(value) {
-                        return '$' + value.toLocaleString();
-                    }
-                }
-            },
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    ticks: {
-                        display: false
-                    },
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)'
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutCubic'
-            }
-        }
-    });
-}
-
-// Función para crear gráfico de flujo mensual mejorado
-function crearGraficoFlujo() {
-    const ctx = document.getElementById('flujoChart');
-    
-    flujoChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: flujoData.labels,
-            datasets: [{
-                label: 'Ingresos',
-                data: flujoData.ingresos,
-                borderColor: colors.success,
-                backgroundColor: colors.success + '20',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: colors.success,
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }, {
-                label: 'Egresos',
-                data: flujoData.egresos,
-                borderColor: colors.danger,
-                backgroundColor: colors.danger + '20',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: colors.danger,
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        font: {
-                            size: 12,
-                            weight: '500'
-                        },
-                        padding: 20
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    borderColor: colors.primary,
-                    borderWidth: 1,
-                    cornerRadius: 10,
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: $${context.parsed.y.toLocaleString()}`;
-                        }
-                    }
-                },
-                datalabels: {
-                    display: false // Desactivar para líneas, puede ser muy cluttered
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.1)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return '$' + value.toLocaleString();
-                        },
-                        font: {
-                            size: 11
-                        }
-                    }
-                },
-                x: {
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    ticks: {
-                        font: {
-                            size: 11
-                        }
-                    }
-                }
-            },
-            animation: {
-                duration: 1500,
-                easing: 'easeInOutCubic'
-            }
-        }
-    });
-}
-
-// Inicializar todos los gráficos cuando se carga la página
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 DOM Content Loaded - Inicializando gráficos...');
-    
-    // Verificar que Chart.js esté disponible
-    if (typeof Chart === 'undefined') {
-        console.error('❌ Chart.js no está cargado!');
-        return;
-    }
-    console.log('✅ Chart.js está disponible');
-    
-    // Verificar que los datos estén disponibles
-    console.log('📊 Verificando datos...');
-    console.log('gastosData:', typeof gastosData !== 'undefined' ? gastosData : 'NO DEFINIDO');
-    console.log('ingresosEgresosData:', typeof ingresosEgresosData !== 'undefined' ? ingresosEgresosData : 'NO DEFINIDO');
-    console.log('subcuentasData:', typeof subcuentasData !== 'undefined' ? subcuentasData : 'NO DEFINIDO');
-    console.log('flujoData:', typeof flujoData !== 'undefined' ? flujoData : 'NO DEFINIDO');
-    
-    try {
-        console.log('🔵 Creando gráfico de gastos...');
-        crearGraficoGastos();
-        console.log('✅ Gráfico de gastos creado');
-    } catch (error) {
-        console.error('❌ Error creando gráfico de gastos:', error);
-    }
-    
-    try {
-        console.log('🟢 Creando gráfico de ingresos vs egresos...');
-        crearGraficoIngresosEgresos();
-        console.log('✅ Gráfico de ingresos vs egresos creado');
-    } catch (error) {
-        console.error('❌ Error creando gráfico de ingresos vs egresos:', error);
-    }
-    
-    try {
-        console.log('🟡 Creando gráfico de subcuentas...');
-        crearGraficoSubcuentas();
-        console.log('✅ Gráfico de subcuentas creado');
-    } catch (error) {
-        console.error('❌ Error creando gráfico de subcuentas:', error);
-    }
-    
-    try {
-        console.log('🟣 Creando gráfico de flujo...');
-        crearGraficoFlujo();
-        console.log('✅ Gráfico de flujo creado');
-    } catch (error) {
-        console.error('❌ Error creando gráfico de flujo:', error);
-    }
-    
-    console.log('🎯 Inicialización de gráficos completada');
-});
-
-// Función mejorada para aplicar filtros con AJAX
-function aplicarFiltros() {
-    const periodo = document.getElementById('periodoSelect').value;
-    let url = `{% url 'analisis_reportes:reports' %}?periodo=${periodo}`;
-    
-    if (periodo === 'personalizado') {
-        const fechaInicio = document.getElementById('fechaInicio').value;
-        const fechaFin = document.getElementById('fechaFin').value;
-        
-        if (!fechaInicio || !fechaFin) {
-            showNotification('Por favor selecciona fechas de inicio y fin', 'warning');
-            return;
-        }
-        
-        if (new Date(fechaInicio) > new Date(fechaFin)) {
-            showNotification('La fecha de inicio no puede ser posterior a la fecha de fin', 'error');
-            return;
-        }
-        
-        url += `&fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`;
-    }
-    
-    // Mostrar indicador de carga
-    showLoadingIndicator(true);
-    
-    // Hacer petición AJAX
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Datos recibidos:', data);
-        
-        // Actualizar estadísticas
-        actualizarEstadisticas(data.stats);
-        
-        // Actualizar datos globales
-        gastosData = data.gastos_categoria;
-        ingresosEgresosData = data.ingresos_egresos;
-        subcuentasData = data.subcuentas_data;
-        flujoData = data.flujo_mensual;
-        
-        // Actualizar gráficos
-        actualizarGraficos(data);
-        
-        // Mostrar notificación de éxito
-        showNotification('Datos actualizados correctamente', 'success');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Error al actualizar los datos', 'error');
-    })
-    .finally(() => {
-        showLoadingIndicator(false);
-    });
-}
-
-// Función mejorada para actualizar estadísticas
-function actualizarEstadisticas(stats) {
-    const animateValue = (element, start, end, duration) => {
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            const value = progress * (end - start) + start;
-            element.textContent = '$' + value.toLocaleString('es-MX', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            });
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            }
-        };
-        window.requestAnimationFrame(step);
-    };
-
-    // Obtener valores actuales para animación
-    const balanceElement = document.querySelector('.stat-card.balance .stat-value');
-    const ingresosElement = document.querySelector('.stat-card.ingresos .stat-value');
-    const gastosElement = document.querySelector('.stat-card.gastos .stat-value');
-    const subcuentasElement = document.querySelector('.stat-card.transacciones .stat-value');
-
-    const currentBalance = parseFloat(balanceElement.textContent.replace(/[^0-9.-]/g, ''));
-    const currentIngresos = parseFloat(ingresosElement.textContent.replace(/[^0-9.-]/g, ''));
-    const currentGastos = parseFloat(gastosElement.textContent.replace(/[^0-9.-]/g, ''));
-    const currentSubcuentas = parseFloat(subcuentasElement.textContent.replace(/[^0-9.-]/g, ''));
-
-    // Animar valores
-    animateValue(balanceElement, currentBalance || 0, stats.balance_total, 1000);
-    animateValue(ingresosElement, currentIngresos || 0, stats.ingresos_periodo, 1000);
-    animateValue(gastosElement, currentGastos || 0, stats.gastos_periodo, 1000);
-    animateValue(subcuentasElement, currentSubcuentas || 0, stats.total_subcuentas, 1000);
-
-    // Actualizar sublabels
-    document.querySelector('.stat-card.balance .stat-sublabel').textContent = `En ${stats.num_cuentas} cuenta${stats.num_cuentas !== 1 ? 's' : ''}`;
-    document.querySelector('.stat-card.ingresos .stat-sublabel').textContent = `${stats.total_transacciones} transaccion${stats.total_transacciones !== 1 ? 'es' : ''}`;
-    document.querySelector('.stat-card.gastos .stat-sublabel').textContent = `Promedio: $${stats.promedio_transaccion.toLocaleString()}`;
-    document.querySelector('.stat-card.transacciones .stat-sublabel').textContent = `${stats.num_subcuentas} subcuenta${stats.num_subcuentas !== 1 ? 's' : ''}`;
-}
-
-// Función mejorada para actualizar todos los gráficos
-function actualizarGraficos(data) {
-    // Destruir gráficos existentes antes de recrearlos
-    if (gastosChart) {
-        gastosChart.destroy();
-    }
-    if (ingresosEgresosChart) {
-        ingresosEgresosChart.destroy();
-    }
-    if (subcuentasChart) {
-        subcuentasChart.destroy();
-    }
-    if (flujoChart) {
-        flujoChart.destroy();
-    }
-
-    // Recrear gráficos con datos actualizados
-    setTimeout(() => {
-        crearGraficoGastos();
-        crearGraficoIngresosEgresos();
-        crearGraficoSubcuentas();
-        crearGraficoFlujo();
-    }, 100);
-}
-
-// Funciones de UI mejoradas
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.style.display = 'block';
-    modal.style.opacity = '0';
-    modal.style.transform = 'scale(0.9)';
-    
-    setTimeout(() => {
-        modal.style.transition = 'all 0.3s ease';
-        modal.style.opacity = '1';
-        modal.style.transform = 'scale(1)';
-    }, 10);
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.style.transition = 'all 0.3s ease';
-    modal.style.opacity = '0';
-    modal.style.transform = 'scale(0.9)';
-    
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
-}
-
-// Función mejorada para mostrar/ocultar indicador de carga
-function showLoadingIndicator(show) {
-    const button = document.querySelector('.btn-apply-filters');
-    const icon = button.querySelector('i');
-    
-    if (show) {
-        button.disabled = true;
-        button.style.opacity = '0.7';
-        icon.className = 'fas fa-spinner fa-spin me-2';
-        button.innerHTML = icon.outerHTML + 'Actualizando...';
-    } else {
-        button.disabled = false;
-        button.style.opacity = '1';
-        icon.className = 'fas fa-filter me-2';
-        button.innerHTML = icon.outerHTML + 'Aplicar Filtros';
-    }
-}
-
-// Funciones para menú desplegable de exportación
-function toggleExportMenu(reporteId) {
-    const menu = document.getElementById(`exportMenu${reporteId}`);
-    const button = menu.previousElementSibling;
-    
-    // Cerrar otros menús abiertos
-    document.querySelectorAll('.export-menu.show').forEach(m => {
-        if (m !== menu) {
-            m.classList.remove('show');
-            m.previousElementSibling.classList.remove('active');
-        }
-    });
-    
-    // Toggle current menu
-    menu.classList.toggle('show');
-    button.classList.toggle('active');
-}
-
-// Sistema de notificaciones mejorado
-function showNotification(message, type = 'success', duration = 4000) {
-    // Crear elemento de notificación
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    
-    const iconClass = {
-        'success': 'fas fa-check-circle',
-        'warning': 'fas fa-exclamation-triangle',
-        'error': 'fas fa-times-circle',
-        'info': 'fas fa-info-circle'
-    }[type] || 'fas fa-check-circle';
-    
-    notification.innerHTML = `
-        <i class="${iconClass} notification-icon"></i>
-        <span class="notification-text">${message}</span>
-        <button class="notification-close" onclick="hideNotification(this.parentElement)">
-            <i class="fas fa-times"></i>
+    <div class="flex flex-col sm:flex-row w-full sm:w-auto items-stretch sm:items-center gap-3">
+      <!-- Dropdown para exportar -->
+      <div class="relative">
+        <button id="exportDropdown" class="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Exportar
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
         </button>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Mostrar notificación con animación
-    setTimeout(() => {
-        notification.classList.add('show');
-        notification.style.animation = 'slideInRight 0.4s ease';
-    }, 100);
-    
-    // Auto-ocultar después del tiempo especificado
-    setTimeout(() => hideNotification(notification), duration);
-}
+        <div id="exportMenu" class="absolute left-0 sm:right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10 hidden">
+          <a href="{% url 'analisis_reportes:exportar_pdf' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg">
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            Exportar a PDF
+          </a>
+          <a href="{% url 'analisis_reportes:exportar_excel' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-lg">
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Exportar a Excel
+          </a>
+        </div>
+      </div>
+      <button onclick="window.location.reload()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Actualizar
+      </button>
+    </div>
+  </div>
 
-function hideNotification(notification) {
-    notification.style.animation = 'slideOutRight 0.4s ease';
-    notification.classList.remove('show');
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.parentElement.removeChild(notification);
-        }
-    }, 400);
-}
-
-// Indicador de descarga mejorado
-function showDownloadIndicator(format) {
-    const indicator = document.createElement('div');
-    indicator.className = 'download-indicator';
-    indicator.innerHTML = `
-        <div class="spinner"></div>
-        <span>Preparando ${format}...</span>
-    `;
-    
-    document.body.appendChild(indicator);
-    
-    setTimeout(() => indicator.classList.add('show'), 100);
-    
-    // Simular tiempo de descarga
-    setTimeout(() => {
-        indicator.innerHTML = `
-            <i class="fas fa-check"></i>
-            <span>${format} listo</span>
-        `;
+  <!-- Filtros Mejorados -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700 mb-6">
+    <form method="GET" class="space-y-4">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"/>
+          </svg>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filtros:</span>
+        </div>
         
-        setTimeout(() => {
-            indicator.classList.remove('show');
-            setTimeout(() => {
-                if (indicator.parentElement) {
-                    indicator.parentElement.removeChild(indicator);
-                }
-            }, 400);
-        }, 2000);
-    }, 1500);
-}
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
+          <!-- Período -->
+          <select name="periodo" class="w-full sm:w-48 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+            <option value="mes_actual" {% if periodo_actual == 'mes_actual' %}selected{% endif %}>Este mes</option>
+            <option value="ultimo_mes" {% if periodo_actual == 'ultimo_mes' %}selected{% endif %}>Mes pasado</option>
+            <option value="trimestre" {% if periodo_actual == 'trimestre' %}selected{% endif %}>Último trimestre</option>
+            <option value="ano" {% if periodo_actual == 'ano' %}selected{% endif %}>Este año</option>
+            <option value="personalizado" {% if periodo_actual == 'personalizado' %}selected{% endif %}>Período personalizado</option>
+          </select>
 
-// Función para mostrar notificación de descarga
-function showDownloadNotification(format) {
-    showDownloadIndicator(format);
-    showNotification(`Descargando reporte en formato ${format}...`, 'info', 3000);
-    
-    // Cerrar menú desplegable
-    document.querySelectorAll('.export-menu.show').forEach(menu => {
-        menu.classList.remove('show');
-        menu.previousElementSibling.classList.remove('active');
-    });
-}
+          <!-- Cuentas -->
+          {% if cuentas %}
+          <select name="cuenta" class="w-full sm:w-48 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+            <option value="">Todas las cuentas</option>
+            {% for cuenta in cuentas %}
+            <option value="{{ cuenta.id }}">{{ cuenta.nombre }}</option>
+            {% endfor %}
+          </select>
+          {% endif %}
 
-// Mejorar la función de generar reporte rápido con feedback
-function generarReporteRapido(tipo) {
-    // Mostrar notificación de inicio
-    showNotification('Generando reporte...', 'info', 2000);
-    
-    // Mostrar indicador de carga
-    showDownloadIndicator('PDF');
-    
-    // Crear un formulario temporal para enviar los datos
-    const form = document.createElement('form');
-    form.method = 'post';
-    form.action = '{% url "analisis_reportes:generar_reporte" %}';
-    
-    // Agregar CSRF token
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    form.innerHTML = `
-        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
-        <input type="hidden" name="tipo_reporte" value="${tipo}">
-        <input type="hidden" name="titulo" value="Reporte ${tipo} - ${new Date().toLocaleDateString()}">
-        <input type="hidden" name="fecha_inicio" value="{{ fecha_inicio }}">
-        <input type="hidden" name="fecha_fin" value="{{ fecha_fin }}">
-        <input type="hidden" name="formato_export" value="pdf">
-    `;
-    
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
-}
+          <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Aplicar filtros
+          </button>
+        </div>
+      </div>
+      
+      <!-- Fechas personalizadas (solo visible si se selecciona personalizado) -->
+      <div id="fechasPersonalizadas" class="grid grid-cols-1 sm:grid-cols-2 gap-3 {% if periodo_actual != 'personalizado' %}hidden{% endif %}">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha inicio:</label>
+          <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}" 
+                 class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha fin:</label>
+          <input type="date" name="fecha_fin" value="{{ fecha_fin }}" 
+                 class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+        </div>
+      </div>
+    </form>
+  </div>
 
-// Función para actualizar filtros dinámicamente
-function actualizarFiltros() {
-    const periodoSelect = document.getElementById('periodoSelect');
-    const fechaPersonalizadaGroup = document.getElementById('fechaPersonalizadaGroup');
-    const fechaPersonalizadaGroup2 = document.getElementById('fechaPersonalizadaGroup2');
-    
-    if (periodoSelect.value === 'personalizado') {
-        fechaPersonalizadaGroup.style.display = 'flex';
-        fechaPersonalizadaGroup2.style.display = 'flex';
-        
-        // Animar entrada
-        fechaPersonalizadaGroup.style.opacity = '0';
-        fechaPersonalizadaGroup2.style.opacity = '0';
-        setTimeout(() => {
-            fechaPersonalizadaGroup.style.transition = 'opacity 0.3s ease';
-            fechaPersonalizadaGroup2.style.transition = 'opacity 0.3s ease';
-            fechaPersonalizadaGroup.style.opacity = '1';
-            fechaPersonalizadaGroup2.style.opacity = '1';
-        }, 50);
-    } else {
-        fechaPersonalizadaGroup.style.transition = 'opacity 0.3s ease';
-        fechaPersonalizadaGroup2.style.transition = 'opacity 0.3s ease';
-        fechaPersonalizadaGroup.style.opacity = '0';
-        fechaPersonalizadaGroup2.style.opacity = '0';
-        
-        setTimeout(() => {
-            fechaPersonalizadaGroup.style.display = 'none';
-            fechaPersonalizadaGroup2.style.display = 'none';
-        }, 300);
-    }
-}
+  <!-- Métricas principales -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+    <!-- Balance total -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between">
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Balance Total</p>
+          <p class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-words">${{ stats.balance_total|floatformat:0 }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Todas las cuentas</p>
+        </div>
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+          </svg>
+        </div>
+      </div>
+    </div>
 
-// Event listeners mejorados
+    <!-- Ingresos del período -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between">
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Ingresos</p>
+          <p class="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400 break-words">${{ stats.total_ingresos|floatformat:0 }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Período seleccionado</p>
+        </div>
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gastos del período -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between">
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Gastos</p>
+          <p class="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 break-words">${{ stats.total_egresos|floatformat:0 }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Período seleccionado</p>
+        </div>
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ahorro neto -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between">
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Ahorro Neto</p>
+          <p class="text-xl sm:text-2xl font-bold {% if stats.ahorro_neto >= 0 %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %} break-words">
+            {% if stats.ahorro_neto >= 0 %}+{% endif %} ${{ stats.ahorro_neto|floatformat:0 }}
+          </p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ingresos - Gastos</p>
+        </div>
+        <div class="w-10 h-10 sm:w-12 sm:h-12 {% if stats.ahorro_neto >= 0 %}bg-green-100 dark:bg-green-900/30{% else %}bg-red-100 dark:bg-red-900/30{% endif %} rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 {% if stats.ahorro_neto >= 0 %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos y análisis -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- Gráfico de ingresos vs gastos -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ingresos vs Gastos</h3>
+        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="h-64 sm:h-72 lg:h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-700/50 rounded-lg overflow-hidden">
+        <canvas id="ingresosGastosChart" class="max-w-full max-h-full"></canvas>
+      </div>
+    </div>
+
+    <!-- Distribución por categorías -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Gastos por Categoría</h3>
+        <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="h-64 sm:h-72 lg:h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-700/50 rounded-lg overflow-hidden">
+        <canvas id="categoriasChart" class="max-w-full max-h-full"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flujo mensual -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700 mb-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Flujo de Efectivo Mensual</h3>
+      <div class="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+        <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+        </svg>
+      </div>
+    </div>
+    <div class="h-64 sm:h-80 lg:h-96 bg-gray-50 dark:bg-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden">
+      <canvas id="flujoMensualChart" class="max-w-full max-h-full"></canvas>
+    </div>
+  </div>
+
+  <!-- Análisis detallado -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+    <!-- Top gastos -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Principales Gastos</h3>
+        <div class="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="space-y-3">
+        {% for gasto in stats.top_gastos|slice:":5" %}
+        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+          <div class="min-w-0 flex-1">
+            <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ gasto.nombre }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ gasto.fecha_movimiento|date:"j M" }}</p>
+          </div>
+          <p class="font-semibold text-sm text-red-600 dark:text-red-400 flex-shrink-0 ml-2">-${{ gasto.monto|floatformat:0 }}</p>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay gastos en este período</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Análisis de subcuentas -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Estado de Subcuentas</h3>
+        <div class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="space-y-3">
+        {% for subcuenta in stats.subcuentas_info|slice:":5" %}
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3 min-w-0 flex-1">
+            <div class="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0"></div>
+            <div class="min-w-0 flex-1">
+              <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ subcuenta.nombre }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ subcuenta.cuenta.nombre }}</p>
+            </div>
+          </div>
+          <p class="font-semibold text-sm text-gray-900 dark:text-white flex-shrink-0 ml-2">${{ subcuenta.saldo|floatformat:0 }}</p>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay subcuentas disponibles</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Resumen de metas -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Progreso de Metas</h3>
+        <div class="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="space-y-3">
+        {% for meta in stats.metas_progreso|slice:":3" %}
+        <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ meta.nombre }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">{{ meta.porcentaje_progreso|floatformat:1 }}%</p>
+          </div>
+          <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+            <div class="bg-yellow-500 h-2 rounded-full transition-all duration-300" style="width: {{ meta.porcentaje_progreso }}%"></div>
+          </div>
+          <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <span>${{ meta.monto_ahorrado|floatformat:0 }}</span>
+            <span>${{ meta.monto_objetivo|floatformat:0 }}</span>
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay metas creadas</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts para los gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Event listener para cambio de período
-    document.getElementById('periodoSelect').addEventListener('change', actualizarFiltros);
+    // Dropdown de exportar
+    const exportDropdown = document.getElementById('exportDropdown');
+    const exportMenu = document.getElementById('exportMenu');
     
-    // Event listener para aplicar filtros automáticamente en algunos casos
-    document.getElementById('periodoSelect').addEventListener('change', function() {
-        if (this.value !== 'personalizado') {
-            setTimeout(() => aplicarFiltros(), 500);
-        }
+    exportDropdown.addEventListener('click', function(e) {
+        e.preventDefault();
+        exportMenu.classList.toggle('hidden');
     });
     
-    // Event listeners para fechas personalizadas
-    document.getElementById('fechaInicio').addEventListener('change', function() {
-        if (document.getElementById('periodoSelect').value === 'personalizado' && 
-            document.getElementById('fechaFin').value) {
-            setTimeout(() => aplicarFiltros(), 500);
+    // Cerrar dropdown al hacer click fuera
+    document.addEventListener('click', function(e) {
+        if (!exportDropdown.contains(e.target) && !exportMenu.contains(e.target)) {
+            exportMenu.classList.add('hidden');
         }
     });
-    
-    document.getElementById('fechaFin').addEventListener('change', function() {
-        if (document.getElementById('periodoSelect').value === 'personalizado' && 
-            document.getElementById('fechaInicio').value) {
-            setTimeout(() => aplicarFiltros(), 500);
-        }
-    });
-});
 
-// Cerrar modal y menús desplegables al hacer clic fuera
-window.addEventListener('click', function(event) {
-    const modals = document.querySelectorAll('.modal');
-    modals.forEach(modal => {
-        if (event.target === modal) {
-            closeModal(modal.id);
-        }
-    });
+    // Mostrar/ocultar fechas personalizadas
+    const periodoSelect = document.querySelector('select[name="periodo"]');
+    const fechasPersonalizadas = document.getElementById('fechasPersonalizadas');
     
-    // Cerrar menús desplegables si se hace clic fuera
-    if (!event.target.closest('.export-dropdown')) {
-        document.querySelectorAll('.export-menu.show').forEach(menu => {
-            menu.classList.remove('show');
-            menu.previousElementSibling.classList.remove('active');
+    if (periodoSelect && fechasPersonalizadas) {
+        periodoSelect.addEventListener('change', function() {
+            if (this.value === 'personalizado') {
+                fechasPersonalizadas.classList.remove('hidden');
+            } else {
+                fechasPersonalizadas.classList.add('hidden');
+            }
         });
     }
+
+    // Configuración común para todos los gráficos
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 20,
+                    usePointStyle: true,
+                    font: {
+                        size: window.innerWidth < 640 ? 11 : 12
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    maxRotation: window.innerWidth < 640 ? 45 : 0,
+                    font: {
+                        size: window.innerWidth < 640 ? 10 : 11
+                    }
+                }
+            },
+            y: {
+                ticks: {
+                    font: {
+                        size: window.innerWidth < 640 ? 10 : 11
+                    }
+                }
+            }
+        }
+    };
+
+    // Gráfico de Ingresos vs Gastos
+    const ingresosGastosCtx = document.getElementById('ingresosGastosChart');
+    if (ingresosGastosCtx) {
+        const ingresosGastosData = {{ ingresos_egresos|safe }};
+        
+        new Chart(ingresosGastosCtx, {
+            type: 'bar',
+            data: {
+                labels: ingresosGastosData.labels || ['Sin datos'],
+                datasets: [{
+                    label: 'Ingresos',
+                    data: ingresosGastosData.ingresos || [0],
+                    backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 1
+                }, {
+                    label: 'Gastos',
+                    data: ingresosGastosData.gastos || [0],
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Gráfico de Categorías
+    const categoriasCtx = document.getElementById('categoriasChart');
+    if (categoriasCtx) {
+        const categoriasData = {{ gastos_categoria|safe }};
+        
+        new Chart(categoriasCtx, {
+            type: 'doughnut',
+            data: {
+                labels: categoriasData.labels || ['Sin datos'],
+                datasets: [{
+                    data: categoriasData.values || [1],
+                    backgroundColor: [
+                        '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6',
+                        '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f59e0b'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: window.innerWidth < 640 ? 11 : 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Gráfico de Flujo Mensual
+    const flujoMensualCtx = document.getElementById('flujoMensualChart');
+    if (flujoMensualCtx) {
+        const flujoMensualData = {{ flujo_mensual|safe }};
+        
+        new Chart(flujoMensualCtx, {
+            type: 'line',
+            data: {
+                labels: flujoMensualData.labels || ['Sin datos'],
+                datasets: [{
+                    label: 'Flujo Neto',
+                    data: flujoMensualData.values || [0],
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                elements: {
+                    point: {
+                        radius: 4,
+                        hoverRadius: 6
+                    }
+                }
+            }
+        });
+    }
+    
+    // Redimensionar gráficos cuando cambie el tamaño de la ventana
+    window.addEventListener('resize', function() {
+        Chart.helpers.each(Chart.instances, function(instance) {
+            instance.resize();
+        });
+    });
 });
-
-// Agregar animaciones CSS adicionales
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes slideOutRight {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-    }
-    
-    .chart-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .chart-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    }
-    
-    .stat-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.15);
-    }
-`;
-document.head.appendChild(style);
-
-// Función de depuración para verificar datos
-function debugChartData() {
-    console.log('=== DEBUG: Datos de Gráficos ===');
-    console.log('Gastos Data:', gastosData);
-    console.log('Ingresos/Egresos Data:', ingresosEgresosData);
-    console.log('Subcuentas Data:', subcuentasData);
-    console.log('Flujo Data:', flujoData);
-    console.log('===============================');
-}
-
-// Ejecutar debug si está en modo desarrollo
-if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    debugChartData();
-}
 </script>
 {% endblock %}

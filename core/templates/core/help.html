@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Ayuda - FinGest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            background: #fafbfc;
+            color: #0f172a;
+            line-height: 1.7;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+        
+        .content {
+            padding: 120px 0 80px;
+        }
+        
+        h1 {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0f172a 0%, #22c55e 50%, #3b82f6 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 18px;
+            margin-bottom: 48px;
+        }
+        
+        .section {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+        
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 20px 0 12px 0;
+        }
+        
+        p {
+            color: #475569;
+            margin-bottom: 16px;
+        }
+        
+        ul {
+            color: #475569;
+            padding-left: 20px;
+            margin-bottom: 16px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #22c55e;
+            margin: 20px 0;
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+            padding: 20px 0;
+        }
+        
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+        
+        .faq-question {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: color 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            color: #22c55e;
+        }
+        
+        .faq-answer {
+            color: #475569;
+            line-height: 1.6;
+        }
+        
+        .quick-action {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(59, 130, 246, 0.05));
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 16px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.15);
+        }
+        
+        .quick-action i {
+            font-size: 24px;
+            color: #22c55e;
+            margin-bottom: 12px;
+        }
+        
+        .quick-action h4 {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        
+        .quick-action p {
+            color: #64748b;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .contact-cta {
+            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .contact-cta h3 {
+            color: white;
+            margin-bottom: 12px;
+        }
+        
+        .contact-cta p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+        }
+        
+        .contact-cta .btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .contact-cta .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-content {
+                padding: 12px 16px;
+            }
+            
+            .container {
+                padding: 0 16px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            .content {
+                padding: 100px 0 60px;
+            }
+            
+            .section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="{% url 'core:index' %}" class="logo">
+                <i class="fas fa-chart-line"></i>
+                FinGest
+            </a>
+            <a href="{% url 'core:index' %}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Inicio
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="content">
+            <h1>Centro de Ayuda</h1>
+            <p class="subtitle">Todo lo que necesitas saber para aprovechar al máximo FinGest</p>
+
+            <!-- Acciones Rápidas -->
+            <div class="section">
+                <h2><i class="fas fa-rocket"></i> Acciones Rápidas</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                    <div class="quick-action">
+                        <i class="fas fa-play-circle"></i>
+                        <h4>Primeros Pasos</h4>
+                        <p>Aprende lo básico para empezar</p>
+                    </div>
+                    <div class="quick-action">
+                        <i class="fas fa-video"></i>
+                        <h4>Video Tutoriales</h4>
+                        <p>Guías paso a paso</p>
+                    </div>
+                    <div class="quick-action">
+                        <i class="fas fa-envelope"></i>
+                        <h4>Contactar Soporte</h4>
+                        <p>Necesitas ayuda personalizada</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preguntas Frecuentes -->
+            <div class="section">
+                <h2><i class="fas fa-question-circle"></i> Preguntas Frecuentes</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Cómo empiezo a usar FinGest?
+                    </div>
+                    <div class="faq-answer">
+                        Primero crea tu cuenta, luego configura tus cuentas bancarias y tarjetas en la sección "Cuentas". Después podrás empezar a registrar tus ingresos y gastos para tener un control completo de tus finanzas.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Puedo categorizar mis gastos?
+                    </div>
+                    <div class="faq-answer">
+                        Sí, FinGest incluye categorías predefinidas como Alimentación, Transporte, Entretenimiento, y más. Esto te ayuda a visualizar en qué gastas más dinero y optimizar tu presupuesto.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Mis datos están seguros?
+                    </div>
+                    <div class="faq-answer">
+                        Absolutamente. Utilizamos encriptación de grado bancario y no almacenamos información sensible como números de tarjetas completos. Todos tus datos están protegidos con los más altos estándares de seguridad.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Puedo exportar mis datos?
+                    </div>
+                    <div class="faq-answer">
+                        Sí, puedes exportar tus movimientos y reportes en formato CSV o PDF desde la sección de Análisis y Reportes. Esto te permite usar los datos en otras aplicaciones o mantener respaldos.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Cómo configurar alertas automáticas?
+                    </div>
+                    <div class="faq-answer">
+                        Ve a la sección "Alertas y Notificaciones" donde puedes configurar alertas por límites de gasto, fechas de vencimiento de pagos, metas de ahorro y más. Recibirás notificaciones por email o dentro de la aplicación.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <i class="fas fa-chevron-right" style="color: #22c55e; font-size: 12px;"></i>
+                        ¿Puedo usar FinGest en mi móvil?
+                    </div>
+                    <div class="faq-answer">
+                        Sí, FinGest es completamente responsivo y funciona perfectamente en cualquier dispositivo móvil. Puedes acceder desde cualquier navegador web sin necesidad de descargar una aplicación.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guías por Categoría -->
+            <div class="section">
+                <h2><i class="fas fa-book"></i> Guías por Categoría</h2>
+                
+                <h3>🚀 Primeros Pasos</h3>
+                <ul>
+                    <li><strong>Configuración inicial:</strong> Cómo configurar tu perfil y preferencias</li>
+                    <li><strong>Agregar cuentas:</strong> Registra tus cuentas bancarias y tarjetas</li>
+                    <li><strong>Primer movimiento:</strong> Cómo registrar tu primer ingreso o gasto</li>
+                    <li><strong>Navegación básica:</strong> Conoce todas las secciones de FinGest</li>
+                </ul>
+
+                <h3>💰 Gestión Financiera</h3>
+                <ul>
+                    <li><strong>Categorías de gastos:</strong> Cómo organizar y categorizar tus gastos</li>
+                    <li><strong>Presupuestos:</strong> Crear y gestionar presupuestos mensuales</li>
+                    <li><strong>Metas de ahorro:</strong> Establecer y seguir objetivos financieros</li>
+                    <li><strong>Análisis de gastos:</strong> Interpretar tus patrones de gasto</li>
+                </ul>
+
+                <h3>📊 Reportes y Análisis</h3>
+                <ul>
+                    <li><strong>Dashboard principal:</strong> Entender todas las métricas</li>
+                    <li><strong>Gráficos y visualizaciones:</strong> Cómo leer los reportes</li>
+                    <li><strong>Exportar datos:</strong> Descargar reportes en diferentes formatos</li>
+                    <li><strong>Tendencias:</strong> Analizar patrones a lo largo del tiempo</li>
+                </ul>
+
+                <h3>🔔 Alertas y Automatización</h3>
+                <ul>
+                    <li><strong>Configurar alertas:</strong> Tipos de notificaciones disponibles</li>
+                    <li><strong>Límites de gasto:</strong> Establecer controles automáticos</li>
+                    <li><strong>Recordatorios:</strong> No olvides pagos importantes</li>
+                    <li><strong>Notificaciones personalizadas:</strong> Ajustar según tus necesidades</li>
+                </ul>
+            </div>
+
+            <!-- Consejos y Mejores Prácticas -->
+            <div class="section">
+                <h2><i class="fas fa-lightbulb"></i> Consejos y Mejores Prácticas</h2>
+                
+                <div class="highlight">
+                    <h3>💡 Consejo Pro</h3>
+                    <p>Registra tus movimientos diariamente para mantener un control preciso de tus finanzas. Dedica solo 2-3 minutos al día y tendrás una visión completa de tu situación financiera.</p>
+                </div>
+
+                <h3>📝 Mejores Prácticas</h3>
+                <ul>
+                    <li><strong>Consistencia:</strong> Registra tus movimientos regularmente</li>
+                    <li><strong>Categorización:</strong> Usa categorías específicas para mejor análisis</li>
+                    <li><strong>Revisión mensual:</strong> Analiza tus reportes cada mes</li>
+                    <li><strong>Metas realistas:</strong> Establece objetivos alcanzables</li>
+                    <li><strong>Backup de datos:</strong> Exporta tus datos regularmente</li>
+                </ul>
+
+                <h3>⚠️ Errores Comunes a Evitar</h3>
+                <ul>
+                    <li>No registrar gastos pequeños (se acumulan)</li>
+                    <li>Usar categorías genéricas en lugar de específicas</li>
+                    <li>No revisar y ajustar presupuestos regularmente</li>
+                    <li>Ignorar las alertas y notificaciones</li>
+                    <li>No aprovechar los reportes para tomar decisiones</li>
+                </ul>
+            </div>
+
+            <!-- Recursos Adicionales -->
+            <div class="section">
+                <h2><i class="fas fa-graduation-cap"></i> Recursos de Educación Financiera</h2>
+                
+                <p>FinGest no solo te ayuda a gestionar tus finanzas, sino que también te educa:</p>
+                
+                <h3>📚 Temas Disponibles</h3>
+                <ul>
+                    <li><strong>Presupuesto personal:</strong> Cómo crear y mantener un presupuesto efectivo</li>
+                    <li><strong>Ahorro inteligente:</strong> Estrategias para ahorrar más dinero</li>
+                    <li><strong>Inversiones básicas:</strong> Introducción al mundo de las inversiones</li>
+                    <li><strong>Manejo de deudas:</strong> Cómo salir de deudas de manera eficiente</li>
+                    <li><strong>Planificación financiera:</strong> Establecer metas a largo plazo</li>
+                </ul>
+
+                <div class="highlight">
+                    <p><strong>¿Sabías que?</strong> Los usuarios que utilizan todas las funciones de FinGest logran ahorrar en promedio un 23% más que quienes solo registran movimientos básicos.</p>
+                </div>
+            </div>
+
+            <!-- Soporte Técnico -->
+            <div class="section">
+                <h2><i class="fas fa-tools"></i> Soporte Técnico</h2>
+                
+                <h3>🔧 Problemas Comunes</h3>
+                <ul>
+                    <li><strong>No puedo iniciar sesión:</strong> Verifica tu email y contraseña, usa "Olvidé mi contraseña" si es necesario</li>
+                    <li><strong>Los gráficos no cargan:</strong> Actualiza la página o prueba con otro navegador</li>
+                    <li><strong>No recibo notificaciones:</strong> Verifica tu configuración de email y spam</li>
+                    <li><strong>Error al guardar datos:</strong> Verifica tu conexión a internet e intenta nuevamente</li>
+                </ul>
+
+                <h3>🌐 Navegadores Compatibles</h3>
+                <ul>
+                    <li>Google Chrome (recomendado)</li>
+                    <li>Mozilla Firefox</li>
+                    <li>Safari</li>
+                    <li>Microsoft Edge</li>
+                </ul>
+
+                <h3>📱 Dispositivos Compatibles</h3>
+                <ul>
+                    <li>Computadoras de escritorio y laptops</li>
+                    <li>Tablets (iOS y Android)</li>
+                    <li>Smartphones (iOS y Android)</li>
+                </ul>
+            </div>
+
+            <!-- CTA de Contacto -->
+            <div class="contact-cta">
+                <h3>¿No encuentras lo que buscas?</h3>
+                <p>Nuestro equipo de soporte está aquí para ayudarte. Contáctanos y te responderemos lo antes posible.</p>
+                <a href="{% url 'core:contact' %}" class="btn">
+                    <i class="fas fa-envelope"></i>
+                    Contactar Soporte
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

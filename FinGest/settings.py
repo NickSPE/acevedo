@@ -12,41 +12,29 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
-from decouple import config  # Para leer el archivo .env
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SESSION_COOKIE_AGE = 3600  # 1 hora
+SESSION_COOKIE_AGE = 3600
 
-# Configuración mejorada de sesiones
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # ✅ Expira al cerrar navegador
-SESSION_SAVE_EVERY_REQUEST = True  # Renueva en cada request
-SESSION_COOKIE_SECURE = False  # En desarrollo, cambiar a True en producción con HTTPS
-SESSION_COOKIE_HTTPONLY = True  # Prevenir acceso desde JavaScript
-SESSION_COOKIE_SAMESITE = 'Lax'  # Protección CSRF
-
-# Configuración adicional para desarrollo
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Usar base de datos
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_SAVE_EVERY_REQUEST = True
 
 LOGIN_URL = 'usuarios:login'
 LOGIN_REDIRECT_URL = 'core:dashboard'
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
-# Configuración de Email REAL - Usando credenciales del .env
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.gmail.com'  # o el proveedor que uses
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config("EMAIL_USER")  # Desde .env
-EMAIL_HOST_PASSWORD = config("EMAIL_PASS")  # Desde .env
-DEFAULT_FROM_EMAIL = f'FinGest <{EMAIL_HOST_USER}>'
-
-# Para pruebas con archivos (descomenta si quieres ver archivos en lugar de envío real):
-# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-# EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
+EMAIL_HOST_USER = config("EMAIL_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_PASS")
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -57,7 +45,7 @@ SECRET_KEY = "django-insecure-06s9v4)er801*d#8^73_hlr8rzzy6%&h5*pr+u=^t4_*@wc12n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -83,7 +71,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "core.middleware.ServerRestartSessionMiddleware",  # ✅ Limpia sesiones al reiniciar
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -109,7 +96,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "core.context_processors.currency_context",
             ],
         },
     },
@@ -128,18 +114,6 @@ DATABASES = {
         'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '5432',
-    }
-}
-
-# Configuración de Cache para el sistema de locks de signals
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
-        'TIMEOUT': 300,  # 5 minutos por defecto
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000,
-        }
     }
 }
 

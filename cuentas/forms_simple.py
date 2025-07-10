@@ -50,10 +50,9 @@ class SubCuentaForm(forms.ModelForm):
         self.fields['descripcion'].label = 'Descripción (opcional)'
         self.fields['tipo'].label = 'Categoría'
         
-        # Todas las opciones de categoría (personales y de negocio)
+        # Opciones de categoría simplificadas
         self.fields['tipo'].choices = [
             ('', 'Selecciona una categoría'),
-            # Categorías personales
             ('ahorros', 'Ahorros'),
             ('emergencia', 'Fondo de Emergencia'),
             ('gastos_fijos', 'Gastos Fijos'),
@@ -63,20 +62,9 @@ class SubCuentaForm(forms.ModelForm):
             ('educacion', 'Educación'),
             ('salud', 'Salud'),
             ('familia', 'Familia'),
+            ('negocio', 'Negocio'),
             ('inversion', 'Inversiones'),
             ('otros', 'Otros'),
-            # Categorías de negocio
-            ('tienda_fisica', 'Tienda Física'),
-            ('tienda_online', 'Tienda Online'),
-            ('servicios', 'Servicios Profesionales'),
-            ('freelance', 'Trabajo Freelance'),
-            ('consultoria', 'Consultoría'),
-            ('ventas', 'Ventas'),
-            ('marketing', 'Marketing y Publicidad'),
-            ('inventario', 'Inventario'),
-            ('gastos_operativos', 'Gastos Operativos'),
-            ('equipamiento', 'Equipamiento'),
-            ('otros_negocio', 'Otros (Negocio)'),
         ]
 
 
@@ -178,21 +166,13 @@ class RetiroSubCuentaForm(forms.Form):
 
 
 class TransferenciaCuentaPrincipalForm(forms.ModelForm):
-    TIPO_CHOICES = [
-        ('deposito', 'Transferir hacia cuenta principal'),
-        ('retiro', 'Transferir hacia subcuenta'),
-    ]
-    
-    tipo = forms.ChoiceField(
-        choices=TIPO_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
-        initial='deposito'
-    )
-    
     class Meta:
         model = TransferenciaCuentaPrincipal
-        fields = ['tipo', 'monto', 'descripcion']
+        fields = ['cuenta_destino', 'monto', 'descripcion']
         widgets = {
+            'cuenta_destino': forms.Select(attrs={
+                'class': 'form-control'
+            }),
             'monto': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'step': '0.01',
@@ -208,37 +188,12 @@ class TransferenciaCuentaPrincipalForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
-        self.subcuenta = kwargs.pop('subcuenta', None)
         super().__init__(*args, **kwargs)
         
         # Hacer descripción opcional
         self.fields['descripcion'].required = False
         
         # Personalizar etiquetas
-        self.fields['tipo'].label = 'Tipo de transferencia'
+        self.fields['cuenta_destino'].label = 'Cuenta destino'
         self.fields['monto'].label = 'Monto a transferir'
         self.fields['descripcion'].label = 'Descripción (opcional)'
-        
-        # Validar monto máximo según el tipo
-        if self.subcuenta:
-            if 'tipo' in self.data:
-                tipo_selected = self.data['tipo']
-                if tipo_selected == 'deposito':
-                    # Transferir de subcuenta a cuenta principal
-                    max_amount = self.subcuenta.saldo
-                    self.fields['monto'].widget.attrs['max'] = str(max_amount)
-                    self.fields['monto'].help_text = f'Máximo disponible: ${max_amount:.2f}'
-    
-    def clean_monto(self):
-        monto = self.cleaned_data.get('monto')
-        tipo = self.cleaned_data.get('tipo')
-        
-        if not monto or monto <= 0:
-            raise forms.ValidationError('El monto debe ser mayor a 0')
-        
-        if self.subcuenta and tipo == 'deposito':
-            # Validar que hay suficiente saldo en la subcuenta
-            if monto > self.subcuenta.saldo:
-                raise forms.ValidationError(f'No hay suficiente saldo en la subcuenta. Disponible: ${self.subcuenta.saldo:.2f}')
-        
-        return monto

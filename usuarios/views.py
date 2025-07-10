@@ -22,19 +22,19 @@ def Generar_Pin():
     return str(random.randint(100000, 999999))  # 6 dígitos
 
 def Login(request):
-    print(f"🔍 DEBUG LOGIN: Método {request.method}, URL: {request.path}")
+    # print(f"🔍 DEBUG LOGIN: Método {request.method}, URL: {request.path}") - DESACTIVADO
     
     if request.method == "POST":
-        print(f"🔍 DEBUG LOGIN: Datos POST recibidos: {list(request.POST.keys())}")
+        # print(f"🔍 DEBUG LOGIN: Datos POST recibidos: {list(request.POST.keys())}") - DESACTIVADO
         
         email = request.POST.get("email")
         password = request.POST.get("password")
         
-        print(f"🔍 DEBUG LOGIN: Email: {email}, Password: {'*' * len(password) if password else 'None'}")
+        # print(f"🔍 DEBUG LOGIN: Email: {email}, Password: {'*' * len(password) if password else 'None'}") - DESACTIVADO
 
         usuario = authenticate(request , correo=email , password=password)
         
-        print(f"🔍 DEBUG LOGIN: Resultado authenticate: {usuario}")
+        # print(f"🔍 DEBUG LOGIN: Resultado authenticate: {usuario}") - DESACTIVADO
 
         if usuario:
             request.session['user_id'] = usuario.id

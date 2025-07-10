@@ -3,123 +3,505 @@
 
 {% block title %}Dashboard | FinGest{% endblock %}
 
+{% block extra_css %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* === CLEAN ANIMATIONS === */
+.slide-up {
+  animation: slideUp 0.4s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === CLEAN COLORS === */
+.gradient-primary {
+  background: #2563eb;
+}
+
+.gradient-success {
+  background: #10b981;
+}
+
+.gradient-warning {
+  background: #f59e0b;
+}
+
+.gradient-danger {
+  background: #ef4444;
+}
+
+.gradient-text {
+  color: #1f2937;
+}
+
+.dark .gradient-text {
+  color: #f9fafb;
+}
+
+/* === FEATURE CARDS === */
+.feature-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  transition: all 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 1);
+}
+
+.dark .feature-card {
+  background: rgba(31, 41, 55, 0.9);
+  border-color: rgba(75, 85, 99, 0.3);
+}
+
+.dark .feature-card:hover {
+  background: rgba(31, 41, 55, 0.95);
+}
+
+/* === CARDS === */
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 1);
+}
+
+.metric-card {
+  transition: all 0.2s ease;
+  border: 1px solid rgba(229, 231, 235, 0.3);
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+/* === HERO SECTION === */
+.hero-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  overflow: hidden;
+}
+
+.dark .hero-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+/* === BUTTONS === */
+.btn-primary {
+  background: #2563eb;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-ghost {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* === HEALTH SCORE === */
+.health-circle {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+.health-progress {
+  transform: rotate(-90deg);
+}
+
+/* === CHARTS === */
+.chart-container {
+  position: relative;
+  height: 320px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .hero-card {
+    text-align: center;
+  }
+  
+  .float-animation {
+    animation: none;
+  }
+  
+  .chart-container {
+    height: 280px;
+  }
+}
+
+/* === DARK MODE === */
+.dark .glass-card {
+  background: rgba(31, 41, 55, 0.9);
+  border-color: rgba(75, 85, 99, 0.3);
+}
+
+.dark .glass-card:hover {
+  background: rgba(31, 41, 55, 0.95);
+}
+
+.dark .metric-card {
+  background: rgba(31, 41, 55, 0.8);
+  border-color: rgba(75, 85, 99, 0.3);
+}
+
+.dark .metric-card:hover {
+  border-color: rgba(102, 126, 234, 0.5);
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<!-- Header -->
-<div class="mb-8">
-  <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Panel Principal</h1>
-  <p class="text-lg text-gray-500 dark:text-gray-400">Resumen general de su situación financiera</p>
-</div>
-
-<!-- Tabs -->
-<div class="border-b border-gray-200 dark:border-gray-700 mb-8">
-  <nav class="-mb-px flex space-x-8">
-    <a href="{% url 'core:dashboard' %}?tab=overview" 
-       class="{% if tab == 'overview' %}border-blue-500 text-blue-600 dark:text-blue-400{% else %}border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-      Panel General
-    </a>
-    <a href="{% url 'core:dashboard' %}?tab=analytics" 
-       class="{% if tab == 'analytics' %}border-blue-500 text-blue-600 dark:text-blue-400{% else %}border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-      Análisis
-    </a>
-    <a href="{% url 'core:dashboard' %}?tab=savings" 
-       class="{% if tab == 'savings' %}border-blue-500 text-blue-600 dark:text-blue-400{% else %}border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors">
-      Metas de Ahorros
-    </a>
-  </nav>
-</div>
-
-<!-- Contenido dinámico -->
-{% if tab == "overview" %}
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <!-- Total Balance -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Balance Total</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">{% format_money total_balance user %}</p>
-            <p class="text-sm text-blue-600 dark:text-blue-400 mt-1">Saldo inicial + ingresos - gastos</p>
-          </div>
-          <div class="h-12 w-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-            </svg>
+<div class="p-6 space-y-8">
+  <!-- === CLEAN WELCOME SECTION === -->
+  <div class="hero-card rounded-2xl p-8 relative overflow-hidden slide-up">
+    <div class="relative z-10">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <!-- Left Content -->
+        <div class="flex-1">
+          <h1 class="text-3xl lg:text-4xl font-bold mb-3 text-gray-900 dark:text-white">
+            FinGest
+          </h1>
+          <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 max-w-2xl">
+            Gestiona y monitorea tus finanzas personales de manera eficiente.
+          </p>
+          
+          <!-- Quick Action Buttons -->
+          <div class="flex flex-wrap gap-3">
+            <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" 
+               class="btn-primary text-white px-5 py-2.5 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+              </svg>
+              Nueva Transacción
+            </a>
+            <a href="{% url 'analisis_reportes:reports' %}" 
+               class="btn-ghost text-gray-700 dark:text-gray-300 px-5 py-2.5 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              Ver Reportes
+            </a>
           </div>
         </div>
-      </div>
-
-      <!-- Total Income -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Ingresos Totales</p>
-            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{% format_money total_ingresos user %}</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">De {{ cantidad_ingresos }} fuentes</p>
-          </div>
-          <div class="h-12 w-12 bg-green-50 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Total Expenses -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Gastos Totales</p>
-            <p class="text-2xl font-bold text-red-600 dark:text-red-400">{% format_money total_egresos user %}</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ porcentaje_de_ingresos_para_egresos|floatformat:1 }}% de ingresos</p>
-          </div>
-          <div class="h-12 w-12 bg-red-50 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Initial Balance -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Saldo Inicial</p>
-            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{% format_money saldo_inicial_cuentas user %}</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Base de sus cuentas</p>
-          </div>
-          <div class="h-12 w-12 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-            <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        
+        <!-- Right Content - Simple Icon -->
+        <div class="lg:block hidden">
+          <div class="w-24 h-24 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center">
+            <svg class="w-12 h-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-      <!-- Recent Transactions -->
+  <!-- === CLEAN FINANCIAL METRICS === -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+    <!-- Balance Total -->
+    <div class="glass-card metric-card rounded-xl p-3 sm:p-4 lg:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-2 sm:mb-0">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+          </svg>
+        </div>
+        <div class="text-left sm:text-right">
+          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Balance Total</p>
+          <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">{% format_money total_balance user %}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+          <span class="hidden sm:inline">Total </span>disponible
+        </span>
+      </div>
+    </div>
+
+    <!-- Ingresos Totales -->
+    <div class="glass-card metric-card rounded-xl p-3 sm:p-4 lg:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-lg flex items-center justify-center mb-2 sm:mb-0">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+          </svg>
+        </div>
+        <div class="text-left sm:text-right">
+          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Ingresos<span class="hidden sm:inline"> Totales</span></p>
+          <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600 dark:text-green-400">{% format_money total_ingresos user %}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+          {{ cantidad_ingresos }} registro<span class="hidden sm:inline">s</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Gastos -->
+    <div class="glass-card metric-card rounded-xl p-3 sm:p-4 lg:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-500 rounded-lg flex items-center justify-center mb-2 sm:mb-0">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+          </svg>
+        </div>
+        <div class="text-left sm:text-right">
+          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Gastos<span class="hidden sm:inline"> Totales</span></p>
+          <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600 dark:text-red-400">{% format_money total_egresos user %}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+          {{ porcentaje_de_recursos_para_egresos|floatformat:1 }}%<span class="hidden lg:inline"> de recursos históricos</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Saldo Inicial -->
+    <div class="glass-card metric-card rounded-xl p-3 sm:p-4 lg:p-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 rounded-lg flex items-center justify-center mb-2 sm:mb-0">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+          </svg>
+        </div>
+        <div class="text-left sm:text-right">
+          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Saldo<span class="hidden sm:inline"> Inicial</span></p>
+          <p class="text-lg sm:text-xl lg:text-2xl font-bold text-orange-600 dark:text-orange-400">{% format_money saldo_inicial_cuentas user %}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+          Base<span class="hidden sm:inline"> de cuentas</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+{% if tab == "overview" or not tab %}
+<!-- Main Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+  <!-- Left Column - Chart & Analysis -->
+  <div class="lg:col-span-2 space-y-6">
+    <!-- Financial Health Score -->
+    <div class="feature-card rounded-xl p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white">Salud Financiera</h3>
+          <p class="text-gray-600 dark:text-gray-400">Evaluación de tu gestión financiera</p>
+        </div>
+        <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center">
+          <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+      </div>
+      
+      {% if total_egresos > 0 and total_recursos_historicos > 0 %}
+        {% with porcentaje_gastado=porcentaje_de_recursos_para_egresos|floatformat:0 %}
+          <div class="text-center mb-6">
+            <div class="relative inline-flex items-center justify-center">
+              <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
+                <path class="text-gray-200 dark:text-gray-700" stroke="currentColor" stroke-width="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path class="{% if salud_financiera_score >= 70 %}text-green-500{% elif salud_financiera_score >= 40 %}text-yellow-500{% else %}text-red-500{% endif %}" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="{{ salud_financiera_score }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              </svg>
+              <div class="absolute flex flex-col items-center">
+                <span class="text-3xl font-bold {% if salud_financiera_score >= 70 %}text-green-600{% elif salud_financiera_score >= 40 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                  {{ salud_financiera_score }}
+                </span>
+                <span class="text-sm text-gray-500">puntos</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center mb-4">
+            <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+              {% if salud_financiera_score >= 70 %}
+                Excelente gestión financiera
+              {% elif salud_financiera_score >= 40 %}
+                Gestión financiera aceptable
+              {% else %}
+                Necesitas optimizar tus gastos
+              {% endif %}
+            </p>
+            <p class="text-gray-600 dark:text-gray-400">
+              Has gastado el {{ porcentaje_gastado }}% del total de recursos que has manejado
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-green-600 dark:text-green-400">{% format_money total_recursos_historicos user %}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Total Manejado</div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-red-600 dark:text-red-400">{% format_money total_egresos user %}</div>
+              <div class="text-sm text-gray-600 dark:text-gray-400">Gastos</div>
+            </div>
+          </div>
+        {% endwith %}
+      {% else %}
+        <div class="text-center py-12">
+          <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Comienza tu seguimiento</h4>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">Agrega tus primeros movimientos para ver tu salud financiera</p>
+          <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors">
+            Agregar Movimiento
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Expense Chart -->
+    <div class="feature-card rounded-xl p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white">Desglose de Gastos</h3>
+          <p class="text-gray-600 dark:text-gray-400">Distribución por categorías</p>
+        </div>
+        <a href="{% url 'analisis_reportes:reports' %}" class="text-sm text-blue-600 hover:text-blue-500 font-medium flex items-center gap-1">
+          Ver detalles
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+      
+      {% if gastos_por_categoria %}
+        <div class="chart-container mb-4">
+          <canvas id="gastosChartOverview"></canvas>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="chartLegendOverview">
+          <!-- Leyenda generada dinámicamente -->
+        </div>
+      {% else %}
+        <div class="text-center py-12">
+          <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+            </svg>
+          </div>
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Sin gastos registrados</h4>
+          <p class="text-gray-600 dark:text-gray-400">Agrega algunos gastos para ver el análisis</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Right Column - Quick Actions & Insights -->
+  <div class="space-y-6">
+    <!-- Quick Actions -->
+    <div class="feature-card rounded-xl p-6">
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Acciones Rápidas</h3>
+      <div class="space-y-3">
+        <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" 
+           class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all group">
+          <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-semibold text-gray-900 dark:text-white">Nueva Transacción</div>
+            <div class="text-xs text-gray-600 dark:text-gray-400">Registra ingresos o gastos</div>
+          </div>
+        </a>
+        
+        <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
+           class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all group">
+          <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-semibold text-gray-900 dark:text-white">Metas de Ahorro</div>
+            <div class="text-xs text-gray-600 dark:text-gray-400">Configura objetivos financieros</div>
+          </div>
+        </a>
+        
+        <a href="{% url 'analisis_reportes:reports' %}" 
+           class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all group">
+          <div class="w-10 h-10 bg-gray-500 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-semibold text-gray-900 dark:text-white">Generar Reportes</div>
+            <div class="text-xs text-gray-600 dark:text-gray-400">Análisis detallado y exportar</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Recent Transactions - Más ancho -->
+    <div class="lg:col-span-3 mt-6">
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-xl transition-shadow">
         <div class="p-6 border-b border-gray-100 dark:border-gray-700">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Movimientos Recientes</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Sus últimas actividades financieras</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Movimientos Recientes</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Sus últimas actividades financieras</p>
+            </div>
+            <a href="{% url 'gestion_financiera_basica:transactions' %}" class="text-sm text-blue-600 hover:text-blue-500 font-medium">
+              Ver todos
+            </a>
+          </div>
         </div>
         <div class="p-6">
           <div class="space-y-4">
-            {% for movimiento in movimientos|slice:":5" %}
-              <div class="flex items-center justify-between py-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg px-2 transition-colors">
+            {% for movimiento in movimientos|slice:":6" %}
+              <div class="flex items-center justify-between py-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg px-3 transition-colors">
                 <div class="flex items-center space-x-4">
                   {% if movimiento.tipo == "ingreso" %}
                     <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
                       <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
                       </svg>
                     </div>
                   {% else %}
                     <div class="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
                       <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
                       </svg>
                     </div>
                   {% endif %}
@@ -134,17 +516,118 @@
                   {% else %}
                     <p class="text-sm font-semibold text-red-600 dark:text-red-400">-{% format_money movimiento.monto user %}</p>
                   {% endif %}
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ movimiento.categoria_gasto|default:"General" }}</p>
                 </div>
               </div>
             {% empty %}
-              <p class="text-gray-500 dark:text-gray-400 text-center py-8">No hay movimientos aún</p>
+              <div class="text-center py-8">
+                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V9a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                  </svg>
+                </div>
+                <p class="text-gray-500 dark:text-gray-400 font-medium">No hay movimientos aún</p>
+                <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Agrega tu primera transacción para comenzar</p>
+              </div>
             {% endfor %}
           </div>
         </div>
       </div>
-
-
     </div>
+  </div>
+</div>
+
+<!-- Script para gráfico de overview -->
+{% if gastos_por_categoria %}
+{{ gastos_por_categoria|json_script:"gastos-data-overview" }}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Obtener datos del gráfico desde Django para overview
+    const gastosDataOverview = JSON.parse(document.getElementById('gastos-data-overview').textContent);
+    
+    // Verificar que tenemos datos
+    if (!gastosDataOverview || gastosDataOverview.length === 0) {
+      return;
+    }
+    
+    // Colores para el gráfico (más sutiles para overview)
+    const coloresOverview = [
+      '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
+      '#8B5CF6', '#06B6D4', '#84CC16', '#F97316',
+      '#EC4899', '#6B7280'
+    ];
+    
+    // Preparar datos para Chart.js
+    const labelsOverview = gastosDataOverview.map(item => item.categoria);
+    const montosOverview = gastosDataOverview.map(item => item.monto);
+    const porcentajesOverview = gastosDataOverview.map(item => item.porcentaje);
+    
+    // Verificar que el canvas existe
+    const canvasOverview = document.getElementById('gastosChartOverview');
+    if (!canvasOverview) return;
+    
+    // Configuración del gráfico
+    const ctxOverview = canvasOverview.getContext('2d');
+    const chartOverview = new Chart(ctxOverview, {
+      type: 'doughnut',
+      data: {
+        labels: labelsOverview,
+        datasets: [{
+          data: montosOverview,
+          backgroundColor: coloresOverview.slice(0, labelsOverview.length),
+          borderColor: '#ffffff',
+          borderWidth: 2,
+          hoverBorderWidth: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false // Usaremos leyenda personalizada
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleColor: '#ffffff',
+            bodyColor: '#ffffff',
+            borderColor: '#ffffff',
+            borderWidth: 1,
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.parsed;
+                const percentage = porcentajesOverview[context.dataIndex];
+                return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+              }
+            }
+          }
+        },
+        cutout: '60%',
+        animation: {
+          animateRotate: true,
+          duration: 800
+        }
+      }
+    });
+    
+    // Crear leyenda personalizada para overview
+    const legendContainerOverview = document.getElementById('chartLegendOverview');
+    if (legendContainerOverview) {
+      gastosDataOverview.forEach((item, index) => {
+        const legendItem = document.createElement('div');
+        legendItem.className = 'flex items-center space-x-2 text-xs py-1';
+        legendItem.innerHTML = `
+          <div class="w-3 h-3 rounded-full" style="background-color: ${coloresOverview[index]}"></div>
+          <span class="text-gray-700 dark:text-gray-300 truncate flex-1">${item.categoria}</span>
+          <span class="text-gray-500 dark:text-gray-400 font-medium">${item.porcentaje}%</span>
+        `;
+        legendContainerOverview.appendChild(legendItem);
+      });
+    }
+  });
+</script>
+{% endif %}
 
 {% elif tab == "analytics" %}
   <!-- 📊 Analytics -->
@@ -182,24 +665,24 @@
     <!-- Salud Financiera -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 text-center hover:shadow-md dark:hover:shadow-xl transition-shadow">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Salud Financiera</h3>
-      {% if total_egresos > 0 and total_ingresos > 0 %}
-        {% with score=porcentaje_de_ingresos_para_egresos|floatformat:0 %}
+      {% if total_egresos > 0 and total_recursos_historicos > 0 %}
+        {% with score=porcentaje_de_recursos_para_egresos|floatformat:0 %}
           <div class="text-5xl font-bold mb-2 {% if score <= 30 %}text-green-600 dark:text-green-400{% elif score <= 70 %}text-yellow-600 dark:text-yellow-400{% else %}text-red-600 dark:text-red-400{% endif %}">
             {% if score <= 30 %}95{% elif score <= 70 %}75{% else %}45{% endif %}
           </div>
           <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
             {% if score <= 30 %}
-              ¡Excelente! Gastas solo el {{ score }}% de tus ingresos
+              ¡Excelente! Has gastado solo el {{ score }}% del total manejado
             {% elif score <= 70 %}
-              Bueno. Gastas el {{ score }}% de tus ingresos
+              Bueno. Has gastado el {{ score }}% del total manejado
             {% else %}
-              Atención. Gastas el {{ score }}% de tus ingresos
+              Atención. Has gastado el {{ score }}% del total manejado
             {% endif %}
           </p>
         {% endwith %}
       {% else %}
         <div class="text-5xl font-bold text-gray-400 dark:text-gray-600 mb-2">--</div>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Necesitas ingresos y gastos para calcular</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Necesitas recursos y gastos para calcular</p>
       {% endif %}
       
       <!-- Indicadores rápidos -->
@@ -216,20 +699,18 @@
     </div>
   </div>
 
-  <!-- Script para el gráfico -->
+  <!-- Datos para el gráfico -->
   {% if gastos_por_categoria %}
+  {{ gastos_por_categoria|json_script:"gastos-data" }}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Datos del gráfico desde Django
-      const gastosData = [
-        {% for gasto in gastos_por_categoria %}
-        {
-          categoria: "{{ gasto.categoria|escapejs }}",
-          monto: {{ gasto.monto }},
-          porcentaje: {{ gasto.porcentaje }}
-        }{% if not forloop.last %},{% endif %}
-        {% endfor %}
-      ];
+      // Obtener datos del gráfico desde Django
+      const gastosData = JSON.parse(document.getElementById('gastos-data').textContent);
+      
+      // Verificar que tenemos datos
+      if (!gastosData || gastosData.length === 0) {
+        return;
+      }
       
       // Colores para el gráfico
       const colores = [
@@ -312,7 +793,7 @@
         <h4 class="font-semibold text-gray-900 mb-1">{{ goal.0 }}</h4>
         <p class="text-sm text-gray-500 mb-4">{{ goal.1 }}</p>
         <div class="w-full bg-gray-200 h-2 rounded-full mb-3">
-          <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: {{ goal.2 }}"></div>
+          <div class="bg-blue-600 h-2 rounded-full transition-all duration-300 progress-bar" data-width="{{ goal.2 }}"></div>
         </div>
         <p class="text-xs text-gray-400 mb-4">Fecha objetivo: {{ goal.3 }}</p>
         <div class="flex gap-2">
@@ -332,4 +813,16 @@
     </div>
   </div>
 {% endif %}
+
+<script>
+  // Set progress bar widths dynamically
+  document.addEventListener('DOMContentLoaded', function() {
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+      const width = bar.getAttribute('data-width');
+      bar.style.width = width + '%';
+    });
+  });
+</script>
+
 {% endblock %}
