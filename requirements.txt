@@ -8,7 +8,7 @@ django-decouple>=2.1
 
 # Base de datos
 psycopg2-binary>=2.9.0  # PostgreSQL adapter
-
+pandas >=2.0.0  # Manipulación de datos (usado en educacion_financiera)
 # Procesamiento de imágenes
 Pillow>=9.0.0  # Para PIL/Image processing (usado en cuentas/views.py)
 

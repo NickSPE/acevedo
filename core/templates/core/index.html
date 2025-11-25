@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}FinGest - Gestión Financiera Inteligente{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -20,7 +23,7 @@
                             200: '#bbf7d0',
                             300: '#86efac',
                             400: '#4ade80',
-                            500: '#22c55e',
+                            500: '#227c91',
                             600: '#16a34a',
                             700: '#15803d',
                             800: '#166534',
@@ -79,21 +82,21 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body { 
+
+        body {
             font-family: 'Poppins', 'Inter', sans-serif;
             background: #fafbfc;
             color: #0f172a;
             line-height: 1.6;
             overflow-x: hidden;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 24px;
         }
-        
+
         /* Navegación moderna y atractiva */
         .navbar {
             position: fixed;
@@ -107,38 +110,38 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
-        
+
         .navbar.scrolled {
             background: rgba(255, 255, 255, 0.98);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid rgba(34, 197, 94, 0.2);
         }
-        
+
         .nav-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 0;
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
             font-size: 28px;
             font-weight: 800;
-            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-decoration: none;
             transition: all 0.3s ease;
         }
-        
+
         .logo:hover {
             transform: scale(1.05);
         }
-        
+
         .logo img {
             height: 40px;
             width: 40px;
@@ -146,18 +149,18 @@
             box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
             transition: all 0.3s ease;
         }
-        
+
         .logo:hover img {
             transform: rotate(5deg);
             box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
         }
-        
+
         .nav-links {
             display: flex;
             gap: 32px;
             list-style: none;
         }
-        
+
         .nav-links a {
             color: #475569;
             text-decoration: none;
@@ -167,13 +170,13 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        
+
         .nav-links a:hover {
-            color: #22c55e;
+            color: #227c91;
             background: rgba(34, 197, 94, 0.1);
             transform: translateY(-2px);
         }
-        
+
         .nav-links a::after {
             content: '';
             position: absolute;
@@ -181,17 +184,17 @@
             height: 2px;
             bottom: 0;
             left: 50%;
-            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            background: linear-gradient(90deg, #227c91, #3b82f6);
             transition: all 0.3s ease;
         }
-        
+
         .nav-links a:hover::after {
             width: 100%;
             left: 0;
         }
-        
+
         .nav-cta {
-            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%);
             color: white;
             padding: 12px 24px;
             border-radius: 12px;
@@ -202,7 +205,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .nav-cta::before {
             content: '';
             position: absolute;
@@ -213,16 +216,16 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.5s;
         }
-        
+
         .nav-cta:hover::before {
             left: 100%;
         }
-        
+
         .nav-cta:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(34, 197, 94, 0.5);
         }
-        
+
         /* Hero espectacular y vibrante */
         .hero {
             padding: 160px 0 120px;
@@ -231,7 +234,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .hero::before {
             content: '';
             position: absolute;
@@ -242,7 +245,7 @@
             background: transparent;
             pointer-events: none;
         }
-        
+
         .hero::after {
             content: '';
             position: absolute;
@@ -255,21 +258,21 @@
             border-radius: 50%;
             z-index: 1;
         }
-        
+
         .hero-content {
             position: relative;
             z-index: 10;
             max-width: 900px;
             margin: 0 auto;
         }
-        
+
         .hero h1 {
             font-family: 'Poppins', sans-serif;
             font-size: 84px;
             font-weight: 900;
             line-height: 1.05;
             margin-bottom: 36px;
-            background: linear-gradient(135deg, #0f172a 0%, #22c55e 25%, #3b82f6 50%, #8b5cf6 75%, #f59e0b 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #227c91 25%, #3b82f6 50%, #8b5cf6 75%, #f59e0b 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -278,15 +281,15 @@
             text-shadow: 0 8px 40px rgba(34, 197, 94, 0.4);
             letter-spacing: -2px;
         }
-        
+
         .hero h1 .highlight {
             position: relative;
-            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .hero h1 .highlight::after {
             content: '';
             position: absolute;
@@ -294,12 +297,12 @@
             left: 0;
             right: 0;
             height: 6px;
-            background: linear-gradient(90deg, #22c55e, #3b82f6);
+            background: linear-gradient(90deg, #227c91, #3b82f6);
             border-radius: 3px;
             opacity: 0.8;
             z-index: -1;
         }
-        
+
         .hero p {
             font-size: 28px;
             font-weight: 500;
@@ -312,7 +315,7 @@
             text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             opacity: 0.9;
         }
-        
+
         .hero-buttons {
             display: flex;
             gap: 24px;
@@ -320,9 +323,9 @@
             margin-bottom: 80px;
             flex-wrap: wrap;
         }
-        
+
         .btn-primary {
-            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 50%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #227c91 0%, #3b82f6 50%, #8b5cf6 100%);
             color: white;
             padding: 20px 40px;
             border-radius: 16px;
@@ -340,7 +343,7 @@
             box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
             animation: pulse-slow 3s infinite;
         }
-        
+
         .btn-primary::before {
             content: '';
             position: absolute;
@@ -351,16 +354,16 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.6s;
         }
-        
+
         .btn-primary:hover::before {
             left: 100%;
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-4px) scale(1.02);
             box-shadow: 0 15px 40px rgba(34, 197, 94, 0.6);
         }
-        
+
         .btn-secondary {
             background: rgba(255, 255, 255, 0.95);
             color: #475569;
@@ -378,15 +381,15 @@
             backdrop-filter: blur(20px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
-        
+
         .btn-secondary:hover {
             background: rgba(34, 197, 94, 0.1);
-            border-color: #22c55e;
-            color: #22c55e;
+            border-color: #227c91;
+            color: #227c91;
             transform: translateY(-4px) scale(1.02);
             box-shadow: 0 15px 40px rgba(34, 197, 94, 0.2);
         }
-        
+
         /* Stats vibrantes y atractivas */
         .stats {
             display: flex;
@@ -395,7 +398,7 @@
             margin-top: 80px;
             flex-wrap: wrap;
         }
-        
+
         .stat {
             text-align: center;
             background: rgba(255, 255, 255, 0.95);
@@ -407,24 +410,24 @@
             transition: all 0.4s ease;
             min-width: 140px;
         }
-        
+
         .stat:hover {
             transform: translateY(-8px) scale(1.05);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
             border-color: rgba(34, 197, 94, 0.3);
         }
-        
+
         .stat-number {
             font-size: 42px;
             font-weight: 900;
-            background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             display: block;
             margin-bottom: 8px;
         }
-        
+
         .stat-label {
             font-size: 16px;
             font-weight: 600;
@@ -432,24 +435,24 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         /* Secciones limpias */
         .section {
             padding: 100px 0;
         }
-        
+
         .section-title {
             text-align: center;
             font-size: 48px;
             font-weight: 800;
-            background: linear-gradient(135deg, #0f172a 0%, #22c55e 50%, #3b82f6 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #227c91 50%, #3b82f6 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 20px;
             letter-spacing: -1px;
         }
-        
+
         .section-subtitle {
             text-align: center;
             font-size: 20px;
@@ -461,7 +464,7 @@
             margin-right: auto;
             line-height: 1.7;
         }
-        
+
         /* Grid de funcionalidades */
         .features-grid {
             display: grid;
@@ -469,7 +472,7 @@
             gap: 32px;
             margin-top: 60px;
         }
-        
+
         .feature-card {
             background: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -479,14 +482,14 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(10px);
         }
-        
+
         .feature-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
             border-color: rgba(34, 197, 94, 0.3);
             background: rgba(255, 255, 255, 0.95);
         }
-        
+
         .feature-icon {
             width: 64px;
             height: 64px;
@@ -497,9 +500,9 @@
             justify-content: center;
             margin: 0 auto 24px;
             font-size: 28px;
-            color: #22c55e;
+            color: #227c91;
         }
-        
+
         /* Mejoras tipográficas */
         .feature-title {
             font-size: 22px;
@@ -508,14 +511,14 @@
             margin-bottom: 16px;
             letter-spacing: -0.5px;
         }
-        
+
         .feature-description {
             color: #64748b;
             line-height: 1.7;
             font-size: 16px;
             font-weight: 400;
         }
-        
+
         /* Efectos de partículas flotantes */
         .floating-particles {
             position: fixed;
@@ -526,223 +529,327 @@
             pointer-events: none;
             z-index: 1;
         }
-        
+
         /* Estilos para el gráfico donut */
         #expenseChart {
             filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.1));
             transition: transform 0.3s ease;
         }
-        
+
         #expenseChart:hover {
             transform: scale(1.02);
         }
-        
+
         /* Animación de entrada para el gráfico */
         @keyframes chartFadeIn {
             0% {
                 opacity: 0;
                 transform: scale(0.8) rotate(-10deg);
             }
+
             100% {
                 opacity: 1;
                 transform: scale(1) rotate(0deg);
             }
         }
-        
+
         .chart-container {
             animation: chartFadeIn 1.2s ease-out 0.5s both;
         }
-        
+
         .particle {
             position: absolute;
             background: linear-gradient(45deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
             border-radius: 50%;
             animation: float 20s infinite linear;
         }
-        
-        .particle:nth-child(1) { width: 6px; height: 6px; left: 5%; animation-delay: 0s; }
-        .particle:nth-child(2) { width: 8px; height: 8px; left: 15%; animation-delay: 2s; }
-        .particle:nth-child(3) { width: 4px; height: 4px; left: 25%; animation-delay: 4s; }
-        .particle:nth-child(4) { width: 10px; height: 10px; left: 35%; animation-delay: 6s; }
-        .particle:nth-child(5) { width: 5px; height: 5px; left: 45%; animation-delay: 8s; }
-        .particle:nth-child(6) { width: 7px; height: 7px; left: 55%; animation-delay: 10s; }
-        .particle:nth-child(7) { width: 9px; height: 9px; left: 65%; animation-delay: 12s; }
-        .particle:nth-child(8) { width: 6px; height: 6px; left: 75%; animation-delay: 14s; }
-        .particle:nth-child(9) { width: 8px; height: 8px; left: 85%; animation-delay: 16s; }
-        .particle:nth-child(10) { width: 4px; height: 4px; left: 95%; animation-delay: 18s; }
-        .particle:nth-child(11) { width: 7px; height: 7px; left: 10%; animation-delay: 3s; }
-        .particle:nth-child(12) { width: 5px; height: 5px; left: 30%; animation-delay: 7s; }
-        .particle:nth-child(13) { width: 9px; height: 9px; left: 50%; animation-delay: 11s; }
-        .particle:nth-child(14) { width: 6px; height: 6px; left: 70%; animation-delay: 15s; }
-        .particle:nth-child(15) { width: 8px; height: 8px; left: 90%; animation-delay: 19s; }
-        
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+
+        .particle:nth-child(1) {
+            width: 6px;
+            height: 6px;
+            left: 5%;
+            animation-delay: 0s;
         }
-        
+
+        .particle:nth-child(2) {
+            width: 8px;
+            height: 8px;
+            left: 15%;
+            animation-delay: 2s;
+        }
+
+        .particle:nth-child(3) {
+            width: 10px;
+            height: 10px;
+            left: 25%;
+            animation-delay: 4s;
+        }
+
+        .particle:nth-child(4) {
+            width: 10px;
+            height: 10px;
+            left: 35%;
+            animation-delay: 6s;
+        }
+
+        .particle:nth-child(5) {
+            width: 5px;
+            height: 5px;
+            left: 45%;
+            animation-delay: 8s;
+        }
+
+        .particle:nth-child(6) {
+            width: 7px;
+            height: 7px;
+            left: 55%;
+            animation-delay: 10s;
+        }
+
+        .particle:nth-child(7) {
+            width: 9px;
+            height: 9px;
+            left: 65%;
+            animation-delay: 12s;
+        }
+
+        .particle:nth-child(8) {
+            width: 6px;
+            height: 6px;
+            left: 75%;
+            animation-delay: 14s;
+        }
+
+        .particle:nth-child(9) {
+            width: 8px;
+            height: 8px;
+            left: 85%;
+            animation-delay: 16s;
+        }
+
+        .particle:nth-child(10) {
+            width: 4px;
+            height: 4px;
+            left: 95%;
+            animation-delay: 18s;
+        }
+
+        .particle:nth-child(11) {
+            width: 7px;
+            height: 7px;
+            left: 10%;
+            animation-delay: 3s;
+        }
+
+        .particle:nth-child(12) {
+            width: 5px;
+            height: 5px;
+            left: 30%;
+            animation-delay: 7s;
+        }
+
+        .particle:nth-child(13) {
+            width: 9px;
+            height: 9px;
+            left: 50%;
+            animation-delay: 11s;
+        }
+
+        .particle:nth-child(14) {
+            width: 6px;
+            height: 6px;
+            left: 70%;
+            animation-delay: 15s;
+        }
+
+        .particle:nth-child(15) {
+            width: 8px;
+            height: 8px;
+            left: 90%;
+            animation-delay: 19s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         /* Animaciones suaves */
         .fade-in {
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        
+
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
+
         /* Footer minimalista */
         .footer {
             background: #fafafa;
             padding: 60px 0 30px;
             border-top: 1px solid #f1f5f9;
         }
-        
+
         .footer-content {
             text-align: center;
         }
-        
+
         .footer-text {
             color: #64748b;
             margin-bottom: 20px;
         }
-        
+
         .footer-links {
             display: flex;
             justify-content: center;
             gap: 32px;
             margin-bottom: 30px;
         }
-        
+
         .footer-links a {
             color: #64748b;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
-        
+
         .footer-links a:hover {
-            color: #22c55e;
+            color: #227c91;
         }
-        
+
         /* Responsive */
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
             }
-            
+
             .hero h1 {
                 font-size: 40px;
             }
-            
+
             .hero p {
                 font-size: 18px;
             }
-            
+
             .hero-buttons {
                 flex-direction: column;
                 align-items: center;
             }
-            
+
             .stats {
                 flex-direction: column;
                 gap: 40px;
             }
-            
+
             .section-title {
                 font-size: 32px;
             }
-            
+
             .features-grid {
                 grid-template-columns: 1fr;
                 gap: 24px;
             }
-            
+
             .footer-links {
                 flex-direction: column;
                 gap: 16px;
             }
         }
-        
+
         /* Mejores estilos responsive para tablets */
         @media (max-width: 1024px) and (min-width: 769px) {
             .hero h1 {
                 font-size: 64px;
             }
-            
+
             .hero p {
                 font-size: 24px;
             }
-            
+
             .section-title {
                 font-size: 42px;
             }
-            
+
             .features-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-        
+
         /* Estilos para dispositivos muy pequeños */
         @media (max-width: 480px) {
             .container {
                 padding: 0 16px;
             }
-            
+
             .hero {
                 padding: 120px 0 80px;
             }
-            
+
             .hero h1 {
                 font-size: 32px;
                 line-height: 1.2;
             }
-            
+
             .hero p {
                 font-size: 16px;
                 margin-bottom: 40px;
             }
-            
-            .btn-primary, .btn-secondary {
+
+            .btn-primary,
+            .btn-secondary {
                 padding: 16px 32px;
                 font-size: 16px;
             }
-            
+
             .stats {
                 gap: 24px;
             }
-            
+
             .stat {
                 padding: 24px 16px;
                 min-width: 120px;
             }
-            
+
             .stat-number {
                 font-size: 32px;
             }
-            
+
             .section-title {
                 font-size: 28px;
             }
-            
+
             .section-subtitle {
                 font-size: 18px;
             }
-            
+
             .feature-card {
                 padding: 32px 24px;
             }
-            
+
             /* Mejorar responsividad del gráfico */
             .chart-container {
                 width: 240px !important;
                 height: 240px !important;
             }
-            
+
             /* Ajustar leyenda en móvil */
             .hero div[style*="gap: 40px"] {
                 flex-direction: column !important;
@@ -787,10 +894,12 @@
                     <li><a href="#precios">Precios</a></li>
                     <li><a href="#contacto">Contacto</a></li>
                 </ul>
-                
+
                 <!-- Auth Buttons -->
                 <div style="display: flex; align-items: center; gap: 16px;">
-                    <a href="{% url 'usuarios:login' %}" style="color: #475569; text-decoration: none; font-weight: 500; transition: color 0.3s ease;">Iniciar sesión</a>
+                    <a href="{% url 'usuarios:login' %}"
+                        style="color: #475569; text-decoration: none; font-weight: 500; transition: color 0.3s ease;">Iniciar
+                        sesión</a>
                     <a href="{% url 'usuarios:register' %}" class="nav-cta">Comenzar gratis</a>
                 </div>
             </div>
@@ -802,76 +911,103 @@
         <div class="container">
             <div class="hero-content fade-in">
                 <h1>Gestión financiera <span class="highlight">inteligente</span> y simple</h1>
-                <p>Controla tus finanzas personales con herramientas profesionales. Reportes automáticos, alertas inteligentes y análisis en tiempo real.</p>
-                
+                <p>Controla tus finanzas personales con herramientas profesionales. Reportes automáticos, alertas
+                    inteligentes y análisis en tiempo real.</p>
+
                 <!-- Hero Image Placeholder -->
                 <div style="margin: 60px auto; max-width: 800px; position: relative;">
-                    <div style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%); border-radius: 24px; padding: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2);">
-                        <div style="background: #fff; border-radius: 16px; padding: 40px; text-align: center; position: relative; overflow: hidden;">
+                    <div
+                        style="background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%); border-radius: 24px; padding: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2);">
+                        <div
+                            style="background: #fff; border-radius: 16px; padding: 40px; text-align: center; position: relative; overflow: hidden;">
                             <div style="position: relative; z-index: 2;">
-                                <h3 style="font-size: 28px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Tus finanzas en perspectiva</h3>
-                                <p style="color: #64748b; font-size: 16px; margin-bottom: 32px;">Visualiza y controla tu dinero de manera inteligente</p>
-                                
-                                <div style="display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;">
+                                <h3 style="font-size: 28px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Tus
+                                    finanzas en perspectiva</h3>
+                                <p style="color: #64748b; font-size: 16px; margin-bottom: 32px;">Visualiza y controla tu
+                                    dinero de manera inteligente</p>
+
+                                <div
+                                    style="display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;">
                                     <!-- Gráfico donut -->
-                                    <div class="chart-container" style="width: 280px; height: 280px; position: relative;">
+                                    <div class="chart-container"
+                                        style="width: 280px; height: 280px; position: relative;">
                                         <canvas id="expenseChart"></canvas>
                                     </div>
-                                    
+
                                     <!-- Leyenda visual con iconos -->
                                     <div style="display: flex; flex-direction: column; gap: 20px; text-align: left;">
                                         <!-- Alimentación -->
-                                        <div style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
-                                            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #ef4444, #dc2626); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+                                        <div
+                                            style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
+                                            <div
+                                                style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #ef4444, #dc2626); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
                                                 <i class="fas fa-utensils" style="color: white; font-size: 16px;"></i>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 8px;">
-                                                <i class="fas fa-arrow-right" style="color: #ef4444; font-size: 12px;"></i>
-                                                <span style="color: #6b7280; font-weight: 600; font-size: 18px;">$1,250</span>
+                                                <i class="fas fa-arrow-right"
+                                                    style="color: #ef4444; font-size: 12px;"></i>
+                                                <span
+                                                    style="color: #6b7280; font-weight: 600; font-size: 18px;">$1,250</span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Transporte -->
-                                        <div style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
-                                            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+                                        <div
+                                            style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
+                                            <div
+                                                style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
                                                 <i class="fas fa-car" style="color: white; font-size: 16px;"></i>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 8px;">
-                                                <i class="fas fa-arrow-right" style="color: #3b82f6; font-size: 12px;"></i>
-                                                <span style="color: #6b7280; font-weight: 600; font-size: 18px;">$890</span>
+                                                <i class="fas fa-arrow-right"
+                                                    style="color: #3b82f6; font-size: 12px;"></i>
+                                                <span
+                                                    style="color: #6b7280; font-weight: 600; font-size: 18px;">$890</span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Entretenimiento -->
-                                        <div style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
-                                            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">
+                                        <div
+                                            style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
+                                            <div
+                                                style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #227c91, #16a34a); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);">
                                                 <i class="fas fa-gamepad" style="color: white; font-size: 16px;"></i>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 8px;">
-                                                <i class="fas fa-arrow-right" style="color: #22c55e; font-size: 12px;"></i>
-                                                <span style="color: #6b7280; font-weight: 600; font-size: 18px;">$650</span>
+                                                <i class="fas fa-arrow-right"
+                                                    style="color: #227c91; font-size: 12px;"></i>
+                                                <span
+                                                    style="color: #6b7280; font-weight: 600; font-size: 18px;">$650</span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Servicios -->
-                                        <div style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
-                                            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">
+                                        <div
+                                            style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
+                                            <div
+                                                style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">
                                                 <i class="fas fa-bolt" style="color: white; font-size: 16px;"></i>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 8px;">
-                                                <i class="fas fa-arrow-right" style="color: #f59e0b; font-size: 12px;"></i>
-                                                <span style="color: #6b7280; font-weight: 600; font-size: 18px;">$420</span>
+                                                <i class="fas fa-arrow-right"
+                                                    style="color: #f59e0b; font-size: 12px;"></i>
+                                                <span
+                                                    style="color: #6b7280; font-weight: 600; font-size: 18px;">$420</span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Otros -->
-                                        <div style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
-                                            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">
+                                        <div
+                                            style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
+                                            <div
+                                                style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #8b5cf6, #7c3aed); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">
                                                 <i class="fas fa-ellipsis-h" style="color: white; font-size: 16px;"></i>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 8px;">
-                                                <i class="fas fa-arrow-right" style="color: #8b5cf6; font-size: 12px;"></i>
-                                                <span style="color: #6b7280; font-weight: 600; font-size: 18px;">$290</span>
+                                                <i class="fas fa-arrow-right"
+                                                    style="color: #8b5cf6; font-size: 12px;"></i>
+                                                <span
+                                                    style="color: #6b7280; font-weight: 600; font-size: 18px;">$290</span>
                                             </div>
                                         </div>
                                     </div>
@@ -880,7 +1016,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="hero-buttons">
                     <a href="{% url 'usuarios:register' %}" class="btn-primary">
                         <i class="fas fa-rocket"></i>
@@ -891,7 +1027,7 @@
                         Ver funcionalidades
                     </a>
                 </div>
-                
+
                 <div class="stats">
                     <div class="stat">
                         <span class="stat-number">98%</span>
@@ -914,57 +1050,72 @@
     <section class="section" id="funcionalidades">
         <div class="container">
             <div class="fade-in">
-                <h2 class="section-title" style="font-size: 56px;">Todo lo que necesitas en <span style="background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">un solo lugar</span></h2>
-                <p class="section-subtitle" style="font-size: 22px;">Herramientas profesionales diseñadas para simplificar tu gestión financiera personal y llevar tus finanzas al siguiente nivel</p>
+                <h2 class="section-title" style="font-size: 56px;">Todo lo que necesitas en <span
+                        style="background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">un
+                        solo lugar</span></h2>
+                <p class="section-subtitle" style="font-size: 22px;">Herramientas profesionales diseñadas para
+                    simplificar tu gestión financiera personal y llevar tus finanzas al siguiente nivel</p>
             </div>
-            
+
             <div class="features-grid">
                 <div class="feature-card fade-in">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid rgba(34, 197, 94, 0.2);">
-                        <i class="fas fa-chart-bar" style="color: #22c55e; font-size: 32px;"></i>
+                    <div class="feature-icon"
+                        style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid rgba(34, 197, 94, 0.2);">
+                        <i class="fas fa-chart-bar" style="color: #227c91; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Reportes Automáticos</h3>
-                    <p class="feature-description">Genera reportes financieros detallados en PDF y Excel con un solo clic. Análisis completos de tus ingresos, gastos y tendencias.</p>
+                    <p class="feature-description">Genera reportes financieros detallados en PDF y Excel con un solo
+                        clic. Análisis completos de tus ingresos, gastos y tendencias.</p>
                 </div>
-                
+
                 <div class="feature-card fade-in">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid rgba(59, 130, 246, 0.2);">
+                    <div class="feature-icon"
+                        style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid rgba(59, 130, 246, 0.2);">
                         <i class="fas fa-bell" style="color: #3b82f6; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Alertas Inteligentes</h3>
-                    <p class="feature-description">Recibe notificaciones automáticas sobre gastos inusuales, vencimientos y oportunidades de ahorro personalizadas.</p>
+                    <p class="feature-description">Recibe notificaciones automáticas sobre gastos inusuales,
+                        vencimientos y oportunidades de ahorro personalizadas.</p>
                 </div>
-                
+
                 <div class="feature-card fade-in">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #fefce8, #fef3c7); border: 2px solid rgba(245, 158, 11, 0.2);">
+                    <div class="feature-icon"
+                        style="background: linear-gradient(135deg, #fefce8, #fef3c7); border: 2px solid rgba(245, 158, 11, 0.2);">
                         <i class="fas fa-wallet" style="color: #f59e0b; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Control de Gastos</h3>
-                    <p class="feature-description">Categoriza y rastrea todos tus gastos automáticamente. Establece presupuestos y monitorea tu progreso en tiempo real.</p>
+                    <p class="feature-description">Categoriza y rastrea todos tus gastos automáticamente. Establece
+                        presupuestos y monitorea tu progreso en tiempo real.</p>
                 </div>
-                
+
                 <div class="feature-card fade-in">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border: 2px solid rgba(139, 92, 246, 0.2);">
+                    <div class="feature-icon"
+                        style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border: 2px solid rgba(139, 92, 246, 0.2);">
                         <i class="fas fa-chart-line" style="color: #8b5cf6; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Análisis Avanzado</h3>
-                    <p class="feature-description">Visualiza patrones de gasto, proyecciones futuras y recomendaciones personalizadas basadas en tu comportamiento financiero.</p>
+                    <p class="feature-description">Visualiza patrones de gasto, proyecciones futuras y recomendaciones
+                        personalizadas basadas en tu comportamiento financiero.</p>
                 </div>
-                
+
                 <div class="feature-card fade-in">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid rgba(239, 68, 68, 0.2);">
+                    <div class="feature-icon"
+                        style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid rgba(239, 68, 68, 0.2);">
                         <i class="fas fa-graduation-cap" style="color: #ef4444; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Educación Financiera</h3>
-                    <p class="feature-description">Accede a contenido educativo personalizado, tips de ahorro y estrategias de inversión adaptadas a tu perfil.</p>
+                    <p class="feature-description">Accede a contenido educativo personalizado, tips de ahorro y
+                        estrategias de inversión adaptadas a tu perfil.</p>
                 </div>
-                
+
                 <div class="feature-card fade-in">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid rgba(20, 184, 166, 0.2);">
+                    <div class="feature-icon"
+                        style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid rgba(20, 184, 166, 0.2);">
                         <i class="fas fa-shield-alt" style="color: #14b8a6; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Seguridad Total</h3>
-                    <p class="feature-description">Tus datos están protegidos con encriptación de nivel bancario y autenticación de múltiples factores.</p>
+                    <p class="feature-description">Tus datos están protegidos con encriptación de nivel bancario y
+                        autenticación de múltiples factores.</p>
                 </div>
             </div>
         </div>
@@ -974,109 +1125,153 @@
     <section class="section" id="precios" style="background: #fafafa;">
         <div class="container">
             <div class="fade-in">
-                <h2 class="section-title" style="font-size: 56px;">Comienza <span style="background: linear-gradient(135deg, #22c55e 0%, #f59e0b 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">gratis</span>, crece con nosotros</h2>
-                <p class="section-subtitle" style="font-size: 22px;">Elige el plan que mejor se adapte a tus necesidades. Siempre puedes cambiar o cancelar cuando quieras. Sin compromisos.</p>
+                <h2 class="section-title" style="font-size: 56px;">Comienza <span
+                        style="background: linear-gradient(135deg, #227c91 0%, #f59e0b 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">gratis</span>,
+                    crece con nosotros</h2>
+                <p class="section-subtitle" style="font-size: 22px;">Elige el plan que mejor se adapte a tus
+                    necesidades. Siempre puedes cambiar o cancelar cuando quieras. Sin compromisos.</p>
             </div>
-            
+
             <div class="features-grid" style="max-width: 1000px; margin: 60px auto 0;">
                 <!-- Plan Gratuito -->
                 <div class="feature-card fade-in">
                     <h3 class="feature-title">Gratuito</h3>
-                    <div style="font-size: 48px; font-weight: 700; color: #22c55e; margin: 20px 0;">
+                    <div style="font-size: 48px; font-weight: 700; color: #227c91; margin: 20px 0;">
                         $0<span style="font-size: 18px; font-weight: 400; color: #64748b;">/mes</span>
                     </div>
                     <ul style="text-align: left; color: #64748b; line-height: 2; margin: 24px 0;">
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             1 cuenta bancaria
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Reportes básicos
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Soporte por email
                         </li>
                     </ul>
-                    <a href="{% url 'usuarios:register' %}" class="btn-secondary" style="margin-top: 20px; width: 100%; text-align: center; background: #f1f5f9; border: 1px solid #e2e8f0; color: #374151;">Comenzar gratis</a>
+                    <a href="{% url 'usuarios:register' %}" class="btn-secondary"
+                        style="margin-top: 20px; width: 100%; text-align: center; background: #f1f5f9; border: 1px solid #e2e8f0; color: #374151;">Comenzar
+                        gratis</a>
                 </div>
-                
+
                 <!-- Plan Pro -->
-                <div class="feature-card fade-in" style="border: 2px solid #22c55e; position: relative; background: rgba(255, 255, 255, 0.95);">
-                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #22c55e; color: white; padding: 6px 20px; border-radius: 20px; font-size: 14px; font-weight: 600;">Más popular</div>
+                <div class="feature-card fade-in"
+                    style="border: 2px solid #227c91; position: relative; background: rgba(255, 255, 255, 0.95);">
+                    <div
+                        style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #227c91; color: white; padding: 6px 20px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                        Más popular</div>
                     <h3 class="feature-title">Pro</h3>
-                    <div style="font-size: 48px; font-weight: 700; color: #22c55e; margin: 20px 0;">
+                    <div style="font-size: 48px; font-weight: 700; color: #227c91; margin: 20px 0;">
                         $19<span style="font-size: 18px; font-weight: 400; color: #64748b;">/mes</span>
                     </div>
                     <ul style="text-align: left; color: #64748b; line-height: 2; margin: 24px 0;">
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Cuentas ilimitadas
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Reportes avanzados
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Alertas automáticas
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Soporte prioritario
                         </li>
                     </ul>
-                    <a href="{% url 'usuarios:register' %}" class="btn-primary" style="margin-top: 20px; width: 100%; text-align: center;">Comenzar prueba gratuita</a>
+                    <a href="{% url 'usuarios:register' %}" class="btn-primary"
+                        style="margin-top: 20px; width: 100%; text-align: center;">Comenzar prueba gratuita</a>
                 </div>
-                
+
                 <!-- Plan Empresarial -->
                 <div class="feature-card fade-in">
                     <h3 class="feature-title">Empresarial</h3>
-                    <div style="font-size: 48px; font-weight: 700; color: #22c55e; margin: 20px 0;">
+                    <div style="font-size: 48px; font-weight: 700; color: #227c91; margin: 20px 0;">
                         $49<span style="font-size: 18px; font-weight: 400; color: #64748b;">/mes</span>
                     </div>
                     <ul style="text-align: left; color: #64748b; line-height: 2; margin: 24px 0;">
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Todo lo de Pro
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Múltiples usuarios
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             API personalizada
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
-                            <svg style="width: 16px; height: 16px; color: #22c55e;" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
+                                viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                             Soporte dedicado
                         </li>
                     </ul>
-                    <a href="#contacto" class="btn-secondary" style="margin-top: 20px; width: 100%; text-align: center; background: #f1f5f9; border: 1px solid #e2e8f0; color: #374151;">Contactar ventas</a>
+                    <a href="#contacto" class="btn-secondary"
+                        style="margin-top: 20px; width: 100%; text-align: center; background: #f1f5f9; border: 1px solid #e2e8f0; color: #374151;">Contactar
+                        ventas</a>
                 </div>
             </div>
         </div>
@@ -1086,44 +1281,67 @@
     <section class="section" id="sobre-nosotros">
         <div class="container">
             <div class="fade-in" style="text-align: center; max-width: 900px; margin: 0 auto;">
-                <h2 class="section-title" style="font-size: 56px; font-weight: 800; background: linear-gradient(135deg, #0f172a 0%, #22c55e 50%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Simplificamos tus finanzas personales</h2>
-                <p class="section-subtitle" style="font-size: 20px; margin-bottom: 60px;">Somos expertos en tecnología financiera comprometidos con democratizar el acceso a herramientas profesionales de gestión financiera.</p>
-                
+                <h2 class="section-title"
+                    style="font-size: 56px; font-weight: 800; background: linear-gradient(135deg, #0f172a 0%, #227c91 50%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Simplificamos tus finanzas personales</h2>
+                <p class="section-subtitle" style="font-size: 20px; margin-bottom: 60px;">Somos expertos en tecnología
+                    financiera comprometidos con democratizar el acceso a herramientas profesionales de gestión
+                    financiera.</p>
+
                 <!-- Team Preview -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin: 60px 0;">
-                    <div style="background: rgba(255,255,255,0.9); border-radius: 20px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
-                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #22c55e, #3b82f6); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin: 60px 0;">
+                    <div
+                        style="background: rgba(255,255,255,0.9); border-radius: 20px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                        <div
+                            style="width: 80px; height: 80px; background: linear-gradient(135deg, #227c91, #3b82f6); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-brain" style="color: white; font-size: 32px;"></i>
                         </div>
-                        <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Inteligencia Artificial</h3>
-                        <p style="color: #64748b; font-size: 16px;">Algoritmos avanzados para análisis predictivo y recomendaciones personalizadas</p>
+                        <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Inteligencia
+                            Artificial</h3>
+                        <p style="color: #64748b; font-size: 16px;">Algoritmos avanzados para análisis predictivo y
+                            recomendaciones personalizadas</p>
                     </div>
-                    
-                    <div style="background: rgba(255,255,255,0.9); border-radius: 20px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
-                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+
+                    <div
+                        style="background: rgba(255,255,255,0.9); border-radius: 20px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                        <div
+                            style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-users" style="color: white; font-size: 32px;"></i>
                         </div>
-                        <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Equipo Experto</h3>
-                        <p style="color: #64748b; font-size: 16px;">Profesionales en finanzas y tecnología trabajando para tu éxito financiero</p>
+                        <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Equipo
+                            Experto</h3>
+                        <p style="color: #64748b; font-size: 16px;">Profesionales en finanzas y tecnología trabajando
+                            para tu éxito financiero</p>
                     </div>
-                    
-                    <div style="background: rgba(255,255,255,0.9); border-radius: 20px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
-                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+
+                    <div
+                        style="background: rgba(255,255,255,0.9); border-radius: 20px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+                        <div
+                            style="width: 80px; height: 80px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-heart" style="color: white; font-size: 32px;"></i>
                         </div>
-                        <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Pasión por Ayudar</h3>
-                        <p style="color: #64748b; font-size: 16px;">Cada funcionalidad está diseñada pensando en mejorar tu bienestar financiero</p>
+                        <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Pasión por
+                            Ayudar</h3>
+                        <p style="color: #64748b; font-size: 16px;">Cada funcionalidad está diseñada pensando en mejorar
+                            tu bienestar financiero</p>
                     </div>
                 </div>
-                
-                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 100%); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 24px; padding: 48px; margin-top: 60px; backdrop-filter: blur(20px); position: relative; overflow: hidden;">
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, rgba(34, 197, 94, 0.05), rgba(59, 130, 246, 0.05)); pointer-events: none;"></div>
+
+                <div
+                    style="background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 100%); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 24px; padding: 48px; margin-top: 60px; backdrop-filter: blur(20px); position: relative; overflow: hidden;">
+                    <div
+                        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, rgba(34, 197, 94, 0.05), rgba(59, 130, 246, 0.05)); pointer-events: none;">
+                    </div>
                     <div style="position: relative; z-index: 2;">
-                        <blockquote style="font-size: 24px; font-weight: 600; color: #0f172a; line-height: 1.6; font-style: italic; margin-bottom: 24px;">
-                            "Nuestra misión es empoderar a las personas con las herramientas y conocimientos necesarios para tomar decisiones financieras inteligentes y alcanzar sus metas económicas."
+                        <blockquote
+                            style="font-size: 24px; font-weight: 600; color: #0f172a; line-height: 1.6; font-style: italic; margin-bottom: 24px;">
+                            "Nuestra misión es empoderar a las personas con las herramientas y conocimientos necesarios
+                            para tomar decisiones financieras inteligentes y alcanzar sus metas económicas."
                         </blockquote>
                         <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
-                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #22c55e, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <div
+                                style="width: 50px; height: 50px; background: linear-gradient(135deg, #227c91, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-quote-left" style="color: white; font-size: 20px;"></i>
                             </div>
                             <div style="text-align: left;">
@@ -1139,30 +1357,41 @@
 
     <!-- Contacto -->
     <section class="section" id="contacto" style="background: #f8fafc; position: relative; overflow: hidden;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 25% 25%, rgba(34, 197, 94, 0.08) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 50%); pointer-events: none;"></div>
+        <div
+            style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle at 25% 25%, rgba(34, 197, 94, 0.08) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.08) 0%, transparent 50%); pointer-events: none;">
+        </div>
         <div class="container" style="position: relative; z-index: 2;">
             <div class="fade-in" style="text-align: center; max-width: 700px; margin: 0 auto;">
-                <h2 class="section-title" style="font-size: 56px;">¿Listo para <span style="background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">transformar</span> tus finanzas?</h2>
-                <p class="section-subtitle" style="font-size: 22px;">Únete a miles de usuarios que ya controlan sus finanzas con FinGest y descubre el poder de la gestión financiera inteligente</p>
-                
+                <h2 class="section-title" style="font-size: 56px;">¿Listo para <span
+                        style="background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">transformar</span>
+                    tus finanzas?</h2>
+                <p class="section-subtitle" style="font-size: 22px;">Únete a miles de usuarios que ya controlan sus
+                    finanzas con FinGest y descubre el poder de la gestión financiera inteligente</p>
+
                 <!-- CTA Visual -->
-                <div style="background: rgba(255,255,255,0.9); border-radius: 24px; padding: 40px; margin: 60px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); max-width: 500px;">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 32px;">
-                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #22c55e, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: bounce-gentle 2s infinite;">
+                <div
+                    style="background: rgba(255,255,255,0.9); border-radius: 24px; padding: 40px; margin: 60px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); max-width: 500px;">
+                    <div
+                        style="display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 32px;">
+                        <div
+                            style="width: 60px; height: 60px; background: linear-gradient(135deg, #227c91, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: bounce-gentle 2s infinite;">
                             <i class="fas fa-rocket" style="color: white; font-size: 24px;"></i>
                         </div>
                         <div>
-                            <div style="font-size: 18px; font-weight: 700; color: #0f172a;">¡Empieza en menos de 2 minutos!</div>
+                            <div style="font-size: 18px; font-weight: 700; color: #0f172a;">¡Empieza en menos de 2
+                                minutos!</div>
                             <div style="color: #64748b; font-size: 14px;">Configuración rápida y sencilla</div>
                         </div>
                     </div>
-                    
+
                     <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                        <a href="{% url 'usuarios:register' %}" class="btn-primary" style="font-size: 18px; padding: 18px 36px;">
+                        <a href="{% url 'usuarios:register' %}" class="btn-primary"
+                            style="font-size: 18px; padding: 18px 36px;">
                             <i class="fas fa-user-plus"></i>
                             Crear cuenta gratis
                         </a>
-                        <a href="{% url 'core:contact' %}" class="btn-secondary" style="font-size: 18px; padding: 18px 36px;">
+                        <a href="{% url 'core:contact' %}" class="btn-secondary"
+                            style="font-size: 18px; padding: 18px 36px;">
                             <i class="fas fa-comments"></i>
                             Contactar soporte
                         </a>
@@ -1182,16 +1411,16 @@
                     <a href="{% url 'core:help' %}">Ayuda</a>
                     <a href="{% url 'core:contact' %}">Contacto</a>
                 </div>
-                <p class="footer-text">© 2024 FinGest. Todos los derechos reservados.</p>
+                <p class="footer-text">© 2025 FinGest. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
 
     <script>
         // Crear gráfico donut de gastos
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('expenseChart').getContext('2d');
-            
+
             const chart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
@@ -1201,7 +1430,7 @@
                         backgroundColor: [
                             '#ef4444', // Rojo brillante
                             '#3b82f6', // Azul brillante
-                            '#22c55e', // Verde brillante
+                            '#227c91', // Verde brillante
                             '#f59e0b', // Amarillo brillante
                             '#8b5cf6'  // Púrpura brillante
                         ],
@@ -1227,7 +1456,7 @@
                             cornerRadius: 8,
                             displayColors: true,
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     const label = context.label || '';
                                     const value = context.parsed;
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
@@ -1250,7 +1479,7 @@
                     },
                     elements: {
                         arc: {
-                            hoverBackgroundColor: function(context) {
+                            hoverBackgroundColor: function (context) {
                                 const color = context.element.options.backgroundColor;
                                 return color + 'CC'; // Hacer el color más brillante en hover
                             }
@@ -1259,9 +1488,9 @@
                 }
             });
         });
-        
+
         // Navbar scroll effect
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
@@ -1290,7 +1519,7 @@
             rootMargin: '0px 0px -50px 0px'
         };
 
-        const observer = new IntersectionObserver(function(entries) {
+        const observer = new IntersectionObserver(function (entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
@@ -1303,4 +1532,5 @@
         });
     </script>
 </body>
+
 </html>
