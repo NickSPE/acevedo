@@ -1468,12 +1468,13 @@ def exportar_excel(request):
         ws[f'E{row}'] = f"${transaccion.monto:,.2f}"
     
     # Ajustar ancho de columnas
-    for column in ws.columns:
+    from openpyxl.utils import get_column_letter
+    for col_idx, column in enumerate(ws.columns, 1):
         max_length = 0
-        column_letter = column[0].column_letter
+        column_letter = get_column_letter(col_idx)
         for cell in column:
             try:
-                if len(str(cell.value)) > max_length:
+                if cell.value and len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
             except:
                 pass

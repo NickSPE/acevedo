@@ -1,141 +1,43 @@
 {% extends 'core/base_template.html' %}
 {% load static %}
+{% load currency_filters %}
 
-{% block title %}Activar Subcuenta - FinGest{% endblock %}
-
-{% block extra_css %}
-<style>
-    .confirmation-container {
-        max-width: 500px;
-        margin: 0 auto;
-        padding: 2rem;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-    
-    .icon-container {
-        margin-bottom: 2rem;
-    }
-    
-    .icon-container i {
-        font-size: 4rem;
-        color: #00b894;
-    }
-    
-    .confirmation-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 1rem;
-    }
-    
-    .confirmation-text {
-        color: #636e72;
-        margin-bottom: 2rem;
-        line-height: 1.6;
-    }
-    
-    .subcuenta-info {
-        background: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 15px;
-        margin-bottom: 2rem;
-        border-left: 4px solid #00b894;
-    }
-    
-    .subcuenta-name {
-        font-weight: 600;
-        color: #2d3436;
-        margin-bottom: 0.5rem;
-    }
-    
-    .subcuenta-details {
-        color: #636e72;
-        font-size: 0.9rem;
-    }
-    
-    .btn-container {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-    }
-    
-    .btn-confirm, .btn-cancel {
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        min-width: 120px;
-    }
-    
-    .btn-confirm {
-        background: linear-gradient(45deg, #00b894, #00cec9);
-        color: white;
-    }
-    
-    .btn-confirm:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
-        color: white;
-        text-decoration: none;
-    }
-    
-    .btn-cancel {
-        background: #f8f9fa;
-        color: #636e72;
-        border: 1px solid #dee2e6;
-    }
-    
-    .btn-cancel:hover {
-        background: #e9ecef;
-        color: #495057;
-        text-decoration: none;
-    }
-</style>
-{% endblock %}
+{% block title %}Activar Subcuenta | FinGest{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="confirmation-container">
-        <div class="icon-container">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        
-        <h1 class="confirmation-title">Activar Subcuenta</h1>
-        
-        <p class="confirmation-text">
-            ¿Estás seguro de que deseas activar esta subcuenta? Una vez activada, 
-            podrás realizar depósitos, retiros y transferencias.
-        </p>
-        
-        <div class="subcuenta-info">
-            <div class="subcuenta-name">{{ subcuenta.nombre }}</div>
-            <div class="subcuenta-details">
-                Tipo: {{ subcuenta.get_tipo_display }} | 
-                Saldo: ${{ subcuenta.saldo|floatformat:2 }}
-                {% if subcuenta.descripcion %}
-                <br>{{ subcuenta.descripcion }}
-                {% endif %}
-            </div>
-        </div>
-        
-        <div class="btn-container">
-            <form method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn-confirm">
-                    <i class="fas fa-check me-2"></i>Activar Subcuenta
-                </button>
-            </form>
-            
-            <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn-cancel">
-                <i class="fas fa-times me-2"></i>Cancelar
-            </a>
-        </div>
+<div class="max-w-lg mx-auto">
+  <!-- Header -->
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-6 text-center">
+    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
     </div>
+    
+    <h1 class="text-2xl font-bold text-[#605952] mb-2">Activar Subcuenta</h1>
+    <p class="text-[#736B5E] text-sm mb-6">Esta subcuenta volverá a estar disponible para usar</p>
+    
+    <!-- Info de subcuenta -->
+    <div class="bg-[#F1F0EE] rounded-lg p-4 border-l-4 border-green-500 mb-6">
+      <p class="font-semibold text-[#605952] mb-1">{{ subcuenta.nombre }}</p>
+      <p class="text-sm text-[#736B5E]">Saldo: <span class="font-semibold text-[#227C91]">{% format_money subcuenta.saldo user %}</span></p>
+      {% if subcuenta.descripcion %}
+      <p class="text-xs text-[#736B5E] mt-2">{{ subcuenta.descripcion }}</p>
+      {% endif %}
+    </div>
+    
+    <!-- Formulario -->
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="flex-1 bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+          Cancelar
+        </a>
+        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          Activar Subcuenta
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

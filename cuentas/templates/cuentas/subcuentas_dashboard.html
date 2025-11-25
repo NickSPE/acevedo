@@ -1,0 +1,332 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}Gestión de Subcuentas | FinGest{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+  <!-- Header con acciones -->
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-[#605952]">Gestión de Subcuentas</h1>
+          <p class="text-[#736B5E] text-sm">Organiza tu dinero y alcanza tus metas</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        {% if cuentas_con_subcuentas %}
+          <a href="{% url 'cuentas:crear_subcuenta' cuentas_con_subcuentas.0.cuenta.id %}" class="bg-[#227C91] hover:bg-[#1a6070] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Nueva Subcuenta
+          </a>
+        {% else %}
+          <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="bg-[#227C91] hover:bg-[#1a6070] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Nueva Subcuenta
+          </a>
+        {% endif %}
+        <button onclick="openTransferModal()" class="bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+          </svg>
+          Transferir
+        </button>
+        <a href="{% url 'cuentas:historial_transferencias_cuenta_principal' %}" class="bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Historial
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Métricas -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between">
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-medium text-[#736B5E] truncate">Balance Total</p>
+          <p class="text-xl font-bold text-[#605952] break-words">{% format_money total_balance user %}</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">Todas las cuentas</p>
+        </div>
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between">
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-medium text-[#736B5E] truncate">Cuenta Principal</p>
+          <p class="text-xl font-bold text-[#227C91] break-words">{% if cuenta_principal %}{% format_money cuenta_principal.saldo_cuenta user %}{% else %}$0.00{% endif %}</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">Disponible</p>
+        </div>
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between">
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-medium text-[#736B5E] truncate">Subcuentas Personales</p>
+          <p class="text-xl font-bold text-[#227C91] break-words">{% if total_saldo_subcuentas_vinculadas %}{% format_money total_saldo_subcuentas_vinculadas user %}{% else %}$0.00{% endif %}</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">{{ total_subcuentas_vinculadas }} activas</p>
+        </div>
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between">
+        <div class="min-w-0 flex-1">
+          <p class="text-xs font-medium text-[#736B5E] truncate">Subcuentas de Negocio</p>
+          <p class="text-xl font-bold text-[#605952] break-words">{% if total_saldo_subcuentas_independientes %}{% format_money total_saldo_subcuentas_independientes user %}{% else %}$0.00{% endif %}</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">{{ total_subcuentas_independientes }} activas</p>
+        </div>
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subcuentas de Negocio -->
+  {% if subcuentas_independientes_activas %}
+  <div class="bg-white rounded-lg p-4 border border-[#E5E1DD] mb-4">
+    <div class="flex items-center gap-2 mb-3">
+      <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      <h2 class="text-lg font-bold text-[#605952]">Subcuentas de Negocio</h2>
+    </div>
+    <p class="text-sm text-[#736B5E] mb-3">Subcuentas independientes para tus negocios y proyectos</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      {% for subcuenta in subcuentas_independientes_activas %}
+      <div class="bg-[#F1F0EE] rounded-lg p-4 border border-[#E5E1DD] hover:shadow-md transition-shadow">
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex-1 min-w-0">
+            <h3 class="text-base font-semibold text-[#605952] truncate">{{ subcuenta.nombre }}</h3>
+            <span class="text-xs text-[#736B5E]">{{ subcuenta.get_tipo_display }}</span>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <p class="text-2xl font-bold text-[#227C91]">{% format_money subcuenta.saldo user %}</p>
+          {% if subcuenta.meta_objetivo %}
+          <div class="mt-2">
+            <div class="w-full bg-[#E5E1DD] rounded-full h-1.5">
+              <div class="bg-[#227C91] h-1.5 rounded-full" style="width: {{ subcuenta.progreso_meta }}%"></div>
+            </div>
+            <p class="text-xs text-[#736B5E] mt-1">Meta: {% format_money subcuenta.meta_objetivo user %} ({{ subcuenta.progreso_meta|floatformat:1 }}%)</p>
+          </div>
+          {% endif %}
+        </div>
+
+        {% if subcuenta.descripcion %}
+        <p class="text-sm text-[#736B5E] mb-3 line-clamp-2">{{ subcuenta.descripcion }}</p>
+        {% endif %}
+
+        <div class="flex gap-2 flex-wrap">
+          <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors text-center border border-[#E5E1DD]">
+            Editar
+          </a>
+          <button onclick="openTransferToPrincipalModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', {{ subcuenta.saldo }})" class="flex-1 min-w-[80px] bg-[#227C91] hover:bg-[#1a6070] text-white px-2 py-1.5 rounded text-xs font-medium transition-colors">
+            A Principal
+          </button>
+          <button onclick="openDepositModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', 'negocio')" class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors border border-[#E5E1DD]">
+            Depositar
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Subcuentas Personales -->
+  {% if cuentas_con_subcuentas %}
+  <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+    <div class="flex items-center gap-2 mb-3">
+      <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+      </svg>
+      <h2 class="text-lg font-bold text-[#605952]">Subcuentas Personales</h2>
+    </div>
+    <p class="text-sm text-[#736B5E] mb-3">Subcuentas vinculadas a tu cuenta principal</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      {% for cuenta_data in cuentas_con_subcuentas %}
+        {% for subcuenta in cuenta_data.subcuentas %}
+          {% if subcuenta.activa %}
+          <div class="bg-[#F1F0EE] rounded-lg p-4 border border-[#E5E1DD] hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-[#605952] truncate">{{ subcuenta.nombre }}</h3>
+                <span class="text-xs text-[#736B5E]">{{ subcuenta.get_tipo_display }}</span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <p class="text-2xl font-bold text-[#227C91]">{% format_money subcuenta.saldo user %}</p>
+              {% if subcuenta.meta_objetivo %}
+              <div class="mt-2">
+                <div class="w-full bg-[#E5E1DD] rounded-full h-1.5">
+                  <div class="bg-[#227C91] h-1.5 rounded-full" style="width: {{ subcuenta.progreso_meta }}%"></div>
+                </div>
+                <p class="text-xs text-[#736B5E] mt-1">Meta: {% format_money subcuenta.meta_objetivo user %} ({{ subcuenta.progreso_meta|floatformat:1 }}%)</p>
+              </div>
+              {% endif %}
+            </div>
+
+            {% if subcuenta.descripcion %}
+            <p class="text-sm text-[#736B5E] mb-3 line-clamp-2">{{ subcuenta.descripcion }}</p>
+            {% endif %}
+
+            <div class="flex gap-2 flex-wrap">
+              <button onclick="openDepositModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', 'personal')" class="flex-1 min-w-[80px] bg-[#227C91] hover:bg-[#1a6070] text-white px-2 py-1.5 rounded text-xs font-medium transition-colors">
+                Depositar
+              </button>
+              <button onclick="openTransferModal()" class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors border border-[#E5E1DD]">
+                Transferir
+              </button>
+              <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors text-center border border-[#E5E1DD]">
+                Editar
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Estado vacío -->
+  {% if not subcuentas_independientes_activas and not cuentas_con_subcuentas %}
+  <div class="bg-white rounded-lg p-8 border border-[#E5E1DD] text-center">
+    <div class="w-16 h-16 bg-[#F1F0EE] rounded-full flex items-center justify-center mx-auto mb-4">
+      <svg class="w-8 h-8 text-[#736B5E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+      </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-[#605952] mb-2">No tienes subcuentas</h3>
+    <p class="text-[#736B5E] mb-4">Crea tu primera subcuenta para organizar mejor tu dinero</p>
+    <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="inline-flex items-center gap-2 bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Crear Subcuenta
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Modal para Transferir a Cuenta Principal -->
+<div id="transferToPrincipalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-[#605952]">Transferir a Cuenta Principal</h3>
+      <button onclick="closeModal('transferToPrincipalModal')" class="text-[#736B5E] hover:text-[#605952]">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="bg-[#F1F0EE] rounded-lg p-3 mb-4 space-y-2 text-sm">
+      <div class="flex justify-between">
+        <span class="text-[#736B5E]">Desde:</span>
+        <span class="font-medium text-[#605952]" id="fromSubcuentaName"></span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-[#736B5E]">Hacia:</span>
+        <span class="font-medium text-[#605952]">Cuenta Principal</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-[#736B5E]">Disponible:</span>
+        <span class="font-medium text-[#227C91]" id="availableBalance"></span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-[#736B5E]">Saldo cuenta principal:</span>
+        <span class="font-medium text-[#605952]">{% if cuenta_principal %}{% format_money cuenta_principal.saldo_cuenta user %}{% else %}$0.00{% endif %}</span>
+      </div>
+    </div>
+    
+    <form id="transferToPrincipalForm" class="space-y-4">
+      {% csrf_token %}
+      <input type="hidden" id="subcuentaId" name="subcuenta_id">
+      
+      <div>
+        <label class="block text-sm font-medium text-[#605952] mb-1">Monto a transferir</label>
+        <input type="number" class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91]" id="transferAmount" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium text-[#605952] mb-1">Descripción (opcional)</label>
+        <input type="text" class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91]" name="descripcion" placeholder="Motivo de la transferencia">
+      </div>
+      
+      <div class="flex gap-2">
+        <button type="button" onclick="closeModal('transferToPrincipalModal')" class="flex-1 bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] px-4 py-2 rounded-lg font-medium transition-colors">
+          Cancelar
+        </button>
+        <button type="submit" class="flex-1 bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg font-medium transition-colors">
+          Transferir
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Scripts de la página original continúan aquí... -->
+<script>
+function openTransferToPrincipalModal(subcuentaId, nombre, saldo) {
+    document.getElementById('subcuentaId').value = subcuentaId;
+    document.getElementById('fromSubcuentaName').textContent = nombre;
+    document.getElementById('availableBalance').textContent = '$' + saldo.toLocaleString();
+    document.getElementById('transferToPrincipalModal').classList.remove('hidden');
+    document.getElementById('transferToPrincipalModal').classList.add('flex');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    document.getElementById(modalId).classList.remove('flex');
+}
+
+function openDepositModal(subcuentaId, nombre, tipo) {
+    // Redirigir a la página de depósito
+    window.location.href = `/cuentas/subcuentas/depositar/${subcuentaId}/`;
+}
+
+function openTransferModal() {
+    // Redirigir a la página de transferencia
+    window.location.href = '{% url "cuentas:transferir_subcuentas" %}';
+}
+</script>
+{% endblock %}

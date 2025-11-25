@@ -22,9 +22,9 @@
   }
 }
 
-/* === CLEAN COLORS === */
+/* === CLEAN COLORS - Paleta Corporativa FINGEST === */
 .gradient-primary {
-  background: #2563eb;
+  background: #227C91;
 }
 
 .gradient-success {
@@ -36,28 +36,29 @@
 }
 
 .gradient-danger {
-  background: #ef4444;
+  background: #EF4444;
 }
 
 .gradient-text {
-  color: #1f2937;
+  color: #605952;
 }
 
 .dark .gradient-text {
-  color: #f9fafb;
+  color: #ECEBE9;
 }
 
 /* === FEATURE CARDS === */
 .feature-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(229, 231, 235, 0.5);
+  background: #FAFAFA;
+  border: 1px solid #E5E1DD;
   transition: all 0.2s ease;
 }
 
 .feature-card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 12px rgba(34, 124, 145, 0.1);
+  background: #FFFFFF;
+  border-color: #227C91;
 }
 
 .dark .feature-card {
@@ -71,26 +72,26 @@
 
 /* === CARDS === */
 .glass-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(229, 231, 235, 0.5);
+  background: #FFFFFF;
+  border: 1px solid #E5E1DD;
   transition: all 0.2s ease;
 }
 
 .glass-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 8px 25px rgba(34, 124, 145, 0.12);
+  border-color: #227C91;
 }
 
 .metric-card {
   transition: all 0.2s ease;
-  border: 1px solid rgba(229, 231, 235, 0.3);
+  border: 1px solid #E5E1DD;
 }
 
 .metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border-color: rgba(37, 99, 235, 0.2);
+  box-shadow: 0 4px 12px rgba(34, 124, 145, 0.1);
+  border-color: #227C91;
 }
 
 /* === HERO SECTION === */
@@ -108,26 +109,26 @@
 
 /* === BUTTONS === */
 .btn-primary {
-  background: #2563eb;
+  background: #227C91;
   transition: all 0.2s ease;
   border: none;
 }
 
 .btn-primary:hover {
-  background: #1d4ed8;
+  background: #1a5f70;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(34, 124, 145, 0.3);
 }
 
 .btn-ghost {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #F1F0EE;
+  border: 1px solid #E5E1DD;
   transition: all 0.2s ease;
 }
 
 .btn-ghost:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: #ECEBE9;
+  border-color: #227C91;
 }
 
 /* === HEALTH SCORE === */
@@ -170,6 +171,7 @@
 
 .dark .glass-card:hover {
   background: rgba(31, 41, 55, 0.95);
+  border-color: rgba(34, 124, 145, 0.5);
 }
 
 .dark .metric-card {
@@ -178,135 +180,121 @@
 }
 
 .dark .metric-card:hover {
-  border-color: rgba(102, 126, 234, 0.5);
+  border-color: rgba(34, 124, 145, 0.6);
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="p-6 space-y-8">
-  <!-- === CLEAN WELCOME SECTION === -->
-  <div class="hero-card rounded-2xl p-8 relative overflow-hidden slide-up">
-    <div class="relative z-10">
-      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-        <!-- Left Content -->
-        <div class="flex-1">
-          <h1 class="text-3xl lg:text-4xl font-bold mb-3 text-gray-900 dark:text-white">
-            FinGest
-          </h1>
-          <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 max-w-2xl">
-            Gestiona y monitorea tus finanzas personales de manera eficiente.
-          </p>
-          
-          <!-- Quick Action Buttons -->
-          <div class="flex flex-wrap gap-3">
-            <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" 
-               class="btn-primary text-white px-5 py-2.5 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-              </svg>
-              Nueva Transacción
-            </a>
-            <a href="{% url 'analisis_reportes:reports' %}" 
-               class="btn-ghost text-gray-700 dark:text-gray-300 px-5 py-2.5 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-              </svg>
-              Ver Reportes
-            </a>
-          </div>
-        </div>
-        
-        <!-- Right Content - Simple Icon -->
-        <div class="lg:block hidden">
-          <div class="w-24 h-24 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center">
-            <svg class="w-12 h-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
-          </div>
-        </div>
-      </div>
+<div class="p-6 space-y-6">
+  <!-- === HEADER COMPACTO === -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-bold mb-1" style="color: #227C91;">
+        Dashboard Financiero
+      </h1>
+      <p class="text-sm" style="color: #736B5E;">
+        Gestiona y monitorea tus finanzas personales
+      </p>
+    </div>
+    
+    <!-- Quick Action Buttons -->
+    <div class="flex gap-3">
+      <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" 
+         class="btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+        Nueva Transacción
+      </a>
+      <a href="{% url 'analisis_reportes:reports' %}" 
+         class="btn-ghost px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all" style="color: #605952;">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        Reportes
+      </a>
     </div>
   </div>
 
   <!-- === CLEAN FINANCIAL METRICS === -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <!-- Balance Total -->
-    <div class="glass-card metric-card rounded-xl p-3 sm:p-4 lg:p-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-2 sm:mb-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="glass-card metric-card rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: #227C91;">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
           </svg>
         </div>
-        <div class="text-left sm:text-right">
-          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Balance Total</p>
-          <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">{% format_money total_balance user %}</p>
+        <div class="text-right">
+          <p class="text-xs font-medium" style="color: #736B5E;">Balance Total</p>
+          <p class="text-xl font-bold" style="color: #605952;">{% format_money total_balance user %}</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-          <span class="hidden sm:inline">Total </span>disponible
+      <div class="mt-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs" style="background: #F1F0EE; color: #605952;">
+          Disponible
         </span>
       </div>
     </div>
 
     <!-- Ingresos Totales -->
-    <div class="glass-card metric-card rounded-xl p-3 sm:p-4 lg:p-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-lg flex items-center justify-center mb-2 sm:mb-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="glass-card metric-card rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="w-9 h-9 bg-green-500 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
           </svg>
         </div>
-        <div class="text-left sm:text-right">
-          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Ingresos<span class="hidden sm:inline"> Totales</span></p>
-          <p class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600 dark:text-green-400">{% format_money total_ingresos user %}</p>
+        <div class="text-right">
+          <p class="text-xs font-medium" style="color: #736B5E;">Ingresos</p>
+          <p class="text-xl font-bold text-green-600">{% format_money total_ingresos user %}</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
-          {{ cantidad_ingresos }} registro<span class="hidden sm:inline">s</span>
+      <div class="mt-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-green-100 text-green-700">
+          {{ cantidad_ingresos }} reg.
         </span>
       </div>
     </div>
 
     <!-- Gastos -->
-    <div class="glass-card metric-card rounded-xl p-3 sm:p-4 lg:p-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-500 rounded-lg flex items-center justify-center mb-2 sm:mb-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="glass-card metric-card rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: #EF4444;">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
           </svg>
         </div>
-        <div class="text-left sm:text-right">
-          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Gastos<span class="hidden sm:inline"> Totales</span></p>
-          <p class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600 dark:text-red-400">{% format_money total_egresos user %}</p>
+        <div class="text-right">
+          <p class="text-xs font-medium" style="color: #736B5E;">Gastos</p>
+          <p class="text-xl font-bold text-red-600">{% format_money total_egresos user %}</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
-          {{ porcentaje_de_recursos_para_egresos|floatformat:1 }}%<span class="hidden lg:inline"> de recursos históricos</span>
+      <div class="mt-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-red-100 text-red-700">
+          {{ porcentaje_de_recursos_para_egresos|floatformat:1 }}%
         </span>
       </div>
     </div>
 
     <!-- Saldo Inicial -->
-    <div class="glass-card metric-card rounded-xl p-3 sm:p-4 lg:p-6">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500 rounded-lg flex items-center justify-center mb-2 sm:mb-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="glass-card metric-card rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="w-9 h-9 bg-orange-500 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
           </svg>
         </div>
-        <div class="text-left sm:text-right">
-          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Saldo<span class="hidden sm:inline"> Inicial</span></p>
-          <p class="text-lg sm:text-xl lg:text-2xl font-bold text-orange-600 dark:text-orange-400">{% format_money saldo_inicial_cuentas user %}</p>
+        <div class="text-right">
+          <p class="text-xs font-medium" style="color: #736B5E;">Saldo Inicial</p>
+          <p class="text-xl font-bold text-orange-600">{% format_money saldo_inicial_cuentas user %}</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
-          Base<span class="hidden sm:inline"> de cuentas</span>
+      <div class="mt-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-orange-100 text-orange-700">
+          Base
         </span>
       </div>
     </div>
@@ -314,18 +302,18 @@
 
 {% if tab == "overview" or not tab %}
 <!-- Main Dashboard Grid -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
   <!-- Left Column - Chart & Analysis -->
-  <div class="lg:col-span-2 space-y-6">
+  <div class="lg:col-span-2 space-y-5">
     <!-- Financial Health Score -->
-    <div class="feature-card rounded-xl p-6">
-      <div class="flex items-center justify-between mb-6">
+    <div class="feature-card rounded-lg p-4">
+      <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white">Salud Financiera</h3>
-          <p class="text-gray-600 dark:text-gray-400">Evaluación de tu gestión financiera</p>
+          <h3 class="text-base font-bold" style="color: #605952;">Salud Financiera</h3>
+          <p class="text-xs" style="color: #736B5E;">Evaluación de tu gestión</p>
         </div>
-        <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center">
-          <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: #F1F0EE;">
+          <svg class="w-5 h-5" style="color: #227C91;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
           </svg>
         </div>
@@ -333,23 +321,23 @@
       
       {% if total_egresos > 0 and total_recursos_historicos > 0 %}
         {% with porcentaje_gastado=porcentaje_de_recursos_para_egresos|floatformat:0 %}
-          <div class="text-center mb-6">
+          <div class="text-center mb-4">
             <div class="relative inline-flex items-center justify-center">
-              <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 36 36">
-                <path class="text-gray-200 dark:text-gray-700" stroke="currentColor" stroke-width="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 36 36">
+                <path style="color: #E5E1DD;" stroke="currentColor" stroke-width="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
                 <path class="{% if salud_financiera_score >= 70 %}text-green-500{% elif salud_financiera_score >= 40 %}text-yellow-500{% else %}text-red-500{% endif %}" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="{{ salud_financiera_score }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
               </svg>
               <div class="absolute flex flex-col items-center">
-                <span class="text-3xl font-bold {% if salud_financiera_score >= 70 %}text-green-600{% elif salud_financiera_score >= 40 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                <span class="text-xl font-bold {% if salud_financiera_score >= 70 %}text-green-600{% elif salud_financiera_score >= 40 %}text-yellow-600{% else %}text-red-600{% endif %}">
                   {{ salud_financiera_score }}
                 </span>
-                <span class="text-sm text-gray-500">puntos</span>
+                <span class="text-xs" style="color: #736B5E;">pts</span>
               </div>
             </div>
           </div>
           
-          <div class="text-center mb-4">
-            <p class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <div class="text-center mb-3">
+            <p class="text-sm font-semibold mb-1" style="color: #605952;">
               {% if salud_financiera_score >= 70 %}
                 Excelente gestión financiera
               {% elif salud_financiera_score >= 40 %}
@@ -358,32 +346,32 @@
                 Necesitas optimizar tus gastos
               {% endif %}
             </p>
-            <p class="text-gray-600 dark:text-gray-400">
-              Has gastado el {{ porcentaje_gastado }}% del total de recursos que has manejado
+            <p class="text-sm" style="color: #736B5E;">
+              Has gastado el {{ porcentaje_gastado }}% del total de recursos manejados
             </p>
           </div>
           
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-green-600 dark:text-green-400">{% format_money total_recursos_historicos user %}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-400">Total Manejado</div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="rounded-lg p-2 text-center" style="background: #F1F0EE;">
+              <div class="text-lg font-bold text-green-600">{% format_money total_recursos_historicos user %}</div>
+              <div class="text-xs" style="color: #736B5E;">Manejado</div>
             </div>
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-              <div class="text-2xl font-bold text-red-600 dark:text-red-400">{% format_money total_egresos user %}</div>
-              <div class="text-sm text-gray-600 dark:text-gray-400">Gastos</div>
+            <div class="rounded-lg p-2 text-center" style="background: #F1F0EE;">
+              <div class="text-lg font-bold text-red-600">{% format_money total_egresos user %}</div>
+              <div class="text-xs" style="color: #736B5E;">Gastos</div>
             </div>
           </div>
         {% endwith %}
       {% else %}
-        <div class="text-center py-12">
-          <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="text-center py-8">
+          <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style="background: #F1F0EE;">
+            <svg class="w-7 h-7" style="color: #736B5E;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
             </svg>
           </div>
-          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Comienza tu seguimiento</h4>
-          <p class="text-gray-600 dark:text-gray-400 mb-4">Agrega tus primeros movimientos para ver tu salud financiera</p>
-          <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors">
+          <h4 class="text-base font-semibold mb-1" style="color: #605952;">Comienza tu seguimiento</h4>
+          <p class="text-sm mb-3" style="color: #736B5E;">Agrega tus primeros movimientos</p>
+          <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" class="inline-flex items-center px-4 py-2 text-white rounded-lg font-medium transition-colors btn-primary">
             Agregar Movimiento
           </a>
         </div>
@@ -391,13 +379,13 @@
     </div>
 
     <!-- Expense Chart -->
-    <div class="feature-card rounded-xl p-6">
-      <div class="flex items-center justify-between mb-6">
+    <div class="feature-card rounded-lg p-4">
+      <div class="flex items-center justify-between mb-4">
         <div>
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white">Desglose de Gastos</h3>
-          <p class="text-gray-600 dark:text-gray-400">Distribución por categorías</p>
+          <h3 class="text-base font-bold" style="color: #605952;">Desglose de Gastos</h3>
+          <p class="text-xs" style="color: #736B5E;">Por categorías</p>
         </div>
-        <a href="{% url 'analisis_reportes:reports' %}" class="text-sm text-blue-600 hover:text-blue-500 font-medium flex items-center gap-1">
+        <a href="{% url 'analisis_reportes:reports' %}" class="text-sm font-medium flex items-center gap-1" style="color: #227C91;">
           Ver detalles
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

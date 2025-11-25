@@ -5,22 +5,22 @@
 {% block content %}
 <div class="max-w-4xl mx-auto">
   <!-- Header -->
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center">
-          <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
           </svg>
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Aportar a Meta de Ahorro</h2>
-          <p class="text-gray-600 dark:text-gray-300">Agrega fondos a tu meta: <span class="font-semibold text-blue-600 dark:text-blue-400">{{ meta.nombre }}</span></p>
+          <h2 class="text-xl font-bold text-[#605952]">Aportar a Meta de Ahorro</h2>
+          <p class="text-[#736B5E] text-sm">{{ meta.nombre }}</p>
         </div>
       </div>
       <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
-         class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         class="text-[#736B5E] hover:text-[#605952] transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </a>
@@ -28,98 +28,98 @@
   </div>
 
   <!-- Información de la Meta -->
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ meta.nombre }}</h3>
-      <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-base font-semibold text-[#605952]">{{ meta.nombre }}</h3>
+      <span class="px-2 py-0.5 bg-[#227C91] bg-opacity-10 text-[#227C91] rounded-full text-xs font-medium">
         {{ meta.porcentaje_progreso|floatformat:1 }}%
       </span>
     </div>
     
-    <div class="mb-4">
-      <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
+    <div class="mb-3">
+      <div class="flex justify-between text-xs text-[#736B5E] mb-1.5">
         <span>Progreso</span>
         <span>${{ meta.monto_ahorrado|floatformat:2 }} / ${{ meta.monto_objetivo|floatformat:2 }}</span>
       </div>
-      <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+      <div class="w-full bg-[#E5E1DD] rounded-full h-1.5">
+        <div class="bg-[#227C91] h-1.5 rounded-full transition-all duration-300" 
              style="width: {{ meta.porcentaje_progreso }}%"></div>
       </div>
     </div>
     
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
       <div>
-        <p class="text-gray-500 dark:text-gray-400">Meta</p>
-        <p class="font-semibold text-gray-900 dark:text-white">${{ meta.monto_objetivo|floatformat:2 }}</p>
+        <p class="text-[#736B5E]">Meta</p>
+        <p class="font-semibold text-[#605952]">${{ meta.monto_objetivo|floatformat:2 }}</p>
       </div>
       <div>
-        <p class="text-gray-500 dark:text-gray-400">Ahorrado</p>
-        <p class="font-semibold text-green-600 dark:text-green-400">${{ meta.monto_ahorrado|floatformat:2 }}</p>
+        <p class="text-[#736B5E]">Ahorrado</p>
+        <p class="font-semibold text-[#227C91]">${{ meta.monto_ahorrado|floatformat:2 }}</p>
       </div>
       <div>
-        <p class="text-gray-500 dark:text-gray-400">Falta</p>
-        <p class="font-semibold text-orange-600 dark:text-orange-400">${{ meta.falta_por_ahorrar|floatformat:2 }}</p>
+        <p class="text-[#736B5E]">Falta</p>
+        <p class="font-semibold text-[#605952]">${{ meta.falta_por_ahorrar|floatformat:2 }}</p>
       </div>
       <div>
-        <p class="text-gray-500 dark:text-gray-400">Fecha límite</p>
-        <p class="font-semibold text-gray-900 dark:text-white">{{ meta.fecha_limite|date:"d/m/Y" }}</p>
+        <p class="text-[#736B5E]">Fecha límite</p>
+        <p class="font-semibold text-[#605952]">{{ meta.fecha_limite|date:"d/m/Y" }}</p>
       </div>
     </div>
   </div>
 
   <!-- Formulario -->
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-6">
     <form method="post">
       {% csrf_token %}
       
       <!-- Monto a aportar -->
-      <div class="mb-6">
-        <label for="{{ form.monto.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Monto a Aportar
+      <div class="mb-4">
+        <label for="{{ form.monto.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1.5">
+          Monto a Aportar <span class="text-red-500">*</span>
         </label>
         {% if form.monto.errors %}
-          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.monto.errors.0 }}</p>
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-xs">{{ form.monto.errors.0 }}</p>
           </div>
         {% endif %}
         <div class="relative">
-          <span class="absolute left-3 top-3 text-gray-500 dark:text-gray-400">$</span>
+          <span class="absolute left-3 top-2.5 text-[#736B5E] text-sm">$</span>
           {{ form.monto }}
         </div>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">¿Cuánto dinero quieres aportar a esta meta?</p>
+        <p class="text-xs text-[#736B5E] mt-1">¿Cuánto dinero quieres aportar a esta meta?</p>
       </div>
 
       <!-- Descripción -->
-      <div class="mb-8">
-        <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <div class="mb-4">
+        <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1.5">
           Descripción del Aporte (Opcional)
         </label>
         {% if form.descripcion.errors %}
-          <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p class="text-red-600 dark:text-red-400 text-sm">{{ form.descripcion.errors.0 }}</p>
+          <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 text-xs">{{ form.descripcion.errors.0 }}</p>
           </div>
         {% endif %}
         {{ form.descripcion }}
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ejemplo: "Aporte mensual", "Bonificación", "Ahorro extra"</p>
+        <p class="text-xs text-[#736B5E] mt-1">Ejemplo: "Aporte mensual", "Bonificación", "Ahorro extra"</p>
       </div>
 
       <!-- Errores generales -->
       {% if form.non_field_errors %}
-        <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           {% for error in form.non_field_errors %}
-            <p class="text-red-600 dark:text-red-400 text-sm">{{ error }}</p>
+            <p class="text-red-600 text-xs">{{ error }}</p>
           {% endfor %}
         </div>
       {% endif %}
 
       <!-- Botones -->
-      <div class="flex gap-4">
+      <div class="flex gap-3">
         <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
-           class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors duration-200 text-center">
+           class="flex-1 px-4 py-2 bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] rounded-lg text-sm font-medium transition-colors text-center">
           Cancelar
         </a>
         <button type="submit" 
-                class="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm hover:shadow-md">
+                class="flex-1 px-4 py-2 bg-[#227C91] hover:bg-[#1a6070] text-white rounded-lg text-sm font-medium transition-colors">
           Realizar Aporte
         </button>
       </div>
@@ -129,6 +129,15 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('Add fund script loaded');
+  
+  const form = document.querySelector('form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      console.log('Add fund form is being submitted');
+    });
+  }
+  
   const montoInput = document.querySelector('input[name="monto"]');
   const metaFaltante = {{ meta.falta_por_ahorrar|floatformat:2 }};
   
@@ -173,51 +182,4 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-{% endblock %}
-                        </div>
-                    {% endif %}
-                    
-                    <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ form.descripcion.label }}
-                    </label>
-                    {{ form.descripcion }}
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4 pt-6">
-                    <button type="submit" 
-                            class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg font-medium hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                        💰 Agregar Aporte
-                    </button>
-                    
-                    <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
-                       class="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transform hover:scale-105 transition-all duration-200 text-center">
-                        ← Cancelar
-                    </a>
-                </div>
-            </form>
-        </div>
-
-        <!-- Tips Section -->
-        <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">💡 Consejos para Ahorrar</h3>
-            <div class="grid gap-4 sm:grid-cols-2">
-                <div class="flex items-start space-x-3">
-                    <span class="text-green-500 text-xl">🎯</span>
-                    <div>
-                        <h4 class="font-medium text-gray-800">Aportes Regulares</h4>
-                        <p class="text-sm text-gray-600">Realiza aportes pequeños y constantes en lugar de grandes aportes esporádicos.</p>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <span class="text-blue-500 text-xl">📅</span>
-                    <div>
-                        <h4 class="font-medium text-gray-800">Automatiza</h4>
-                        <p class="text-sm text-gray-600">Establece recordatorios para hacer aportes según tu frecuencia planificada.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}

@@ -1,603 +1,193 @@
 {% extends "core/base_template.html" %}
 {% load static %}
 
-{% block title %}Cursos de Educación Financiera - FinGest{% endblock %}
-
-{% block extra_css %}
-<style>
-    .courses-main {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 1rem;
-    }
-    
-    .courses-header {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e5e7eb;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-    
-    .courses-header h1 {
-        color: #1f2937;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-    }
-    
-    .courses-header p {
-        color: #6b7280;
-        font-size: 1.1rem;
-        margin-bottom: 0;
-    }
-    
-    .filters-section {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-        border: 1px solid #e5e7eb;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .filters-title {
-        color: #374151;
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .filters-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        justify-content: center;
-    }
-    
-    .filter-btn {
-        padding: 0.75rem 1.5rem;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
-        background: #f9fafb;
-        color: #6b7280;
-        font-weight: 600;
-        font-size: 0.875rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        min-width: fit-content;
-    }
-    
-    .filter-btn:hover {
-        border-color: #3b82f6;
-        background: #eff6ff;
-        color: #1e40af;
-        transform: translateY(-1px);
-    }
-    
-    .filter-btn.active {
-        border-color: #3b82f6;
-        background: #3b82f6;
-        color: white;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-    }
-    
-    .courses-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
-    }
-    
-    .course-card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-    
-    .course-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        border-color: #3b82f6;
-    }
-    
-    .course-image {
-        width: 100%;
-        height: 200px;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .course-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-    
-    .course-card:hover .course-image img {
-        transform: scale(1.05);
-    }
-    
-    .course-placeholder {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: white;
-    }
-    
-    .favorite-btn {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.95);
-        border: none;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 1.25rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    .favorite-btn:hover {
-        background: white;
-        transform: scale(1.1);
-    }
-    
-    .course-content {
-        padding: 1.5rem;
-    }
-    
-    .course-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-    
-    .level-badge {
-        padding: 0.375rem 0.75rem;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.025em;
-    }
-    
-    .level-basico {
-        background: #dcfce7;
-        color: #166534;
-    }
-    
-    .level-intermedio {
-        background: #fef3c7;
-        color: #92400e;
-    }
-    
-    .level-avanzado {
-        background: #fee2e2;
-        color: #991b1b;
-    }
-    
-    .platform-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.75rem;
-        color: #6b7280;
-    }
-    
-    .free-badge {
-        background: #d1fae5;
-        color: #065f46;
-        padding: 0.25rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.625rem;
-        font-weight: 700;
-        text-transform: uppercase;
-    }
-    
-    .course-title {
-        color: #1f2937;
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 0.75rem;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    
-    .course-description {
-        color: #6b7280;
-        font-size: 0.875rem;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    
-    .course-details {
-        margin-bottom: 1.5rem;
-        padding: 1rem;
-        background: #f9fafb;
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-    }
-    
-    .course-detail {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        color: #4b5563;
-        margin-bottom: 0.5rem;
-    }
-    
-    .course-detail:last-child {
-        margin-bottom: 0;
-    }
-    
-    .course-action {
-        display: block;
-        width: 100%;
-        padding: 0.875rem 1.5rem;
-        background: #3b82f6;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        text-decoration: none;
-        text-align: center;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-    
-    .course-action:hover {
-        background: #2563eb;
-        color: white;
-        text-decoration: none;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
-    }
-    
-    .empty-state {
-        grid-column: 1 / -1;
-        text-align: center;
-        padding: 4rem 2rem;
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e5e7eb;
-    }
-    
-    .empty-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        opacity: 0.5;
-    }
-    
-    .empty-title {
-        color: #374151;
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-    
-    .empty-description {
-        color: #6b7280;
-        font-size: 1rem;
-    }
-    
-    @media (max-width: 768px) {
-        .courses-main {
-            padding: 0 0.5rem;
-        }
-        
-        .courses-header {
-            padding: 1.5rem;
-        }
-        
-        .courses-header h1 {
-            font-size: 2rem;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .filters-section {
-            padding: 1rem;
-        }
-        
-        .filters-grid {
-            gap: 0.5rem;
-            justify-content: center;
-        }
-        
-        .filter-btn {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.8rem;
-            min-width: auto;
-            flex: 1;
-            max-width: 120px;
-            justify-content: center;
-        }
-        
-        .filter-btn i {
-            display: none; /* Ocultar iconos en móvil para ahorrar espacio */
-        }
-        
-        .courses-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-        
-        .course-card {
-            border-radius: 12px;
-        }
-        
-        .course-image {
-            height: 120px; /* Más pequeño en móvil */
-        }
-        
-        .course-content {
-            padding: 1rem;
-        }
-        
-        .course-title {
-            font-size: 1rem;
-            line-height: 1.3;
-        }
-        
-        .course-description {
-            font-size: 0.8rem;
-            -webkit-line-clamp: 2;
-        }
-        
-        .course-details {
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        
-        .course-detail {
-            font-size: 0.75rem;
-        }
-        
-        .course-action {
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-        }
-        
-        .level-badge {
-            font-size: 0.65rem;
-            padding: 0.25rem 0.5rem;
-        }
-        
-        .platform-info {
-            font-size: 0.65rem;
-        }
-        
-        .free-badge {
-            font-size: 0.5rem;
-            padding: 0.2rem 0.4rem;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .courses-grid {
-            grid-template-columns: 1fr; /* Una sola columna en pantallas muy pequeñas */
-        }
-        
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-        }
-        
-        .filter-btn {
-            max-width: none;
-            padding: 0.6rem 0.5rem;
-            font-size: 0.75rem;
-        }
-        
-        .course-image {
-            height: 140px;
-        }
-        
-        .course-title {
-            font-size: 1.1rem;
-        }
-        
-        .course-description {
-            -webkit-line-clamp: 3;
-        }
-    }
-</style>
-{% endblock %}
+{% block title %}Cursos de Educación Financiera | FinGest{% endblock %}
 
 {% block content %}
-<div class="courses-main">
-    <!-- Header Section -->
-    <div class="courses-header">
-        <h1>
-            <i class="fas fa-graduation-cap"></i>
-            Educación Financiera
-        </h1>
-        <p>Cursos seleccionados para mejorar tu conocimiento financiero</p>
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white rounded-lg border border-[#E5E1DD] p-6 mb-6">
+        <div class="text-center">
+            <div class="flex items-center justify-center gap-3 mb-2">
+                <svg class="w-10 h-10 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                <h1 class="text-3xl font-bold text-[#605952]">Educación Financiera</h1>
+            </div>
+            <p class="text-[#736B5E]">Cursos seleccionados para mejorar tu conocimiento financiero</p>
+        </div>
     </div>
 
-    <!-- Filters Section -->
-    <div class="filters-section">
-        <div class="filters-title">
-            <i class="fas fa-filter"></i>
-            Filtrar por categoría
+    <!-- Filtros -->
+    <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-6">
+        <div class="flex items-center gap-2 mb-4">
+            <svg class="w-5 h-5 text-[#605952]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+            </svg>
+            <span class="text-sm font-semibold text-[#605952]">Filtrar por categoría</span>
         </div>
-        <div class="filters-grid">
-            <button onclick="filterCourses('all')" class="filter-btn active">
-                <i class="fas fa-th-large"></i>
+        <div class="flex flex-wrap gap-2 justify-center">
+            <button onclick="filterCourses('all')" class="filter-btn px-4 py-2 rounded-lg border-2 border-[#227C91] bg-[#227C91] text-white font-medium text-sm transition-all hover:bg-[#1a6070] flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
                 Todos los cursos
             </button>
-            <button onclick="filterCourses('basico')" class="filter-btn">
-                <i class="fas fa-seedling"></i>
+            <button onclick="filterCourses('basico')" class="filter-btn px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-[#F1F0EE] text-[#605952] font-medium text-sm transition-all hover:border-[#227C91] hover:bg-[#227C91] hover:bg-opacity-10 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
                 Nivel Básico
             </button>
-            <button onclick="filterCourses('intermedio')" class="filter-btn">
-                <i class="fas fa-chart-line"></i>
+            <button onclick="filterCourses('intermedio')" class="filter-btn px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-[#F1F0EE] text-[#605952] font-medium text-sm transition-all hover:border-[#227C91] hover:bg-[#227C91] hover:bg-opacity-10 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                </svg>
                 Nivel Intermedio
             </button>
-            <button onclick="filterCourses('avanzado')" class="filter-btn">
-                <i class="fas fa-star"></i>
+            <button onclick="filterCourses('avanzado')" class="filter-btn px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-[#F1F0EE] text-[#605952] font-medium text-sm transition-all hover:border-[#227C91] hover:bg-[#227C91] hover:bg-opacity-10 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                </svg>
                 Nivel Avanzado
             </button>
-            <button onclick="filterCourses('gratis')" class="filter-btn">
-                <i class="fas fa-gift"></i>
+            <button onclick="filterCourses('gratis')" class="filter-btn px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-[#F1F0EE] text-[#605952] font-medium text-sm transition-all hover:border-[#227C91] hover:bg-[#227C91] hover:bg-opacity-10 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+                </svg>
                 Cursos Gratuitos
             </button>
         </div>
     </div>
 
-    <!-- Courses Grid -->
-    <div class="courses-grid" id="courses-grid">
+    <!-- Grid de Cursos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="courses-grid">
         {% for course in courses %}
-            <div class="course-card" 
+            <div class="course-card bg-white rounded-lg border border-[#E5E1DD] overflow-hidden hover:shadow-lg transition-all duration-300" 
                  data-level="{{ course.nivel|lower }}" 
-                 data-free="{% if course.gratis %}true{% else %}false{% endif %}">>
+                 data-free="{% if course.gratis %}true{% else %}false{% endif %}">
                 
-                <!-- Course Image -->
-                <div class="course-image">
+                <!-- Imagen del Curso -->
+                <div class="relative h-48 bg-gradient-to-br from-[#227C91] to-[#1a6070] overflow-hidden">
                     {% if course.imagen_url %}
-                        <img src="{{ course.imagen_url }}" alt="{{ course.titulo }}">
+                        <img src="{{ course.imagen_url }}" alt="{{ course.titulo }}" class="w-full h-full object-cover">
                     {% else %}
-                        <div class="course-placeholder">
-                            {{ course.plataforma_icon }}
+                        <div class="flex items-center justify-center h-full text-white text-6xl">
+                            📚
                         </div>
                     {% endif %}
                     
-                    <!-- Favorite Button -->
+                    <!-- Botón Favorito -->
                     <button onclick="toggleFavorito({{ course.id }})" 
-                            class="favorite-btn"
+                            class="absolute top-3 right-3 w-10 h-10 bg-white bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all transform hover:scale-110"
                             id="fav-btn-{{ course.id }}"
                             title="{% if course.es_favorito %}Quitar de favoritos{% else %}Agregar a favoritos{% endif %}">
                         {% if course.es_favorito %}
-                            <span class="text-red-500">❤️</span>
+                            <span class="text-red-500 text-xl">❤️</span>
                         {% else %}
-                            <span class="text-gray-400">🤍</span>
+                            <span class="text-gray-400 text-xl">🤍</span>
                         {% endif %}
                     </button>
                 </div>
                 
-                <!-- Course Content -->
-                <div class="course-content">
-                    <!-- Meta Information -->
-                    <div class="course-meta">
-                        <span class="level-badge level-{{ course.nivel|lower }}">
+                <!-- Contenido -->
+                <div class="p-4">
+                    <!-- Meta Info -->
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold
+                            {% if course.nivel|lower == 'basico' or course.nivel|lower == 'básico' %}bg-green-100 text-green-700
+                            {% elif course.nivel|lower == 'intermedio' %}bg-blue-100 text-blue-700
+                            {% else %}bg-purple-100 text-purple-700{% endif %}">
                             {{ course.nivel }}
                         </span>
-                        
-                        <div class="platform-info">
+                        <div class="flex items-center gap-2 text-xs text-[#736B5E]">
                             <span>{{ course.plataforma_icon }} {{ course.plataforma }}</span>
                             {% if course.gratis %}
-                                <span class="free-badge">Gratis</span>
+                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full font-semibold">Gratis</span>
                             {% endif %}
                         </div>
                     </div>
                     
-                    <!-- Course Title -->
-                    <h3 class="course-title">{{ course.titulo }}</h3>
+                    <!-- Título -->
+                    <h3 class="text-lg font-bold text-[#605952] mb-2 line-clamp-2">{{ course.titulo }}</h3>
                     
-                    <!-- Course Description -->
-                    <p class="course-description">{{ course.descripcion }}</p>
+                    <!-- Descripción -->
+                    <p class="text-sm text-[#736B5E] mb-4 line-clamp-3">{{ course.descripcion }}</p>
                     
-                    <!-- Course Details -->
-                    <div class="course-details">
+                    <!-- Detalles -->
+                    <div class="space-y-2 mb-4">
                         {% if course.instructor %}
-                            <div class="course-detail">
-                                <i class="fas fa-user-tie"></i>
+                            <div class="flex items-center gap-2 text-xs text-[#736B5E]">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
                                 <span>{{ course.instructor }}</span>
                             </div>
                         {% endif %}
                         
-                        <div class="course-detail">
-                            <i class="fas fa-clock"></i>
+                        <div class="flex items-center gap-2 text-xs text-[#736B5E]">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                             <span>{{ course.duracion_estimada }}</span>
                         </div>
                         
-                        <div class="course-detail">
-                            <i class="fas fa-language"></i>
+                        <div class="flex items-center gap-2 text-xs text-[#736B5E]">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                            </svg>
                             <span>{{ course.idioma }}</span>
                         </div>
                     </div>
                     
-                    <!-- Action Button -->
+                    <!-- Botón de Acción -->
                     <a href="{{ course.url_externa }}" 
                        target="_blank" 
                        rel="noopener noreferrer"
-                       class="course-action">
-                        <i class="fas fa-play me-2"></i>Iniciar Curso
-                        <i class="fas fa-external-link-alt ms-2"></i>
+                       class="w-full bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Iniciar Curso
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                        </svg>
                     </a>
                 </div>
             </div>
         {% empty %}
-            <div class="empty-state">
-                <div class="empty-icon">📚</div>
-                <h3 class="empty-title">No hay cursos disponibles</h3>
-                <p class="empty-description">Los cursos estarán disponibles pronto. ¡Mantente atento!</p>
+            <div class="col-span-full bg-white rounded-lg border border-[#E5E1DD] p-12 text-center">
+                <div class="text-6xl mb-4">📚</div>
+                <h3 class="text-xl font-bold text-[#605952] mb-2">No hay cursos disponibles</h3>
+                <p class="text-[#736B5E]">Los cursos estarán disponibles pronto. ¡Mantente atento!</p>
             </div>
         {% endfor %}
     </div>
 </div>
 
 <script>
-// Filtrar cursos con animaciones mejoradas
 function filterCourses(filter) {
     const cards = document.querySelectorAll('.course-card');
     const buttons = document.querySelectorAll('.filter-btn');
     
     // Actualizar botones activos
     buttons.forEach(btn => {
-        btn.classList.remove('active');
+        btn.classList.remove('bg-[#227C91]', 'text-white', 'border-[#227C91]');
+        btn.classList.add('bg-[#F1F0EE]', 'text-[#605952]', 'border-[#E5E1DD]');
     });
     
-    // Encontrar el botón correcto y marcarlo como activo
     const activeBtn = Array.from(buttons).find(btn => btn.onclick.toString().includes(`'${filter}'`));
     if (activeBtn) {
-        activeBtn.classList.add('active');
+        activeBtn.classList.remove('bg-[#F1F0EE]', 'text-[#605952]', 'border-[#E5E1DD]');
+        activeBtn.classList.add('bg-[#227C91]', 'text-white', 'border-[#227C91]');
     }
     
-    // Filtrar cards con animación
+    // Filtrar cards
     cards.forEach(card => {
-        let shouldShow = false;
         const cardLevel = card.dataset.level;
         const cardFree = card.dataset.free;
-        
-        console.log(`Card level: "${cardLevel}", filter: "${filter}", cardFree: "${cardFree}"`); // Debug
+        let shouldShow = false;
         
         if (filter === 'all') {
             shouldShow = true;
@@ -609,62 +199,13 @@ function filterCourses(filter) {
             shouldShow = cardLevel === filter;
         }
         
-        if (shouldShow) {
-            card.style.display = 'block';
-            card.style.transition = 'all 0.3s ease';
-            // Animación de entrada
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, 100);
-        } else {
-            // Animación de salida
-            card.style.transition = 'all 0.3s ease';
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                card.style.display = 'none';
-            }, 300);
-        }
+        card.style.display = shouldShow ? 'block' : 'none';
     });
-    
-    // Mostrar mensaje si no hay resultados
-    setTimeout(() => {
-        const visibleCards = Array.from(cards).filter(card => 
-            card.style.display !== 'none' && card.style.opacity !== '0'
-        );
-        
-        let emptyState = document.querySelector('.empty-state[data-filter]');
-        
-        if (visibleCards.length === 0) {
-            if (!emptyState) {
-                const coursesGrid = document.getElementById('courses-grid');
-                emptyState = document.createElement('div');
-                emptyState.className = 'empty-state';
-                emptyState.setAttribute('data-filter', 'true');
-                emptyState.innerHTML = `
-                    <div class="empty-icon">🔍</div>
-                    <h3 class="empty-title">No se encontraron cursos</h3>
-                    <p class="empty-description">Intenta con otro filtro para ver más opciones.</p>
-                `;
-                coursesGrid.appendChild(emptyState);
-            }
-        } else if (emptyState) {
-            emptyState.remove();
-        }
-    }, 350);
 }
 
-// Toggle favorito con feedback mejorado
 function toggleFavorito(cursoId) {
     const btn = document.getElementById(`fav-btn-${cursoId}`);
     const span = btn.querySelector('span');
-    
-    // Animación de clic
-    btn.style.transform = 'scale(0.9)';
-    setTimeout(() => {
-        btn.style.transform = 'scale(1)';
-    }, 150);
     
     fetch(`/educacion-financiera/favorito/${cursoId}/`, {
         method: 'POST',
@@ -677,95 +218,17 @@ function toggleFavorito(cursoId) {
     .then(data => {
         if (data.es_favorito) {
             span.textContent = '❤️';
-            span.className = 'text-red-500';
+            span.className = 'text-red-500 text-xl';
             btn.title = 'Quitar de favoritos';
-            
-            // Mostrar notificación temporal
-            showNotification('¡Curso agregado a favoritos!', 'success');
         } else {
             span.textContent = '🤍';
-            span.className = 'text-gray-400';
+            span.className = 'text-gray-400 text-xl';
             btn.title = 'Agregar a favoritos';
-            
-            showNotification('Curso removido de favoritos', 'info');
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Error al actualizar favorito', 'error');
-    });
+    .catch(error => console.error('Error:', error));
 }
-
-// Función para mostrar notificaciones
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
-        color: white;
-        font-weight: 600;
-        z-index: 1000;
-        opacity: 0;
-        transform: translateY(-20px);
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    `;
-    
-    // Colores según el tipo
-    switch(type) {
-        case 'success':
-            notification.style.background = '#10b981';
-            break;
-        case 'error':
-            notification.style.background = '#ef4444';
-            break;
-        default:
-            notification.style.background = '#3b82f6';
-    }
-    
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    
-    // Mostrar notificación
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateY(0)';
-    }, 100);
-    
-    // Ocultar después de 3 segundos
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateY(-20px)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }, 3000);
-}
-
-// Inicializar animaciones cuando se carga la página
-document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.course-card');
-    
-    // Stagger animation para las cards
-    cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        
-        setTimeout(() => {
-            card.style.transition = 'all 0.6s ease';
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-});
 </script>
 
-<!-- CSRF Token for AJAX -->
 {% csrf_token %}
 {% endblock %}
