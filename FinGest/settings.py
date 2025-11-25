@@ -29,12 +29,12 @@ LOGIN_REDIRECT_URL = 'core:dashboard'
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # o el proveedor que uses
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config("EMAIL_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_PASS")
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('EMAIL_FROM', default=config('EMAIL_HOST_USER'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -111,7 +111,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fingest_db',
         'USER': 'postgres',     # O 'django_user' si usaste la opción recomendada
-        'PASSWORD': 'admin',
+        'PASSWORD': 'alansamuel34',
         'HOST': 'localhost',
         'PORT': '5432',
     }

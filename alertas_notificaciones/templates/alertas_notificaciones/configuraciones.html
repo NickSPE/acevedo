@@ -7,7 +7,8 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
     <!-- Header -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-8 mb-6 text-white">
+    <div class="rounded-2xl p-8 mb-6 text-white" 
+     style="background: linear-gradient(to right, #227C91, #1B6677);">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-bold mb-2">Configuraciones de Notificaciones</h1>
@@ -191,9 +192,15 @@
 
             <!-- Botón de guardar -->
             <div class="pt-6 border-t border-gray-200">
-              <button type="submit" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium transition-colors">
-                💾 Guardar Configuración
+              <button type="submit" class="w-full text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                 style="background-color: #227C91;"
+                 onmouseover="this.style.backgroundColor='#1B6677'"
+                 onmouseout="this.style.backgroundColor='#227C91'"
+                 onfocus="this.style.boxShadow='0 0 0 4px rgba(34, 124, 145, 0.4)'" 
+                 onblur="this.style.boxShadow='none'">
+              💾 Guardar Configuración
               </button>
+
             </div>
           </form>
         </div>
