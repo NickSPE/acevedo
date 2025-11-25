@@ -463,10 +463,6 @@
                 gap: 8px;
             }
 
-            h1 {
-                font-size: 20px;
-            }
-
             .subtitle {
                 font-size: 14px;
             }
@@ -496,7 +492,10 @@
                 {% load static %}
                 <img src="{% static 'images/fingest_logo_im.png' %}" alt="FinGest Logo"
                     class="h-10 w-10 border rounded-lg" />
-                FinGest
+
+                <h1>
+                    FinGest
+                </h1>
             </a>
             <a href="{% url 'core:index' %}" class="back-btn">
                 <i class="fas fa-arrow-left"></i>

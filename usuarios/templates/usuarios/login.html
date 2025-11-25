@@ -3,157 +3,539 @@
 {% block title %}Iniciar Sesión - FinGest{% endblock %}
 
 {% block nav_links %}
-<a href="{% url 'usuarios:register_simple' %}"
-    class="bg-fingest-primary text-white px-4 py-2 rounded-lg hover:bg-b transition-colors">
+<a href="{% url 'usuarios:register_simple' %}" class="back-btn">
+    <i class="fas fa-user-plus"></i>
     Crear Cuenta
 </a>
 {% endblock %}
 
-
-
 {% block content %}
-<div class="w-full max-w-md mx-auto p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 relative">
-        <!-- Botón X para cerrar -->
-        <button id="closeButton"
-            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-all duration-200 z-10 p-1 rounded-full hover:bg-gray-100"
-            title="Volver a la página principal" type="button">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', 'Poppins', sans-serif;
+        background: #fafbfc;
+        color: #0f172a;
+        line-height: 1.6;
+    }
+
+    /* Partículas de fondo */
+    .floating-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .particle {
+        position: absolute;
+        background: linear-gradient(45deg, #227c91, rgba(59, 130, 246, 0.1));
+        border-radius: 50%;
+        animation: float 20s infinite linear;
+    }
+
+    .particle:nth-child(1) {
+        width: 6px;
+        height: 6px;
+        left: 5%;
+        animation-delay: 0s;
+    }
+
+    .particle:nth-child(2) {
+        width: 8px;
+        height: 8px;
+        left: 15%;
+        animation-delay: 2s;
+    }
+
+    .particle:nth-child(3) {
+        width: 4px;
+        height: 4px;
+        left: 25%;
+        animation-delay: 4s;
+    }
+
+    .particle:nth-child(4) {
+        width: 10px;
+        height: 10px;
+        left: 35%;
+        animation-delay: 6s;
+    }
+
+    .particle:nth-child(5) {
+        width: 5px;
+        height: 5px;
+        left: 45%;
+        animation-delay: 8s;
+    }
+
+    .particle:nth-child(6) {
+        width: 7px;
+        height: 7px;
+        left: 55%;
+        animation-delay: 10s;
+    }
+
+    .particle:nth-child(7) {
+        width: 9px;
+        height: 9px;
+        left: 65%;
+        animation-delay: 12s;
+    }
+
+    .particle:nth-child(8) {
+        width: 6px;
+        height: 6px;
+        left: 75%;
+        animation-delay: 14s;
+    }
+
+    .particle:nth-child(9) {
+        width: 8px;
+        height: 8px;
+        left: 85%;
+        animation-delay: 16s;
+    }
+
+    .particle:nth-child(10) {
+        width: 4px;
+        height: 4px;
+        left: 95%;
+        animation-delay: 18s;
+    }
+
+    @keyframes float {
+        0% {
+            transform: translateY(100vh) rotate(0deg);
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 1;
+        }
+
+        90% {
+            opacity: 1;
+        }
+
+        100% {
+            transform: translateY(-100vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+
+    .back-btn {
+        background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+    }
+
+    .form-card {
+        background: rgba(255, 255, 255, 0.95);
+        width: 600px;
+        border-radius: 16px;
+        padding: 40px;
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #227c91, #3b82f6, #8b5cf6);
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #0f172a 0%, #227c91 50%, #3b82f6 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 24px;
+        line-height: 1.4;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #0f172a;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 2px solid rgba(34, 197, 94, 0.1);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #227c91;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        background: rgba(255, 255, 255, 1);
+    }
+
+    .password-input {
+        position: relative;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        font-size: 16px;
+        background: none;
+        border: none;
+        padding: 4px;
+    }
+
+    .password-toggle:hover {
+        color: #227c91;
+    }
+
+    .alert {
+        padding: 14px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #dc2626;
+    }
+
+    .alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        color: #15803d;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%);
+        color: white;
+        box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(34, 197, 94, 0.5);
+    }
+
+    .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .links-section {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .link-item {
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .link-item a {
+        color: #227c91;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .link-item a:hover {
+        color: #3b82f6;
+        transform: translateX(2px);
+    }
+
+    .divider {
+        height: 1px;
+        background: rgba(34, 197, 94, 0.1);
+        margin: 20px 0;
+    }
+
+    .link-item.secondary {
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(100, 116, 139, 0.1);
+        color: #64748b;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        font-size: 16px;
+    }
+
+    .close-btn:hover {
+        background: rgba(100, 116, 139, 0.2);
+        color: #0f172a;
+        transform: rotate(90deg);
+    }
+
+    @media (max-width: 768px) {
+        .form-card {
+            width: 90%;
+            max-width: 100%;
+            padding: 24px 16px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+        }
+    }
+</style>
+
+<!-- Partículas flotantes -->
+<div class="floating-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+</div>
+
+<div
+    style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; z-index: 5;">
+    <div class="form-card">
+        <button class="close-btn" id="closeButton" title="Volver a la página principal">
+            <i class="fas fa-times"></i>
         </button>
 
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-fingest-primary mb-2">Bienvenido de Vuelta</h1>
-            <p class="text-gray-600">Inicia sesión en tu cuenta de FinGest</p>
-        </div>
+        <h1>Bienvenido de Vuelta</h1>
+        <p class="subtitle">Inicia sesión en tu cuenta de FinGest</p>
 
         {% if message_success %}
-        <div
-            class="mb-6 text-emerald-600 text-center font-semibold bg-emerald-100 rounded-lg p-3 border border-emerald-200">
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
             {{ message_success }}
         </div>
         {% endif %}
 
         {% if message_error %}
-        <div class="mb-6 text-red-600 text-center font-semibold bg-red-100 rounded-lg p-3 border border-red-200">
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i>
             {{ message_error }}
         </div>
         {% endif %}
 
-        <form class="space-y-6" method="post" action="{% url 'usuarios:login' %}">
+        <form method="post" action="{% url 'usuarios:login' %}" id="login-form">
             {% csrf_token %}
 
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope" style="color: #227c91; margin-right: 6px;"></i>
                     Correo electrónico
                 </label>
-                <input type="email" id="email" name="email" placeholder="ejemplo@email.com"
-                    class="w-full p-3 border {% if errors.email_error %}border-red-500{% else %}border-gray-300{% endif %} rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
-                    required value="{{ email|default:'' }}" />
+                <input type="email" id="email" name="email" placeholder="ejemplo@email.com" required
+                    value="{{ email|default:'' }}" />
                 {% if errors.email_error %}
-                <p class="text-xs text-red-500 mt-1">{{ errors.email_error }}</p>
+                <p style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                    <i class="fas fa-times-circle"></i> {{ errors.email_error }}
+                </p>
                 {% endif %}
             </div>
 
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock" style="color: #227c91; margin-right: 6px;"></i>
                     Contraseña
                 </label>
-                <div class="relative">
-                    <input type="password" id="password" name="password" placeholder="Tu contraseña"
-                        class="w-full p-3 border {% if errors.password_error %}border-red-500{% else %}border-gray-300{% endif %} rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition pr-12"
-                        required />
-                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                        <svg id="eye-closed" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500"
-                            viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M3.28 2.22a.75.75 0 00-1.06 1.06l14.5 14.5a.75.75 0 001.06-1.06l-1.745-1.745a10.029 10.029 0 003.3-4.38 1.651 1.651 0 000-1.185A10.004 10.004 0 009.999 3a9.956 9.956 0 00-4.744 1.194L3.28 2.22zM7.752 6.69l1.092 1.092a2.5 2.5 0 013.374 3.373l1.091 1.092a4 4 0 00-5.557-5.557z" />
-                            <path
-                                d="M10.748 13.93l2.523 2.523a9.987 9.987 0 01-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 010-1.186A10.007 10.007 0 012.839 6.02L6.07 9.252a4 4 0 004.678 4.678z" />
-                        </svg>
-                        <svg id="eye-open" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 hidden"
-                            viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd"
-                                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
+                <div class="password-input">
+                    <input type="password" id="password" name="password" placeholder="Tu contraseña" required />
+                    <button type="button" class="password-toggle" id="togglePassword">
+                        <i class="fas fa-eye"></i>
                     </button>
                 </div>
                 {% if errors.password_error %}
-                <p class="text-xs text-red-500 mt-1">{{ errors.password_error }}</p>
+                <p style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                    <i class="fas fa-times-circle"></i> {{ errors.password_error }}
+                </p>
                 {% endif %}
             </div>
 
-            <button type="submit"
-                class="w-full bg-gradient-to-r from-fingest-primary to-fingest-secondary text-white font-bold py-3 rounded-lg shadow-lg hover:from-fingest-primary hover:to-fingest-secondary hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
                 Iniciar Sesión
             </button>
         </form>
 
-        <!-- Enlaces adicionales -->
-        <div class="mt-6 space-y-4">
-            <!-- Acceso con PIN -->
-            <div class="text-center">
-                <a href="{% url 'usuarios:pin_login' %}"
-                    class="inline-flex items-center gap-2 text-sm text-fingest-primary hover:text-fingest-secondary font-medium">
-                    🔢 Acceso rápido con PIN
+        <div class="divider"></div>
+
+        <div class="links-section">
+            <div class="link-item">
+                <a href="{% url 'usuarios:pin_login' %}">
+                    <i class="fas fa-keypad"></i>
+                    Acceso rápido con PIN
                 </a>
-                <p class="text-xs text-gray-500 mt-1">Accede directamente con tu PIN personal</p>
             </div>
 
-            <!-- Registro -->
-            <div class="text-center text-sm text-fingest-secondary">
+            <div class="link-item secondary">
                 ¿No tienes una cuenta?
-                <a href="{% url 'usuarios:register_simple' %}"
-                    class="text-fingest-primary hover:text-fingest-secondary font-medium">
-                    Regístrate aquí
-                </a>
+                <a href="{% url 'usuarios:register_simple' %}">Regístrate aquí</a>
             </div>
 
-            <!-- Recuperar contraseña -->
-            <div class="text-center">
-                <a href="{% url 'usuarios:password_reset_request' %}" class="text-sm text-gray-500 hover:text-gray-700">
+            <div class="link-item secondary">
+                <a href="{% url 'usuarios:password_reset_request' %}">
+                    <i class="fas fa-redo"></i>
                     ¿Olvidaste tu contraseña?
                 </a>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block extra_js %}
 <script>
-    // Script para mostrar/ocultar contraseña
     document.addEventListener('DOMContentLoaded', function () {
+        // Toggle contraseña
         const togglePassword = document.getElementById('togglePassword');
-        const password = document.getElementById('password');
-        const eyeClosed = document.getElementById('eye-closed');
-        const eyeOpen = document.getElementById('eye-open');
+        const passwordInput = document.getElementById('password');
 
-        if (togglePassword && password && eyeClosed && eyeOpen) {
-            togglePassword.addEventListener('click', function () {
-                // Cambiar el tipo de input entre password y text
-                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-                password.setAttribute('type', type);
+        if (togglePassword && passwordInput) {
+            togglePassword.addEventListener('click', function (e) {
+                e.preventDefault();
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
 
-                // Cambiar el icono
-                eyeClosed.classList.toggle('hidden');
-                eyeOpen.classList.toggle('hidden');
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
             });
         }
 
-        // Funcionalidad para el botón de cerrar (X)
+        // Botón cerrar
         const closeButton = document.getElementById('closeButton');
         if (closeButton) {
             closeButton.addEventListener('click', function () {
-                // Añadir una pequeña animación antes de redirigir
-                this.style.transform = 'rotate(90deg)';
-                setTimeout(() => {
-                    window.location.href = '{% url "core:index" %}';
-                }, 150);
+                window.location.href = '{% url "core:index" %}';
             });
         }
+
+        // Auto-cerrar alertas después de 5 segundos
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.animation = 'slideDown 0.3s ease reverse';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        });
     });
 </script>
+
 {% endblock %}

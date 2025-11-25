@@ -17,6 +17,8 @@
             theme: {
                 extend: {
                     colors: {
+                        "fingest-primary": '#227c91',
+                        "fingest-secondary": '#3b82f6',
                         'primary': {
                             50: '#f0fdf4',
                             100: '#dcfce7',
@@ -886,7 +888,10 @@
                 <a href="/" class="logo">
                     {% load static %}
                     <img src="{% static 'images/fingest_logo_im.png' %}" alt="FinGest">
-                    FinGest
+                    <h1
+                        class="text-2xl font-bold bg-gradient-to-r from-fingest-primary to-fingest-secondary bg-clip-text text-transparent">
+                        FinGest
+                    </h1>
                 </a>
                 <ul class="nav-links">
                     <li><a href="#funcionalidades">Funcionalidades</a></li>
