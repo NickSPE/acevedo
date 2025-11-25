@@ -21,13 +21,13 @@
                 {% endif %}
                 <div class="badge-status"></div>
             </div>
-            <div class="profile-intro">
-                <h1 class="profile-name">{{ usuario.nombres }} {{ usuario.apellido_paterno }}</h1>
-                <p class="profile-email">{{ usuario.correo }}</p>
+            <div class="profile-intro" >
+                <h1 class="profile-name" style="color: whitesmoke;">{{ usuario.nombres }} {{ usuario.apellido_paterno }}</h1>
+                <p class="profile-email" style="color: whitesmoke">{{ usuario.correo }}</p>
                 <div class="profile-meta">
                     {% if usuario.telefono %}
                         <span class="meta-pill">
-                            <i class="fas fa-phone"></i>
+                            <i class="fas fa-phone" ></i>
                             {{ usuario.telefono }}
                         </span>
                     {% endif %}
