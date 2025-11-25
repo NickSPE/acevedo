@@ -7,11 +7,11 @@
   <div class="mb-6">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-2xl font-bold text-gray-800 mb-1">💬 Chat con IA</h2>
-        <p class="text-gray-600">Pregunta lo que quieras, sin restricciones</p>
+        <h2 class="text-2xl font-bold mb-1" style="color: #605952;">💬 Chat con IA</h2>
+        <p style="color: #736B5E;">Pregunta lo que quieras, sin restricciones</p>
       </div>
       <a href="{% url 'educacion_financiera:tips' %}" 
-         class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+         class="px-4 py-2 text-white rounded-lg transition-colors" style="background-color: #227C91;" onmouseover="this.style.backgroundColor='#1a6070'" onmouseout="this.style.backgroundColor='#227C91'">
         ← Volver a Tips
       </a>
     </div>
@@ -20,10 +20,10 @@
   <!-- Chat Container -->
   <div class="bg-white rounded-xl shadow-lg border overflow-hidden">
     <!-- Chat Messages -->
-    <div id="chat-messages" class="h-96 overflow-y-auto p-4 space-y-4 bg-gray-50">
+    <div id="chat-messages" class="h-96 overflow-y-auto p-4 space-y-4" style="background-color: #F1F0EE;">
       <!-- Welcome Message -->
       <div class="flex gap-3">
-        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
           <span class="text-white text-sm">🤖</span>
         </div>
         <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
@@ -40,11 +40,17 @@
                id="user-input" 
                name="question"
                placeholder="Escribe tu pregunta aquí..."
-               class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+               class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
+               style="border-color: #E5E1DD;"
+               onfocus="this.style.borderColor='#227C91'; this.style.boxShadow='0 0 0 2px rgba(34, 124, 145, 0.2)'"
+               onblur="this.style.borderColor='#E5E1DD'; this.style.boxShadow='none'"
                autocomplete="off">
         <button type="submit" 
                 id="send-btn"
-                class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                class="px-6 py-3 text-white rounded-lg transition-colors font-medium"
+                style="background-color: #227C91;"
+                onmouseover="this.style.backgroundColor='#1a6070'"
+                onmouseout="this.style.backgroundColor='#227C91'">
           Enviar
         </button>
       </form>
@@ -53,26 +59,41 @@
 
   <!-- Quick Suggestions -->
   <div class="mt-6">
-    <h3 class="text-sm font-medium text-gray-700 mb-3">Sugerencias rápidas:</h3>
+    <h3 class="text-sm font-medium mb-3" style="color: #605952;">Sugerencias rápidas:</h3>
     <div class="flex flex-wrap gap-2">
       <button onclick="sendQuickMessage('Hola, ¿cómo estás?')" 
-              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+              class="px-3 py-1 rounded-full text-sm transition-colors"
+              style="background-color: #F1F0EE; color: #605952;"
+              onmouseover="this.style.backgroundColor='#E5E1DD'"
+              onmouseout="this.style.backgroundColor='#F1F0EE'">
         👋 Saludo
       </button>
       <button onclick="sendQuickMessage('¿Qué es Bitcoin?')" 
-              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+              class="px-3 py-1 rounded-full text-sm transition-colors"
+              style="background-color: #F1F0EE; color: #605952;"
+              onmouseover="this.style.backgroundColor='#E5E1DD'"
+              onmouseout="this.style.backgroundColor='#F1F0EE'">
         💰 Bitcoin
       </button>
       <button onclick="sendQuickMessage('Consejos para ahorrar')" 
-              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+              class="px-3 py-1 rounded-full text-sm transition-colors"
+              style="background-color: #F1F0EE; color: #605952;"
+              onmouseover="this.style.backgroundColor='#E5E1DD'"
+              onmouseout="this.style.backgroundColor='#F1F0EE'">
         💡 Ahorros
       </button>
       <button onclick="sendQuickMessage('¿Cómo invertir mi dinero?')" 
-              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+              class="px-3 py-1 rounded-full text-sm transition-colors"
+              style="background-color: #F1F0EE; color: #605952;"
+              onmouseover="this.style.backgroundColor='#E5E1DD'"
+              onmouseout="this.style.backgroundColor='#F1F0EE'">
         📈 Inversiones
       </button>
       <button onclick="sendQuickMessage('Explícame algo interesante')" 
-              class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition-colors">
+              class="px-3 py-1 rounded-full text-sm transition-colors"
+              style="background-color: #F1F0EE; color: #605952;"
+              onmouseover="this.style.backgroundColor='#E5E1DD'"
+              onmouseout="this.style.backgroundColor='#F1F0EE'">
         🎯 Sorpréndeme
       </button>
     </div>
@@ -152,10 +173,10 @@ function addMessage(content, isUser = false) {
   if (isUser) {
     messageDiv.className += ' justify-end';
     messageDiv.innerHTML = `
-      <div class="bg-purple-600 text-white p-4 rounded-lg shadow-sm max-w-md">
+      <div class="text-white p-4 rounded-lg shadow-sm max-w-md" style="background-color: #227C91;">
         <p class="text-sm">${content}</p>
       </div>
-      <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #736B5E;">
         <span class="text-white text-sm">👤</span>
       </div>
     `;
@@ -164,10 +185,10 @@ function addMessage(content, isUser = false) {
     const formattedContent = formatAIResponse(content);
     
     messageDiv.innerHTML = `
-      <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
         <span class="text-white text-sm">🤖</span>
       </div>
-      <div class="bg-white p-4 rounded-lg shadow-sm max-w-2xl border border-gray-100">
+      <div class="bg-white p-4 rounded-lg shadow-sm max-w-2xl border" style="border-color: #F1F0EE;">
         <div class="ai-response text-sm">${formattedContent}</div>
       </div>
     `;
@@ -182,7 +203,7 @@ function formatAIResponse(content) {
   let formatted = content;
   
   // Convertir títulos (líneas que terminan con :)
-  formatted = formatted.replace(/^(.+):$/gm, '<h4 class="font-bold text-gray-800 mt-3 mb-2 first:mt-0">$1</h4>');
+  formatted = formatted.replace(/^(.+):$/gm, '<h4 class="font-bold mt-3 mb-2 first:mt-0" style="color: #605952;">$1</h4>');
   
   // Convertir listas con guiones
   formatted = formatted.replace(/^- (.+)$/gm, '<li class="ml-4 mb-1">• $1</li>');
@@ -194,7 +215,7 @@ function formatAIResponse(content) {
   formatted = formatted.replace(/(<li[^>]*>.*<\/li>\s*)+/gs, '<ul class="my-2">$&</ul>');
   
   // Convertir texto en negrita **texto**
-  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-800">$1</strong>');
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold" style="color: #605952;">$1</strong>');
   
   // Convertir texto en cursiva *texto*
   formatted = formatted.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
@@ -218,14 +239,14 @@ function showTyping() {
   typingDiv.id = 'typing-indicator';
   typingDiv.className = 'flex gap-3';
   typingDiv.innerHTML = `
-    <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+    <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
       <span class="text-white text-sm">🤖</span>
     </div>
     <div class="bg-white p-3 rounded-lg shadow-sm">
       <div class="flex gap-1">
-        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+        <div class="w-2 h-2 rounded-full animate-bounce" style="background-color: #736B5E;"></div>
+        <div class="w-2 h-2 rounded-full animate-bounce" style="background-color: #736B5E; animation-delay: 0.1s"></div>
+        <div class="w-2 h-2 rounded-full animate-bounce" style="background-color: #736B5E; animation-delay: 0.2s"></div>
       </div>
     </div>
   `;

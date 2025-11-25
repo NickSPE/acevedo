@@ -3,24 +3,24 @@
 {% block title %}Metas de Ahorro | FinGest{% endblock %}
 
 {% block content %}
-<!-- Header profesional -->
+<!-- Header -->
 <div class="max-w-7xl mx-auto">
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
-          <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-            </svg>
-          </div>
-          Metas de Ahorro
-        </h1>
-        <p class="text-gray-600 dark:text-gray-300 text-lg">Alcanza tus objetivos financieros con constancia y planificación</p>
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-[#605952]">Metas de Ahorro</h1>
+          <p class="text-[#736B5E] text-sm">Alcanza tus objetivos financieros</p>
+        </div>
       </div>
       <a href="{% url 'gestion_financiera_basica:agregar_meta_ahorro' %}" 
-         class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         class="flex items-center gap-2 bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
         Nueva Meta
@@ -30,31 +30,31 @@
 
   <!-- Metas de Ahorro -->
   {% if goals %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
       {% for goal in goals %}
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-300 overflow-hidden">
+        <div class="bg-white rounded-lg border border-[#E5E1DD] hover:shadow-sm transition-all overflow-hidden">
           <!-- Header de la meta -->
-          <div class="bg-gray-50 dark:bg-gray-700 p-5 border-b border-gray-200 dark:border-gray-600">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white truncate">{{ goal.nombre }}</h3>
-              <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center">
-                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="bg-[#F1F0EE] p-4 border-b border-[#E5E1DD]">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-lg font-semibold text-[#605952] truncate">{{ goal.nombre }}</h3>
+              <div class="w-8 h-8 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+                <svg class="w-4 h-4 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                 </svg>
               </div>
             </div>
-            <div class="text-gray-600 dark:text-gray-300 text-sm">
+            <div class="text-[#736B5E] text-sm">
               <p class="font-medium">{{ goal.progreso }}</p>
-              <p class="text-gray-500 dark:text-gray-400">{{ goal.porcentaje }} completado</p>
+              <p class="text-xs">{{ goal.porcentaje }} completado</p>
             </div>
           </div>
           
           <!-- Cuerpo de la meta -->
-          <div class="p-5">
+          <div class="p-4">
             <!-- Barra de progreso -->
-            <div class="mb-4">
-              <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
-                <div class="bg-blue-600 h-full rounded-full transition-all duration-500"
+            <div class="mb-3">
+              <div class="w-full bg-[#E5E1DD] rounded-full h-1.5 overflow-hidden">
+                <div class="bg-[#227C91] h-full rounded-full transition-all duration-500"
                      style="width: {{ goal.porcentaje_num }}%">
                 </div>
               </div>
@@ -62,31 +62,31 @@
             
             <!-- Descripción -->
             {% if goal.descripcion %}
-              <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">{{ goal.descripcion }}</p>
+              <p class="text-[#736B5E] text-xs mb-2 line-clamp-2">{{ goal.descripcion }}</p>
             {% endif %}
             
             <!-- Fecha límite -->
-            <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm mb-4">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center gap-2 text-[#736B5E] text-xs mb-3">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
               </svg>
-              <span>Meta: {{ goal.fecha_limite }}</span>
+              <span>{{ goal.fecha_limite }}</span>
             </div>
             
             <!-- Botones de acción -->
             <div class="flex gap-2">
               <a href="{% url 'gestion_financiera_basica:aportar_meta_ahorro' goal.id %}" 
-                 class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 text-center">
-                <span class="flex items-center justify-center gap-2">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 class="flex-1 bg-[#227C91] hover:bg-[#1a6070] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
+                <span class="flex items-center justify-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                   </svg>
                   Aportar
                 </span>
               </a>
               <a href="{% url 'gestion_financiera_basica:editar_meta_ahorro' goal.id %}" 
-                 class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 flex items-center justify-center">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 class="px-3 py-2 border border-[#E5E1DD] text-[#605952] rounded-lg text-sm font-medium hover:bg-[#F1F0EE] transition-colors flex items-center justify-center">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                 </svg>
               </a>
@@ -110,19 +110,19 @@
     </div>
   {% else %}
     <!-- Estado vacío cuando no hay metas -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center mb-8">
-      <div class="w-24 h-24 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center mx-auto mb-6">
-        <svg class="w-12 h-12 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-lg border border-[#E5E1DD] p-10 text-center mb-6">
+      <div class="w-16 h-16 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
         </svg>
       </div>
-      <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">¡Comienza a Ahorrar!</h3>
-      <p class="text-gray-600 dark:text-gray-300 mb-6 max-w-md mx-auto">
-        Aún no tienes metas de ahorro definidas. Crear objetivos específicos te ayudará a mantener la motivación y alcanzar tus sueños financieros.
+      <h3 class="text-xl font-bold text-[#605952] mb-2">¡Comienza a Ahorrar!</h3>
+      <p class="text-[#736B5E] mb-4 max-w-md mx-auto text-sm">
+        Aún no tienes metas de ahorro. Crear objetivos específicos te ayudará a alcanzar tus sueños financieros.
       </p>
       <a href="{% url 'gestion_financiera_basica:agregar_meta_ahorro' %}" 
-         class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         class="inline-flex items-center gap-2 bg-[#227C91] hover:bg-[#1a6070] text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
         Crear Mi Primera Meta

@@ -284,7 +284,7 @@ def subcuentas_dashboard(request):
     saldo_inicial_cuentas = Cuenta.objects.filter(id_usuario=user_id).aggregate(total=Sum('saldo_cuenta'))['total'] or 0
     total_balance = float(saldo_inicial_cuentas) + float(total_ingresos) - float(total_egresos)
     
-    return render(request, 'cuentas/subcuentas_dashboard_new.html', {
+    return render(request, 'cuentas/subcuentas_dashboard.html', {
         'cuentas_con_subcuentas': cuentas_con_subcuentas,
         'subcuentas_independientes_activas': subcuentas_independientes_activas,
         'subcuentas_independientes_inactivas': subcuentas_independientes_inactivas,
@@ -458,24 +458,31 @@ def transferir_subcuentas(request):
     else:
         form = TransferenciaSubCuentaForm(user=request.user)
     
-    # Obtener subcuentas activas para el template
+    # Obtener subcuentas activas para el template (personales y de negocio)
     subcuentas_activas = SubCuenta.objects.filter(
-        id_cuenta__id_usuario=request.user, 
+        Q(id_cuenta__id_usuario=request.user) | Q(propietario=request.user),
         activa=True
     )
     
     return render(request, 'cuentas/transferir_subcuentas.html', {
         'form': form,
-        'subcuentas_activas': subcuentas_activas
+        'subcuentas': subcuentas_activas
     })
 
 
 @login_required
 @fast_access_pin_verified
 def depositar_subcuenta(request, subcuenta_id):
-    """Vista para depositar dinero de la cuenta principal a una subcuenta"""
-    subcuenta = get_object_or_404(SubCuenta, id=subcuenta_id, id_cuenta__id_usuario=request.user)
-    cuenta = subcuenta.id_cuenta
+    """Vista para depositar dinero a una subcuenta (personal o negocio)"""
+    # Buscar subcuenta que pertenezca al usuario
+    subcuenta = get_object_or_404(
+        SubCuenta,
+        Q(id=subcuenta_id) & (Q(id_cuenta__id_usuario=request.user) | Q(propietario=request.user))
+    )
+    
+    # Obtener cuenta principal si es subcuenta personal
+    cuenta = subcuenta.id_cuenta if subcuenta.id_cuenta else None
+    es_negocio = not subcuenta.id_cuenta
     
     if request.method == 'POST':
         form = DepositoSubCuentaForm(request.POST)
@@ -484,32 +491,59 @@ def depositar_subcuenta(request, subcuenta_id):
                 monto = form.cleaned_data['monto']
                 descripcion = form.cleaned_data['descripcion']
                 
-                # Verificar que hay saldo suficiente
-                if cuenta.saldo_disponible() >= monto:
-                    # Realizar el depósito
+                if es_negocio:
+                    # Para subcuentas de negocio, solo agregar el monto
                     subcuenta.saldo += monto
                     subcuenta.save()
-                    
                     messages.success(request, f'Depósito de ${monto:.2f} realizado exitosamente a "{subcuenta.nombre}".')
                     return redirect('cuentas:subcuentas_dashboard')
                 else:
-                    messages.error(request, 'No hay saldo suficiente en la cuenta principal.')
+                    # Para subcuentas personales, transferir desde cuenta principal
+                    if cuenta.saldo_disponible() >= monto:
+                        # Restar de cuenta principal y agregar a subcuenta
+                        cuenta.saldo_cuenta -= monto
+                        subcuenta.saldo += monto
+                        cuenta.save()
+                        subcuenta.save()
+                        
+                        # Registrar la transferencia
+                        TransferenciaCuentaPrincipal.objects.create(
+                            subcuenta=subcuenta,
+                            cuenta_destino=cuenta,
+                            monto=monto,
+                            tipo='retiro',  # Retiro de cuenta principal hacia subcuenta
+                            descripcion=descripcion or f'Depósito a {subcuenta.nombre}',
+                            id_usuario=request.user
+                        )
+                        
+                        messages.success(request, f'Depósito de ${monto:.2f} realizado exitosamente a "{subcuenta.nombre}".')
+                        return redirect('cuentas:subcuentas_dashboard')
+                    else:
+                        messages.error(request, 'No hay saldo suficiente en la cuenta principal.')
     else:
         form = DepositoSubCuentaForm()
     
     return render(request, 'cuentas/depositar_subcuenta.html', {
         'form': form,
         'subcuenta': subcuenta,
-        'cuenta': cuenta
+        'cuenta_principal': cuenta,
+        'es_negocio': es_negocio
     })
 
 
 @login_required
 @fast_access_pin_verified
 def retirar_subcuenta(request, subcuenta_id):
-    """Vista para retirar dinero de una subcuenta a la cuenta principal"""
-    subcuenta = get_object_or_404(SubCuenta, id=subcuenta_id, id_cuenta__id_usuario=request.user)
-    cuenta = subcuenta.id_cuenta
+    """Vista para retirar dinero de una subcuenta (personal o negocio)"""
+    # Buscar subcuenta que pertenezca al usuario
+    subcuenta = get_object_or_404(
+        SubCuenta,
+        Q(id=subcuenta_id) & (Q(id_cuenta__id_usuario=request.user) | Q(propietario=request.user))
+    )
+    
+    # Obtener cuenta principal si es subcuenta personal
+    cuenta = subcuenta.id_cuenta if subcuenta.id_cuenta else None
+    es_negocio = not subcuenta.id_cuenta
     
     if request.method == 'POST':
         form = RetiroSubCuentaForm(request.POST)
@@ -518,22 +552,39 @@ def retirar_subcuenta(request, subcuenta_id):
                 monto = form.cleaned_data['monto']
                 descripcion = form.cleaned_data['descripcion']
                 
-                # Realizar el retiro
-                subcuenta.saldo -= monto
-                cuenta.saldo_cuenta += monto
-                
-                subcuenta.save()
-                cuenta.save()
-                
-            messages.success(request, f'Retiro de ${monto:.2f} realizado exitosamente desde "{subcuenta.nombre}".')
-            return redirect('cuentas:subcuentas_dashboard')
+                if es_negocio:
+                    # Para subcuentas de negocio, solo restar el monto
+                    subcuenta.saldo -= monto
+                    subcuenta.save()
+                    messages.success(request, f'Retiro de ${monto:.2f} realizado exitosamente desde "{subcuenta.nombre}".')
+                    return redirect('cuentas:subcuentas_dashboard')
+                else:
+                    # Para subcuentas personales, transferir a cuenta principal
+                    subcuenta.saldo -= monto
+                    cuenta.saldo_cuenta += monto
+                    subcuenta.save()
+                    cuenta.save()
+                    
+                    # Registrar la transferencia
+                    TransferenciaCuentaPrincipal.objects.create(
+                        subcuenta=subcuenta,
+                        cuenta_destino=cuenta,
+                        monto=monto,
+                        tipo='deposito',  # Depósito de subcuenta hacia cuenta principal
+                        descripcion=descripcion or f'Retiro de {subcuenta.nombre}',
+                        id_usuario=request.user
+                    )
+                    
+                    messages.success(request, f'Retiro de ${monto:.2f} realizado exitosamente desde "{subcuenta.nombre}".')
+                    return redirect('cuentas:subcuentas_dashboard')
     else:
         form = RetiroSubCuentaForm()
     
     return render(request, 'cuentas/retirar_subcuenta.html', {
         'form': form,
         'subcuenta': subcuenta,
-        'cuenta': cuenta
+        'cuenta_principal': cuenta,
+        'es_negocio': es_negocio
     })
 
 
@@ -822,6 +873,11 @@ def historial_transferencias_cuenta_principal(request):
     total_transferencias = len(todas_transferencias)
     monto_total = sum(trans['monto'] for trans in todas_transferencias)
     
+    # Contar depósitos y retiros (solo movimientos con cuenta principal)
+    total_depositos = sum(1 for trans in todas_transferencias if trans.get('tipo_transferencia') == 'deposito')
+    total_retiros = sum(1 for trans in todas_transferencias if trans.get('tipo_transferencia') == 'retiro')
+    total_movimientos = total_transferencias  # Todos los movimientos incluyendo entre subcuentas
+    
     # Paginación manual
     paginator = Paginator(todas_transferencias, 20)
     page_number = request.GET.get('page')
@@ -836,6 +892,9 @@ def historial_transferencias_cuenta_principal(request):
         'transferencias': transferencias_paginadas,
         'total_transferencias': total_transferencias,
         'monto_total': monto_total,
+        'total_depositos': total_depositos,
+        'total_retiros': total_retiros,
+        'total_movimientos': total_movimientos,
         'todas_subcuentas': todas_subcuentas,
         'is_paginated': transferencias_paginadas.has_other_pages(),
         'page_obj': transferencias_paginadas,

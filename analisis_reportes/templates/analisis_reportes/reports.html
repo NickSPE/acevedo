@@ -4,63 +4,70 @@
 {% block title %}Análisis y Reportes | FinGest{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
-  <!-- Header -->
-  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-    <div>
-      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Análisis y Reportes</h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-1">Visualiza y analiza tu situación financiera</p>
-    </div>
-    <div class="flex flex-col sm:flex-row w-full sm:w-auto items-stretch sm:items-center gap-3">
-      <!-- Dropdown para exportar -->
-      <div class="relative">
-        <button id="exportDropdown" class="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+<div class="max-w-7xl mx-auto">
+  <!-- Header con filtros integrados -->
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
           </svg>
-          Exportar
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-          </svg>
-        </button>
-        <div id="exportMenu" class="absolute left-0 sm:right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10 hidden">
-          <a href="{% url 'analisis_reportes:exportar_pdf' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-            </svg>
-            Exportar a PDF
-          </a>
-          <a href="{% url 'analisis_reportes:exportar_excel' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-lg">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            Exportar a Excel
-          </a>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-[#605952]">Análisis y Reportes</h1>
+          <p class="text-[#736B5E] text-sm">Visualiza tu situación financiera</p>
         </div>
       </div>
-      <button onclick="window.location.reload()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-        </svg>
-        Actualizar
-      </button>
+      <div class="flex items-center gap-2">
+        <!-- Dropdown para exportar -->
+        <div class="relative">
+          <button id="exportDropdown" class="bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Exportar
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div id="exportMenu" class="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg border border-[#E5E1DD] z-10 hidden">
+            <a href="{% url 'analisis_reportes:exportar_pdf' %}" class="block px-3 py-2 text-sm text-[#605952] hover:bg-[#F1F0EE] rounded-t-lg">
+              <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+              </svg>
+              Exportar a PDF
+            </a>
+            <a href="{% url 'analisis_reportes:exportar_excel' %}" class="block px-3 py-2 text-sm text-[#605952] hover:bg-[#F1F0EE] rounded-b-lg">
+              <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              Exportar a Excel
+            </a>
+          </div>
+        </div>
+        <button onclick="window.location.reload()" class="bg-[#227C91] hover:bg-[#1a6070] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Actualizar
+        </button>
+      </div>
     </div>
-  </div>
 
-  <!-- Filtros Mejorados -->
-  <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700 mb-6">
-    <form method="GET" class="space-y-4">
-      <div class="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+    <!-- Filtros integrados -->
+    <form method="GET" class="border-t border-[#E5E1DD] pt-3">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center gap-3">
         <div class="flex items-center gap-2 flex-shrink-0">
-          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 text-[#736B5E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"/>
           </svg>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filtros:</span>
+          <span class="text-sm font-medium text-[#605952]">Filtros:</span>
         </div>
         
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
           <!-- Período -->
-          <select name="periodo" class="w-full sm:w-48 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+          <select name="periodo" class="w-full sm:w-44 border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
             <option value="mes_actual" {% if periodo_actual == 'mes_actual' %}selected{% endif %}>Este mes</option>
             <option value="ultimo_mes" {% if periodo_actual == 'ultimo_mes' %}selected{% endif %}>Mes pasado</option>
             <option value="trimestre" {% if periodo_actual == 'trimestre' %}selected{% endif %}>Último trimestre</option>
@@ -70,7 +77,7 @@
 
           <!-- Cuentas -->
           {% if cuentas %}
-          <select name="cuenta" class="w-full sm:w-48 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+          <select name="cuenta" class="w-full sm:w-44 border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
             <option value="">Todas las cuentas</option>
             {% for cuenta in cuentas %}
             <option value="{{ cuenta.id }}">{{ cuenta.nombre }}</option>
@@ -78,43 +85,43 @@
           </select>
           {% endif %}
 
-          <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+          <button type="submit" class="w-full sm:w-auto bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
-            Aplicar filtros
+            Aplicar
           </button>
         </div>
       </div>
       
-      <!-- Fechas personalizadas (solo visible si se selecciona personalizado) -->
-      <div id="fechasPersonalizadas" class="grid grid-cols-1 sm:grid-cols-2 gap-3 {% if periodo_actual != 'personalizado' %}hidden{% endif %}">
+      <!-- Fechas personalizadas -->
+      <div id="fechasPersonalizadas" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 {% if periodo_actual != 'personalizado' %}hidden{% endif %}">
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha inicio:</label>
+          <label class="block text-xs font-medium text-[#605952] mb-1">Fecha inicio:</label>
           <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}" 
-                 class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                 class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha fin:</label>
+          <label class="block text-xs font-medium text-[#605952] mb-1">Fecha fin:</label>
           <input type="date" name="fecha_fin" value="{{ fecha_fin }}" 
-                 class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                 class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
         </div>
       </div>
     </form>
   </div>
 
   <!-- Métricas principales -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
     <!-- Balance total -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between">
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Balance Total</p>
-          <p class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-words">${{ stats.balance_total|floatformat:0 }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Todas las cuentas</p>
+          <p class="text-xs font-medium text-[#736B5E] truncate">Balance Total</p>
+          <p class="text-xl font-bold text-[#605952] break-words">${{ stats.balance_total|floatformat:0 }}</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">Todas las cuentas</p>
         </div>
-        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
           </svg>
         </div>
@@ -122,15 +129,15 @@
     </div>
 
     <!-- Ingresos del período -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between">
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Ingresos</p>
-          <p class="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400 break-words">${{ stats.total_ingresos|floatformat:0 }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Período seleccionado</p>
+          <p class="text-xs font-medium text-[#736B5E] truncate">Ingresos</p>
+          <p class="text-xl font-bold text-[#227C91] break-words">${{ stats.total_ingresos|floatformat:0 }}</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">Período seleccionado</p>
         </div>
-        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
           </svg>
         </div>
@@ -138,15 +145,15 @@
     </div>
 
     <!-- Gastos del período -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between">
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Gastos</p>
-          <p class="text-xl sm:text-2xl font-bold text-red-600 dark:text-red-400 break-words">${{ stats.total_egresos|floatformat:0 }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Período seleccionado</p>
+          <p class="text-xs font-medium text-[#736B5E] truncate">Gastos</p>
+          <p class="text-xl font-bold text-red-600 break-words">${{ stats.total_egresos|floatformat:0 }}</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">Período seleccionado</p>
         </div>
-        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+          <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
           </svg>
         </div>
@@ -154,17 +161,17 @@
     </div>
 
     <!-- Ahorro neto -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between">
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-medium text-gray-600 dark:text-gray-400 truncate">Ahorro Neto</p>
-          <p class="text-xl sm:text-2xl font-bold {% if stats.ahorro_neto >= 0 %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %} break-words">
+          <p class="text-xs font-medium text-[#736B5E] truncate">Ahorro Neto</p>
+          <p class="text-xl font-bold {% if stats.ahorro_neto >= 0 %}text-[#227C91]{% else %}text-red-600{% endif %} break-words">
             {% if stats.ahorro_neto >= 0 %}+{% endif %} ${{ stats.ahorro_neto|floatformat:0 }}
           </p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ingresos - Gastos</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">Ingresos - Gastos</p>
         </div>
-        <div class="w-10 h-10 sm:w-12 sm:h-12 {% if stats.ahorro_neto >= 0 %}bg-green-100 dark:bg-green-900/30{% else %}bg-red-100 dark:bg-red-900/30{% endif %} rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-          <svg class="w-5 h-5 sm:w-6 sm:h-6 {% if stats.ahorro_neto >= 0 %}text-green-600 dark:text-green-400{% else %}text-red-600 dark:text-red-400{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="w-9 h-9 {% if stats.ahorro_neto >= 0 %}bg-[#227C91] bg-opacity-10{% else %}bg-red-100{% endif %} rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+          <svg class="w-5 h-5 {% if stats.ahorro_neto >= 0 %}text-[#227C91]{% else %}text-red-600{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
           </svg>
         </div>
@@ -173,139 +180,139 @@
   </div>
 
   <!-- Gráficos y análisis -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
     <!-- Gráfico de ingresos vs gastos -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ingresos vs Gastos</h3>
-        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-semibold text-[#605952]">Ingresos vs Gastos</h3>
+        <div class="w-7 h-7 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
           </svg>
         </div>
       </div>
-      <div class="h-64 sm:h-72 lg:h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-700/50 rounded-lg overflow-hidden">
+      <div class="h-64 flex items-center justify-center bg-[#F1F0EE] rounded-lg overflow-hidden">
         <canvas id="ingresosGastosChart" class="max-w-full max-h-full"></canvas>
       </div>
     </div>
 
     <!-- Distribución por categorías -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Gastos por Categoría</h3>
-        <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-semibold text-[#605952]">Gastos por Categoría</h3>
+        <div class="w-7 h-7 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
           </svg>
         </div>
       </div>
-      <div class="h-64 sm:h-72 lg:h-80 flex items-center justify-center bg-gray-50 dark:bg-gray-700/50 rounded-lg overflow-hidden">
+      <div class="h-64 flex items-center justify-center bg-[#F1F0EE] rounded-lg overflow-hidden">
         <canvas id="categoriasChart" class="max-w-full max-h-full"></canvas>
       </div>
     </div>
   </div>
 
   <!-- Flujo mensual -->
-  <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700 mb-6">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Flujo de Efectivo Mensual</h3>
-      <div class="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-        <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="bg-white rounded-lg p-4 border border-[#E5E1DD] mb-4">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-base font-semibold text-[#605952]">Flujo de Efectivo Mensual</h3>
+      <div class="w-7 h-7 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+        <svg class="w-4 h-4 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
         </svg>
       </div>
     </div>
-    <div class="h-64 sm:h-80 lg:h-96 bg-gray-50 dark:bg-gray-700/50 rounded-lg flex items-center justify-center overflow-hidden">
+    <div class="h-72 bg-[#F1F0EE] rounded-lg flex items-center justify-center overflow-hidden">
       <canvas id="flujoMensualChart" class="max-w-full max-h-full"></canvas>
     </div>
   </div>
 
   <!-- Análisis detallado -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
     <!-- Top gastos -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Principales Gastos</h3>
-        <div class="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-semibold text-[#605952]">Principales Gastos</h3>
+        <div class="w-7 h-7 bg-red-100 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
           </svg>
         </div>
       </div>
       
-      <div class="space-y-3">
+      <div class="space-y-2">
         {% for gasto in stats.top_gastos|slice:":5" %}
-        <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+        <div class="flex items-center justify-between p-2.5 bg-[#F1F0EE] rounded-lg">
           <div class="min-w-0 flex-1">
-            <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ gasto.nombre }}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400">{{ gasto.fecha_movimiento|date:"j M" }}</p>
+            <p class="font-medium text-[#605952] text-sm truncate">{{ gasto.nombre }}</p>
+            <p class="text-xs text-[#736B5E]">{{ gasto.fecha_movimiento|date:"j M" }}</p>
           </div>
-          <p class="font-semibold text-sm text-red-600 dark:text-red-400 flex-shrink-0 ml-2">-${{ gasto.monto|floatformat:0 }}</p>
+          <p class="font-semibold text-sm text-red-600 flex-shrink-0 ml-2">-${{ gasto.monto|floatformat:0 }}</p>
         </div>
         {% empty %}
-        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay gastos en este período</p>
+        <p class="text-[#736B5E] text-sm text-center py-4">No hay gastos en este período</p>
         {% endfor %}
       </div>
     </div>
 
     <!-- Análisis de subcuentas -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Estado de Subcuentas</h3>
-        <div class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-semibold text-[#605952]">Estado de Subcuentas</h3>
+        <div class="w-7 h-7 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
           </svg>
         </div>
       </div>
       
-      <div class="space-y-3">
+      <div class="space-y-2">
         {% for subcuenta in stats.subcuentas_info|slice:":5" %}
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3 min-w-0 flex-1">
-            <div class="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0"></div>
+          <div class="flex items-center gap-2.5 min-w-0 flex-1">
+            <div class="w-2 h-2 bg-[#227C91] rounded-full flex-shrink-0"></div>
             <div class="min-w-0 flex-1">
-              <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ subcuenta.nombre }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ subcuenta.cuenta.nombre }}</p>
+              <p class="font-medium text-[#605952] text-sm truncate">{{ subcuenta.nombre }}</p>
+              <p class="text-xs text-[#736B5E] truncate">{{ subcuenta.cuenta.nombre }}</p>
             </div>
           </div>
-          <p class="font-semibold text-sm text-gray-900 dark:text-white flex-shrink-0 ml-2">${{ subcuenta.saldo|floatformat:0 }}</p>
+          <p class="font-semibold text-sm text-[#605952] flex-shrink-0 ml-2">${{ subcuenta.saldo|floatformat:0 }}</p>
         </div>
         {% empty %}
-        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay subcuentas disponibles</p>
+        <p class="text-[#736B5E] text-sm text-center py-4">No hay subcuentas disponibles</p>
         {% endfor %}
       </div>
     </div>
 
     <!-- Resumen de metas -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Progreso de Metas</h3>
-        <div class="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-semibold text-[#605952]">Progreso de Metas</h3>
+        <div class="w-7 h-7 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
           </svg>
         </div>
       </div>
       
-      <div class="space-y-3">
+      <div class="space-y-2.5">
         {% for meta in stats.metas_progreso|slice:":3" %}
-        <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-          <div class="flex items-center justify-between mb-2">
-            <p class="font-medium text-gray-900 dark:text-white text-sm truncate">{{ meta.nombre }}</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">{{ meta.porcentaje_progreso|floatformat:1 }}%</p>
+        <div class="p-2.5 bg-[#F1F0EE] rounded-lg">
+          <div class="flex items-center justify-between mb-1.5">
+            <p class="font-medium text-[#605952] text-sm truncate">{{ meta.nombre }}</p>
+            <p class="text-xs text-[#736B5E] flex-shrink-0">{{ meta.porcentaje_progreso|floatformat:1 }}%</p>
           </div>
-          <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-            <div class="bg-yellow-500 h-2 rounded-full transition-all duration-300" style="width: {{ meta.porcentaje_progreso }}%"></div>
+          <div class="w-full bg-[#E5E1DD] rounded-full h-1.5">
+            <div class="bg-[#227C91] h-1.5 rounded-full transition-all duration-300" style="width: {{ meta.porcentaje_progreso }}%"></div>
           </div>
-          <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <div class="flex justify-between text-xs text-[#736B5E] mt-1">
             <span>${{ meta.monto_ahorrado|floatformat:0 }}</span>
             <span>${{ meta.monto_objetivo|floatformat:0 }}</span>
           </div>
         </div>
         {% empty %}
-        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay metas creadas</p>
+        <p class="text-[#736B5E] text-sm text-center py-4">No hay metas creadas</p>
         {% endfor %}
       </div>
     </div>
@@ -354,28 +361,59 @@ document.addEventListener('DOMContentLoaded', function() {
             legend: {
                 position: 'bottom',
                 labels: {
-                    padding: 20,
+                    padding: 15,
                     usePointStyle: true,
                     font: {
-                        size: window.innerWidth < 640 ? 11 : 12
-                    }
+                        size: 12,
+                        family: 'Inter, sans-serif'
+                    },
+                    color: '#605952'
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(29, 41, 61, 0.95)',
+                titleColor: '#F1F0EE',
+                bodyColor: '#F1F0EE',
+                borderColor: '#227C91',
+                borderWidth: 1,
+                padding: 12,
+                cornerRadius: 8,
+                titleFont: {
+                    size: 13,
+                    weight: 'bold'
+                },
+                bodyFont: {
+                    size: 12
                 }
             }
         },
         scales: {
             x: {
                 ticks: {
-                    maxRotation: window.innerWidth < 640 ? 45 : 0,
+                    maxRotation: 45,
+                    minRotation: 0,
                     font: {
-                        size: window.innerWidth < 640 ? 10 : 11
-                    }
+                        size: 11,
+                        family: 'Inter, sans-serif'
+                    },
+                    color: '#736B5E'
+                },
+                grid: {
+                    color: '#E5E1DD',
+                    drawBorder: false
                 }
             },
             y: {
                 ticks: {
                     font: {
-                        size: window.innerWidth < 640 ? 10 : 11
-                    }
+                        size: 11,
+                        family: 'Inter, sans-serif'
+                    },
+                    color: '#736B5E'
+                },
+                grid: {
+                    color: '#E5E1DD',
+                    drawBorder: false
                 }
             }
         }
@@ -393,25 +431,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Ingresos',
                     data: ingresosGastosData.ingresos || [0],
-                    backgroundColor: 'rgba(34, 197, 94, 0.8)',
-                    borderColor: 'rgba(34, 197, 94, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(34, 124, 145, 0.85)',
+                    borderColor: '#227C91',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    hoverBackgroundColor: 'rgba(34, 124, 145, 1)'
                 }, {
                     label: 'Gastos',
                     data: ingresosGastosData.gastos || [0],
-                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
-                    borderColor: 'rgba(239, 68, 68, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(239, 68, 68, 0.85)',
+                    borderColor: '#dc2626',
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    hoverBackgroundColor: 'rgba(239, 68, 68, 1)'
                 }]
             },
             options: {
                 ...commonOptions,
                 scales: {
+                    ...commonOptions.scales,
                     y: {
+                        ...commonOptions.scales.y,
                         beginAtZero: true,
                         ticks: {
+                            ...commonOptions.scales.y.ticks,
                             callback: function(value) {
                                 return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        ...commonOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
                             }
                         }
                     }
@@ -420,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Gráfico de Categorías
+    // Gráfico de Categorías (Gastos por Categoría)
     const categoriasCtx = document.getElementById('categoriasChart');
     if (categoriasCtx) {
         const categoriasData = {{ gastos_categoria|safe }};
@@ -432,9 +488,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     data: categoriasData.values || [1],
                     backgroundColor: [
-                        '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6',
-                        '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#f59e0b'
-                    ]
+                        '#227C91', // Primario corporativo
+                        '#605952', // Secundario corporativo
+                        '#ef4444', // Rojo
+                        '#f97316', // Naranja
+                        '#eab308', // Amarillo
+                        '#22c55e', // Verde
+                        '#3b82f6', // Azul
+                        '#8b5cf6', // Púrpura
+                        '#ec4899', // Rosa
+                        '#06b6d4'  // Cyan
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 3,
+                    hoverOffset: 8
                 }]
             },
             options: {
@@ -444,17 +511,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     legend: {
                         position: 'bottom',
                         labels: {
-                            padding: 20,
+                            padding: 15,
                             usePointStyle: true,
+                            pointStyle: 'circle',
                             font: {
-                                size: window.innerWidth < 640 ? 11 : 12
+                                size: 12,
+                                family: 'Inter, sans-serif'
+                            },
+                            color: '#605952',
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map((label, i) => {
+                                        const value = data.datasets[0].data[i];
+                                        const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return {
+                                            text: `${label} (${percentage}%)`,
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            hidden: false,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
                             }
                         }
                     },
                     tooltip: {
+                        ...commonOptions.plugins.tooltip,
                         callbacks: {
                             label: function(context) {
-                                return context.label + ': $' + context.parsed.toLocaleString();
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                return context.label + ': $' + context.parsed.toLocaleString() + ' (' + percentage + '%)';
                             }
                         }
                     }
@@ -463,7 +553,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Gráfico de Flujo Mensual
+    // Gráfico de Flujo Mensual (Ingresos - Gastos = Ahorro/Déficit)
     const flujoMensualCtx = document.getElementById('flujoMensualChart');
     if (flujoMensualCtx) {
         const flujoMensualData = {{ flujo_mensual|safe }};
@@ -473,30 +563,84 @@ document.addEventListener('DOMContentLoaded', function() {
             data: {
                 labels: flujoMensualData.labels || ['Sin datos'],
                 datasets: [{
-                    label: 'Flujo Neto',
+                    label: 'Flujo Neto (Ingresos - Gastos)',
                     data: flujoMensualData.values || [0],
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderColor: '#227C91',
+                    backgroundColor: function(context) {
+                        const chart = context.chart;
+                        const {ctx, chartArea} = chart;
+                        if (!chartArea) return null;
+                        
+                        const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+                        gradient.addColorStop(0, 'rgba(34, 124, 145, 0.25)');
+                        gradient.addColorStop(1, 'rgba(34, 124, 145, 0.02)');
+                        return gradient;
+                    },
                     fill: true,
-                    tension: 0.4
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#227C91',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointHoverBackgroundColor: '#227C91',
+                    pointHoverBorderWidth: 3,
+                    segment: {
+                        borderColor: function(ctx) {
+                            // Cambiar color a rojo cuando el flujo es negativo
+                            return ctx.p1.parsed.y < 0 ? '#ef4444' : '#227C91';
+                        }
+                    }
                 }]
             },
             options: {
                 ...commonOptions,
                 scales: {
+                    ...commonOptions.scales,
                     y: {
+                        ...commonOptions.scales.y,
                         beginAtZero: true,
                         ticks: {
+                            ...commonOptions.scales.y.ticks,
                             callback: function(value) {
                                 return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: function(context) {
+                                if (context.tick.value === 0) {
+                                    return '#605952';
+                                }
+                                return '#E5E1DD';
+                            },
+                            lineWidth: function(context) {
+                                if (context.tick.value === 0) {
+                                    return 2;
+                                }
+                                return 1;
                             }
                         }
                     }
                 },
-                elements: {
-                    point: {
-                        radius: 4,
-                        hoverRadius: 6
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        ...commonOptions.plugins.tooltip,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                const label = value >= 0 ? 'Ahorro: +$' : 'Déficit: -$';
+                                return label + Math.abs(value).toLocaleString();
+                            },
+                            afterLabel: function(context) {
+                                if (context.parsed.y >= 0) {
+                                    return '✓ Mes positivo';
+                                } else {
+                                    return '⚠ Mes con déficit';
+                                }
+                            }
+                        }
                     }
                 }
             }
