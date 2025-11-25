@@ -20,13 +20,14 @@
         </svg>
         Exportar
       </button>
-      <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+     <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}"
+         class="bg-[#227C91] hover:bg-[#1B6677] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          <path stroke-linecap="round" stroke-linejoin="round"    stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
-        Nueva Transacción
+       Nueva Transacción
       </a>
+
     </div>
   </div>
 
@@ -198,13 +199,14 @@
 
             <!-- Botón de búsqueda -->
             <button type="submit"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 lg:px-6 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 min-w-fit">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <span class="hidden sm:inline">Buscar</span>
-            </button>
+               class="bg-[#227C91] hover:bg-[#1B6677] text-white px-4 lg:px-6 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 min-w-fit">
+             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+             </svg>
+           <span class="hidden sm:inline">Buscar</span>
+          </button>
+
           </div>
         </form>
       </div>
@@ -270,12 +272,13 @@
         <p class="text-gray-500 font-medium mb-2">No hay transacciones</p>
         <p class="text-gray-400 text-sm mb-4">Comience agregando su primera transacción</p>
         <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors inline-flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Nueva transacción
+         class="bg-[#227C91] hover:bg-[#1b6676] text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors inline-flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+           Nueva transacción
         </a>
+
       </div>
       {% endfor %}
     </div>
