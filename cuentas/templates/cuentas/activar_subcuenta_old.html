@@ -1,0 +1,141 @@
+{% extends 'core/base_template.html' %}
+{% load static %}
+
+{% block title %}Activar Subcuenta - FinGest{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    
+    .icon-container {
+        margin-bottom: 2rem;
+    }
+    
+    .icon-container i {
+        font-size: 4rem;
+        color: #00b894;
+    }
+    
+    .confirmation-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 1rem;
+    }
+    
+    .confirmation-text {
+        color: #636e72;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    .subcuenta-info {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        border-left: 4px solid #00b894;
+    }
+    
+    .subcuenta-name {
+        font-weight: 600;
+        color: #2d3436;
+        margin-bottom: 0.5rem;
+    }
+    
+    .subcuenta-details {
+        color: #636e72;
+        font-size: 0.9rem;
+    }
+    
+    .btn-container {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+    
+    .btn-confirm, .btn-cancel {
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        min-width: 120px;
+    }
+    
+    .btn-confirm {
+        background: linear-gradient(45deg, #00b894, #00cec9);
+        color: white;
+    }
+    
+    .btn-confirm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 184, 148, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-cancel {
+        background: #f8f9fa;
+        color: #636e72;
+        border: 1px solid #dee2e6;
+    }
+    
+    .btn-cancel:hover {
+        background: #e9ecef;
+        color: #495057;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="confirmation-container">
+        <div class="icon-container">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <h1 class="confirmation-title">Activar Subcuenta</h1>
+        
+        <p class="confirmation-text">
+            ¿Estás seguro de que deseas activar esta subcuenta? Una vez activada, 
+            podrás realizar depósitos, retiros y transferencias.
+        </p>
+        
+        <div class="subcuenta-info">
+            <div class="subcuenta-name">{{ subcuenta.nombre }}</div>
+            <div class="subcuenta-details">
+                Tipo: {{ subcuenta.get_tipo_display }} | 
+                Saldo: ${{ subcuenta.saldo|floatformat:2 }}
+                {% if subcuenta.descripcion %}
+                <br>{{ subcuenta.descripcion }}
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="btn-container">
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-confirm">
+                    <i class="fas fa-check me-2"></i>Activar Subcuenta
+                </button>
+            </form>
+            
+            <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn-cancel">
+                <i class="fas fa-times me-2"></i>Cancelar
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,279 +1,120 @@
 {% extends 'core/base_template.html' %}
 {% load static %}
+{% load currency_filters %}
 
-{% block title %}Eliminar Subcuenta - FinGest{% endblock %}
-
-{% block extra_css %}
-<style>
-    .form-container {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    .danger-card {
-        border: 2px solid #dc3545;
-        background-color: #f8d7da;
-    }
-    .warning-card {
-        border: 2px solid #ffc107;
-        background-color: #fff3cd;
-    }
-    .subcuenta-info {
-        border-left: 4px solid;
-    }
-    .icon-warning {
-        color: #dc3545;
-        font-size: 3rem;
-    }
-</style>
-{% endblock %}
+{% block title %}Eliminar Subcuenta | FinGest{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="form-container">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h1 class="h3 text-danger mb-0">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Eliminar Subcuenta
-                        </h1>
-                        <p class="text-muted mb-0">Esta acción no se puede deshacer</p>
-                    </div>
-                    <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Volver
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Advertencia principal -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card danger-card">
-                    <div class="card-body text-center">
-                        <i class="fas fa-exclamation-triangle icon-warning mb-3"></i>
-                        <h4 class="text-danger">¿Estás seguro de eliminar esta subcuenta?</h4>
-                        <p class="mb-0">Esta acción eliminará permanentemente la subcuenta y toda su información asociada</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Información de la subcuenta -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card subcuenta-info" style="border-left-color: {{ subcuenta.color }};">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Información de la Subcuenta
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Nombre</h6>
-                                <p class="fw-bold">{{ subcuenta.nombre }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6 class="text-muted">Tipo</h6>
-                                <span class="badge" style="background-color: {{ subcuenta.color }}15; color: {{ subcuenta.color }};">
-                                    {{ subcuenta.get_tipo_display }}
-                                </span>
-                            </div>
-                        </div>
-                        
-                        {% if subcuenta.descripcion %}
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <h6 class="text-muted">Descripción</h6>
-                                <p>{{ subcuenta.descripcion }}</p>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        <div class="row mt-3">
-                            <div class="col-md-4">
-                                <h6 class="text-muted">Saldo Actual</h6>
-                                <h4 class="{% if subcuenta.saldo >= 0 %}text-success{% else %}text-danger{% endif %}">
-                                    ${{ subcuenta.saldo|floatformat:2 }}
-                                </h4>
-                            </div>
-                            <div class="col-md-4">
-                                <h6 class="text-muted">Estado</h6>
-                                <span class="badge {% if subcuenta.activa %}bg-success{% else %}bg-secondary{% endif %}">
-                                    {% if subcuenta.activa %}Activa{% else %}Inactiva{% endif %}
-                                </span>
-                            </div>
-                            <div class="col-md-4">
-                                <h6 class="text-muted">Fecha de Creación</h6>
-                                <p>{{ subcuenta.fecha_creacion|date:'d/m/Y H:i' }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Información sobre el saldo -->
-        {% if subcuenta.saldo != 0 %}
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card warning-card">
-                    <div class="card-body">
-                        <h6 class="text-warning">
-                            <i class="fas fa-exclamation-circle me-2"></i>
-                            Atención: La subcuenta tiene saldo
-                        </h6>
-                        <p class="mb-2">
-                            Esta subcuenta tiene un saldo de <strong>${{ subcuenta.saldo|floatformat:2 }}</strong>.
-                        </p>
-                        <p class="mb-0">
-                            {% if subcuenta.saldo > 0 %}
-                                Al eliminar la subcuenta, este saldo se transferirá de vuelta a la cuenta principal.
-                            {% else %}
-                                Al eliminar la subcuenta, este saldo negativo se descontará de la cuenta principal.
-                            {% endif %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Información sobre transferencias -->
-        {% if tiene_transferencias %}
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card border-info">
-                    <div class="card-body">
-                        <h6 class="text-info">
-                            <i class="fas fa-exchange-alt me-2"></i>
-                            Historial de Transferencias
-                        </h6>
-                        <p class="mb-0">
-                            Esta subcuenta tiene transferencias registradas. Al eliminarla, se mantendrá el historial 
-                            de transferencias para fines de auditoría, pero la subcuenta no estará disponible 
-                            para nuevas operaciones.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Formulario de confirmación -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <form method="post">
-                            {% csrf_token %}
-                            
-                            <!-- Confirmación -->
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="confirmar" required>
-                                    <label class="form-check-label fw-bold text-danger" for="confirmar">
-                                        Confirmo que deseo eliminar permanentemente esta subcuenta
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Texto de confirmación -->
-                            <div class="mb-4">
-                                <label for="confirmacion_texto" class="form-label">
-                                    Para confirmar, escribe <strong>"{{ subcuenta.nombre }}"</strong> en el campo siguiente:
-                                </label>
-                                <input type="text" class="form-control" id="confirmacion_texto" 
-                                       placeholder="Escribe el nombre de la subcuenta para confirmar" required>
-                            </div>
-
-                            <!-- Botones -->
-                            <div class="d-flex justify-content-between">
-                                <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
-                                    <i class="fas fa-times me-2"></i>Cancelar
-                                </a>
-                                <button type="submit" class="btn btn-danger" id="btnEliminar" disabled>
-                                    <i class="fas fa-trash me-2"></i>Eliminar Subcuenta
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Alternativas -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card bg-light">
-                    <div class="card-header">
-                        <h6 class="mb-0">¿Consideraste estas alternativas?</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn btn-outline-primary w-100">
-                                    <i class="fas fa-edit me-2"></i>Desactivar en lugar de eliminar
-                                </a>
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                {% if subcuenta.saldo > 0 %}
-                                <a href="{% url 'cuentas:retirar_subcuenta' subcuenta.id %}" class="btn btn-outline-warning w-100">
-                                    <i class="fas fa-minus-circle me-2"></i>Retirar saldo antes de eliminar
-                                </a>
-                                {% else %}
-                                <button class="btn btn-outline-secondary w-100" disabled>
-                                    <i class="fas fa-info-circle me-2"></i>Sin saldo que retirar
-                                </button>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="max-w-2xl mx-auto">
+  <!-- Header -->
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center">
+        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-[#605952]">Eliminar Subcuenta</h1>
+        <p class="text-[#736B5E] text-sm">Esta acción no se puede deshacer</p>
+      </div>
     </div>
-</div>
-{% endblock %}
+  </div>
 
-{% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const confirmarCheck = document.getElementById('confirmar');
-    const confirmacionTexto = document.getElementById('confirmacion_texto');
-    const btnEliminar = document.getElementById('btnEliminar');
-    const nombreSubcuenta = '{{ subcuenta.nombre }}';
-    
-    function validarFormulario() {
-        const checkMarcado = confirmarCheck.checked;
-        const textoCorrect = confirmacionTexto.value.trim() === nombreSubcuenta;
-        
-        btnEliminar.disabled = !(checkMarcado && textoCorrect);
-        
-        if (textoCorrect) {
-            confirmacionTexto.classList.remove('is-invalid');
-            confirmacionTexto.classList.add('is-valid');
-        } else if (confirmacionTexto.value.trim() !== '') {
-            confirmacionTexto.classList.remove('is-valid');
-            confirmacionTexto.classList.add('is-invalid');
-        } else {
-            confirmacionTexto.classList.remove('is-valid', 'is-invalid');
-        }
-    }
-    
-    confirmarCheck.addEventListener('change', validarFormulario);
-    confirmacionTexto.addEventListener('input', validarFormulario);
-    
-    // Confirmación adicional antes del envío
-    document.querySelector('form').addEventListener('submit', function(e) {
-        if (!confirm('¿Estás completamente seguro? Esta acción NO se puede deshacer.')) {
-            e.preventDefault();
-        }
-    });
-});
-</script>
+  <!-- Advertencia -->
+  <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+    <div class="flex gap-3">
+      <svg class="w-6 h-6 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+      </svg>
+      <div>
+        <h3 class="text-red-800 font-semibold">¿Estás seguro de eliminar esta subcuenta?</h3>
+        <p class="text-red-700 text-sm mt-1">
+          {% if subcuenta.saldo > 0 %}
+            El saldo de {% format_money subcuenta.saldo user %} será transferido automáticamente a tu cuenta principal.
+          {% else %}
+            Esta subcuenta será desactivada permanentemente.
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info de la subcuenta -->
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
+    <h3 class="text-sm font-semibold text-[#605952] mb-3 flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      Información de la Subcuenta
+    </h3>
+    <div class="space-y-3">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <p class="text-xs text-[#736B5E]">Nombre</p>
+          <p class="font-semibold text-[#605952]">{{ subcuenta.nombre }}</p>
+        </div>
+        <div>
+          <p class="text-xs text-[#736B5E]">Tipo</p>
+          <span class="inline-block px-2 py-1 rounded text-xs font-semibold {% if subcuenta.id_cuenta %}bg-[#227C91] bg-opacity-10 text-[#227C91]{% else %}bg-[#605952] bg-opacity-10 text-[#605952]{% endif %}">
+            {% if subcuenta.id_cuenta %}Personal{% else %}Negocio{% endif %}
+          </span>
+        </div>
+      </div>
+      
+      {% if subcuenta.descripcion %}
+      <div>
+        <p class="text-xs text-[#736B5E]">Descripción</p>
+        <p class="text-sm text-[#605952]">{{ subcuenta.descripcion }}</p>
+      </div>
+      {% endif %}
+      
+      <div class="grid grid-cols-2 gap-4 pt-3 border-t border-[#E5E1DD]">
+        <div>
+          <p class="text-xs text-[#736B5E]">Saldo actual</p>
+          <p class="text-lg font-bold {% if subcuenta.saldo > 0 %}text-[#227C91]{% else %}text-[#736B5E]{% endif %}">
+            {% format_money subcuenta.saldo user %}
+          </p>
+        </div>
+        {% if subcuenta.meta_objetivo %}
+        <div>
+          <p class="text-xs text-[#736B5E]">Meta de ahorro</p>
+          <p class="text-lg font-bold text-[#605952]">{% format_money subcuenta.meta_objetivo user %}</p>
+          <p class="text-xs text-[#736B5E]">{{ subcuenta.progreso_meta|floatformat:1 }}% completado</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if tiene_transferencias %}
+  <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+    <div class="flex gap-3">
+      <svg class="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <p class="text-sm font-medium text-yellow-800">Esta subcuenta tiene transferencias registradas</p>
+        <p class="text-xs text-yellow-700 mt-1">El historial de transferencias se mantendrá por motivos contables</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Formulario -->
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="flex-1 bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] px-4 py-3 rounded-lg text-sm font-medium transition-colors text-center">
+        Cancelar
+      </a>
+      <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+        Confirmar Eliminación
+      </button>
+    </div>
+  </form>
+</div>
 {% endblock %}

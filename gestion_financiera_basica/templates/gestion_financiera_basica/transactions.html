@@ -4,12 +4,12 @@
 {% block title %}Transacciones | FinGest{% endblock %}
 
 {% block content %}
-<div class="p-6 space-y-6">
+<div class="p-6 space-y-5">
   <!-- Header con estadísticas -->
-  <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+  <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Transacciones</h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-1">Gestiona y visualiza tu historial financiero</p>
+      <h1 class="text-2xl font-bold" style="color: #605952;">Transacciones</h1>
+      <p class="text-sm" style="color: #736B5E;">Gestiona y visualiza tu historial financiero</p>
     </div>
     <div class="flex flex-wrap items-center gap-3">
       <button
@@ -31,9 +31,9 @@
   </div>
 
   <!-- Tarjetas de resumen -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <!-- Total de transacciones -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl p-4 border" style="border-color: #E5E1DD;">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Transacciones ({{ nombre_mes }})
@@ -52,7 +52,7 @@
     </div>
 
     <!-- Ingresos del mes -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl p-4 border" style="border-color: #E5E1DD;">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Ingresos del Mes</p>
@@ -70,11 +70,11 @@
     </div>
 
     <!-- Gastos del mes -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl p-4 border" style="border-color: #E5E1DD;">
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Gastos del Mes</p>
-          <p class="text-lg sm:text-2xl font-bold text-red-600 dark:text-red-400">-${{ gastos_mes|floatformat:0 }}</p>
+          <p class="text-xs font-medium" style="color: #736B5E;">Gastos del Mes</p>
+          <p class="text-xl font-bold text-red-600">-${{ gastos_mes|floatformat:0 }}</p>
         </div>
         <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
           <svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
@@ -86,7 +86,7 @@
     </div>
 
     <!-- Balance del mes -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-3 sm:p-4 border border-gray-200 dark:border-gray-700">
+    <div class="bg-white rounded-xl p-4 border" style="border-color: #E5E1DD;">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Balance del Mes</p>
@@ -156,6 +156,9 @@
               Gastos
             </a>
           </div>
+          <input type="text" name="search" value="{{ search_query|default:'' }}" 
+                 placeholder="Buscar transacciones..." 
+                 class="block w-full pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-gray-500" style="border-color: #E5E1DD; color: #605952;">
         </div>
 
         <!-- Búsqueda y Ordenación - Compacto en móvil -->
@@ -225,8 +228,7 @@
   </script>
 
   <!-- Lista de transacciones -->
-  <div class="bg-white rounded-lg border border-gray-200">
-    <div class="divide-y divide-gray-100">
+  <div class="bg-white rounded-lg border" style="border-color: #E5E1DD;">    <div class="divide-y" style="border-color: #E5E1DD;">
       {% for movimiento in transactions %}
       <div class="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
         <div class="flex items-center gap-3">

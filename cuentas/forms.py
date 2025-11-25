@@ -136,7 +136,7 @@ class DepositoSubCuentaForm(forms.Form):
         max_digits=10,
         decimal_places=2,
         widget=forms.NumberInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]',
             'step': '0.01',
             'min': '0.01',
             'placeholder': '0.00'
@@ -146,7 +146,7 @@ class DepositoSubCuentaForm(forms.Form):
     descripcion = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952] resize-none',
             'rows': 3,
             'placeholder': 'Motivo del depósito (opcional)...'
         }),
@@ -159,7 +159,7 @@ class RetiroSubCuentaForm(forms.Form):
         max_digits=10,
         decimal_places=2,
         widget=forms.NumberInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]',
             'step': '0.01',
             'min': '0.01',
             'placeholder': '0.00'
@@ -169,7 +169,7 @@ class RetiroSubCuentaForm(forms.Form):
     descripcion = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952] resize-none',
             'rows': 3,
             'placeholder': 'Motivo del retiro (opcional)...'
         }),
