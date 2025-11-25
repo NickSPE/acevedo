@@ -157,8 +157,6 @@
             z-index: 50;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(34, 197, 94, 0.1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             padding: 16px 0;
         }
 
@@ -470,7 +468,7 @@
             }
 
             .subtitle {
-                font-size: 12px;
+                font-size: 14px;
             }
         }
     </style>
@@ -495,7 +493,9 @@
     <nav class="navbar">
         <div class="nav-content">
             <a href="{% url 'core:index' %}" class="logo">
-                <i class="fas fa-chart-line"></i>
+                {% load static %}
+                <img src="{% static 'images/fingest_logo_im.png' %}" alt="FinGest Logo"
+                    class="h-10 w-10 border rounded-lg" />
                 FinGest
             </a>
             <a href="{% url 'core:index' %}" class="back-btn">
@@ -507,7 +507,7 @@
 
     <div class="container">
         <div class="form-card">
-            <h1>Únete a FinGest</h1>
+            <h1 class="text-3xl font-bold mb-4 text-fingest-primary">Únete a FinGest</h1>
             <p class="subtitle">Crea tu cuenta en minutos y transforma tus finanzas</p>
 
             <!-- Alertas -->
