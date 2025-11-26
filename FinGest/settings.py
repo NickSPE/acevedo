@@ -111,7 +111,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fingest_db',
         'USER': 'postgres',     # O 'django_user' si usaste la opción recomendada
-        'PASSWORD': 'alansamuel34',
+        'PASSWORD': '61544196mts',
         'HOST': 'localhost',
         'PORT': '5432',
     }
