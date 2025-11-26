@@ -226,7 +226,7 @@
 
             <!-- Tab Seguridad -->
             <div class="tab-content {% if tab == 'security' %}active{% endif %}" id="tab-security">
-                <div class="content-grid">
+                <div class="content-grid security-horizontal">
                     
                     <!-- Cambiar contraseña -->
                     <div class="info-card security-card">
@@ -244,8 +244,8 @@
                             {% csrf_token %}
                             <input type="hidden" name="action" value="change_password">
                             
-                            <div class="form-layout">
-                                <div class="input-group full-width">
+                            <div class="form-layout vertical">
+                                <div class="input-group">
                                     <label>Contraseña Actual</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-key"></i>
@@ -315,25 +315,54 @@
                             {% csrf_token %}
                             <input type="hidden" name="action" value="change_pin">
                             
-                            <div class="form-layout">
+                            <div class="form-layout vertical">
                                 <div class="input-group">
                                     <label>PIN Actual</label>
-                                    <input type="password" name="actual_pin" maxlength="6" class="pin-input">
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-lock"></i>
+                                        <input type="password" name="actual_pin" maxlength="6" class="pin-input" id="current-pin">
+                                        <button type="button" class="toggle-password" onclick="togglePassword('current-pin')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <div class="input-group">
                                     <label>Nuevo PIN</label>
-                                    <input type="password" name="new_pin" maxlength="6" class="pin-input">
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-key"></i>
+                                        <input type="password" name="new_pin" maxlength="6" class="pin-input" id="new-pin">
+                                        <button type="button" class="toggle-password" onclick="togglePassword('new-pin')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <div class="input-group">
                                     <label>Confirmar PIN</label>
-                                    <input type="password" name="confirm_pin" maxlength="6" class="pin-input">
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                        <input type="password" name="confirm_pin" maxlength="6" class="pin-input" id="confirm-pin">
+                                        <button type="button" class="toggle-password" onclick="togglePassword('confirm-pin')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="security-indicators">
+                                <div class="indicator" id="pin-length-indicator">
+                                    <i class="fas fa-times"></i>
+                                    <span>6 dígitos numéricos</span>
+                                </div>
+                                <div class="indicator" id="pin-match-indicator">
+                                    <i class="fas fa-times"></i>
+                                    <span>Los PINs coinciden</span>
                                 </div>
                             </div>
                             
                             <div class="form-actions">
-                                <button type="submit" class="btn-save">
+                                <button type="submit" class="btn-save" id="change-pin-btn" disabled>
                                     <i class="fas fa-fingerprint"></i>
                                     Actualizar PIN
                                 </button>
@@ -643,6 +672,19 @@
     gap: 1.5rem;
 }
 
+/* Layout de seguridad horizontal */
+.security-horizontal {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 968px) {
+    .security-horizontal {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Cards de información */
 .info-card {
     background: white;
@@ -729,6 +771,25 @@
     margin-bottom: 1.5rem;
 }
 
+/* Layout vertical para secciones de seguridad */
+.form-layout.vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-layout.vertical .input-group {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.form-layout.vertical .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
 .input-group {
     display: flex;
     flex-direction: column;
@@ -772,42 +833,81 @@
 
 .input-with-icon {
     position: relative;
-    display: flex;
-    align-items: center;
+    display: block;
+    width: 100%;
 }
 
 .input-with-icon i {
     position: absolute;
-    left: 0.75rem;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--text-muted);
     font-size: 0.9rem;
+    z-index: 2;
+    pointer-events: none;
 }
 
 .input-with-icon input {
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
+    width: 100%;
+    padding: 0.75rem 3rem 0.75rem 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    transition: var(--transition);
+    background: white;
+    box-sizing: border-box;
+}
+
+.input-with-icon input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(34, 124, 145, 0.1);
+    outline: none;
 }
 
 .toggle-password {
     position: absolute;
-    right: 0.75rem;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 0;
-    font-size: 0.9rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    z-index: 3;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .toggle-password:hover {
     color: var(--primary);
+    background: rgba(34, 124, 145, 0.1);
 }
 
 .pin-input {
     text-align: center;
     font-family: monospace;
-    font-size: 1.2rem;
-    letter-spacing: 0.5rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    width: 100%;
+    padding: 0.75rem 3rem 0.75rem 2.75rem !important;
+}
+
+/* Inputs de PIN con iconos */
+.input-with-icon .pin-input {
+    padding: 0.75rem 3rem 0.75rem 2.75rem !important;
+    text-align: center;
+}
+
+/* Ajustes específicos para inputs de PIN con iconos */
+.pin-input:focus {
+    letter-spacing: 0.3rem;
 }
 
 /* Acciones de formulario */
@@ -851,8 +951,31 @@
 }
 
 .btn-save:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-save:disabled:hover {
+    transform: none;
+    box-shadow: none;
+    background: var(--primary);
+}
+
+/* Estilos para secciones de seguridad */
+.security-card .card-form {
+    padding: 1.5rem;
+}
+
+.security-card .form-actions {
+    margin-top: 0.5rem;
+    justify-content: center;
+}
+
+.security-card .btn-save {
+    min-width: 160px;
+    font-weight: 600;
 }
 
 .btn-cancel {
@@ -911,24 +1034,43 @@
 
 /* Indicadores de seguridad */
 .security-indicators {
-    margin-bottom: 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
 }
 
 .indicator {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 0;
-    font-size: 0.85rem;
-    color: var(--text-muted);
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    color: #dc2626;
+    background: #fef2f2;
+    border-radius: var(--radius-sm);
+    border: 1px solid #fecaca;
+    transition: var(--transition);
 }
 
 .indicator.valid {
-    color: var(--success);
+    color: #16a34a;
+    background: #f0fdf4;
+    border-color: #bbf7d0;
 }
 
 .indicator.valid i {
-    color: var(--success);
+    color: #16a34a;
+}
+
+.indicator i {
+    font-size: 0.75rem;
+    color: #dc2626;
+    transition: var(--transition);
 }
 
 /* Preferencias */
@@ -1167,13 +1309,19 @@ function togglePassword(inputId) {
     }
 }
 
-// Validación de contraseñas
+// Validación de contraseñas y PINs
 document.addEventListener('DOMContentLoaded', function() {
     const newPassInput = document.getElementById('new-pass');
     const confirmPassInput = document.getElementById('confirm-pass');
     const changeBtn = document.getElementById('change-password-btn');
     const lengthIndicator = document.getElementById('length-indicator');
     const matchIndicator = document.getElementById('match-indicator');
+    
+    // Elementos de PIN
+    const newPinInput = document.getElementById('new-pin');
+    const confirmPinInput = document.getElementById('confirm-pin');
+    const pinLengthIndicator = document.getElementById('pin-length-indicator');
+    const pinMatchIndicator = document.getElementById('pin-match-indicator');
     
     function validatePassword() {
         const newPass = newPassInput?.value || '';
@@ -1207,8 +1355,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    function validatePIN() {
+        const newPin = newPinInput?.value || '';
+        const confirmPin = confirmPinInput?.value || '';
+        
+        // Validar longitud y formato de PIN
+        const isPinValid = /^\d{6}$/.test(newPin);
+        if (isPinValid) {
+            pinLengthIndicator?.classList.add('valid');
+            pinLengthIndicator?.querySelector('i').classList.remove('fa-times');
+            pinLengthIndicator?.querySelector('i').classList.add('fa-check');
+        } else {
+            pinLengthIndicator?.classList.remove('valid');
+            pinLengthIndicator?.querySelector('i').classList.remove('fa-check');
+            pinLengthIndicator?.querySelector('i').classList.add('fa-times');
+        }
+        
+        // Validar coincidencia de PINs
+        if (newPin && confirmPin && newPin === confirmPin && isPinValid) {
+            pinMatchIndicator?.classList.add('valid');
+            pinMatchIndicator?.querySelector('i').classList.remove('fa-times');
+            pinMatchIndicator?.querySelector('i').classList.add('fa-check');
+        } else {
+            pinMatchIndicator?.classList.remove('valid');
+            pinMatchIndicator?.querySelector('i').classList.remove('fa-check');
+            pinMatchIndicator?.querySelector('i').classList.add('fa-times');
+        }
+        
+        // Habilitar/deshabilitar botón de PIN
+        const pinBtn = document.querySelector('#pin-form .btn-save');
+        if (pinBtn) {
+            pinBtn.disabled = !(isPinValid && newPin === confirmPin);
+        }
+    }
+    
+    // Event listeners para contraseñas
     newPassInput?.addEventListener('input', validatePassword);
     confirmPassInput?.addEventListener('input', validatePassword);
+    
+    // Event listeners para PINs con validación de solo números
+    [newPinInput, confirmPinInput].forEach(input => {
+        if (input) {
+            input.addEventListener('input', function(e) {
+                // Solo permitir números
+                this.value = this.value.replace(/[^0-9]/g, '');
+                validatePIN();
+            });
+        }
+    });
     
     // Inicializar tab activo
     const urlParams = new URLSearchParams(window.location.search);
