@@ -213,8 +213,8 @@ def generate_ai_explanation(result, calculation_type):
     """Genera explicación usando IA de Gemini"""
     try:
         # Configurar Gemini
-        genai.configure(api_key="AIzaSyDh4bnktEMaf2BJgBA3Z3DuFtcjxGEj54w")
-        model = genai.GenerativeModel(model_name='gemini-2.5-flash-latest')
+        genai.configure(api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
+        model = genai.GenerativeModel(model_name='gemini-2.0-flash')
         
         if calculation_type == 'savings':
             prompt = f"""
@@ -408,7 +408,7 @@ def generate_ai_tips(categoria):
     """Genera consejos financieros usando Gemini AI"""
     try:
         # Configurar Gemini
-        genai.configure(api_key="AIzaSyDh4bnktEMaf2BJgBA3Z3DuFtcjxGEj54w")
+        genai.configure(api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
         
         # Prompt para generar consejos
         prompt = f"""
@@ -430,7 +430,7 @@ Responde SOLO con un JSON array en este formato:
 """
         
         # Intentar con diferentes modelos
-        models = ['gemini-2.5-flash-latest']
+        models = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-pro-latest']
         
         for model_name in models:
             try:
@@ -523,7 +523,7 @@ def ai_chat(request):
                 user_message = request.POST.get('question', '')
             
             # Configurar Gemini sin restricciones
-            genai.configure(api_key="AIzaSyDh4bnktEMaf2BJgBA3Z3DuFtcjxGEj54w")
+            genai.configure(api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
             
             # Prompt básico sin restricciones
             prompt = f"""
@@ -536,7 +536,7 @@ Sé específico, da ejemplos prácticos y mantén un tono amigable.
 """
             
             # Intentar con diferentes modelos
-            models = ['gemini-2.5-flash-latest']
+            models = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-pro-latest']
             
             for model_name in models:
                 try:
