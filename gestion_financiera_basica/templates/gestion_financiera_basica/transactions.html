@@ -251,8 +251,7 @@
           <!-- Información de la transacción -->
           <div>
             <p class="font-medium text-gray-900">{{ movimiento.nombre }}</p>
-            <p class="text-sm text-gray-500">{{ movimiento.fecha_movimiento|date:"j M, Y" }} • {{
-              movimiento.id_cuenta.nombre }}</p>
+            <p class="text-sm text-gray-500">{{ movimiento.fecha_movimiento|date:"j M, Y" }} • {{ movimiento.id_cuenta.nombre }}</p>
           </div>
         </div>
 
@@ -353,8 +352,7 @@
             <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
             <div>
               <p class="font-medium text-gray-900 dark:text-white text-sm">{{ categoria.nombre }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">{{ categoria.cantidad }} transacción{{
-                categoria.cantidad|pluralize:"es" }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ categoria.cantidad }} transacción {{ categoria.cantidad|pluralize:"es" }}</p>
             </div>
           </div>
           <p class="font-semibold text-sm text-gray-900 dark:text-white">${{ categoria.total_monto|floatformat:0 }}</p>
