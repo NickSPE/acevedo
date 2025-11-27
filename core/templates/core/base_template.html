@@ -499,16 +499,24 @@
 
             if (theme === 'dark') {
                 html.classList.add('dark');
-                toggle.classList.remove('bg-gray-200');
-                toggle.classList.add('bg-green-600');
-                circle.classList.remove('translate-x-1');
-                circle.classList.add('translate-x-6');
+                if (toggle) {
+                    toggle.classList.remove('bg-gray-200');
+                    toggle.classList.add('bg-green-600');
+                }
+                if (circle) {
+                    circle.classList.remove('translate-x-1');
+                    circle.classList.add('translate-x-6');
+                }
             } else {
                 html.classList.remove('dark');
-                toggle.classList.remove('bg-green-600');
-                toggle.classList.add('bg-gray-200');
-                circle.classList.remove('translate-x-6');
-                circle.classList.add('translate-x-1');
+                if (toggle) {
+                    toggle.classList.remove('bg-green-600');
+                    toggle.classList.add('bg-gray-200');
+                }
+                if (circle) {
+                    circle.classList.remove('translate-x-6');
+                    circle.classList.add('translate-x-1');
+                }
             }
         }
 

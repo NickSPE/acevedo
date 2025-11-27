@@ -7,6 +7,8 @@ import json
 import google.generativeai as genai
 
 """ Views App EDUCACION_FINANCIERA """
+
+
 @login_required
 @fast_access_pin_verified
 def calculators(request):
@@ -212,7 +214,7 @@ def generate_ai_explanation(result, calculation_type):
     try:
         # Configurar Gemini
         genai.configure(api_key="AIzaSyDh4bnktEMaf2BJgBA3Z3DuFtcjxGEj54w")
-        model = genai.GenerativeModel(model_name='gemini-1.5-flash-latest')
+        model = genai.GenerativeModel(model_name='gemini-2.5-flash-latest')
         
         if calculation_type == 'savings':
             prompt = f"""
@@ -406,7 +408,7 @@ def generate_ai_tips(categoria):
     """Genera consejos financieros usando Gemini AI"""
     try:
         # Configurar Gemini
-        genai.configure(api_key="AIzaSyDnWhyD5zCArmmEzmRkQH4zuB2NxgtuEHc")
+        genai.configure(api_key="AIzaSyDh4bnktEMaf2BJgBA3Z3DuFtcjxGEj54w")
         
         # Prompt para generar consejos
         prompt = f"""
@@ -428,7 +430,7 @@ Responde SOLO con un JSON array en este formato:
 """
         
         # Intentar con diferentes modelos
-        models = ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-pro']
+        models = ['gemini-2.5-flash-latest']
         
         for model_name in models:
             try:
@@ -504,15 +506,24 @@ Responde SOLO con un JSON array en este formato:
         return []
 
 @login_required
+@fast_access_pin_verified
 def ai_chat(request):
     """Chat interactivo con IA financiera sin restricciones"""
+    # Si es GET, renderizar el template del chat
+    if request.method == 'GET':
+        return render(request, 'educacion_financiera/ai_chat.html')
+    
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)
-            user_message = data.get('message', '')
+            # Intentar leer como JSON o como FormData
+            if request.content_type == 'application/json':
+                data = json.loads(request.body)
+                user_message = data.get('message', '')
+            else:
+                user_message = request.POST.get('question', '')
             
             # Configurar Gemini sin restricciones
-            genai.configure(api_key="AIzaSyDnWhyD5zCArmmEzmRkQH4zuB2NxgtuEHc")
+            genai.configure(api_key="AIzaSyDh4bnktEMaf2BJgBA3Z3DuFtcjxGEj54w")
             
             # Prompt básico sin restricciones
             prompt = f"""
@@ -525,7 +536,7 @@ Sé específico, da ejemplos prácticos y mantén un tono amigable.
 """
             
             # Intentar con diferentes modelos
-            models = ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-pro']
+            models = ['gemini-2.5-flash-latest']
             
             for model_name in models:
                 try:
