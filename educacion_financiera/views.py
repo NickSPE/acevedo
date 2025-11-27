@@ -211,8 +211,8 @@ def generate_ai_explanation(result, calculation_type):
     """Genera explicación usando IA de Gemini"""
     try:
         # Configurar Gemini
-        genai.configure(api_key="AIzaSyDnWhyD5zCArmmEzmRkQH4zuB2NxgtuEHc")
-        model = genai.GenerativeModel('gemini-pro')
+        genai.configure(api_key="AIzaSyDh4bnktEMaf2BJgBA3Z3DuFtcjxGEj54w")
+        model = genai.GenerativeModel(model_name='gemini-1.5-flash-latest')
         
         if calculation_type == 'savings':
             prompt = f"""
