@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from gestion_financiera_basica.models import Movimiento
@@ -46,7 +46,9 @@ def dashboard(request):
     if(not total_egresos):
         total_egresos = 0
 
-    # Calcular saldo inicial de todas las cuentas del usuario
+    # Calcular saldo actual de todas las cuentas del usuario
+    # NOTA: saldo_cuenta ahora se actualiza automáticamente con cada ingreso/egreso
+    # Por lo tanto, ya incluye el saldo inicial + todos los ingresos - todos los egresos
     saldo_inicial_cuentas = Cuenta.objects.filter(id_usuario=user_id).aggregate(total=Sum('saldo_cuenta'))['total']
     
     if(not saldo_inicial_cuentas):
@@ -57,8 +59,32 @@ def dashboard(request):
     else:
         porcentaje_de_ingresos_para_egresos = (float(total_egresos) / float(total_ingresos)) * 100
 
-    # Total de recursos históricos para calcular salud financiera = saldo inicial + ingresos
-    total_recursos_historicos = float(saldo_inicial_cuentas) + float(total_ingresos)
+    # Ahora saldo_cuenta ya incluye ingresos y egresos aplicados
+    # El total_balance incluye el dinero en cuentas principales + dinero en subcuentas
+    from cuentas.models import SubCuenta, TransferenciaCuentaPrincipal
+    
+    # Saldo en subcuentas del usuario
+    saldo_subcuentas = SubCuenta.objects.filter(
+        Q(id_cuenta__id_usuario=user_id) | Q(propietario_id=user_id),
+        activa=True
+    ).aggregate(total=Sum('saldo'))['total'] or 0
+    
+    # Calcular total transferido a subcuentas (dinero movido, no gastado)
+    total_transferencias_subcuentas = TransferenciaCuentaPrincipal.objects.filter(
+        cuenta_destino__id_usuario=user_id,
+        tipo='retiro'  # Retiros de cuenta principal hacia subcuentas
+    ).aggregate(total=Sum('monto'))['total'] or 0
+    
+    # Balance total = SOLO dinero disponible en cuentas principales
+    # (el dinero en subcuentas está separado y no se cuenta como disponible)
+    total_balance = float(saldo_inicial_cuentas)
+    
+    # Patrimonio total = dinero en cuentas + dinero en subcuentas (todo tu dinero)
+    total_patrimonio = float(saldo_inicial_cuentas) + float(saldo_subcuentas)
+    
+    # Para calcular el porcentaje de recursos usados, necesitamos saber cuánto ingresó en total
+    # Los movimientos de ingreso y egreso son solo para referencia histórica
+    total_recursos_historicos = float(total_ingresos)
 
     if(total_recursos_historicos == 0):
         porcentaje_de_recursos_para_egresos = 0
@@ -66,9 +92,6 @@ def dashboard(request):
     else:
         porcentaje_de_recursos_para_egresos = (float(total_egresos) / float(total_recursos_historicos)) * 100
         salud_financiera_score = max(0, 100 - int(porcentaje_de_recursos_para_egresos))  # Score dinámico
-    
-    # Balance actual (dinero que realmente tienes disponible ahora) = saldo inicial + ingresos - egresos
-    total_balance = float(saldo_inicial_cuentas) + float(total_ingresos) - float(total_egresos)
 
     # Datos para gráfico de gastos por categoría
     gastos_por_categoria = []
@@ -103,7 +126,10 @@ def dashboard(request):
     return render(request , 'core/dashboard.html' , {
         "tab": tab,
         "total_balance": total_balance,
+        "total_patrimonio": total_patrimonio,
         "saldo_inicial_cuentas": saldo_inicial_cuentas,
+        "saldo_subcuentas": saldo_subcuentas,
+        "total_transferencias_subcuentas": total_transferencias_subcuentas,
         "total_ingresos": total_ingresos,
         "total_recursos_historicos": total_recursos_historicos,
         "cantidad_ingresos": cantidad_registros_ingresos,

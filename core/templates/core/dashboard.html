@@ -218,8 +218,8 @@
   </div>
 
   <!-- === CLEAN FINANCIAL METRICS === -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-    <!-- Balance Total -->
+  <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+    <!-- Balance Disponible -->
     <div class="glass-card metric-card rounded-lg p-4">
       <div class="flex items-center justify-between mb-2">
         <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: #227C91;">
@@ -228,13 +228,13 @@
           </svg>
         </div>
         <div class="text-right">
-          <p class="text-xs font-medium" style="color: #736B5E;">Balance Total</p>
+          <p class="text-xs font-medium" style="color: #736B5E;">Balance Disponible</p>
           <p class="text-xl font-bold" style="color: #605952;">{% format_money total_balance user %}</p>
         </div>
       </div>
       <div class="mt-2">
         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs" style="background: #F1F0EE; color: #605952;">
-          Disponible
+          Para gastar
         </span>
       </div>
     </div>
@@ -279,7 +279,7 @@
       </div>
     </div>
 
-    <!-- Saldo Inicial -->
+    <!-- Saldo en Cuentas Principales -->
     <div class="glass-card metric-card rounded-lg p-4">
       <div class="flex items-center justify-between mb-2">
         <div class="w-9 h-9 bg-orange-500 rounded-lg flex items-center justify-center">
@@ -288,13 +288,53 @@
           </svg>
         </div>
         <div class="text-right">
-          <p class="text-xs font-medium" style="color: #736B5E;">Saldo Inicial</p>
+          <p class="text-xs font-medium" style="color: #736B5E;">Saldo Cuentas</p>
           <p class="text-xl font-bold text-orange-600">{% format_money saldo_inicial_cuentas user %}</p>
         </div>
       </div>
       <div class="mt-2">
         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-orange-100 text-orange-700">
-          Base
+          Disponible
+        </span>
+      </div>
+    </div>
+
+    <!-- En Subcuentas -->
+    <div class="glass-card metric-card rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: #736B5E;">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+        </div>
+        <div class="text-right">
+          <p class="text-xs font-medium" style="color: #736B5E;">En Subcuentas</p>
+          <p class="text-xl font-bold" style="color: #736B5E;">{% format_money saldo_subcuentas user %}</p>
+        </div>
+      </div>
+      <div class="mt-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs" style="background: rgba(115, 107, 94, 0.1); color: #736B5E;">
+          Separado
+        </span>
+      </div>
+    </div>
+
+    <!-- Patrimonio Total -->
+    <div class="glass-card metric-card rounded-lg p-4">
+      <div class="flex items-center justify-between mb-2">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: #10b981;">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+        </div>
+        <div class="text-right">
+          <p class="text-xs font-medium" style="color: #736B5E;">Patrimonio Total</p>
+          <p class="text-xl font-bold text-green-600">{% format_money total_patrimonio user %}</p>
+        </div>
+      </div>
+      <div class="mt-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs bg-green-100 text-green-700">
+          Todo tu dinero
         </span>
       </div>
     </div>

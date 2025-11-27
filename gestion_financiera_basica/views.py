@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import MovimientoForm, MetaAhorroForm, AporteMetaAhorroForm
-from cuentas.models import Cuenta
+from cuentas.models import Cuenta, SubCuenta
 from django.shortcuts import render
 from django.db.models import Sum, Q
 from cuentas.models import Cuenta
@@ -215,6 +215,29 @@ def transactions(request):
     # Obtener transacciones reales de la base de datos
     transacciones = Movimiento.objects.filter(id_cuenta__id_usuario=user_id)
 
+    # ========== MÉTRICAS PRINCIPALES (IGUAL QUE DASHBOARD) ==========
+    # 1. Saldo actual de cuentas principales (ya incluye ingresos/egresos)
+    saldo_inicial_cuentas = Cuenta.objects.filter(id_usuario=user_id).aggregate(total=Sum('saldo_cuenta'))['total'] or 0
+    
+    # 2. Saldo en subcuentas
+    from cuentas.models import TransferenciaCuentaPrincipal
+    saldo_subcuentas = SubCuenta.objects.filter(
+        id_cuenta__id_usuario=user_id,
+        activo=True
+    ).aggregate(total=Sum('saldo'))['total'] or 0
+    
+    # 3. Total transferencias a subcuentas
+    total_transferencias_subcuentas = TransferenciaCuentaPrincipal.objects.filter(
+        id_cuenta__id_usuario=user_id,
+        tipo='retiro'
+    ).aggregate(total=Sum('monto'))['total'] or 0
+    
+    # 4. Balance Disponible (solo dinero para gastar)
+    total_balance = float(saldo_inicial_cuentas)
+    
+    # 5. Patrimonio Total (todo el dinero del usuario)
+    total_patrimonio = float(saldo_inicial_cuentas) + float(saldo_subcuentas)
+
     # Calcular métricas del mes actual
     now = timezone.now()
     primer_dia_mes = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -295,6 +318,12 @@ def transactions(request):
         "filter_type": filter_type,
         "search_query": search_query,
         "sort_by": sort_by,
+        # Métricas principales (igual que dashboard)
+        "total_balance": total_balance,  # Balance Disponible (para gastar)
+        "saldo_inicial_cuentas": saldo_inicial_cuentas,  # Saldo Cuentas
+        "saldo_subcuentas": saldo_subcuentas,  # En Subcuentas
+        "total_patrimonio": total_patrimonio,  # Patrimonio Total
+        "total_transferencias_subcuentas": total_transferencias_subcuentas,
         # Métricas del mes
         "total_transacciones": total_transacciones,
         "ingresos_mes": ingresos_mes,
@@ -334,30 +363,28 @@ def agregar_movimiento(request):
                 form.add_error('id_cuenta', 'La cuenta seleccionada no existe.')
                 return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
 
-            # ⚠️ CORRECCIÓN: NO modificar el saldo de la cuenta
-            # El saldo_cuenta debe mantenerse como saldo inicial
-            # Los movimientos se registran independientemente para calcular el balance total
+            # Actualizar el saldo de la cuenta según el tipo de movimiento
+            # Ingresos: SUMAR al saldo_cuenta
+            # Egresos: RESTAR del saldo_cuenta (solo si hay saldo disponible)
             
-            # Verificación opcional: alertar si el balance resultante sería negativo
-            from django.db.models import Sum
-            total_ingresos = Movimiento.objects.filter(
-                id_cuenta=cuenta, tipo="ingreso"
-            ).aggregate(total=Sum('monto'))['total'] or 0
-            
-            total_egresos = Movimiento.objects.filter(
-                id_cuenta=cuenta, tipo="egreso"
-            ).aggregate(total=Sum('monto'))['total'] or 0
-            
-            # Simular el nuevo balance después de este movimiento
-            if tipo == 'egreso':
-                nuevo_balance = float(cuenta.saldo_cuenta) + float(total_ingresos) - (float(total_egresos) + float(monto))
-            else:
-                nuevo_balance = float(cuenta.saldo_cuenta) + (float(total_ingresos) + float(monto)) - float(total_egresos)
-            
-            # Advertir si el balance sería negativo (opcional, no bloquear)
-            if nuevo_balance < 0 and tipo == 'egreso':
-                form.add_error('monto', f'Advertencia: Este gasto resultaría en un balance negativo (${nuevo_balance:.2f}). Balance actual: ${float(cuenta.saldo_cuenta) + float(total_ingresos) - float(total_egresos):.2f}')
-                return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
+            if tipo == 'ingreso':
+                # Sumar ingreso al saldo de la cuenta
+                cuenta.saldo_cuenta += monto
+                cuenta.save()
+                print(f"✅ Ingreso registrado: +${monto} - Nuevo saldo: ${cuenta.saldo_cuenta}")
+                
+            elif tipo == 'egreso':
+                # Verificar saldo disponible antes de restar
+                saldo_disponible = cuenta.saldo_disponible()
+                
+                if saldo_disponible < monto:
+                    form.add_error('monto', f'Saldo insuficiente. Saldo disponible: ${saldo_disponible:.2f}. El saldo en subcuentas no puede usarse para gastos.')
+                    return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
+                
+                # Restar egreso del saldo de la cuenta
+                cuenta.saldo_cuenta -= monto
+                cuenta.save()
+                print(f"✅ Egreso registrado: -${monto} - Nuevo saldo: ${cuenta.saldo_cuenta}")
 
             # Ahora guardar el movimiento
             movimiento.save()
@@ -423,59 +450,67 @@ def aportar_meta_ahorro(request, meta_id):
         form = AporteMetaAhorroForm(request.POST, meta_ahorro=meta)
         
         if form.is_valid():
-            # Verificar que el usuario tenga suficiente balance
+            # Verificar que el usuario tenga suficiente saldo disponible
             from django.db.models import Sum
             user_id = request.user.id
             
-            # Calcular balance total actual
-            total_ingresos = Movimiento.objects.filter(
-                id_cuenta__id_usuario=user_id, tipo="ingreso"
-            ).aggregate(total=Sum('monto'))['total'] or 0
-            
-            total_egresos = Movimiento.objects.filter(
-                id_cuenta__id_usuario=user_id, tipo="egreso"
-            ).aggregate(total=Sum('monto'))['total'] or 0
-            
-            saldo_inicial_cuentas = Cuenta.objects.filter(
+            # Calcular saldo total disponible en todas las cuentas
+            # Ahora el saldo_cuenta YA incluye ingresos y egresos
+            saldo_total_cuentas = Cuenta.objects.filter(
                 id_usuario=user_id
             ).aggregate(total=Sum('saldo_cuenta'))['total'] or 0
             
-            balance_actual = float(saldo_inicial_cuentas) + float(total_ingresos) - float(total_egresos)
+            # Restar el saldo comprometido en subcuentas
+            saldo_en_subcuentas = SubCuenta.objects.filter(
+                Q(id_cuenta__id_usuario=user_id) | Q(propietario_id=user_id),
+                activa=True
+            ).aggregate(total=Sum('saldo'))['total'] or 0
+            
+            saldo_disponible = float(saldo_total_cuentas) - float(saldo_en_subcuentas)
             monto_aporte = float(form.cleaned_data['monto'])
             
-            # Verificar si hay suficiente balance
-            if balance_actual < monto_aporte:
-                form.add_error('monto', f'Balance insuficiente. Tu balance actual es ${balance_actual:.2f} y quieres aportar ${monto_aporte:.2f}')
+            # Verificar si hay suficiente saldo disponible
+            if saldo_disponible < monto_aporte:
+                form.add_error('monto', f'Saldo insuficiente. Saldo disponible: ${saldo_disponible:.2f}. El saldo en subcuentas no puede usarse.')
                 return render(request, 'gestion_financiera_basica/add_fund_to_goal.html', {
                     'form': form, 
                     'meta': meta
                 })
             
-            # Guardar el aporte sin commit
+            # Obtener la cuenta principal del usuario
+            cuenta_usuario = Cuenta.objects.filter(id_usuario=request.user).first()
+            
+            if not cuenta_usuario:
+                form.add_error(None, 'No tienes una cuenta principal configurada.')
+                return render(request, 'gestion_financiera_basica/add_fund_to_goal.html', {
+                    'form': form, 
+                    'meta': meta
+                })
+            
+            # Restar el aporte del saldo de la cuenta
+            cuenta_usuario.saldo_cuenta -= monto_aporte
+            cuenta_usuario.save()
+            
+            # Guardar el aporte
             aporte = form.save(commit=False)
             aporte.id_meta_ahorro = meta
             aporte.id_usuario = request.user
             aporte.save()
             
-            # 🔥 NUEVO: Crear movimiento de egreso para descontar del balance total
-            # Obtener la cuenta principal del usuario (primera cuenta disponible)
-            cuenta_usuario = Cuenta.objects.filter(id_usuario=request.user).first()
+            # Crear movimiento de egreso para registrar el aporte
+            movimiento_aporte = Movimiento.objects.create(
+                nombre=f"Aporte a meta: {meta.nombre}",
+                tipo="egreso",
+                categoria="ahorros",
+                monto=monto_aporte,
+                fecha_movimiento=aporte.fecha_aporte,
+                descripcion=f"Transferencia a meta de ahorro '{meta.nombre}'. {aporte.descripcion or ''}".strip(),
+                id_cuenta=cuenta_usuario,
+                id_usuario=request.user
+            )
             
-            if cuenta_usuario:
-                # Crear movimiento de egreso para reflejar el aporte en el balance
-                movimiento_aporte = Movimiento.objects.create(
-                    nombre=f"Aporte a meta: {meta.nombre}",
-                    tipo="egreso",
-                    categoria="ahorros",  # Categoría específica para aportes a metas
-                    monto=monto_aporte,
-                    fecha_movimiento=aporte.fecha_aporte,
-                    descripcion=f"Transferencia a meta de ahorro '{meta.nombre}'. {aporte.descripcion or ''}".strip(),
-                    id_cuenta=cuenta_usuario,
-                    id_usuario=request.user
-                )
-                
-                print(f"✅ Aporte registrado: ${monto_aporte} a meta '{meta.nombre}'")
-                print(f"✅ Movimiento creado: Egreso de ${monto_aporte} de cuenta '{cuenta_usuario.nombre}'")
+            print(f"✅ Aporte registrado: ${monto_aporte} a meta '{meta.nombre}'")
+            print(f"✅ Movimiento creado: Egreso de ${monto_aporte} de cuenta '{cuenta_usuario.nombre}'")
             
             # Redirigir de vuelta a las metas de ahorro
             return redirect('gestion_financiera_basica:savings_goals')
