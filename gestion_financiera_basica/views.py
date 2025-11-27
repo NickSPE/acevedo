@@ -215,29 +215,6 @@ def transactions(request):
     # Obtener transacciones reales de la base de datos
     transacciones = Movimiento.objects.filter(id_cuenta__id_usuario=user_id)
 
-    # ========== MÉTRICAS PRINCIPALES (IGUAL QUE DASHBOARD) ==========
-    # 1. Saldo actual de cuentas principales (ya incluye ingresos/egresos)
-    saldo_inicial_cuentas = Cuenta.objects.filter(id_usuario=user_id).aggregate(total=Sum('saldo_cuenta'))['total'] or 0
-    
-    # 2. Saldo en subcuentas
-    from cuentas.models import TransferenciaCuentaPrincipal
-    saldo_subcuentas = SubCuenta.objects.filter(
-        id_cuenta__id_usuario=user_id,
-        activo=True
-    ).aggregate(total=Sum('saldo'))['total'] or 0
-    
-    # 3. Total transferencias a subcuentas
-    total_transferencias_subcuentas = TransferenciaCuentaPrincipal.objects.filter(
-        id_cuenta__id_usuario=user_id,
-        tipo='retiro'
-    ).aggregate(total=Sum('monto'))['total'] or 0
-    
-    # 4. Balance Disponible (solo dinero para gastar)
-    total_balance = float(saldo_inicial_cuentas)
-    
-    # 5. Patrimonio Total (todo el dinero del usuario)
-    total_patrimonio = float(saldo_inicial_cuentas) + float(saldo_subcuentas)
-
     # Calcular métricas del mes actual
     now = timezone.now()
     primer_dia_mes = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -318,12 +295,6 @@ def transactions(request):
         "filter_type": filter_type,
         "search_query": search_query,
         "sort_by": sort_by,
-        # Métricas principales (igual que dashboard)
-        "total_balance": total_balance,  # Balance Disponible (para gastar)
-        "saldo_inicial_cuentas": saldo_inicial_cuentas,  # Saldo Cuentas
-        "saldo_subcuentas": saldo_subcuentas,  # En Subcuentas
-        "total_patrimonio": total_patrimonio,  # Patrimonio Total
-        "total_transferencias_subcuentas": total_transferencias_subcuentas,
         # Métricas del mes
         "total_transacciones": total_transacciones,
         "ingresos_mes": ingresos_mes,
