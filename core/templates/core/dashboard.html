@@ -359,13 +359,17 @@
         </div>
       </div>
       
-      {% if total_egresos > 0 and total_recursos_historicos > 0 %}
+      {% if total_recursos_historicos > 0 %}
         {% with porcentaje_gastado=porcentaje_de_recursos_para_egresos|floatformat:0 %}
           <div class="text-center mb-4">
             <div class="relative inline-flex items-center justify-center">
               <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 36 36">
                 <path style="color: #E5E1DD;" stroke="currentColor" stroke-width="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                <path class="{% if salud_financiera_score >= 70 %}text-green-500{% elif salud_financiera_score >= 40 %}text-yellow-500{% else %}text-red-500{% endif %}" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="{{ salud_financiera_score }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                {% if salud_financiera_score > 0 %}
+                  <path class="{% if salud_financiera_score >= 70 %}text-green-500{% elif salud_financiera_score >= 40 %}text-yellow-500{% else %}text-red-500{% endif %}" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="{{ salud_financiera_score }}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                {% else %}
+                  <path class="text-red-500" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="3, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                {% endif %}
               </svg>
               <div class="absolute flex flex-col items-center">
                 <span class="text-xl font-bold {% if salud_financiera_score >= 70 %}text-green-600{% elif salud_financiera_score >= 40 %}text-yellow-600{% else %}text-red-600{% endif %}">

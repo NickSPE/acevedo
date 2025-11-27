@@ -82,9 +82,10 @@ def dashboard(request):
     # Patrimonio total = dinero en cuentas + dinero en subcuentas (todo tu dinero)
     total_patrimonio = float(saldo_inicial_cuentas) + float(saldo_subcuentas)
     
-    # Para calcular el porcentaje de recursos usados, necesitamos saber cuánto ingresó en total
-    # Los movimientos de ingreso y egreso son solo para referencia histórica
-    total_recursos_historicos = float(total_ingresos)
+    # Para calcular el porcentaje de recursos usados, necesitamos saber cuánto se ha manejado en total
+    # Total recursos = saldo actual en cuentas + todo lo que se ha gastado
+    # Esto representa todo el dinero que has manejado históricamente
+    total_recursos_historicos = float(saldo_inicial_cuentas) + float(total_egresos)
 
     if(total_recursos_historicos == 0):
         porcentaje_de_recursos_para_egresos = 0
