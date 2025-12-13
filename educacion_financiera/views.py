@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from core.decorators import fast_access_pin_verified
 from django.contrib.auth.decorators import login_required
 from .models import CursoExterno, FavoritoCurso
@@ -213,8 +214,9 @@ def generate_ai_explanation(result, calculation_type):
     """Genera explicación usando IA de Gemini"""
     try:
         # Configurar Gemini
-        genai.configure(api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
-        model = genai.GenerativeModel(model_name='gemini-2.0-flash')
+        model = genai.GenerativeModel(model_name='gemini-2.0-flash', api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
+        
+        prompt = "Explica estos resultados financieros."  # Default prompt
         
         if calculation_type == 'savings':
             prompt = f"""
@@ -274,16 +276,31 @@ def generate_ai_explanation(result, calculation_type):
 @fast_access_pin_verified
 def courses(request):
     # Obtener todos los cursos
-    cursos = CursoExterno.objects.all()
+    todos_cursos = CursoExterno.objects.all().order_by('orden', 'titulo')
     
     # Marcar favoritos para el usuario actual
     favoritos_ids = FavoritoCurso.objects.filter(usuario=request.user).values_list('curso_id', flat=True)
     
-    for curso in cursos:
+    for curso in todos_cursos:
         curso.es_favorito = curso.id in favoritos_ids
     
+    # Configurar paginación: 6 cursos por página
+    paginator = Paginator(todos_cursos, 6)
+    page = request.GET.get('page')
+    
+    try:
+        cursos = paginator.page(page)
+    except PageNotAnInteger:
+        # Si page no es un entero, mostrar la primera página
+        cursos = paginator.page(1)
+    except EmptyPage:
+        # Si page está fuera de rango, mostrar la última página
+        cursos = paginator.page(paginator.num_pages)
+    
     return render(request, 'educacion_financiera/courses.html', {
-        'courses': cursos
+        'cursos': cursos,
+        'paginator': paginator,
+        'page_obj': cursos,
     })
 
 @login_required
@@ -407,9 +424,6 @@ def tips(request):
 def generate_ai_tips(categoria):
     """Genera consejos financieros usando Gemini AI"""
     try:
-        # Configurar Gemini
-        genai.configure(api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
-        
         # Prompt para generar consejos
         prompt = f"""
 Genera 3 consejos financieros muy específicos y prácticos sobre {categoria} para el año 2025.
@@ -434,7 +448,7 @@ Responde SOLO con un JSON array en este formato:
         
         for model_name in models:
             try:
-                model = genai.GenerativeModel(model_name)
+                model = genai.GenerativeModel(model_name, api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
                 response = model.generate_content(prompt)
                 
                 # Limpiar respuesta
@@ -522,9 +536,6 @@ def ai_chat(request):
             else:
                 user_message = request.POST.get('question', '')
             
-            # Configurar Gemini sin restricciones
-            genai.configure(api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
-            
             # Prompt básico sin restricciones
             prompt = f"""
 Eres un asistente financiero experto y amigable. El usuario te pregunta: "{user_message}"
@@ -540,7 +551,7 @@ Sé específico, da ejemplos prácticos y mantén un tono amigable.
             
             for model_name in models:
                 try:
-                    model = genai.GenerativeModel(model_name)
+                    model = genai.GenerativeModel(model_name, api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
                     response = model.generate_content(prompt)
                     
                     return JsonResponse({
