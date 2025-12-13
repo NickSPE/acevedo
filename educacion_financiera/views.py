@@ -4,8 +4,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from core.decorators import fast_access_pin_verified
 from django.contrib.auth.decorators import login_required
 from .models import CursoExterno, FavoritoCurso
+from .utils import marcar_favoritos, paginar_cursos
+from .services import generate_ai_explanation, generate_ai_tips, process_ai_chat
+from .models_helpers import TipObject
+from .constants import CONSEJOS_BASE
 import json
-import google.generativeai as genai
 
 """ Views App EDUCACION_FINANCIERA """
 
@@ -210,97 +213,23 @@ def calculators(request):
         'ai_explanation': ai_explanation
     })
 
-def generate_ai_explanation(result, calculation_type):
-    """Genera explicación usando IA de Gemini"""
-    try:
-        # Configurar Gemini
-        model = genai.GenerativeModel(model_name='gemini-2.0-flash', api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
-        
-        prompt = "Explica estos resultados financieros."  # Default prompt
-        
-        if calculation_type == 'savings':
-            prompt = f"""
-            Explica de manera simple estos resultados de ahorro:
-            - Valor futuro: ${result['future_value']:,.2f}
-            - Total aportado: ${result['total_contributed']:,.2f}
-            - Intereses ganados: ${result['interest_earned']:,.2f}
-            
-            Da 2-3 consejos prácticos sobre ahorro.
-            """
-        elif calculation_type == 'loan':
-            prompt = f"""
-            Explica estos resultados de préstamo:
-            - Pago mensual: ${result['monthly_payment']:,.2f}
-            - Total a pagar: ${result['total_payment']:,.2f}
-            - Intereses totales: ${result['total_interest']:,.2f}
-            
-            Da consejos para manejar mejor las deudas.
-            """
-        elif calculation_type == 'budget':
-            prompt = f"""
-            Analiza este presupuesto:
-            - Ingresos: ${result['income']:,.2f}
-            - Gastos totales: ${result['total_expenses']:,.2f}
-            - Remanente: ${result['remaining']:,.2f}
-            
-            Da consejos para optimizar el presupuesto.
-            """
-        elif calculation_type == 'retirement':
-            prompt = f"""
-            Analiza este plan de jubilación:
-            - Total al jubilarte: ${result['total_at_retirement']:,.2f}
-            - Ingreso mensual sostenible: ${result['monthly_income']:,.2f}
-            - Años para jubilación: {result['years_to_retirement']}
-            
-            Da consejos específicos para mejorar el plan de jubilación.
-            """
-        elif calculation_type == 'investment':
-            prompt = f"""
-            Analiza esta proyección de inversión:
-            - Valor final: ${result['final_value']:,.2f}
-            - Ganancia total: ${result['total_profit']:,.2f}
-            - ROI: {result['roi_percentage']:.1f}%
-            - Valor real: ${result['real_value']:,.2f}
-            
-            Da consejos sobre estrategias de inversión y diversificación.
-            """
-        
-        response = model.generate_content(prompt)
-        return response.text
-        
-    except Exception as e:
-        print(f"Error generando explicación IA: {e}")
-        return "No se pudo generar explicación con IA en este momento."
-
 @login_required
 @fast_access_pin_verified
 def courses(request):
-    # Obtener todos los cursos
+    # Obtener cursos ordenados
     todos_cursos = CursoExterno.objects.all().order_by('orden', 'titulo')
     
-    # Marcar favoritos para el usuario actual
-    favoritos_ids = FavoritoCurso.objects.filter(usuario=request.user).values_list('curso_id', flat=True)
+    # Marcar favoritos del usuario
+    todos_cursos = marcar_favoritos(todos_cursos, request.user)
     
-    for curso in todos_cursos:
-        curso.es_favorito = curso.id in favoritos_ids
-    
-    # Configurar paginación: 6 cursos por página
-    paginator = Paginator(todos_cursos, 6)
+    # Paginar cursos
     page = request.GET.get('page')
-    
-    try:
-        cursos = paginator.page(page)
-    except PageNotAnInteger:
-        # Si page no es un entero, mostrar la primera página
-        cursos = paginator.page(1)
-    except EmptyPage:
-        # Si page está fuera de rango, mostrar la última página
-        cursos = paginator.page(paginator.num_pages)
+    paginator, cursos_pagina = paginar_cursos(todos_cursos, page)
     
     return render(request, 'educacion_financiera/courses.html', {
-        'cursos': cursos,
+        'cursos': cursos_pagina,
         'paginator': paginator,
-        'page_obj': cursos,
+        'page_obj': cursos_pagina,
     })
 
 @login_required
@@ -340,72 +269,8 @@ def tips(request):
     tab = request.GET.get('tab', 'savings')
     ai_enabled = request.GET.get('ai', 'false').lower() == 'true'
     
-    # Clase para estructurar consejos
-    class TipObject:
-        def __init__(self, categoria, titulo, descripcion, prioridad, es_ai=False, link_externo=None, id=None):
-            self.id = id or f"{categoria}_{hash(titulo) % 1000}"
-            self.categoria = categoria
-            self.titulo = titulo
-            self.descripcion = descripcion
-            self.prioridad = prioridad
-            self.es_ai = es_ai
-            self.link_externo = link_externo
-        
-        def get_categoria_display(self):
-            category_map = {
-                'savings': '💰 Ahorros',
-                'investment': '📈 Inversiones',
-                'budget': '📊 Presupuesto',
-                'debt': '💳 Deudas',
-                'insurance': '🛡️ Seguros',
-                'retirement': '🏖️ Jubilación'
-            }
-            return category_map.get(self.categoria, self.categoria.title())
-        
-        def get_prioridad_display(self):
-            prioridad_map = {
-                'high': 'Alta',
-                'medium': 'Media',
-                'low': 'Baja'
-            }
-            return prioridad_map.get(self.prioridad, self.prioridad.title())
-    
-    # Consejos base por categoría
-    consejos_base = {
-        'savings': [
-            TipObject('savings', 'Automatiza tus Ahorros', 'Configura transferencias automáticas del 20% de tus ingresos a una cuenta separada el día que cobras.', 'high'),
-            TipObject('savings', 'Regla del 50/30/20', 'Destina 50% para necesidades, 30% para deseos y 20% para ahorros e inversiones.', 'medium'),
-            TipObject('savings', 'Fondo de Emergencia', 'Mantén al menos 3-6 meses de gastos en una cuenta de fácil acceso para emergencias.', 'high'),
-        ],
-        'investment': [
-            TipObject('investment', 'Diversifica tu Portafolio', 'Invierte en diferentes tipos de activos (acciones, bonos, bienes raíces) para reducir riesgos.', 'high'),
-            TipObject('investment', 'Inversión a Largo Plazo', 'El tiempo es tu mejor aliado. Invierte consistentemente y deja que el interés compuesto haga su magia.', 'medium'),
-            TipObject('investment', 'Edúcate Antes de Invertir', 'Nunca inviertas en algo que no entiendes. Lee, estudia y consulta con expertos.', 'high'),
-        ],
-        'budget': [
-            TipObject('budget', 'Rastrea Todos tus Gastos', 'Anota cada peso que gastas durante un mes para identificar patrones y áreas de mejora.', 'high'),
-            TipObject('budget', 'Presupuesto Base Cero', 'Cada peso debe tener un propósito antes de gastarlo. Asigna todo tu ingreso a categorías específicas.', 'medium'),
-            TipObject('budget', 'Revisa Mensualmente', 'Evalúa tu presupuesto cada mes y ajusta según tus necesidades y objetivos cambiantes.', 'medium'),
-        ],
-        'debt': [
-            TipObject('debt', 'Método Avalancha de Deudas', 'Paga primero las deudas con mayor tasa de interés mientras mantienes pagos mínimos en otras.', 'high'),
-            TipObject('debt', 'Evita Deudas de Consumo', 'No uses tarjetas de crédito para compras que no puedes pagar inmediatamente.', 'high'),
-            TipObject('debt', 'Negocia con Acreedores', 'Si tienes problemas para pagar, contacta a tus acreedores para negociar planes de pago.', 'medium'),
-        ],
-        'insurance': [
-            TipObject('insurance', 'Seguro de Vida', 'Si tienes dependientes, necesitas un seguro de vida equivalente a 10 veces tu ingreso anual.', 'high'),
-            TipObject('insurance', 'Seguro de Salud', 'Un seguro médico puede protegerte de gastos catastróficos que podrían arruinar tus finanzas.', 'high'),
-            TipObject('insurance', 'Revisa Coberturas Anualmente', 'Evalúa tus seguros cada año para asegurar que cubran tus necesidades actuales.', 'medium'),
-        ],
-        'retirement': [
-            TipObject('retirement', 'Comienza Temprano', 'Incluso $50 mensuales a los 25 años valen más que $500 mensuales a los 45 por el interés compuesto.', 'high'),
-            TipObject('retirement', 'Contribuye al Máximo', 'Si tu empleador ofrece plan de jubilación con aportación patronal, contribuye al menos hasta el límite del match.', 'high'),
-            TipObject('retirement', 'Calcula tu Número', 'Determina cuánto necesitas para jubilarte cómodamente y trabaja hacia esa meta específica.', 'medium'),
-        ]
-    }
-    
-    # Obtener consejos para la categoría seleccionada
-    tips_data = consejos_base.get(tab, consejos_base['savings'])
+    # Obtener consejos base para la categoría
+    tips_data = CONSEJOS_BASE.get(tab, CONSEJOS_BASE['savings']).copy()
     
     # Si AI está habilitada, generar consejos adicionales
     if ai_enabled:
@@ -420,104 +285,6 @@ def tips(request):
         'current_tab': tab,
         'ai_enabled': ai_enabled
     })
-
-def generate_ai_tips(categoria):
-    """Genera consejos financieros usando Gemini AI"""
-    try:
-        # Prompt para generar consejos
-        prompt = f"""
-Genera 3 consejos financieros muy específicos y prácticos sobre {categoria} para el año 2025.
-
-Cada consejo debe incluir:
-- Un título claro y directo
-- Una descripción práctica de 2-3 líneas con pasos específicos
-- Una prioridad (alta/media/baja)
-
-Responde SOLO con un JSON array en este formato:
-[
-  {{
-    "titulo": "Título del consejo",
-    "descripcion": "Descripción práctica con pasos específicos",
-    "prioridad": "alta"
-  }}
-]
-"""
-        
-        # Intentar con diferentes modelos
-        models = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-pro-latest']
-        
-        for model_name in models:
-            try:
-                model = genai.GenerativeModel(model_name, api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
-                response = model.generate_content(prompt)
-                
-                # Limpiar respuesta
-                ai_tips_raw = response.text.strip()
-                if "```json" in ai_tips_raw:
-                    ai_tips_raw = ai_tips_raw.split("```json")[1].split("```")[0]
-                elif "```" in ai_tips_raw:
-                    ai_tips_raw = ai_tips_raw.split("```")[1]
-                
-                ai_tips_data = json.loads(ai_tips_raw.strip())
-                
-                # Convertir a objetos TipObject
-                class TipObject:
-                    def __init__(self, categoria, titulo, descripcion, prioridad, es_ai=False, link_externo=None, id=None):
-                        self.id = id or f"{categoria}_{hash(titulo) % 1000}"
-                        self.categoria = categoria
-                        self.titulo = titulo
-                        self.descripcion = descripcion
-                        self.prioridad = prioridad
-                        self.es_ai = es_ai
-                        self.link_externo = link_externo
-                    
-                    def get_categoria_display(self):
-                        category_map = {
-                            'savings': '💰 Ahorros',
-                            'investment': '📈 Inversiones',
-                            'budget': '📊 Presupuesto',
-                            'debt': '💳 Deudas',
-                            'insurance': '🛡️ Seguros',
-                            'retirement': '🏖️ Jubilación'
-                        }
-                        return category_map.get(self.categoria, self.categoria.title())
-                    
-                    def get_prioridad_display(self):
-                        prioridad_map = {
-                            'alta': 'Alta',
-                            'media': 'Media',
-                            'baja': 'Baja',
-                            'high': 'Alta',
-                            'medium': 'Media',
-                            'low': 'Baja'
-                        }
-                        return prioridad_map.get(self.prioridad, self.prioridad.title())
-                
-                ai_tips = []
-                for i, tip_data in enumerate(ai_tips_data):
-                    tip_obj = TipObject(
-                        id=f"ai_{categoria}_{i}",
-                        categoria=categoria,
-                        titulo=tip_data['titulo'],
-                        descripcion=tip_data['descripcion'],
-                        prioridad=tip_data['prioridad'],
-                        es_ai=True,
-                        link_externo=None
-                    )
-                    ai_tips.append(tip_obj)
-                
-                return ai_tips
-                
-            except Exception as e:
-                print(f"Error con modelo {model_name}: {e}")
-                continue
-        
-        # Si falla, retornar lista vacía
-        return []
-        
-    except Exception as e:
-        print(f"Error general en generate_ai_tips: {e}")
-        return []
 
 @login_required
 @fast_access_pin_verified
@@ -536,39 +303,9 @@ def ai_chat(request):
             else:
                 user_message = request.POST.get('question', '')
             
-            # Prompt básico sin restricciones
-            prompt = f"""
-Eres un asistente financiero experto y amigable. El usuario te pregunta: "{user_message}"
-
-Responde de manera útil, práctica y conversacional. Puedes hablar de cualquier tema financiero sin restricciones.
-Si no es sobre finanzas, redirige amablemente hacia temas financieros.
-
-Sé específico, da ejemplos prácticos y mantén un tono amigable.
-"""
-            
-            # Intentar con diferentes modelos
-            models = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-pro-latest']
-            
-            for model_name in models:
-                try:
-                    model = genai.GenerativeModel(model_name, api_key="AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A")
-                    response = model.generate_content(prompt)
-                    
-                    return JsonResponse({
-                        'success': True,
-                        'response': response.text,
-                        'model': model_name
-                    })
-                    
-                except Exception as e:
-                    print(f"Error con modelo {model_name}: {e}")
-                    continue
-            
-            # Si todos los modelos fallan
-            return JsonResponse({
-                'success': False,
-                'error': 'No se pudo conectar con la IA. Intenta de nuevo.'
-            })
+            # Procesar con servicio de IA
+            result = process_ai_chat(user_message)
+            return JsonResponse(result)
             
         except Exception as e:
             print(f"Error en ai_chat: {e}")

@@ -1,13 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import MovimientoForm, MetaAhorroForm, AporteMetaAhorroForm
 from cuentas.models import Cuenta, SubCuenta
-from django.shortcuts import render
 from django.db.models import Sum, Q
-from cuentas.models import Cuenta
 from .models import Movimiento, MetaAhorro, AporteMetaAhorro
 from django.contrib.auth.decorators import login_required
 from core.decorators import fast_access_pin_verified
 from alertas_notificaciones.services import NotificationService
+from decimal import Decimal
 import random
 from datetime import datetime, timedelta
 
@@ -324,7 +323,7 @@ def agregar_movimiento(request):
             movimiento.id_usuario = request.user
             
             tipo = movimiento.tipo  # 'ingreso' o 'egreso'
-            monto = movimiento.monto
+            monto = Decimal(str(movimiento.monto))  # Asegurar que es Decimal
             id_cuenta = movimiento.id_cuenta  # Obtener la cuenta relacionada
 
             # Verificar si la cuenta existe
@@ -421,28 +420,26 @@ def aportar_meta_ahorro(request, meta_id):
         form = AporteMetaAhorroForm(request.POST, meta_ahorro=meta)
         
         if form.is_valid():
-            # Verificar que el usuario tenga suficiente saldo disponible
-            from django.db.models import Sum
             user_id = request.user.id
             
             # Calcular saldo total disponible en todas las cuentas
-            # Ahora el saldo_cuenta YA incluye ingresos y egresos
             saldo_total_cuentas = Cuenta.objects.filter(
                 id_usuario=user_id
-            ).aggregate(total=Sum('saldo_cuenta'))['total'] or 0
+            ).aggregate(total=Sum('saldo_cuenta'))['total'] or Decimal('0')
             
             # Restar el saldo comprometido en subcuentas
             saldo_en_subcuentas = SubCuenta.objects.filter(
                 Q(id_cuenta__id_usuario=user_id) | Q(propietario_id=user_id),
                 activa=True
-            ).aggregate(total=Sum('saldo'))['total'] or 0
+            ).aggregate(total=Sum('saldo'))['total'] or Decimal('0')
             
-            saldo_disponible = float(saldo_total_cuentas) - float(saldo_en_subcuentas)
-            monto_aporte = float(form.cleaned_data['monto'])
+            # Usar Decimal para todas las operaciones
+            saldo_disponible = Decimal(str(saldo_total_cuentas)) - Decimal(str(saldo_en_subcuentas))
+            monto_aporte = Decimal(str(form.cleaned_data['monto']))
             
             # Verificar si hay suficiente saldo disponible
             if saldo_disponible < monto_aporte:
-                form.add_error('monto', f'Saldo insuficiente. Saldo disponible: ${saldo_disponible:.2f}. El saldo en subcuentas no puede usarse.')
+                form.add_error('monto', f'Saldo insuficiente. Saldo disponible: ${float(saldo_disponible):.2f}. El saldo en subcuentas no puede usarse.')
                 return render(request, 'gestion_financiera_basica/add_fund_to_goal.html', {
                     'form': form, 
                     'meta': meta
@@ -458,7 +455,7 @@ def aportar_meta_ahorro(request, meta_id):
                     'meta': meta
                 })
             
-            # Restar el aporte del saldo de la cuenta
+            # Restar el aporte del saldo de la cuenta (ahora ambos son Decimal)
             cuenta_usuario.saldo_cuenta -= monto_aporte
             cuenta_usuario.save()
             
@@ -480,8 +477,8 @@ def aportar_meta_ahorro(request, meta_id):
                 id_usuario=request.user
             )
             
-            print(f"✅ Aporte registrado: ${monto_aporte} a meta '{meta.nombre}'")
-            print(f"✅ Movimiento creado: Egreso de ${monto_aporte} de cuenta '{cuenta_usuario.nombre}'")
+            print(f"✅ Aporte registrado: ${float(monto_aporte)} a meta '{meta.nombre}'")
+            print(f"✅ Movimiento creado: Egreso de ${float(monto_aporte)} de cuenta '{cuenta_usuario.nombre}'")
             
             # Redirigir de vuelta a las metas de ahorro
             return redirect('gestion_financiera_basica:savings_goals')
