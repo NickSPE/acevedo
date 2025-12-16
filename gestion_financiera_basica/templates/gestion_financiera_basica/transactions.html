@@ -408,8 +408,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       // Poblar select de cuentas en el modal
       const cuentasData = {
-        {% for cuenta in user.cuentas.all %}
-        '{{ cuenta.id }}': '{{ cuenta.nombre_cuenta|escapejs }}'{% if not forloop.last %},{% endif %}
+        {% for cuenta in user.cuenta_set.all %}
+        '{{ cuenta.id }}': '{{ cuenta.nombre|escapejs }}'{% if not forloop.last %},{% endif %}
         {% endfor %}
       };
 
