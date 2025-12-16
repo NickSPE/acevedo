@@ -896,11 +896,11 @@
           setTimeout(function() {
             const selectCuenta = document.querySelector('#transaction-form-ajax select[name="id_cuenta"]');
             if (selectCuenta && selectCuenta.options.length === 1) {
-              {% if user.cuentas.all %}
-                {% for cuenta in user.cuentas.all %}
+              {% if user.cuenta_set.all %}
+                {% for cuenta in user.cuenta_set.all %}
                   const opt{{ forloop.counter }} = document.createElement('option');
                   opt{{ forloop.counter }}.value = '{{ cuenta.id }}';
-                  opt{{ forloop.counter }}.textContent = '{{ cuenta.nombre_cuenta|escapejs }}';
+                  opt{{ forloop.counter }}.textContent = '{{ cuenta.nombre|escapejs }}';
                   selectCuenta.appendChild(opt{{ forloop.counter }});
                 {% endfor %}
               {% endif %}
