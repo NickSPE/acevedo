@@ -1,7 +1,12 @@
 {% extends "core/base_template.html" %}
+{% load static %}
 {% load currency_filters %}
 
 {% block title %}Transacciones | FinGest{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'gestion_financiera_basica/css/transaction-modal.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="p-6 space-y-5">
@@ -20,13 +25,13 @@
         </svg>
         Exportar
       </button>
-     <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}"
+     <button type="button" data-toggle="transaction-modal"
          class="bg-[#227C91] hover:bg-[#1B6677] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round"    stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
        Nueva Transacción
-      </a>
+      </button>
 
     </div>
   </div>
@@ -394,4 +399,37 @@
       </div>
     </div>
   </div>
-  {% endblock %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'gestion_financiera_basica/js/transaction-modal.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Poblar select de cuentas en el modal
+      const cuentasData = {
+        {% for cuenta in user.cuentas.all %}
+        '{{ cuenta.id }}': '{{ cuenta.nombre_cuenta|escapejs }}'{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      };
+
+      // Listener para cuando se abra el modal
+      document.addEventListener('click', function(e) {
+        if (e.target.getAttribute('data-toggle') === 'transaction-modal' || 
+            e.target.closest('[data-toggle="transaction-modal"]')) {
+          setTimeout(function() {
+            const selectCuenta = document.querySelector('#transaction-form-ajax select[name="id_cuenta"]');
+            if (selectCuenta && selectCuenta.options.length === 1) {
+              for (const [id, nombre] of Object.entries(cuentasData)) {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = nombre;
+                selectCuenta.appendChild(option);
+              }
+            }
+          }, 50);
+        }
+      });
+    });
+  </script>
+{% endblock %}

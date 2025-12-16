@@ -261,7 +261,22 @@ def editar_subcuenta(request, subcuenta_id):
         if form.is_valid():
             form.save()
             messages.success(request, f'SubCuenta "{subcuenta.nombre}" actualizada exitosamente.')
+            
+            # Si es una petición AJAX, devolver JSON
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True,
+                    'message': f'SubCuenta "{subcuenta.nombre}" actualizada exitosamente.'
+                })
+            
             return redirect('cuentas:subcuentas_dashboard')
+        else:
+            # Si es AJAX y hay errores
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'errors': form.errors
+                }, status=400)
     else:
         form = SubCuentaForm(instance=subcuenta)
     
