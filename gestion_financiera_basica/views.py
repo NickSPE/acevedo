@@ -10,6 +10,7 @@ from core.decorators import fast_access_pin_verified
 from alertas_notificaciones.services import NotificationService
 import random
 from datetime import datetime, timedelta
+from decimal import Decimal
 
 def get_nombre_mes_espanol(fecha):
     """Convierte el nombre del mes al español"""
@@ -458,8 +459,9 @@ def aportar_meta_ahorro(request, meta_id):
                     'meta': meta
                 })
             
-            # Restar el aporte del saldo de la cuenta
-            cuenta_usuario.saldo_cuenta -= monto_aporte
+            # Restar el aporte del saldo de la cuenta (convertir a Decimal)
+            from decimal import Decimal
+            cuenta_usuario.saldo_cuenta -= Decimal(str(monto_aporte))
             cuenta_usuario.save()
             
             # Guardar el aporte
@@ -530,6 +532,31 @@ def editar_meta_ahorro(request, meta_id):
         'form': form, 
         'meta': meta
     })
+
+
+@login_required
+@fast_access_pin_verified
+def eliminar_meta_ahorro(request, meta_id):
+    """Vista para eliminar una meta de ahorro"""
+    # Obtener la meta de ahorro
+    meta = get_object_or_404(MetaAhorro, id=meta_id, id_usuario=request.user)
+    
+    if request.method == 'POST':
+        # Guardar el nombre antes de eliminar
+        nombre_meta = meta.nombre
+        
+        # Eliminar la meta de ahorro
+        meta.delete()
+        
+        # Agregar mensaje de éxito
+        from django.contrib import messages
+        messages.success(request, f'La meta de ahorro "{nombre_meta}" ha sido eliminada correctamente.')
+        
+        # Redirigir a la página de metas de ahorro
+        return redirect('gestion_financiera_basica:savings_goals')
+    
+    # Si no es POST, redirigir de vuelta
+    return redirect('gestion_financiera_basica:savings_goals')
 
 
 @login_required

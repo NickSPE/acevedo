@@ -227,9 +227,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
           </svg>
         </div>
-        <div class="text-right">
+        <div class="text-right overflow-hidden">
           <p class="text-xs font-medium" style="color: #736B5E;">Balance Disponible</p>
-          <p class="text-xl font-bold" style="color: #605952;">{% format_money total_balance user %}</p>
+          <p class="auto-resize-text font-bold whitespace-nowrap" style="color: #605952;" data-max-size="16">{% format_money total_balance user %}</p>
         </div>
       </div>
       <div class="mt-2">
@@ -247,9 +247,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
           </svg>
         </div>
-        <div class="text-right">
+        <div class="text-right overflow-hidden">
           <p class="text-xs font-medium" style="color: #736B5E;">Ingresos</p>
-          <p class="text-xl font-bold text-green-600">{% format_money total_ingresos user %}</p>
+          <p class="auto-resize-text font-bold text-green-600 whitespace-nowrap" data-max-size="16">{% format_money total_ingresos user %}</p>
         </div>
       </div>
       <div class="mt-2">
@@ -267,9 +267,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
           </svg>
         </div>
-        <div class="text-right">
+        <div class="text-right overflow-hidden">
           <p class="text-xs font-medium" style="color: #736B5E;">Gastos</p>
-          <p class="text-xl font-bold text-red-600">{% format_money total_egresos user %}</p>
+          <p class="auto-resize-text font-bold text-red-600 whitespace-nowrap" data-max-size="16">{% format_money total_egresos user %}</p>
         </div>
       </div>
       <div class="mt-2">
@@ -287,9 +287,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
           </svg>
         </div>
-        <div class="text-right">
+        <div class="text-right overflow-hidden">
           <p class="text-xs font-medium" style="color: #736B5E;">Saldo Cuentas</p>
-          <p class="text-xl font-bold text-orange-600">{% format_money saldo_inicial_cuentas user %}</p>
+          <p class="auto-resize-text font-bold text-orange-600 whitespace-nowrap" data-max-size="16">{% format_money saldo_inicial_cuentas user %}</p>
         </div>
       </div>
       <div class="mt-2">
@@ -307,9 +307,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
           </svg>
         </div>
-        <div class="text-right">
+        <div class="text-right overflow-hidden">
           <p class="text-xs font-medium" style="color: #736B5E;">En Subcuentas</p>
-          <p class="text-xl font-bold" style="color: #736B5E;">{% format_money saldo_subcuentas user %}</p>
+          <p class="auto-resize-text font-bold whitespace-nowrap" style="color: #736B5E;" data-max-size="16">{% format_money saldo_subcuentas user %}</p>
         </div>
       </div>
       <div class="mt-2">
@@ -327,9 +327,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
           </svg>
         </div>
-        <div class="text-right">
+        <div class="text-right overflow-hidden">
           <p class="text-xs font-medium" style="color: #736B5E;">Patrimonio Total</p>
-          <p class="text-xl font-bold text-green-600">{% format_money total_patrimonio user %}</p>
+          <p class="auto-resize-text font-bold text-green-600 whitespace-nowrap" data-max-size="16">{% format_money total_patrimonio user %}</p>
         </div>
       </div>
       <div class="mt-2">
@@ -359,7 +359,7 @@
         </div>
       </div>
       
-      {% if total_recursos_historicos > 0 %}
+      {% if total_ingresos > 0 or total_egresos > 0 %}
         {% with porcentaje_gastado=porcentaje_de_recursos_para_egresos|floatformat:0 %}
           <div class="text-center mb-4">
             <div class="relative inline-flex items-center justify-center">
@@ -391,14 +391,14 @@
               {% endif %}
             </p>
             <p class="text-sm" style="color: #736B5E;">
-              Has gastado el {{ porcentaje_gastado }}% del total de recursos manejados
+              Has gastado el {{ porcentaje_de_recursos_para_egresos|floatformat:1 }}% de tus ingresos totales
             </p>
           </div>
           
           <div class="grid grid-cols-2 gap-2">
             <div class="rounded-lg p-2 text-center" style="background: #F1F0EE;">
-              <div class="text-lg font-bold text-green-600">{% format_money total_recursos_historicos user %}</div>
-              <div class="text-xs" style="color: #736B5E;">Manejado</div>
+              <div class="text-lg font-bold text-green-600">{% format_money total_ingresos user %}</div>
+              <div class="text-xs" style="color: #736B5E;">Ingresos</div>
             </div>
             <div class="rounded-lg p-2 text-center" style="background: #F1F0EE;">
               <div class="text-lg font-bold text-red-600">{% format_money total_egresos user %}</div>
@@ -853,6 +853,30 @@
     progressBars.forEach(bar => {
       const width = bar.getAttribute('data-width');
       bar.style.width = width + '%';
+    });
+    
+    // Auto-resize text based on character length
+    const autoResizeElements = document.querySelectorAll('.auto-resize-text');
+    autoResizeElements.forEach(element => {
+      const text = element.textContent.trim();
+      const length = text.length;
+      const maxSize = parseInt(element.getAttribute('data-max-size')) || 16;
+      
+      // Calculate font size based on text length
+      let fontSize;
+      if (length <= 8) {
+        fontSize = maxSize;
+      } else if (length <= 12) {
+        fontSize = maxSize * 0.85;
+      } else if (length <= 16) {
+        fontSize = maxSize * 0.7;
+      } else if (length <= 20) {
+        fontSize = maxSize * 0.6;
+      } else {
+        fontSize = maxSize * 0.5;
+      }
+      
+      element.style.fontSize = fontSize + 'px';
     });
   });
 </script>

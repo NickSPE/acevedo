@@ -12,6 +12,7 @@ urlpatterns = [
     path('metas/agregar/', views.agregar_meta_ahorro, name='agregar_meta_ahorro'),
     path('metas/<int:meta_id>/aportar/', views.aportar_meta_ahorro, name='aportar_meta_ahorro'),
     path('metas/<int:meta_id>/editar/', views.editar_meta_ahorro, name='editar_meta_ahorro'),
+    path('metas/<int:meta_id>/eliminar/', views.eliminar_meta_ahorro, name='eliminar_meta_ahorro'),
     path('metas/<int:meta_id>/detalle/', views.detalle_meta_ahorro, name='detalle_meta_ahorro'),
     # Pruebas de notificaciones
     path('test-notifications/', test_views.test_notifications, name='test_notifications'),

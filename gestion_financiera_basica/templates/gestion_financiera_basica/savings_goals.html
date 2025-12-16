@@ -90,6 +90,12 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                 </svg>
               </a>
+              <button onclick="confirmarEliminacion({{ goal.id }}, '{{ goal.nombre|escapejs }}')"
+                 class="px-3 py-2 border border-red-300 text-red-600 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors flex items-center justify-center">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -143,6 +149,25 @@
       </h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% if estadisticas.porcentaje_total < 30 %}
+        <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-sm font-medium text-red-700 dark:text-red-300">Total Ahorrado</h4>
+            <span class="text-xl">💰</span>
+          </div>
+          <p class="text-2xl font-bold text-red-800 dark:text-red-200">{% format_money estadisticas.total_ahorrado user %}</p>
+          <p class="text-xs text-red-600 dark:text-red-400">de {% format_money estadisticas.total_objetivo user %}</p>
+        </div>
+        {% elif estadisticas.porcentaje_total < 70 %}
+        <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-sm font-medium text-orange-700 dark:text-orange-300">Total Ahorrado</h4>
+            <span class="text-xl">💰</span>
+          </div>
+          <p class="text-2xl font-bold text-orange-800 dark:text-orange-200">{% format_money estadisticas.total_ahorrado user %}</p>
+          <p class="text-xs text-orange-600 dark:text-orange-400">de {% format_money estadisticas.total_objetivo user %}</p>
+        </div>
+        {% else %}
         <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-green-700 dark:text-green-300">Total Ahorrado</h4>
@@ -151,7 +176,27 @@
           <p class="text-2xl font-bold text-green-800 dark:text-green-200">{% format_money estadisticas.total_ahorrado user %}</p>
           <p class="text-xs text-green-600 dark:text-green-400">de {% format_money estadisticas.total_objetivo user %}</p>
         </div>
+        {% endif %}
         
+        {% if estadisticas.porcentaje_total < 30 %}
+        <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-sm font-medium text-red-700 dark:text-red-300">Progreso General</h4>
+            <span class="text-xl">📊</span>
+          </div>
+          <p class="text-2xl font-bold text-red-800 dark:text-red-200">{{ estadisticas.porcentaje_total|floatformat:1 }}%</p>
+          <p class="text-xs text-red-600 dark:text-red-400">promedio de todas las metas</p>
+        </div>
+        {% elif estadisticas.porcentaje_total < 70 %}
+        <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-sm font-medium text-orange-700 dark:text-orange-300">Progreso General</h4>
+            <span class="text-xl">📊</span>
+          </div>
+          <p class="text-2xl font-bold text-orange-800 dark:text-orange-200">{{ estadisticas.porcentaje_total|floatformat:1 }}%</p>
+          <p class="text-xs text-orange-600 dark:text-orange-400">promedio de todas las metas</p>
+        </div>
+        {% else %}
         <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-blue-700 dark:text-blue-300">Progreso General</h4>
@@ -160,6 +205,7 @@
           <p class="text-2xl font-bold text-blue-800 dark:text-blue-200">{{ estadisticas.porcentaje_total|floatformat:1 }}%</p>
           <p class="text-xs text-blue-600 dark:text-blue-400">promedio de todas las metas</p>
         </div>
+        {% endif %}
         
         <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
           <div class="flex items-center justify-between mb-2">
@@ -334,5 +380,67 @@ function expandirTip(elemento) {
     }, 50);
   }
 }
+
+// Función para confirmar eliminación de meta
+function confirmarEliminacion(metaId, nombreMeta) {
+  const modal = document.getElementById('modalEliminarMeta');
+  const nombreElement = document.getElementById('nombreMetaEliminar');
+  const formEliminar = document.getElementById('formEliminarMeta');
+  
+  // Actualizar el nombre de la meta en el modal
+  nombreElement.textContent = nombreMeta;
+  
+  // Actualizar la acción del formulario
+  formEliminar.action = `/gestion_financiera_basica/metas/${metaId}/eliminar/`;
+  
+  // Mostrar el modal
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+// Función para cancelar eliminación
+function cancelarEliminacion() {
+  const modal = document.getElementById('modalEliminarMeta');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+}
 </script>
+
+<!-- Modal de confirmación de eliminación -->
+<div id="modalEliminarMeta" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="p-6">
+      <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      
+      <h3 class="text-lg font-bold text-gray-900 text-center mb-2">
+        ¿Estás seguro que deseas eliminar esta meta de ahorro?
+      </h3>
+      
+      <p class="text-gray-600 text-center mb-1">
+        Meta: <span id="nombreMetaEliminar" class="font-semibold text-gray-900"></span>
+      </p>
+      
+      <p class="text-sm text-red-600 text-center mb-6">
+        Esta acción no se puede deshacer.
+      </p>
+      
+      <form id="formEliminarMeta" method="POST" class="flex gap-3">
+        {% csrf_token %}
+        <button type="button" onclick="cancelarEliminacion()"
+                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+          Cancelar
+        </button>
+        <button type="submit"
+                class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors">
+          Eliminar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

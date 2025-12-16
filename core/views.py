@@ -76,22 +76,20 @@ def dashboard(request):
     ).aggregate(total=Sum('monto'))['total'] or 0
     
     # Balance total = SOLO dinero disponible en cuentas principales
-    # (el dinero en subcuentas está separado y no se cuenta como disponible)
+    # Este valor ya representa ingresos - egresos porque saldo_cuenta se actualiza con cada transacción
     total_balance = float(saldo_inicial_cuentas)
     
-    # Patrimonio total = dinero en cuentas + dinero en subcuentas (todo tu dinero)
-    total_patrimonio = float(saldo_inicial_cuentas) + float(saldo_subcuentas)
+    # Patrimonio total = Balance disponible (ingresos - egresos)
+    # El saldo_cuenta ya incluye todos los ingresos menos todos los egresos
+    total_patrimonio = float(saldo_inicial_cuentas)
     
-    # Para calcular el porcentaje de recursos usados, necesitamos saber cuánto se ha manejado en total
-    # Total recursos = saldo actual en cuentas + todo lo que se ha gastado
-    # Esto representa todo el dinero que has manejado históricamente
-    total_recursos_historicos = float(saldo_inicial_cuentas) + float(total_egresos)
-
-    if(total_recursos_historicos == 0):
+    # Para calcular el porcentaje de gastos sobre ingresos
+    # Usar ingresos totales como base, no recursos históricos
+    if(total_ingresos == 0):
         porcentaje_de_recursos_para_egresos = 0
         salud_financiera_score = 100  # Puntuación perfecta si no hay gastos
     else:
-        porcentaje_de_recursos_para_egresos = (float(total_egresos) / float(total_recursos_historicos)) * 100
+        porcentaje_de_recursos_para_egresos = (float(total_egresos) / float(total_ingresos)) * 100
         salud_financiera_score = max(0, 100 - int(porcentaje_de_recursos_para_egresos))  # Score dinámico
 
     # Datos para gráfico de gastos por categoría
@@ -132,7 +130,6 @@ def dashboard(request):
         "saldo_subcuentas": saldo_subcuentas,
         "total_transferencias_subcuentas": total_transferencias_subcuentas,
         "total_ingresos": total_ingresos,
-        "total_recursos_historicos": total_recursos_historicos,
         "cantidad_ingresos": cantidad_registros_ingresos,
 
         "total_egresos": total_egresos,
