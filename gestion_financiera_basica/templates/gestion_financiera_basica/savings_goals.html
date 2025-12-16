@@ -1,6 +1,12 @@
 {% extends "core/base_template.html" %}
+{% load static %}
 {% load currency_filters %}
+
 {% block title %}Metas de Ahorro | FinGest{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'gestion_financiera_basica/css/meta-modal.css' %}">
+{% endblock %}
 
 {% block content %}
 <!-- Header -->
@@ -18,13 +24,13 @@
           <p class="text-[#736B5E] text-sm">Alcanza tus objetivos financieros</p>
         </div>
       </div>
-      <a href="{% url 'gestion_financiera_basica:agregar_meta_ahorro' %}" 
+      <button type="button" data-toggle="meta-modal"
          class="flex items-center gap-2 bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
         Nueva Meta
-      </a>
+      </button>
     </div>
   </div>
 
@@ -103,7 +109,7 @@
       
       <!-- Tarjeta para agregar nueva meta -->
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border-2 border-dashed border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-300">
-        <a href="{% url 'gestion_financiera_basica:agregar_meta_ahorro' %}" class="flex items-center justify-center flex-col h-full p-8 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 min-h-[250px]">
+        <button type="button" data-toggle="meta-modal" class="flex items-center justify-center flex-col h-full p-8 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 min-h-[250px] w-full">
           <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mb-4">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
@@ -111,7 +117,7 @@
           </div>
           <p class="font-semibold text-lg mb-2">Agregar Nueva Meta</p>
           <p class="text-sm text-center">Define un nuevo objetivo de ahorro</p>
-        </a>
+        </button>
       </div>
     </div>
   {% else %}
@@ -126,13 +132,13 @@
       <p class="text-[#736B5E] mb-4 max-w-md mx-auto text-sm">
         Aún no tienes metas de ahorro. Crear objetivos específicos te ayudará a alcanzar tus sueños financieros.
       </p>
-      <a href="{% url 'gestion_financiera_basica:agregar_meta_ahorro' %}" 
+      <button type="button" data-toggle="meta-modal"
          class="inline-flex items-center gap-2 bg-[#227C91] hover:bg-[#1a6070] text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
         Crear Mi Primera Meta
-      </a>
+      </button>
     </div>
   {% endif %}
 
@@ -443,4 +449,29 @@ function cancelarEliminacion() {
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'gestion_financiera_basica/js/meta-modal.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Poblar select de cuentas en el modal
+      document.addEventListener('click', function(e) {
+        if (e.target.getAttribute('data-toggle') === 'meta-modal' || 
+            e.target.closest('[data-toggle="meta-modal"]')) {
+          setTimeout(function() {
+            const selectCuenta = document.querySelector('#meta-form-ajax select[name="id_cuenta"]');
+            if (selectCuenta && selectCuenta.options.length === 1) {
+              {% for cuenta in user.cuentas.all %}
+                const opt{{ forloop.counter }} = document.createElement('option');
+                opt{{ forloop.counter }}.value = '{{ cuenta.id }}';
+                opt{{ forloop.counter }}.textContent = '{{ cuenta.nombre_cuenta|escapejs }}';
+                selectCuenta.appendChild(opt{{ forloop.counter }});
+              {% endfor %}
+            }
+          }, 50);
+        }
+      });
+    });
+  </script>
 {% endblock %}

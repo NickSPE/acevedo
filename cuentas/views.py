@@ -1,33 +1,55 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q, Sum
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
-import json
-import base64
-from PIL import Image
-import io
+from django.core.paginator import Paginator
+from django.utils import timezone
+from datetime import datetime
 from decimal import Decimal
+
+# Modelos
 from usuarios.models import Usuario
 from .models import Cuenta, SubCuenta, TransferenciaSubCuenta, TransferenciaCuentaPrincipal
 from gestion_financiera_basica.models import Movimiento
+
+# Forms
 from .forms import SubCuentaForm, TransferenciaSubCuentaForm, DepositoSubCuentaForm, RetiroSubCuentaForm, TransferenciaCuentaPrincipalForm
-from core.decorators import fast_access_pin_verified
-from alertas_notificaciones.models import Notificacion, TipoNotificacion
-from django.db.models import Q, Sum
-from django.urls import reverse
-from usuarios.models import Usuario
-from .models import Cuenta, SubCuenta, TransferenciaSubCuenta, TransferenciaCuentaPrincipal
-from .forms import SubCuentaForm, TransferenciaSubCuentaForm, DepositoSubCuentaForm, RetiroSubCuentaForm, TransferenciaCuentaPrincipalForm
+
+# Decoradores
 from core.decorators import fast_access_pin_verified
 
-import base64
-from PIL import Image
-import io
-import json
+# Servicios y utilidades
+from .services import (
+    actualizar_perfil_usuario,
+    actualizar_contacto_usuario,
+    cambiar_password_usuario,
+    cambiar_pin_usuario,
+    procesar_transferencia_entre_subcuentas,
+    procesar_deposito_subcuenta,
+    procesar_retiro_subcuenta,
+    procesar_transferencia_a_principal
+)
+from .utils import (
+    obtener_cuentas_usuario,
+    obtener_estadisticas_subcuentas,
+    obtener_balance_total,
+    obtener_cuentas_con_subcuentas,
+    obtener_subcuentas_independientes,
+    obtener_transferencias_recientes,
+    es_subcuenta_negocio
+)
+from .helpers import (
+    crear_notificacion_movimiento,
+    validar_permisos_subcuenta,
+    validar_permisos_ambas_subcuentas,
+    procesar_imagen_perfil,
+    validar_password,
+    validar_pin_cambio,
+    procesar_ajax_operacion
+)
 
 """ Views App CUENTAS """
 
@@ -45,19 +67,8 @@ def profile(request):
         # Cambio de foto de perfil
         if action == "change_photo":
             imagen_perfil = request.FILES.get("imagen_perfil")
-            if imagen_perfil:
-                try:
-                    # Validar que sea una imagen
-                    imagen_bytes = imagen_perfil.read()
-                    Image.open(io.BytesIO(imagen_bytes))  # Validar formato
-                    
-                    usuario.imagen_perfil = imagen_bytes
-                    usuario.save()
-                    messages.success(request, "✅ Foto de perfil actualizada correctamente.")
-                except Exception as e:
-                    messages.error(request, "❌ Error al procesar la imagen. Asegúrate de subir un archivo de imagen válido.")
-            else:
-                messages.error(request, "❌ No se seleccionó ninguna imagen.")
+            success, msg = procesar_imagen_perfil(usuario, imagen_perfil)
+            messages.success(request, msg) if success else messages.error(request, msg)
             return redirect("cuentas:profile")
         
         # Actualización de perfil general
@@ -68,11 +79,7 @@ def profile(request):
             pais = request.POST.get("pais", "").strip()
             
             if nombres and apellido_paterno and pais:
-                usuario.nombres = nombres
-                usuario.apellido_paterno = apellido_paterno
-                usuario.apellido_materno = apellido_materno
-                usuario.pais = pais
-                usuario.save()
+                actualizar_perfil_usuario(usuario, nombres, apellido_paterno, apellido_materno, pais)
                 messages.success(request, "✅ Información personal actualizada correctamente.")
             else:
                 messages.error(request, "❌ Los campos Nombres, Apellido Paterno y País son obligatorios.")
@@ -84,14 +91,10 @@ def profile(request):
             telefono = request.POST.get("telefono", "").strip()
             
             if email:
-                # Verificar que el email no esté siendo usado por otro usuario
                 if Usuario.objects.filter(correo=email).exclude(id=usuario.id).exists():
                     messages.error(request, "❌ Este correo electrónico ya está siendo usado por otro usuario.")
                 else:
-                    usuario.correo = email
-                    if telefono:
-                        usuario.telefono = telefono
-                    usuario.save()
+                    actualizar_contacto_usuario(usuario, email, telefono)
                     messages.success(request, "✅ Información de contacto actualizada correctamente.")
             else:
                 messages.error(request, "❌ El correo electrónico es obligatorio.")
@@ -103,39 +106,13 @@ def profile(request):
             new_password = request.POST.get("new_password", "").strip()
             confirm_password = request.POST.get("confirm_password", "").strip()
             
-            if not all([actual_password, new_password, confirm_password]):
-                messages.error(request, "❌ Todos los campos de contraseña son obligatorios.")
+            error_msg = validar_password(actual_password, new_password, confirm_password)
+            if error_msg:
+                messages.error(request, error_msg)
                 return redirect(reverse("cuentas:profile") + "?tab=security")
             
-            # Verificar contraseña actual
-            if not usuario.check_password(actual_password):
-                messages.error(request, "❌ La contraseña actual es incorrecta.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Verificar que las nuevas contraseñas coincidan
-            if new_password != confirm_password:
-                messages.error(request, "❌ Las nuevas contraseñas no coinciden.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Verificar longitud mínima
-            if len(new_password) < 8:
-                messages.error(request, "❌ La nueva contraseña debe tener al menos 8 caracteres.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Verificar que la nueva contraseña sea diferente
-            if actual_password == new_password:
-                messages.warning(request, "⚠️ La nueva contraseña debe ser diferente a la actual.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Actualizar contraseña
-            usuario.set_password(new_password)
-            usuario.save()
-            
-            # Mantener la sesión del usuario después del cambio de contraseña
-            from django.contrib.auth import update_session_auth_hash
-            update_session_auth_hash(request, usuario)
-            
-            messages.success(request, "✅ Contraseña actualizada correctamente.")
+            success, msg = cambiar_password_usuario(usuario, actual_password, new_password, request)
+            messages.success(request, f"✅ {msg}") if success else messages.error(request, f"❌ {msg}")
             return redirect(reverse("cuentas:profile") + "?tab=security")
         
         # Cambio de PIN
@@ -144,68 +121,28 @@ def profile(request):
             new_pin = request.POST.get("new_pin", "").strip()
             confirm_pin = request.POST.get("confirm_pin", "").strip()
             
-            if not all([current_pin, new_pin, confirm_pin]):
-                messages.error(request, "❌ Todos los campos de PIN son obligatorios.")
+            error_msg = validar_pin_cambio(usuario, current_pin, new_pin, confirm_pin)
+            if error_msg:
+                messages.error(request, error_msg)
                 return redirect(reverse("cuentas:profile") + "?tab=security")
             
-            # Verificar que todos sean números
-            if not all(pin.isdigit() for pin in [current_pin, new_pin, confirm_pin]):
-                messages.error(request, "❌ Los PINs solo pueden contener números.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Verificar PIN actual
-            if str(usuario.pin_acceso_rapido) != current_pin:
-                messages.error(request, "❌ El PIN actual es incorrecto.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Verificar que los nuevos PINs coincidan
-            if new_pin != confirm_pin:
-                messages.error(request, "❌ Los nuevos PINs no coinciden.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Verificar que el nuevo PIN sea diferente
-            if current_pin == new_pin:
-                messages.warning(request, "⚠️ El nuevo PIN debe ser diferente al actual.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Verificar que el PIN no esté siendo usado por otro usuario
-            if Usuario.objects.filter(pin_acceso_rapido=new_pin).exclude(id=usuario.id).exists():
-                messages.error(request, "❌ Este PIN ya está siendo usado. Por favor, elige uno diferente.")
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            # Actualizar PIN
-            usuario.pin_acceso_rapido = new_pin
-            usuario.save()
-            messages.success(request, "✅ PIN de seguridad actualizado correctamente.")
+            success, msg = cambiar_pin_usuario(usuario, current_pin, new_pin)
+            messages.success(request, f"✅ {msg}") if success else messages.error(request, f"❌ {msg}")
             return redirect(reverse("cuentas:profile") + "?tab=security")
         
         return redirect("cuentas:profile")
 
     usuario = Usuario.objects.get(id=user_id)
     
-    # Si el usuario no tiene país asignado, usar Perú como predeterminado
-    if not usuario.pais or usuario.pais == "":
+    if not usuario.pais:
         usuario.pais = "Peru"
         usuario.save()
     
-    formato_imagen = None
-    imagen_base64 = None
-    if(usuario.imagen_perfil):
-        try:
-            imagen_bytes = usuario.imagen_perfil
-            imagen_base64 = base64.b64encode(imagen_bytes).decode('utf-8')
-            formato_imagen = Image.open(io.BytesIO(imagen_bytes)).format
-        except Exception as e:
-            # Si hay error al procesar la imagen, limpiarla
-            print(f"Error procesando imagen de perfil para usuario {usuario.id}: {e}")
-            usuario.imagen_perfil = None
-            usuario.save()
-            imagen_base64 = None
-            formato_imagen = None
-
+    imagen_base64, formato_imagen = procesar_imagen_perfil(usuario, solo_leer=True)
     tab = request.GET.get("tab", "general")
+    
     return render(request, "cuentas/profile_modern.html", {
-        "tab": tab , 
+        "tab": tab,
         "usuario": usuario,
         "imagen_base64": imagen_base64,
         "formato_imagen": formato_imagen,
@@ -223,81 +160,30 @@ def settings(request):
 @fast_access_pin_verified
 def subcuentas_dashboard(request):
     """Vista principal del dashboard de subcuentas"""
-    # Obtener todas las cuentas del usuario
-    cuentas = Cuenta.objects.filter(id_usuario=request.user)
+    # Obtener estadísticas
+    stats = obtener_estadisticas_subcuentas(request.user)
+    cuentas_con_subcuentas = obtener_cuentas_con_subcuentas(request.user)
+    subcuentas_independientes = obtener_subcuentas_independientes(request.user)
+    transferencias_recientes = obtener_transferencias_recientes(request.user)
+    balance_total = obtener_balance_total(request.user)
     
-    # Obtener estadísticas generales (incluir subcuentas independientes)
-    total_subcuentas_vinculadas = SubCuenta.objects.filter(id_cuenta__id_usuario=request.user, activa=True).count()
-    total_subcuentas_independientes = SubCuenta.objects.filter(propietario=request.user, id_cuenta__isnull=True, activa=True).count()
-    total_subcuentas = total_subcuentas_vinculadas + total_subcuentas_independientes
-    
-    total_subcuentas_inactivas_vinculadas = SubCuenta.objects.filter(id_cuenta__id_usuario=request.user, activa=False).count()
-    total_subcuentas_inactivas_independientes = SubCuenta.objects.filter(propietario=request.user, id_cuenta__isnull=True, activa=False).count()
-    total_subcuentas_inactivas = total_subcuentas_inactivas_vinculadas + total_subcuentas_inactivas_independientes
-    
-    # Saldo total en subcuentas vinculadas
-    total_saldo_subcuentas_vinculadas = sum([cuenta.saldo_total_subcuentas() for cuenta in cuentas])
-    
-    # Saldo total en subcuentas independientes
-    subcuentas_independientes = SubCuenta.objects.filter(propietario=request.user, id_cuenta__isnull=True)
-    total_saldo_subcuentas_independientes = sum([subcuenta.saldo for subcuenta in subcuentas_independientes])
-    
-    total_saldo_subcuentas = total_saldo_subcuentas_vinculadas + total_saldo_subcuentas_independientes
-    
-    # Obtener subcuentas por cuenta (vinculadas)
-    cuentas_con_subcuentas = []
-    for cuenta in cuentas:
-        subcuentas_activas = SubCuenta.objects.filter(id_cuenta=cuenta, activa=True)
-        subcuentas_inactivas = SubCuenta.objects.filter(id_cuenta=cuenta, activa=False)
-        
-        cuentas_con_subcuentas.append({
-            'cuenta': cuenta,
-            'subcuentas': subcuentas_activas,
-            'subcuentas_inactivas': subcuentas_inactivas,
-            'saldo_disponible': cuenta.saldo_disponible()
-        })
-    
-    # Obtener subcuentas independientes
-    subcuentas_independientes_activas = SubCuenta.objects.filter(
-        propietario=request.user, 
-        id_cuenta__isnull=True, 
-        activa=True
-    )
-    subcuentas_independientes_inactivas = SubCuenta.objects.filter(
-        propietario=request.user, 
-        id_cuenta__isnull=True, 
-        activa=False
-    )
-    
-    # Obtener transferencias recientes (incluir todos los tipos)
-    transferencias_recientes = TransferenciaSubCuenta.objects.filter(
-        id_usuario=request.user
-    )[:10]
-    
-    # Obtener cuenta principal para el modal
-    cuenta_principal = cuentas.first() if cuentas.exists() else None
-    
-    # Calcular el balance total real (igual al dashboard principal)
-    user_id = request.user.id
-    total_ingresos = Movimiento.objects.filter(id_cuenta__id_usuario=user_id, tipo="ingreso").aggregate(total=Sum('monto'))['total'] or 0
-    total_egresos = Movimiento.objects.filter(id_cuenta__id_usuario=user_id, tipo="egreso").aggregate(total=Sum('monto'))['total'] or 0
-    saldo_inicial_cuentas = Cuenta.objects.filter(id_usuario=user_id).aggregate(total=Sum('saldo_cuenta'))['total'] or 0
-    total_balance = float(saldo_inicial_cuentas) + float(total_ingresos) - float(total_egresos)
+    # Obtener cuenta principal
+    cuenta_principal = obtener_cuentas_usuario(request.user).first()
     
     return render(request, 'cuentas/subcuentas_dashboard.html', {
         'cuentas_con_subcuentas': cuentas_con_subcuentas,
-        'subcuentas_independientes_activas': subcuentas_independientes_activas,
-        'subcuentas_independientes_inactivas': subcuentas_independientes_inactivas,
-        'total_subcuentas': total_subcuentas,
-        'total_subcuentas_vinculadas': total_subcuentas_vinculadas,
-        'total_subcuentas_independientes': total_subcuentas_independientes,
-        'total_subcuentas_inactivas': total_subcuentas_inactivas,
-        'total_saldo_subcuentas': total_saldo_subcuentas,
-        'total_saldo_subcuentas_vinculadas': total_saldo_subcuentas_vinculadas,
-        'total_saldo_subcuentas_independientes': total_saldo_subcuentas_independientes,
+        'subcuentas_independientes_activas': subcuentas_independientes['activas'],
+        'subcuentas_independientes_inactivas': subcuentas_independientes['inactivas'],
+        'total_subcuentas': stats['total'],
+        'total_subcuentas_vinculadas': stats['total_vinculadas'],
+        'total_subcuentas_independientes': stats['total_independientes'],
+        'total_subcuentas_inactivas': stats['total_inactivas'],
+        'total_saldo_subcuentas': stats['saldo_total'],
+        'total_saldo_subcuentas_vinculadas': stats['saldo_vinculadas'],
+        'total_saldo_subcuentas_independientes': stats['saldo_independientes'],
         'transferencias_recientes': transferencias_recientes,
         'cuenta_principal': cuenta_principal,
-        'total_balance': total_balance,
+        'total_balance': balance_total,
     })
 
 
@@ -375,7 +261,22 @@ def editar_subcuenta(request, subcuenta_id):
         if form.is_valid():
             form.save()
             messages.success(request, f'SubCuenta "{subcuenta.nombre}" actualizada exitosamente.')
+            
+            # Si es una petición AJAX, devolver JSON
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True,
+                    'message': f'SubCuenta "{subcuenta.nombre}" actualizada exitosamente.'
+                })
+            
             return redirect('cuentas:subcuentas_dashboard')
+        else:
+            # Si es AJAX y hay errores
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'errors': form.errors
+                }, status=400)
     else:
         form = SubCuentaForm(instance=subcuenta)
     
@@ -592,10 +493,6 @@ def retirar_subcuenta(request, subcuenta_id):
 @fast_access_pin_verified
 def historial_transferencias(request):
     """Vista para ver el historial de transferencias"""
-    from datetime import datetime, timedelta
-    from django.utils import timezone
-    from django.core.paginator import Paginator
-    
     # Obtener todas las transferencias del usuario
     transferencias_query = TransferenciaSubCuenta.objects.filter(
         id_usuario=request.user
@@ -768,10 +665,6 @@ def transferir_a_cuenta_principal(request, subcuenta_id):
 @fast_access_pin_verified
 def historial_transferencias_cuenta_principal(request):
     """Vista para ver el historial completo de transferencias del usuario"""
-    from datetime import datetime
-    from django.core.paginator import Paginator
-    from django.db.models import Q
-    
     # Obtener todas las transferencias del usuario (tanto entre subcuentas como con cuenta principal)
     transferencias_subcuentas = TransferenciaSubCuenta.objects.filter(
         id_usuario=request.user
@@ -904,76 +797,50 @@ def historial_transferencias_cuenta_principal(request):
 @login_required
 @fast_access_pin_verified
 def transferir_a_cuenta_principal_ajax(request):
-    """Vista AJAX para transferir dinero desde una subcuenta independiente a la cuenta principal"""
+    """Vista AJAX para transferir dinero desde una subcuenta a la cuenta principal"""
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Método no permitido'})
     
-    try:
-        subcuenta_id = request.POST.get('subcuenta_id')
-        monto = Decimal(str(request.POST.get('monto', '0')))
-        descripcion = request.POST.get('descripcion', '')
-        
-        if monto <= Decimal('0'):
-            return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
-        
-        # Obtener la subcuenta
-        subcuenta = get_object_or_404(SubCuenta, id=subcuenta_id)
-        
-        # Verificar permisos
-        if not (subcuenta.propietario == request.user or 
-                (subcuenta.id_cuenta and subcuenta.id_cuenta.id_usuario == request.user)):
-            return JsonResponse({'success': False, 'error': 'No tienes permisos sobre esta subcuenta'})
-        
-        # Verificar saldo suficiente
-        if subcuenta.saldo < monto:
-            return JsonResponse({'success': False, 'error': 'Saldo insuficiente en la subcuenta'})
-        
-        # Obtener cuenta principal
-        cuenta_principal = request.user.cuenta_set.first()
-        if not cuenta_principal:
-            return JsonResponse({'success': False, 'error': 'No tienes una cuenta principal'})
-        
-        # Realizar la transferencia
-        with transaction.atomic():
-            subcuenta.saldo -= monto
-            cuenta_principal.saldo_cuenta += monto
-            
-            # Crear registro de transferencia
-            transferencia = TransferenciaCuentaPrincipal.objects.create(
-                subcuenta=subcuenta,
-                cuenta_destino=cuenta_principal,
-                id_usuario=request.user,
-                monto=monto,
-                tipo='deposito',
-                descripcion=descripcion or f'Transferencia desde {subcuenta.nombre}'
-            )
-            
-            subcuenta.save()
-            cuenta_principal.save()
-            
-            # Crear notificación persistente
-            crear_notificacion_movimiento(
-                usuario=request.user,
-                titulo=f"🏦 Transferencia a cuenta principal",
-                mensaje=f"Se transfirió ${monto:.2f} desde '{subcuenta.nombre}' a tu cuenta principal. {descripcion}".strip(),
-                categoria='Transferencias',
-                datos_adicionales={
-                    'tipo_movimiento': 'transferencia_a_principal',
-                    'subcuenta_id': subcuenta.id,
-                    'subcuenta_nombre': subcuenta.nombre,
-                    'monto': float(monto),
-                    'saldo_subcuenta_restante': float(subcuenta.saldo),
-                    'saldo_principal_resultante': float(cuenta_principal.saldo_cuenta)
-                }
-            )
-        
-        return JsonResponse({
-            'success': True, 
-            'message': f'Transferencia de ${monto:.2f} realizada exitosamente'
-        })
-        
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
+    subcuenta_id = request.POST.get('subcuenta_id')
+    monto = Decimal(str(request.POST.get('monto', '0')))
+    
+    # Validaciones
+    if monto <= Decimal('0'):
+        return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
+    
+    subcuenta = get_object_or_404(SubCuenta, id=subcuenta_id)
+    
+    if not validar_permisos_subcuenta(request.user, subcuenta):
+        return JsonResponse({'success': False, 'error': 'No tienes permisos sobre esta subcuenta'})
+    
+    cuenta_principal = request.user.cuenta_set.first()
+    if not cuenta_principal:
+        return JsonResponse({'success': False, 'error': 'No tienes una cuenta principal'})
+    
+    # Procesar
+    success, message = procesar_transferencia_a_principal(
+        subcuenta,
+        cuenta_principal,
+        monto,
+        request.user,
+        tipo='deposito',
+        descripcion=request.POST.get('descripcion', '')
+    )
+    
+    if success:
+        crear_notificacion_movimiento(
+            usuario=request.user,
+            titulo="🏦 Transferencia a cuenta principal",
+            mensaje=message,
+            datos_adicionales={
+                'tipo_movimiento': 'transferencia_a_principal',
+                'subcuenta_id': subcuenta.id,
+                'monto': float(monto)
+            }
+        )
+        return JsonResponse({'success': True, 'message': message})
+    
+    return JsonResponse({'success': False, 'error': message})
 
 
 @login_required
@@ -983,96 +850,45 @@ def depositar_subcuenta_ajax(request):
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Método no permitido'})
     
-    try:
-        subcuenta_id = request.POST.get('subcuenta_id')
-        monto = Decimal(str(request.POST.get('monto', '0')))
-        descripcion = request.POST.get('descripcion', '')
-        tipo_deposito = request.POST.get('tipo_deposito', 'personal')
+    subcuenta_id = request.POST.get('subcuenta_id')
+    monto = Decimal(str(request.POST.get('monto', '0')))
+    
+    # Validaciones previas
+    if monto <= Decimal('0'):
+        return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
+    
+    subcuenta = get_object_or_404(SubCuenta, id=subcuenta_id)
+    
+    if not validar_permisos_subcuenta(request.user, subcuenta):
+        return JsonResponse({'success': False, 'error': 'No tienes permisos sobre esta subcuenta'})
+    
+    # Procesar
+    success, message = procesar_deposito_subcuenta(
+        subcuenta,
+        monto,
+        request.user,
+        request.POST.get('descripcion', '')
+    )
+    
+    if success:
+        es_negocio = es_subcuenta_negocio(subcuenta)
+        titulo = f"💼 Ingreso registrado en {subcuenta.nombre}" if es_negocio else f"💰 Depósito en {subcuenta.nombre}"
         
-        print(f"DEBUG: subcuenta_id={subcuenta_id}, monto={monto}, tipo_deposito={tipo_deposito}")
-        
-        if monto <= Decimal('0'):
-            return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
-        
-        # Obtener la subcuenta
-        subcuenta = get_object_or_404(SubCuenta, id=subcuenta_id)
-        print(f"DEBUG: Subcuenta encontrada: {subcuenta.nombre}, es_negocio={subcuenta.es_negocio}, id_cuenta={subcuenta.id_cuenta}")
-        
-        # Verificar permisos
-        if not (subcuenta.propietario == request.user or 
-                (subcuenta.id_cuenta and subcuenta.id_cuenta.id_usuario == request.user)):
-            return JsonResponse({'success': False, 'error': 'No tienes permisos sobre esta subcuenta'})
-        
-        # Determinar si es subcuenta de negocio o personal basado en la estructura
-        es_subcuenta_negocio = subcuenta.es_negocio or (subcuenta.propietario and not subcuenta.id_cuenta)
-        
-        with transaction.atomic():
-            if es_subcuenta_negocio:
-                # Para subcuentas de negocio (independientes), simplemente agregar el dinero
-                print(f"DEBUG: Agregando dinero a subcuenta de negocio independiente")
-                subcuenta.saldo += monto
-                subcuenta.save()
-                print(f"DEBUG: Nuevo saldo subcuenta de negocio: {subcuenta.saldo}")
-                
-                # Crear notificación persistente
-                crear_notificacion_movimiento(
-                    usuario=request.user,
-                    titulo=f"💼 Ingreso registrado en {subcuenta.nombre}",
-                    mensaje=f"Se registró un ingreso de ${monto:.2f} en tu subcuenta de negocio '{subcuenta.nombre}'. {descripcion}".strip(),
-                    categoria='Ingresos',
-                    datos_adicionales={
-                        'tipo_movimiento': 'deposito_negocio',
-                        'subcuenta_id': subcuenta.id,
-                        'subcuenta_nombre': subcuenta.nombre,
-                        'monto': float(monto),
-                        'saldo_resultante': float(subcuenta.saldo)
-                    }
-                )
-                
-            else:
-                # Para subcuentas personales (vinculadas), transferir desde cuenta principal
-                if not subcuenta.id_cuenta:
-                    return JsonResponse({'success': False, 'error': 'Error en la configuración de la subcuenta'})
-                
-                cuenta_principal = subcuenta.id_cuenta
-                saldo_disponible = cuenta_principal.saldo_disponible()
-                print(f"DEBUG: Cuenta principal saldo_cuenta={cuenta_principal.saldo_cuenta}, saldo_disponible={saldo_disponible}")
-                
-                if saldo_disponible < monto:
-                    return JsonResponse({'success': False, 'error': f'Saldo insuficiente en la cuenta principal. Disponible: ${saldo_disponible:.2f}'})
-                
-                # Realizar la transferencia interna
-                cuenta_principal.saldo_cuenta -= monto
-                subcuenta.saldo += monto
-                cuenta_principal.save()
-                subcuenta.save()
-                print(f"DEBUG: Transferencia completada. Nuevo saldo subcuenta: {subcuenta.saldo}")
-                
-                # Crear notificación persistente
-                crear_notificacion_movimiento(
-                    usuario=request.user,
-                    titulo=f"💰 Depósito en {subcuenta.nombre}",
-                    mensaje=f"Se transfirió ${monto:.2f} desde tu cuenta principal a '{subcuenta.nombre}'. {descripcion}".strip(),
-                    categoria='Transferencias',
-                    datos_adicionales={
-                        'tipo_movimiento': 'deposito_personal',
-                        'subcuenta_id': subcuenta.id,
-                        'subcuenta_nombre': subcuenta.nombre,
-                        'monto': float(monto),
-                        'saldo_subcuenta': float(subcuenta.saldo),
-                        'saldo_principal_restante': float(cuenta_principal.saldo_cuenta)
-                    }
-                )
-        
-        tipo_operacion = "Ingreso registrado" if es_subcuenta_negocio else "Depósito realizado"
-        return JsonResponse({
-            'success': True, 
-            'message': f'{tipo_operacion}: ${monto:.2f} en {subcuenta.nombre}'
-        })
-        
-    except Exception as e:
-        print(f"ERROR en depositar_subcuenta_ajax: {str(e)}")
-        return JsonResponse({'success': False, 'error': str(e)})
+        crear_notificacion_movimiento(
+            usuario=request.user,
+            titulo=titulo,
+            mensaje=message,
+            datos_adicionales={
+                'tipo_movimiento': 'deposito_negocio' if es_negocio else 'deposito_personal',
+                'subcuenta_id': subcuenta.id,
+                'monto': float(monto),
+                'saldo_resultante': float(subcuenta.saldo)
+            }
+        )
+        return JsonResponse({'success': True, 'message': message})
+    
+    return JsonResponse({'success': False, 'error': message})
+
 
 
 @login_required
@@ -1082,106 +898,44 @@ def transferir_subcuentas_ajax(request):
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Método no permitido'})
     
-    try:
-        subcuenta_origen_id = request.POST.get('subcuenta_origen')
-        subcuenta_destino_id = request.POST.get('subcuenta_destino')
-        monto = Decimal(str(request.POST.get('monto', '0')))
-        descripcion = request.POST.get('descripcion', '')
-        
-        if monto <= Decimal('0'):
-            return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
-        
-        if subcuenta_origen_id == subcuenta_destino_id:
-            return JsonResponse({'success': False, 'error': 'No puedes transferir a la misma subcuenta'})
-        
-        # Obtener subcuentas
-        subcuenta_origen = get_object_or_404(SubCuenta, id=subcuenta_origen_id)
-        subcuenta_destino = get_object_or_404(SubCuenta, id=subcuenta_destino_id)
-        
-        # Verificar permisos
-        usuario = request.user
-        if not ((subcuenta_origen.propietario == usuario or 
-                (subcuenta_origen.id_cuenta and subcuenta_origen.id_cuenta.id_usuario == usuario)) and
-               (subcuenta_destino.propietario == usuario or 
-                (subcuenta_destino.id_cuenta and subcuenta_destino.id_cuenta.id_usuario == usuario))):
-            return JsonResponse({'success': False, 'error': 'No tienes permisos sobre estas subcuentas'})
-        
-        # Verificar saldo suficiente
-        if subcuenta_origen.saldo < monto:
-            return JsonResponse({'success': False, 'error': 'Saldo insuficiente en la subcuenta origen'})
-        
-        # Realizar la transferencia
-        with transaction.atomic():
-            subcuenta_origen.saldo -= monto
-            subcuenta_destino.saldo += monto
-            
-            # Crear registro de transferencia
-            transferencia = TransferenciaSubCuenta.objects.create(
-                subcuenta_origen=subcuenta_origen,
-                subcuenta_destino=subcuenta_destino,
-                id_usuario=usuario,
-                monto=monto,
-                descripcion=descripcion or f'Transferencia de {subcuenta_origen.nombre} a {subcuenta_destino.nombre}'
-            )
-            
-            subcuenta_origen.save()
-            subcuenta_destino.save()
-            
-            # Crear notificación persistente
-            crear_notificacion_movimiento(
-                usuario=request.user,
-                titulo=f"🔄 Transferencia entre subcuentas",
-                mensaje=f"Se transfirió ${monto:.2f} desde '{subcuenta_origen.nombre}' a '{subcuenta_destino.nombre}'. {descripcion}".strip(),
-                categoria='Transferencias',
-                datos_adicionales={
-                    'tipo_movimiento': 'transferencia_entre_subcuentas',
-                    'subcuenta_origen_id': subcuenta_origen.id,
-                    'subcuenta_origen_nombre': subcuenta_origen.nombre,
-                    'subcuenta_destino_id': subcuenta_destino.id,
-                    'subcuenta_destino_nombre': subcuenta_destino.nombre,
-                    'monto': float(monto),
-                    'saldo_origen_restante': float(subcuenta_origen.saldo),
-                    'saldo_destino_resultante': float(subcuenta_destino.saldo)
-                }
-            )
-        
-        return JsonResponse({
-            'success': True, 
-            'message': f'Transferencia de ${monto:.2f} realizada exitosamente'
-        })
-        
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-
-def crear_notificacion_movimiento(usuario, titulo, mensaje, categoria='Transacciones', datos_adicionales=None):
-    """Función auxiliar para crear notificaciones persistentes de movimientos financieros"""
-    try:
-        # Buscar o crear el tipo de notificación para transacciones
-        tipo_notificacion, created = TipoNotificacion.objects.get_or_create(
-            nombre='Movimiento Financiero',
-            defaults={
-                'categoria': 'info',
-                'descripcion': 'Notificaciones sobre movimientos en cuentas y subcuentas',
-                'icono': '💰',
-                'color': '#10b981'
+    subcuenta_origen_id = request.POST.get('subcuenta_origen')
+    subcuenta_destino_id = request.POST.get('subcuenta_destino')
+    monto = Decimal(str(request.POST.get('monto', '0')))
+    
+    # Validaciones
+    if monto <= Decimal('0'):
+        return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
+    
+    if subcuenta_origen_id == subcuenta_destino_id:
+        return JsonResponse({'success': False, 'error': 'No puedes transferir a la misma subcuenta'})
+    
+    subcuenta_origen = get_object_or_404(SubCuenta, id=subcuenta_origen_id)
+    subcuenta_destino = get_object_or_404(SubCuenta, id=subcuenta_destino_id)
+    
+    if not validar_permisos_ambas_subcuentas(request.user, subcuenta_origen, subcuenta_destino):
+        return JsonResponse({'success': False, 'error': 'No tienes permisos sobre estas subcuentas'})
+    
+    # Procesar
+    success, message = procesar_transferencia_entre_subcuentas(
+        subcuenta_origen,
+        subcuenta_destino,
+        monto,
+        request.user,
+        request.POST.get('descripcion', '')
+    )
+    
+    if success:
+        crear_notificacion_movimiento(
+            usuario=request.user,
+            titulo="🔄 Transferencia entre subcuentas",
+            mensaje=message,
+            datos_adicionales={
+                'tipo_movimiento': 'transferencia_entre_subcuentas',
+                'subcuenta_origen_id': subcuenta_origen.id,
+                'subcuenta_destino_id': subcuenta_destino.id,
+                'monto': float(monto)
             }
         )
-        
-        # Crear la notificación
-        notificacion = Notificacion.objects.create(
-            usuario=usuario,
-            tipo_notificacion=tipo_notificacion,
-            titulo=titulo,
-            mensaje=mensaje,
-            categoria=categoria,
-            modulo_origen='cuentas',
-            datos_adicionales=datos_adicionales or {},
-            estado='enviada',
-            prioridad='media'
-        )
-        
-        return notificacion
-    except Exception as e:
-        print(f"Error creando notificación: {e}")
-        return None
+        return JsonResponse({'success': True, 'message': message})
+    
+    return JsonResponse({'success': False, 'error': message})

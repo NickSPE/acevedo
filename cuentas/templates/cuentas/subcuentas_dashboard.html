@@ -4,6 +4,11 @@
 
 {% block title %}Gestión de Subcuentas | FinGest{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'cuentas/css/subcuenta-modal.css' %}">
+  <link rel="stylesheet" href="{% static 'cuentas/css/edit-subcuenta-modal.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="max-w-7xl mx-auto">
   <!-- Header con acciones -->
@@ -21,21 +26,12 @@
         </div>
       </div>
       <div class="flex items-center gap-2 flex-wrap">
-        {% if cuentas_con_subcuentas %}
-          <a href="{% url 'cuentas:crear_subcuenta' cuentas_con_subcuentas.0.cuenta.id %}" class="bg-[#227C91] hover:bg-[#1a6070] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Nueva Subcuenta
-          </a>
-        {% else %}
-          <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="bg-[#227C91] hover:bg-[#1a6070] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Nueva Subcuenta
-          </a>
-        {% endif %}
+        <button type="button" data-toggle="subcuenta-modal" class="bg-[#227C91] hover:bg-[#1a6070] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Nueva Subcuenta
+        </button>
         <button onclick="openTransferModal()" class="bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
@@ -153,9 +149,17 @@
         {% endif %}
 
         <div class="flex gap-2 flex-wrap">
-          <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors text-center border border-[#E5E1DD]">
+          <button type="button" 
+                  data-toggle="edit-subcuenta-modal" 
+                  data-subcuenta-id="{{ subcuenta.id }}" 
+                  data-subcuenta-nombre="{{ subcuenta.nombre }}" 
+                  data-subcuenta-tipo="{{ subcuenta.tipo }}" 
+                  data-subcuenta-descripcion="{{ subcuenta.descripcion }}" 
+                  data-subcuenta-saldo="{% format_money subcuenta.saldo user %}" 
+                  data-tipo-subcuenta="negocio"
+                  class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors text-center border border-[#E5E1DD]">
             Editar
-          </a>
+          </button>
           <button onclick="openTransferToPrincipalModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', {{ subcuenta.saldo }})" class="flex-1 min-w-[80px] bg-[#227C91] hover:bg-[#1a6070] text-white px-2 py-1.5 rounded text-xs font-medium transition-colors">
             A Principal
           </button>
@@ -215,9 +219,17 @@
               <button onclick="openTransferModal()" class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors border border-[#E5E1DD]">
                 Transferir
               </button>
-              <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors text-center border border-[#E5E1DD]">
+              <button type="button" 
+                      data-toggle="edit-subcuenta-modal" 
+                      data-subcuenta-id="{{ subcuenta.id }}" 
+                      data-subcuenta-nombre="{{ subcuenta.nombre }}" 
+                      data-subcuenta-tipo="{{ subcuenta.tipo }}" 
+                      data-subcuenta-descripcion="{{ subcuenta.descripcion }}" 
+                      data-subcuenta-saldo="{% format_money subcuenta.saldo user %}" 
+                      data-tipo-subcuenta="personal"
+                      class="flex-1 min-w-[80px] bg-white hover:bg-[#E5E1DD] text-[#605952] px-2 py-1.5 rounded text-xs font-medium transition-colors text-center border border-[#E5E1DD]">
                 Editar
-              </a>
+              </button>
             </div>
           </div>
           {% endif %}
@@ -329,4 +341,9 @@ function openTransferModal() {
     window.location.href = '{% url "cuentas:transferir_subcuentas" %}';
 }
 </script>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'cuentas/js/subcuenta-modal.js' %}"></script>
+  <script src="{% static 'cuentas/js/edit-subcuenta-modal.js' %}"></script>
 {% endblock %}

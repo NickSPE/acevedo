@@ -1,9 +1,11 @@
 {% extends "core/base_template.html" %}
+{% load static %}
 {% load currency_filters %}
 
 {% block title %}Dashboard | FinGest{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'gestion_financiera_basica/css/transaction-modal.css' %}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 /* === CLEAN ANIMATIONS === */
@@ -200,13 +202,13 @@
     
     <!-- Quick Action Buttons -->
     <div class="flex gap-3">
-      <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" 
+      <button type="button" data-toggle="transaction-modal"
          class="btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
         Nueva Transacción
-      </a>
+      </button>
       <a href="{% url 'analisis_reportes:reports' %}" 
          class="btn-ghost px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all" style="color: #605952;">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -881,4 +883,31 @@
   });
 </script>
 
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'gestion_financiera_basica/js/transaction-modal.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Poblar select de cuentas en el modal cuando se abra
+      document.addEventListener('click', function(e) {
+        if (e.target.getAttribute('data-toggle') === 'transaction-modal' || 
+            e.target.closest('[data-toggle="transaction-modal"]')) {
+          setTimeout(function() {
+            const selectCuenta = document.querySelector('#transaction-form-ajax select[name="id_cuenta"]');
+            if (selectCuenta && selectCuenta.options.length === 1) {
+              {% if user.cuentas.all %}
+                {% for cuenta in user.cuentas.all %}
+                  const opt{{ forloop.counter }} = document.createElement('option');
+                  opt{{ forloop.counter }}.value = '{{ cuenta.id }}';
+                  opt{{ forloop.counter }}.textContent = '{{ cuenta.nombre_cuenta|escapejs }}';
+                  selectCuenta.appendChild(opt{{ forloop.counter }});
+                {% endfor %}
+              {% endif %}
+            }
+          }, 50);
+        }
+      });
+    });
+  </script>
 {% endblock %}

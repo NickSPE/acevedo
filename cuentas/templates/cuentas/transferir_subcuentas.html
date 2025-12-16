@@ -4,6 +4,10 @@
 
 {% block title %}Transferir Entre Subcuentas | FinGest{% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'cuentas/css/transfer-modal.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="max-w-2xl mx-auto">
   <!-- Header -->
@@ -21,132 +25,107 @@
     </div>
   </div>
 
-  <!-- Formulario -->
-  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4">
-    <form method="post" id="transferForm" class="space-y-4">
-      {% csrf_token %}
-      
-      <div>
-        <label for="{{ form.subcuenta_origen.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
-          Subcuenta origen
-        </label>
-        {{ form.subcuenta_origen }}
-        {% if form.subcuenta_origen.errors %}
-          <p class="text-red-600 text-xs mt-1">{{ form.subcuenta_origen.errors.0 }}</p>
-        {% endif %}
-        <div id="saldo-origen" class="text-xs text-[#736B5E] mt-1"></div>
-      </div>
-      
-      <div class="flex justify-center">
-        <div class="w-10 h-10 bg-[#F1F0EE] rounded-full flex items-center justify-center">
-          <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-          </svg>
-        </div>
-      </div>
-      
-      <div>
-        <label for="{{ form.subcuenta_destino.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
-          Subcuenta destino
-        </label>
-        {{ form.subcuenta_destino }}
-        {% if form.subcuenta_destino.errors %}
-          <p class="text-red-600 text-xs mt-1">{{ form.subcuenta_destino.errors.0 }}</p>
-        {% endif %}
-        <div id="saldo-destino" class="text-xs text-[#736B5E] mt-1"></div>
-      </div>
-      
-      <div>
-        <label for="{{ form.monto.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
-          Monto a transferir
-        </label>
-        {{ form.monto }}
-        {% if form.monto.errors %}
-          <p class="text-red-600 text-xs mt-1">{{ form.monto.errors.0 }}</p>
-        {% endif %}
-      </div>
-      
-      <div>
-        <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
-          Concepto (opcional)
-        </label>
-        {{ form.descripcion }}
-        {% if form.descripcion.errors %}
-          <p class="text-red-600 text-xs mt-1">{{ form.descripcion.errors.0 }}</p>
-        {% endif %}
-      </div>
-      
-      <!-- Botones -->
-      <div class="flex flex-col sm:flex-row gap-3 pt-2">
-        <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="flex-1 bg-[#F1F0EE] hover:bg-[#E5E1DD] text-[#605952] px-4 py-2 rounded-lg text-sm font-medium transition-colors text-center">
-          Cancelar
-        </a>
-        <button type="submit" class="flex-1 bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-          Transferir Fondos
-        </button>
-      </div>
-    </form>
+  <!-- Botón para abrir modal -->
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
+    <button 
+      type="button" 
+      data-toggle="transfer-modal"
+      class="w-full bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors"
+    >
+      <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+      </svg>
+      Nueva Transferencia
+    </button>
   </div>
 
   <!-- Resumen de subcuentas -->
   {% if subcuentas %}
-  <div class="mt-4 bg-[#F1F0EE] rounded-lg p-4">
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4">
     <h3 class="text-sm font-semibold text-[#605952] mb-3">Tus Subcuentas</h3>
     <div class="space-y-2">
       {% for sc in subcuentas %}
-      <div class="flex items-center justify-between bg-white rounded-lg p-3">
+      <div class="flex items-center justify-between bg-[#F1F0EE] rounded-lg p-3 hover:bg-[#E5E1DD] transition-colors">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 bg-[#227C91] bg-opacity-10 rounded flex items-center justify-center">
             <svg class="w-4 h-4 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
             </svg>
           </div>
-          <span class="text-sm text-[#605952] font-medium">{{ sc.nombre }}</span>
+          <div>
+            <span class="text-sm text-[#605952] font-medium">{{ sc.nombre }}</span>
+            <span class="text-xs text-[#736B5E] block">{{ sc.get_tipo_display }}</span>
+          </div>
         </div>
         <span class="text-sm font-semibold text-[#227C91]">{% format_money sc.saldo user %}</span>
       </div>
       {% endfor %}
     </div>
   </div>
+  {% else %}
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 text-center">
+    <svg class="w-12 h-12 mx-auto text-[#E5E1DD] mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <p class="text-[#736B5E]">Aún no tienes subcuentas creadas</p>
+    <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="inline-block mt-3 bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+      Crear Subcuenta
+    </a>
+  </div>
   {% endif %}
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const subcuentasData = {
-    {% for sc in subcuentas %}
-    '{{ sc.id }}': {
-      saldo: '{% format_money sc.saldo user %}',
-      nombre: '{{ sc.nombre|escapejs }}'
-    }{% if not forloop.last %},{% endif %}
-    {% endfor %}
-  };
-  
-  const origenSelect = document.getElementById('{{ form.subcuenta_origen.id_for_label }}');
-  const destinoSelect = document.getElementById('{{ form.subcuenta_destino.id_for_label }}');
-  const saldoOrigenDiv = document.getElementById('saldo-origen');
-  const saldoDestinoDiv = document.getElementById('saldo-destino');
-  
-  function actualizarSaldo(selectElement, saldoDiv) {
-    const selectedId = selectElement.value;
-    if (selectedId && subcuentasData[selectedId]) {
-      saldoDiv.textContent = 'Saldo disponible: ' + subcuentasData[selectedId].saldo;
-    } else {
-      saldoDiv.textContent = '';
-    }
-  }
-  
-  origenSelect.addEventListener('change', function() {
-    actualizarSaldo(this, saldoOrigenDiv);
-  });
-  
-  destinoSelect.addEventListener('change', function() {
-    actualizarSaldo(this, saldoDestinoDiv);
-  });
-  
-  // Inicializar
-  actualizarSaldo(origenSelect, saldoOrigenDiv);
-  actualizarSaldo(destinoSelect, saldoDestinoDiv);
-});
-</script>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'cuentas/js/transfer-modal.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Datos de subcuentas para el modal
+      const subcuentasData = {
+        {% for sc in subcuentas %}
+        '{{ sc.id }}': {
+          saldo: {{ sc.saldo }},
+          nombre: '{{ sc.nombre|escapejs }}'
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      };
+
+      // Listener para actualizar opciones de select en el modal
+      document.addEventListener('DOMContentLoaded', function() {
+        // Cuando se abra el modal, llenar los selects
+        document.addEventListener('click', function(e) {
+          if (e.target.getAttribute('data-toggle') === 'transfer-modal') {
+            // Esperar a que se cree el modal
+            setTimeout(function() {
+              const selectOrigen = document.getElementById('id_subcuenta_origen');
+              const selectDestino = document.getElementById('id_subcuenta_destino');
+              
+              if (selectOrigen && selectDestino) {
+                // Llenar opciones
+                for (const [id, data] of Object.entries(subcuentasData)) {
+                  const option = document.createElement('option');
+                  option.value = id;
+                  option.textContent = data.nombre + ' ($' + parseFloat(data.saldo).toFixed(2) + ')';
+                  
+                  selectOrigen.appendChild(option.cloneNode(true));
+                  selectDestino.appendChild(option);
+                }
+              }
+            }, 50);
+          }
+        });
+      });
+
+      // Escuchar evento de transferencia completada
+      window.addEventListener('transferComplete', function(e) {
+        // Actualizar saldos dinámicamente o recargar
+        console.log('Transferencia completada:', e.detail);
+        // Opcional: recargar después de 2 segundos
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+      });
+    });
+  </script>
 {% endblock %}
