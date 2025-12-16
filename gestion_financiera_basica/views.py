@@ -291,6 +291,9 @@ def transactions(request):
     else:
         transacciones = transacciones.order_by('-fecha_movimiento')
 
+    # Obtener cuentas del usuario para el formulario modal
+    cuentas = Cuenta.objects.filter(id_usuario=user_id)
+    
     return render(request, "gestion_financiera_basica/transactions.html", {
         "transactions": transacciones,
         "filter_type": filter_type,
@@ -309,6 +312,7 @@ def transactions(request):
         "transacciones_recientes": transacciones_recientes,
         "categorias_frecuentes": categorias_frecuentes,
         "nombre_mes": get_nombre_mes_espanol(now),
+        "cuentas": cuentas,
     })
     
 @login_required

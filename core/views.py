@@ -140,6 +140,7 @@ def dashboard(request):
 
         "movimientos": movimientos,
         "simbolo_moneda": simbolo_moneda,
+        "cuentas": Cuenta.objects.filter(id_usuario=user_id),
     })
 
 @login_required
