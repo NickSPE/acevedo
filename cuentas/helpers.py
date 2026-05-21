@@ -130,7 +130,6 @@ def validar_pin_cambio(usuario, current_pin, new_pin, confirm_pin):
 def procesar_ajax_operacion(request, operacion, operacion_fn, validaciones_previas, usuario, titulo, datos_adicionales=None):
     """Helper para procesar operaciones AJAX comunes (depósitos, transferencias, etc.)"""
     from django.http import JsonResponse
-    from decimal import Decimal
     
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Método no permitido'})

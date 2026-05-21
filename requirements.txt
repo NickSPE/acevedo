@@ -3,17 +3,17 @@
 # ===========================
 
 # Django y dependencias core
-Django>=4.2.0,<5.3.0
+Django>=4.2.18,<5.3.0
 django-decouple>=2.1
 
 # Base de datos
-psycopg2-binary>=2.9.0  # PostgreSQL adapter
-pandas >=2.0.0  # Manipulación de datos (usado en educacion_financiera)
+psycopg2-binary>=2.9.11  # PostgreSQL adapter
+pandas>=2.2.3  # Manipulación de datos (usado en educacion_financiera)
 # Procesamiento de imágenes
-Pillow>=9.0.0  # Para PIL/Image processing (usado en cuentas/views.py)
+Pillow>=10.3.0  # Para PIL/Image processing (usado en cuentas/views.py)
 
 # Inteligencia Artificial
-google-generativeai>=0.3.0  # Google Gemini AI (usado en educacion_financiera)
+google-generativeai>=0.8.5  # Google Gemini AI (usado en educacion_financiera)
 
 # ===========================
 # DEPENDENCIAS OPCIONALES/DESARROLLO

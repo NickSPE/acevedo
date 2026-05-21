@@ -2,7 +2,6 @@
 from django import forms
 from .models import Movimiento, MetaAhorro, AporteMetaAhorro
 from cuentas.models import Cuenta
-from usuarios.models import Usuario
 
 
 class MovimientoForm(forms.ModelForm):

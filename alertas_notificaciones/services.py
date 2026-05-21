@@ -1,6 +1,5 @@
 from django.core.mail import send_mail
 from django.conf import settings
-from django.template.loader import render_to_string
 from django.utils import timezone
 from django.db import transaction
 from .models import Notificacion, TipoNotificacion, ConfiguracionNotificacion, PlantillaNotificacion
@@ -140,7 +139,7 @@ class NotificationService:
             # Formatear con comas para miles
             formatted_amount = f"{float(amount):,.2f}"
             return f"{symbol}{formatted_amount}"
-        except:
+        except Exception:
             return f"${amount}"
     
 

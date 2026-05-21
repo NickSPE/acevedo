@@ -3,11 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from decimal import Decimal
-import json
 
 from .models import MetaAhorro, AporteMetaAhorro, Movimiento
 from cuentas.models import Cuenta
-from alertas_notificaciones.services import NotificationService
 
 
 @login_required

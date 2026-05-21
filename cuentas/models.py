@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 
 class Moneda(models.Model):
     codigo = models.CharField(max_length=5)

@@ -1,7 +1,7 @@
 """Funciones utilitarias para la app cuentas"""
 
-from django.db.models import Q, Sum
-from .models import Cuenta, SubCuenta, TransferenciaSubCuenta, TransferenciaCuentaPrincipal
+from django.db.models import Sum
+from .models import Cuenta, SubCuenta, TransferenciaSubCuenta
 from gestion_financiera_basica.models import Movimiento
 
 

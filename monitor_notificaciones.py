@@ -11,9 +11,7 @@ sys.path.append('c:\\Users\\ZUZUKA\\AppIngRequisitos')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'FinGest.settings')
 django.setup()
 
-from alertas_notificaciones.models import Notificacion, TipoNotificacion
-from gestion_financiera_basica.models import Movimiento
-from usuarios.models import Usuario
+from alertas_notificaciones.models import Notificacion
 from django.utils import timezone
 
 def limpiar_duplicados_recientes():

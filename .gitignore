@@ -172,3 +172,12 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+# SonarQube
+.scannerwork/
+.sonarqube/
+
+# Logs temporales
+*.log
+.test/
+sonar-scanner*/
+docs/

@@ -1,9 +1,8 @@
 """Servicios para la app cuentas (lógica de negocio)"""
 
-from decimal import Decimal
 from django.db import transaction
 from django.contrib.auth import update_session_auth_hash
-from .models import Cuenta, SubCuenta, TransferenciaSubCuenta, TransferenciaCuentaPrincipal
+from .models import TransferenciaSubCuenta, TransferenciaCuentaPrincipal
 from .utils import es_subcuenta_negocio
 
 

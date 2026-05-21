@@ -5,32 +5,21 @@ from django.contrib import messages
 from django.db.models import Sum, Count, Q, Avg
 from django.utils import timezone
 from datetime import datetime, timedelta
-from decimal import Decimal
 import json
-import pandas as pd
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
-from reportlab.graphics.shapes import Drawing, Rect, String
-from reportlab.graphics import renderPDF
 from io import BytesIO
-import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
-import base64
-import openpyxl
-from openpyxl.styles import Font, PatternFill, Alignment
-from openpyxl.utils.dataframe import dataframe_to_rows
-from django.utils.text import slugify
+from openpyxl.styles import Font, PatternFill
 
 from core.decorators import fast_access_pin_verified
 from .models import Reporte, ConfiguracionReporte
-from cuentas.models import Cuenta, SubCuenta, TransferenciaSubCuenta
-from gestion_financiera_basica.models import Movimiento, MetaAhorro
+from cuentas.models import Cuenta, SubCuenta
+from gestion_financiera_basica.models import Movimiento
 
 @login_required
 @fast_access_pin_verified
@@ -356,7 +345,6 @@ def get_gastos_por_categoria(usuario, fecha_inicio, fecha_fin):
 
 def get_ingresos_vs_egresos(usuario, fecha_inicio, fecha_fin):
     """Obtiene comparación de ingresos vs egresos por mes"""
-    from datetime import datetime, timedelta
     import calendar
     
     # Obtener datos mes por mes en el rango
@@ -465,7 +453,7 @@ def get_estadisticas_subcuentas(usuario):
 
 def get_flujo_mensual(usuario, fecha_inicio, fecha_fin):
     """Obtiene flujo de efectivo mensual"""
-    from datetime import datetime, timedelta
+    from datetime import datetime
     import calendar
     
     labels = []
@@ -535,9 +523,8 @@ def get_balance_general(usuario, fecha_inicio, fecha_fin):
 
 def exportar_pdf(reporte, datos):
     """Exporta reporte a PDF con formato ultra profesional y visualmente atractivo"""
-    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
-    from reportlab.graphics.shapes import Drawing, Rect, String
-    from reportlab.graphics import renderPDF
+    from reportlab.lib.enums import TA_CENTER
+    from reportlab.graphics.shapes import Drawing, Rect
     
     buffer = BytesIO()
     doc = SimpleDocTemplate(
@@ -1172,7 +1159,7 @@ def exportar_excel(reporte, datos):
             try:
                 if len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
-            except:
+            except Exception:
                 pass
         adjusted_width = min(max_length + 2, 50)
         ws.column_dimensions[column_letter].width = adjusted_width
@@ -1230,9 +1217,7 @@ def exportar_csv(reporte, datos):
 
 def exportar_pdf_simple(request):
     """Exporta un reporte simple en PDF"""
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import letter, A4
-    from reportlab.lib.utils import ImageReader
+    from reportlab.lib.pagesizes import A4
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib import colors
@@ -1347,7 +1332,7 @@ def exportar_pdf_simple(request):
 def obtener_fechas_periodo(periodo):
     """Obtener fechas de inicio y fin según el período seleccionado"""
     from django.utils import timezone
-    from datetime import datetime, timedelta
+    from datetime import timedelta
     import calendar
     
     now = timezone.now()
@@ -1385,7 +1370,7 @@ def obtener_fechas_periodo(periodo):
 def exportar_excel(request):
     """Exportar datos financieros a Excel"""
     from openpyxl import Workbook
-    from openpyxl.styles import Font, PatternFill, Alignment
+    from openpyxl.styles import Font, PatternFill
     from django.http import HttpResponse
     from datetime import datetime
     
@@ -1476,7 +1461,7 @@ def exportar_excel(request):
             try:
                 if cell.value and len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
-            except:
+            except Exception:
                 pass
         adjusted_width = min(max_length + 2, 50)
         ws.column_dimensions[column_letter].width = adjusted_width
@@ -1495,9 +1480,7 @@ def exportar_excel(request):
 @fast_access_pin_verified
 def exportar_pdf_simple(request):
     """Exportar reporte simple a PDF"""
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import letter, A4
-    from reportlab.lib.utils import ImageReader
+    from reportlab.lib.pagesizes import A4
     from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib import colors

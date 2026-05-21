@@ -3,8 +3,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Count, Q
-from .models import Notificacion, TipoNotificacion, ConfiguracionNotificacion
-from usuarios.models import Usuario
+from .models import Notificacion
 
 @staff_member_required
 def admin_notificaciones(request):

@@ -3,8 +3,6 @@ Script para actualizar automáticamente las vistas que manejan PINs
 Reemplaza las comparaciones de texto plano por verificación segura con hash
 """
 
-import os
-import sys
 import re
 from datetime import datetime
 

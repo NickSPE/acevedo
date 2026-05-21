@@ -1,8 +1,6 @@
 # core/middleware.py
-import os
 import time
 from django.contrib.sessions.models import Session
-from django.utils import timezone
 from django.core.cache import cache
 
 class ServerRestartSessionMiddleware:

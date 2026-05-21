@@ -13,7 +13,6 @@ from decimal import Decimal
 # Modelos
 from usuarios.models import Usuario
 from .models import Cuenta, SubCuenta, TransferenciaSubCuenta, TransferenciaCuentaPrincipal
-from gestion_financiera_basica.models import Movimiento
 
 # Forms
 from .forms import SubCuentaForm, TransferenciaSubCuentaForm, DepositoSubCuentaForm, RetiroSubCuentaForm, TransferenciaCuentaPrincipalForm
@@ -29,7 +28,6 @@ from .services import (
     cambiar_pin_usuario,
     procesar_transferencia_entre_subcuentas,
     procesar_deposito_subcuenta,
-    procesar_retiro_subcuenta,
     procesar_transferencia_a_principal
 )
 from .utils import (
@@ -47,8 +45,7 @@ from .helpers import (
     validar_permisos_ambas_subcuentas,
     procesar_imagen_perfil,
     validar_password,
-    validar_pin_cambio,
-    procesar_ajax_operacion
+    validar_pin_cambio
 )
 
 """ Views App CUENTAS """

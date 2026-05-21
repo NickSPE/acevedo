@@ -6,7 +6,6 @@ Este script migra los PINs de texto plano a hash seguro usando PBKDF2
 import os
 import sys
 import django
-from django.core.management.utils import get_random_secret_key
 from django.contrib.auth.hashers import make_password, check_password
 import json
 from datetime import datetime

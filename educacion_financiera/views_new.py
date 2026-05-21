@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
 from core.decorators import fast_access_pin_verified
 from django.contrib.auth.decorators import login_required
 from .models import CursoExterno, FavoritoCurso
@@ -21,7 +21,7 @@ def calculators(request):
                 months = years * 12
                 future_value = initial * (1 + rate/12) ** months + monthly * (((1 + rate/12) ** months - 1) / (rate/12))
                 result = round(future_value, 2)
-            except:
+            except Exception:
                 result = "Error en los valores ingresados"
         
         elif tab == "loan":
@@ -33,7 +33,7 @@ def calculators(request):
                 monthly_rate = rate / 12
                 payment = amount * monthly_rate / (1 - (1 + monthly_rate) ** -months)
                 result = round(payment, 2)
-            except:
+            except Exception:
                 result = "Error en los valores ingresados"
 
     return render(request, "educacion_financiera/calculators.html", {

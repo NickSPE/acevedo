@@ -4,10 +4,6 @@ from django.contrib import messages
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import ValidationError
-from datetime import timedelta
-import json
 
 from .models import TipoNotificacion, ConfiguracionNotificacion, Notificacion
 from .services import NotificationService, ConfigurationNotificationService
@@ -181,7 +177,7 @@ def historial(request):
         page = request.GET.get('page', 1)
         try:
             notificaciones_db = paginator.page(page)
-        except:
+        except Exception:
             notificaciones_db = paginator.page(1)
         print(f"📄 COMPLETO: Mostrando página {notificaciones_db.number} de {paginator.num_pages} ({total_notifications} total)")
     else:

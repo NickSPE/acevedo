@@ -5,10 +5,8 @@ from django.db.models import Sum, Q
 from .models import Movimiento, MetaAhorro, AporteMetaAhorro
 from django.contrib.auth.decorators import login_required
 from core.decorators import fast_access_pin_verified
-from alertas_notificaciones.services import NotificationService
 from decimal import Decimal
 import random
-from datetime import datetime, timedelta
 from decimal import Decimal
 
 def get_nombre_mes_espanol(fecha):
@@ -203,7 +201,7 @@ def savings_goals(request):
 @login_required
 @fast_access_pin_verified
 def transactions(request):
-    from datetime import datetime, timedelta
+    from datetime import timedelta
     from django.utils import timezone
     from calendar import monthrange
     

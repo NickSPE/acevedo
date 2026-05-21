@@ -10,7 +10,7 @@ def currency_symbol(user):
         if user and hasattr(user, 'id_moneda') and user.id_moneda:
             return user.id_moneda.simbolo
         return "$"  # Símbolo por defecto
-    except:
+    except Exception:
         return "$"
 
 @register.filter
@@ -30,7 +30,7 @@ def format_currency(amount, user=None):
         formatted_amount = f"{amount:,.2f}"
         
         return f"{symbol}{formatted_amount}"
-    except:
+    except Exception:
         return f"${amount}"
 
 @register.simple_tag
@@ -40,7 +40,7 @@ def user_currency_symbol(user):
         if user and hasattr(user, 'id_moneda') and user.id_moneda:
             return user.id_moneda.simbolo
         return "$"
-    except:
+    except Exception:
         return "$"
 
 @register.simple_tag
@@ -56,5 +56,5 @@ def format_money(amount, user=None):
         
         formatted_amount = f"{amount:,.2f}"
         return f"{symbol}{formatted_amount}"
-    except:
+    except Exception:
         return f"${amount}"

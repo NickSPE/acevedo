@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate , login
 from django.core.mail import send_mail
@@ -10,7 +10,6 @@ from django.shortcuts import redirect
 from cuentas.models import Moneda, Cuenta
 from .models import Usuario
 import random
-import json
 
 def check_onboarding_required(user):
     """Verificar si el usuario necesita completar onboarding"""

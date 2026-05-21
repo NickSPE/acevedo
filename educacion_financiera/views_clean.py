@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
 from core.decorators import fast_access_pin_verified
 from django.contrib.auth.decorators import login_required
 from .models import CursoExterno, FavoritoCurso
@@ -42,7 +42,7 @@ def calculators(request):
                 # Generar explicación con IA
                 ai_explanation = generate_ai_explanation(result, tab)
                 
-            except:
+            except Exception:
                 result = {"error": "Error en los valores ingresados"}
         
         elif tab == "loan":
@@ -72,7 +72,7 @@ def calculators(request):
                 # Generar explicación con IA
                 ai_explanation = generate_ai_explanation(result, tab)
                 
-            except:
+            except Exception:
                 result = {"error": "Error en los valores ingresados"}
         
         elif tab == "budget":
@@ -106,7 +106,7 @@ def calculators(request):
                 # Generar explicación con IA
                 ai_explanation = generate_ai_explanation(result, tab)
                 
-            except:
+            except Exception:
                 result = {"error": "Error en los valores ingresados"}
 
     return render(request, 'educacion_financiera/calculators.html', {

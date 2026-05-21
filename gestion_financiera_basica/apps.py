@@ -7,4 +7,3 @@ class GestionFinancieraBasicaConfig(AppConfig):
     
     def ready(self):
         """Importar señales cuando la aplicación esté lista"""
-        import gestion_financiera_basica.signals

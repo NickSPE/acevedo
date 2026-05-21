@@ -1,12 +1,11 @@
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.db import models
-from decimal import Decimal
 import logging
 
 from .models import MetaAhorro, AporteMetaAhorro, Movimiento
-from cuentas.models import Cuenta, SubCuenta
+from cuentas.models import Cuenta
 from alertas_notificaciones.services import NotificationService
 from alertas_notificaciones.signal_decorators import prevent_duplicate_signals
 
@@ -308,7 +307,7 @@ def verificar_metas_vencidas():
     Función auxiliar para verificar metas que están próximas a vencer
     Esta función debería ser llamada por un cron job o tarea programada
     """
-    from datetime import datetime, timedelta
+    from datetime import timedelta
     
     # Buscar metas que vencen en los próximos 7 días
     fecha_limite = timezone.now().date() + timedelta(days=7)
