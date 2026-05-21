@@ -42,7 +42,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SECRET_KEY = "django-insecure-06s9v4)er801*d#8^73_hlr8rzzy6%&h5*pr+u=^t4_*@wc12n"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
