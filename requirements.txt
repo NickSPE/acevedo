@@ -3,14 +3,15 @@
 # ===========================
 
 # Django y dependencias core
-Django>=4.2.18,<5.3.0
+Django>=4.2.30,<5.3.0
 django-decouple>=2.1
 
 # Base de datos
-psycopg2-binary>=2.9.11  # PostgreSQL adapter
-pandas>=2.2.3  # Manipulación de datos (usado en educacion_financiera)
+psycopg2-binary>=2.9.12  # PostgreSQL adapter (incluye libpq actualizada contra CVE-2021-23222)
+pandas>=2.2.3            # Manipulación de datos (usado en educacion_financiera)
+
 # Procesamiento de imágenes
-Pillow>=10.3.0  # Para PIL/Image processing (usado en cuentas/views.py)
+Pillow>=10.4.0           # Para PIL/Image processing (resuelve CVE-2024-28219 y mitigaciones de desbordamiento)
 
 # Inteligencia Artificial
 google-generativeai>=0.8.5  # Google Gemini AI (usado en educacion_financiera)
@@ -20,21 +21,21 @@ google-generativeai>=0.8.5  # Google Gemini AI (usado en educacion_financiera)
 # ===========================
 
 # FastAPI y dependencias para test1.py (sistema de notificaciones externo)
-# fastapi>=0.100.0
-# pydantic>=2.0.0
-# google-auth>=2.0.0
-# google-auth-oauthlib>=1.0.0
-# google-auth-httplib2>=0.1.0
+# fastapi>=0.115.11
+# pydantic>=2.10.8
+# google-auth>=2.38.0
+# google-auth-oauthlib>=1.2.1
+# google-auth-httplib2>=0.2.0
 
 # ===========================
 # DEPENDENCIAS DE PRODUCCIÓN
 # ===========================
 
 # Servidor WSGI para producción
-# gunicorn>=20.1.0
+# gunicorn>=23.0.0
 
 # Servir archivos estáticos en producción
-# whitenoise>=6.0.0
+# whitenoise>=6.8.2
 
 # ===========================
 # DEPENDENCIAS PYTHON ESTÁNDAR
