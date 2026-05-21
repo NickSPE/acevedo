@@ -66,7 +66,7 @@ def update_usuarios_views():
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
     
-    print(f"✅ usuarios/views.py actualizado")
+    print("✅ usuarios/views.py actualizado")
 
 def update_cuentas_views():
     """Actualizar cuentas/views.py para usar verificación segura de PIN"""
@@ -112,7 +112,7 @@ def update_cuentas_views():
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
     
-    print(f"✅ cuentas/views.py actualizado")
+    print("✅ cuentas/views.py actualizado")
 
 def update_model_comments():
     """Actualizar comentarios en el modelo para reflejar el cambio de seguridad"""
@@ -135,7 +135,7 @@ def update_model_comments():
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(content)
     
-    print(f"✅ usuarios/models.py actualizado")
+    print("✅ usuarios/models.py actualizado")
 
 def create_migration_command():
     """Crear comando para generar migración de Django"""
@@ -157,7 +157,7 @@ python migrar_seguridad_pin.py
     with open('comandos_migracion.txt', 'w', encoding='utf-8') as f:
         f.write(migration_content)
     
-    print(f"✅ Comandos de migración guardados en: comandos_migracion.txt")
+    print("✅ Comandos de migración guardados en: comandos_migracion.txt")
 
 def main():
     print("🔧 Script de Actualización de Seguridad de PINs")

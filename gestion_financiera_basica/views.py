@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from core.decorators import fast_access_pin_verified
 from decimal import Decimal
 import random
-from decimal import Decimal
 
 def get_nombre_mes_espanol(fecha):
     """Convierte el nombre del mes al español"""
@@ -389,7 +388,7 @@ def agregar_meta_ahorro(request):
             
             # Verificar si la cuenta existe
             try:
-                cuenta = Cuenta.objects.get(id=meta_ahorro.id_cuenta.id, id_usuario=request.user)
+                Cuenta.objects.get(id=meta_ahorro.id_cuenta.id, id_usuario=request.user)
             except Cuenta.DoesNotExist:
                 form.add_error('id_cuenta', 'La cuenta seleccionada no existe o no te pertenece.')
                 return render(request, 'gestion_financiera_basica/add_savings_goal.html', {'form': form})
@@ -465,7 +464,7 @@ def aportar_meta_ahorro(request, meta_id):
             aporte.save()
             
             # Crear movimiento de egreso para registrar el aporte
-            movimiento_aporte = Movimiento.objects.create(
+            Movimiento.objects.create(
                 nombre=f"Aporte a meta: {meta.nombre}",
                 tipo="egreso",
                 categoria="ahorros",

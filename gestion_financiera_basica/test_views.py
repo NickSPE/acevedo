@@ -47,7 +47,7 @@ def _test_aporte_meta(request):
         meta = MetaAhorro.objects.get(id=meta_id, id_usuario=request.user)
         
         # Crear el aporte (esto disparará la señal automáticamente)
-        aporte = AporteMetaAhorro.objects.create(
+        AporteMetaAhorro.objects.create(
             id_meta_ahorro=meta,
             monto=monto,
             descripcion="Aporte de prueba del sistema de notificaciones",
@@ -78,7 +78,7 @@ def _test_movimiento_ingreso(request):
         cuenta = Cuenta.objects.get(id=cuenta_id, id_usuario=request.user)
         
         # Crear el movimiento (esto disparará la señal automáticamente)
-        movimiento = Movimiento.objects.create(
+        Movimiento.objects.create(
             nombre="Ingreso de prueba",
             tipo='ingreso',
             monto=monto,
@@ -116,7 +116,7 @@ def _test_movimiento_egreso(request):
         cuenta = Cuenta.objects.get(id=cuenta_id, id_usuario=request.user)
         
         # Crear el movimiento (esto disparará la señal automáticamente)
-        movimiento = Movimiento.objects.create(
+        Movimiento.objects.create(
             nombre="Gasto de prueba",
             tipo='egreso',
             monto=monto,

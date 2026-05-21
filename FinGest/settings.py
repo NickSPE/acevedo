@@ -108,7 +108,7 @@ WSGI_APPLICATION = "FinGest.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'fin_gest_db',
+        'NAME': 'fingest_db',
         'USER': 'postgres',     # O 'django_user' si usaste la opción recomendada
         'PASSWORD': config("DB_PASSWORD"),
         'HOST': 'localhost',

@@ -84,7 +84,7 @@ def procesar_imagen_perfil(usuario, imagen_archivo=None, solo_leer=False):
         usuario.imagen_perfil = imagen_bytes
         usuario.save()
         return True, "✅ Foto de perfil actualizada correctamente."
-    except Exception as e:
+    except Exception:
         return False, "❌ Error al procesar la imagen. Asegúrate de subir un archivo de imagen válido."
 
 

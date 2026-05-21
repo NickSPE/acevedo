@@ -34,7 +34,7 @@ def notificar_nuevo_aporte(sender, instance, created, **kwargs):
     ).exists()
     
     if existe_notificacion:
-        print(f"⚠️ Ya existe notificación para este aporte, saltando...")
+        print("⚠️ Ya existe notificación para este aporte, saltando...")
         return
         
     meta = instance.id_meta_ahorro
@@ -44,18 +44,18 @@ def notificar_nuevo_aporte(sender, instance, created, **kwargs):
     progreso_anterior = meta.porcentaje_progreso()
     
     # Determinar tipo de notificación basado en el progreso
-    titulo = f"💰 Nuevo aporte registrado"
+    titulo = "💰 Nuevo aporte registrado"
     mensaje = f"Has registrado un aporte de ${instance.monto:,.2f} a tu meta '{meta.nombre}'. "
     
     if meta.meta_alcanzada():
         # Meta alcanzada - notificación de felicitación
-        titulo = f"🎉 ¡Meta alcanzada!"
+        titulo = "🎉 ¡Meta alcanzada!"
         mensaje += f"¡Felicidades! Has alcanzado tu meta de ${meta.monto_objetivo:,.2f}. ¡Excelente trabajo!"
         categoria = "Logros"
         tipo_notificacion = "meta_alcanzada"
     elif progreso_anterior >= 90:
         # Cerca de la meta
-        titulo = f"🎯 ¡Casi lo logras!"
+        titulo = "🎯 ¡Casi lo logras!"
         mensaje += f"Ya tienes {progreso_anterior:.1f}% de tu meta. Solo te faltan ${meta.falta_por_ahorrar():,.2f}."
         categoria = "Metas"
         tipo_notificacion = "progreso_meta"
@@ -97,7 +97,7 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
     print(f"🔍 Created: {created}, Sender: {sender.__name__}, ID: {instance.id}")
     
     if not created:
-        print(f"⚠️ Movimiento actualizado, no se creó notificación")
+        print("⚠️ Movimiento actualizado, no se creó notificación")
         return
     
     usuario = instance.id_usuario
@@ -132,18 +132,14 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
     ).exists()
     
     if duplicado_por_contenido:
-        print(f"⚠️ Ya existe notificación similar para este tipo de movimiento, saltando...")
+        print("⚠️ Ya existe notificación similar para este tipo de movimiento, saltando...")
         return
     
     try:
         if instance.tipo == 'ingreso':
-            titulo = f"💵 Nuevo ingreso registrado"
-            emoji = "💵"
-            color = "verde"
+            titulo = "💵 Nuevo ingreso registrado"
         else:  # egreso
-            titulo = f"💸 Nuevo gasto registrado"
-            emoji = "💸"
-            color = "rojo"
+            titulo = "💸 Nuevo gasto registrado"
         
         # Mensaje más detallado con el nombre de la transacción
         mensaje = f"Hola {usuario.nombres},\n\n"
@@ -162,11 +158,11 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
             mensaje += f"\n\n¡Excelente! Tus ingresos suman ${instance.monto:,.2f} más a tu patrimonio. 🎉"
         else:
             if instance.monto >= 1000:
-                mensaje += f"\n\n⚠️ Este es un gasto considerable. Recuerda revisar tu presupuesto mensual."
+                mensaje += "\n\n⚠️ Este es un gasto considerable. Recuerda revisar tu presupuesto mensual."
             elif instance.monto >= 500:
-                mensaje += f"\n\n💡 Gasto registrado. Mantén el control de tus finanzas."
+                mensaje += "\n\n💡 Gasto registrado. Mantén el control de tus finanzas."
             else:
-                mensaje += f"\n\n✅ Gasto registrado correctamente en tu historial financiero."
+                mensaje += "\n\n✅ Gasto registrado correctamente en tu historial financiero."
         
         # Determinar prioridad basada en el monto
         if instance.monto >= 1000:
@@ -199,13 +195,13 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
             }
         )
         
-        print(f"✅ Notificación creada exitosamente")
+        print("✅ Notificación creada exitosamente")
         
     except Exception as e:
         print(f"❌ Error en notificación: {str(e)}")
         logger.error(f"Error en notificación de movimiento: {str(e)}")
     else:
-        print(f"⚠️ Movimiento actualizado, no se creó notificación")
+        print("⚠️ Movimiento actualizado, no se creó notificación")
 
 
 @receiver(post_save, sender=Cuenta)
@@ -216,7 +212,7 @@ def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
         
         # Verificar si el saldo está bajo (menos de $50)
         if instance.saldo_cuenta < 50:
-            titulo = f"⚠️ Saldo bajo en cuenta"
+            titulo = "⚠️ Saldo bajo en cuenta"
             mensaje = f"Tu cuenta '{instance.nombre}' tiene un saldo bajo: ${instance.saldo_cuenta:,.2f}. "
             mensaje += "Considera revisar tus gastos o hacer un depósito."
             
@@ -236,7 +232,7 @@ def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
         
         # Verificar si el saldo está en números rojos
         elif instance.saldo_cuenta < 0:
-            titulo = f"🚨 Saldo negativo"
+            titulo = "🚨 Saldo negativo"
             mensaje = f"¡Atención! Tu cuenta '{instance.nombre}' tiene saldo negativo: ${instance.saldo_cuenta:,.2f}. "
             mensaje += "Es recomendable hacer un depósito lo antes posible."
             
@@ -276,12 +272,12 @@ def notificar_nueva_meta_ahorro(sender, instance, created, **kwargs):
     ).exists()
     
     if existe_notificacion:
-        print(f"⚠️ Ya existe notificación para esta nueva meta, saltando...")
+        print("⚠️ Ya existe notificación para esta nueva meta, saltando...")
         return
         
     usuario = instance.id_usuario
     
-    titulo = f"🎯 Nueva meta de ahorro creada"
+    titulo = "🎯 Nueva meta de ahorro creada"
     mensaje = f"Has creado la meta '{instance.nombre}' con un objetivo de ${instance.monto_objetivo:,.2f}. "
     mensaje += f"Fecha límite: {instance.fecha_limite.strftime('%d/%m/%Y')}. ¡Comienza a ahorrar!"
     
@@ -330,7 +326,7 @@ def verificar_metas_vencidas():
         progreso = meta.porcentaje_progreso()
         
         if dias_restantes <= 1:
-            titulo = f"⏰ Meta por vencer hoy"
+            titulo = "⏰ Meta por vencer hoy"
             prioridad = 'urgente'
         elif dias_restantes <= 3:
             titulo = f"⏰ Meta por vencer en {dias_restantes} días"

@@ -75,14 +75,14 @@ def mostrar_estadisticas():
         fecha_creacion__gte=timezone.now() - timedelta(hours=1)
     ).count()
     
-    print(f"📊 ESTADÍSTICAS GENERALES:")
+    print("📊 ESTADÍSTICAS GENERALES:")
     print(f"   Total notificaciones: {total}")
     print(f"   Creadas hoy: {hoy}")
     print(f"   Última hora: {ultima_hora}")
     
     # Duplicados
     duplicados = limpiar_duplicados_recientes()
-    print(f"\n🔍 ANÁLISIS DE DUPLICADOS:")
+    print("\n🔍 ANÁLISIS DE DUPLICADOS:")
     print(f"   Duplicados encontrados: {len(duplicados)}")
     
     if duplicados:
@@ -97,7 +97,7 @@ def mostrar_estadisticas():
     
     # Últimas 5 notificaciones
     ultimas = Notificacion.objects.order_by('-fecha_creacion')[:5]
-    print(f"\n📋 ÚLTIMAS 5 NOTIFICACIONES:")
+    print("\n📋 ÚLTIMAS 5 NOTIFICACIONES:")
     for notif in ultimas:
         print(f"   {notif.fecha_creacion.strftime('%H:%M:%S')} - "
               f"{notif.usuario.nombres} - {notif.tipo_notificacion.nombre} - "

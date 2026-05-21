@@ -275,7 +275,7 @@ def Pagina_Verificar_Correo(request):
                 fail_silently=False,
             )
             print(f"🔍 DEBUG: Resultado del envío: {result}")
-            print(f"✅ Email enviado exitosamente")
+            print("✅ Email enviado exitosamente")
         except Exception as e:
             print(f"❌ ERROR al enviar email: {str(e)}")
             print(f"❌ Tipo de error: {type(e).__name__}")
@@ -459,7 +459,7 @@ def pin_login(request):
                 
                 # Debug: Mostrar todos los PINs existentes
                 all_pins = Usuario.objects.values_list('pin_acceso_rapido', 'correo')
-                print(f"🔍 DEBUG PIN_LOGIN: PINs existentes en BD:")
+                print("🔍 DEBUG PIN_LOGIN: PINs existentes en BD:")
                 for pin, email in all_pins:
                     print(f"   PIN: '{pin}' -> {email}")
                 
@@ -643,7 +643,7 @@ def password_reset_request(request):
                     print(f"🔍 DEBUG PASSWORD_RESET: Resultado del envío: {result}")
                     
                     if result == 1:
-                        print(f"✅ DEBUG PASSWORD_RESET: Código enviado exitosamente")
+                        print("✅ DEBUG PASSWORD_RESET: Código enviado exitosamente")
                         return JsonResponse({
                             'success': True,
                             'message': 'Código de recuperación enviado a tu email'
@@ -682,13 +682,13 @@ def password_reset_request(request):
                     usuario.codigo_expiracion and 
                     usuario.codigo_expiracion > timezone.now()):
                     
-                    print(f"✅ DEBUG PASSWORD_RESET: Código verificado correctamente")
+                    print("✅ DEBUG PASSWORD_RESET: Código verificado correctamente")
                     return JsonResponse({
                         'success': True,
                         'message': 'Código verificado correctamente'
                     })
                 else:
-                    print(f"❌ DEBUG PASSWORD_RESET: Código inválido o expirado")
+                    print("❌ DEBUG PASSWORD_RESET: Código inválido o expirado")
                     return JsonResponse({
                         'success': False,
                         'message': 'Código inválido o expirado'
@@ -720,7 +720,7 @@ def password_reset_request(request):
                     usuario.codigo_expiracion = None
                     usuario.save()
                     
-                    print(f"✅ DEBUG PASSWORD_RESET: Contraseña cambiada exitosamente")
+                    print("✅ DEBUG PASSWORD_RESET: Contraseña cambiada exitosamente")
                     return JsonResponse({
                         'success': True,
                         'message': 'Contraseña actualizada exitosamente'

@@ -40,7 +40,7 @@ class TestCaseConReporte(TestCase):
         
         # Mostrar mensaje con la ruta
         print(f"\n{'='*70}")
-        print(f"✅ REPORTE HTML GENERADO")
+        print("✅ REPORTE HTML GENERADO")
         print(f"{'='*70}")
         print(f"📄 Archivo: {archivo_reporte}")
         print(f"📁 Ruta completa: {os.path.abspath(archivo_reporte)}")

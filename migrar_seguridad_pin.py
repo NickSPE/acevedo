@@ -78,7 +78,7 @@ def migrar_pins_a_hash():
             print(f"❌ Error migrando PIN para {usuario.correo}: {e}")
             errores += 1
     
-    print(f"\n📊 Resumen de migración:")
+    print("\n📊 Resumen de migración:")
     print(f"   - PINs migrados: {migrados}")
     print(f"   - Errores: {errores}")
     print(f"   - Total usuarios: {usuarios.count()}")
@@ -131,12 +131,12 @@ def main():
     migrados, errores = migrar_pins_a_hash()
     
     if errores == 0:
-        print(f"\n✅ Migración completada exitosamente!")
+        print("\n✅ Migración completada exitosamente!")
         print(f"   - {migrados} PINs migrados")
         print(f"   - Backup guardado en: {backup_file}")
         print("\n⚠️  IMPORTANTE: Debes actualizar el código de las vistas para usar check_password()")
     else:
-        print(f"\n⚠️  Migración completada con errores:")
+        print("\n⚠️  Migración completada con errores:")
         print(f"   - {migrados} PINs migrados")
         print(f"   - {errores} errores")
         print(f"   - Backup guardado en: {backup_file}")

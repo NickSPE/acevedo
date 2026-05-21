@@ -182,7 +182,7 @@ def exportar_reporte(request, reporte_id, formato):
     if formato == 'pdf':
         return exportar_pdf(reporte, datos)
     elif formato == 'excel':
-        return exportar_excel(reporte, datos)
+        return exportar_reporte_excel(reporte, datos)
     elif formato == 'csv':
         return exportar_csv(reporte, datos)
     else:
@@ -1075,7 +1075,7 @@ def exportar_pdf(reporte, datos):
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
 
-def exportar_excel(reporte, datos):
+def exportar_reporte_excel(reporte, datos):
     """Exporta reporte a Excel con formato ultra profesional y limpio"""
     from openpyxl import Workbook
     from django.http import HttpResponse
@@ -1215,119 +1215,7 @@ def exportar_csv(reporte, datos):
     
     return response
 
-def exportar_pdf_simple(request):
-    """Exporta un reporte simple en PDF"""
-    from reportlab.lib.pagesizes import A4
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.lib import colors
-    from reportlab.lib.units import inch
-    from io import BytesIO
-    from datetime import datetime
-    
-    # Obtener fechas del filtro
-    periodo = request.GET.get('periodo', 'mes_actual')
-    fecha_inicio, fecha_fin = obtener_fechas_periodo(periodo)
-    
-    # Crear buffer
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=A4)
-    story = []
-    
-    # Estilos
-    styles = getSampleStyleSheet()
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=18,
-        spaceAfter=30,
-        alignment=1,  # Center
-    )
-    
-    # Título
-    title = Paragraph("REPORTE FINANCIERO - FINGEST", title_style)
-    story.append(title)
-    
-    # Información del período
-    period_info = Paragraph(
-        f"<b>Período:</b> {fecha_inicio.strftime('%d/%m/%Y')} - {fecha_fin.strftime('%d/%m/%Y')}<br/>"
-        f"<b>Generado:</b> {datetime.now().strftime('%d/%m/%Y %H:%M')}",
-        styles['Normal']
-    )
-    story.append(period_info)
-    story.append(Spacer(1, 20))
-    
-    # Estadísticas generales
-    stats = calcular_estadisticas_generales(request.user, fecha_inicio, fecha_fin)
-    
-    stats_data = [
-        ['RESUMEN FINANCIERO', ''],
-        ['Balance Total', f"${stats['balance_total']:,.2f}"],
-        ['Ingresos del Período', f"${stats['total_ingresos']:,.2f}"],
-        ['Gastos del Período', f"${stats['total_egresos']:,.2f}"],
-        ['Ahorro Neto', f"${stats['ahorro_neto']:,.2f}"],
-    ]
-    
-    stats_table = Table(stats_data, colWidths=[3*inch, 2*inch])
-    stats_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1,  0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black)
-    ]))
-    
-    story.append(stats_table)
-    story.append(Spacer(1, 30))
-    
-    # Transacciones recientes
-    transacciones = Movimiento.objects.filter(
-        id_cuenta__id_usuario=request.user,
-        fecha_movimiento__range=[fecha_inicio, fecha_fin]
-    ).order_by('-fecha_movimiento')[:10]
-    
-    if transacciones:
-        trans_title = Paragraph("<b>TRANSACCIONES RECIENTES</b>", styles['Heading2'])
-        story.append(trans_title)
-        
-        trans_data = [['Fecha', 'Descripción', 'Tipo', 'Monto']]
-        
-        for transaccion in transacciones:
-            trans_data.append([
-                transaccion.fecha_movimiento.strftime('%d/%m/%Y'),
-                transaccion.nombre[:30],
-                transaccion.tipo.title(),
-                f"${transaccion.monto:,.2f}"
-            ])
-        
-        trans_table = Table(trans_data, colWidths=[1.2*inch, 2.5*inch, 1*inch, 1.3*inch])
-        trans_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('FONTSIZE', (0, 1), (-1, -1), 9),
-        ]))
-        
-        story.append(trans_table)
-    
-    # Generar PDF
-    doc.build(story)
-    
-    # Preparar respuesta
-    buffer.seek(0)
-    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
-    filename = f"reporte_financiero_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    
-    return response
+
 
 def obtener_fechas_periodo(periodo):
     """Obtener fechas de inicio y fin según el período seleccionado"""

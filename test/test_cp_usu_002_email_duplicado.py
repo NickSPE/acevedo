@@ -60,7 +60,7 @@ class CPUsuario002EmailDuplicado(TestCaseConReporte):
         """
         usuarios_antes = Usuario.objects.count()
         
-        response = self.client.post(self.registration_url, {
+        self.client.post(self.registration_url, {
             'correo': 'admin@test.com',  # Email duplicado
             'nombres': 'Nuevo',
             'apellido_paterno': 'Usuario',

@@ -52,7 +52,7 @@ def ver_emails_enviados(request):
                     'html_content': html_content
                 })
                 
-            except Exception as e:
+            except Exception:
                 continue
     
     context = {

@@ -61,7 +61,7 @@ class CPAuth001LoginExitoso(TestCaseConReporte):
         - Nueva sesión creada
         - Usuario autenticado en sesión
         """
-        response = self.client.post(self.login_url, {
+        self.client.post(self.login_url, {
             'email': 'usuario@test.com',
             'password': 'CorrectPassword123'
         }, follow=True)

@@ -66,11 +66,11 @@ class CPAuth004AccesoPIN(TestCaseConReporte):
         """
         start_time = time.time()
         
-        response = self.client.post(self.pin_login_url, {
+        self.client.post(self.pin_login_url, {
             'pin': '1234'
         }, follow=True)
         
-        elapsed_time = (time.time() - start_time) * 1000  # en milisegundos
+        (time.time() - start_time) * 1000  # en milisegundos
         
         # Configurar datos de entrada y resultados
         self.datos_entrada = {

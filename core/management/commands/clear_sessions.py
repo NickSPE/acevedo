@@ -50,7 +50,7 @@ class Command(BaseCommand):
             
             self.stdout.write(
                 self.style.SUCCESS(
-                    f'✅ Sesiones limpiadas:'
+                    '✅ Sesiones limpiadas:'
                 )
             )
             self.stdout.write(f'   📊 Antes: {count_before} sesiones')
