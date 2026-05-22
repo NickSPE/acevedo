@@ -95,33 +95,33 @@ def _handle_update_profile(request, usuario):
             messages.error(request, "❌ El correo electrónico es obligatorio.")
         return redirect("cuentas:profile")
         
-        # Cambio de contraseña
-        elif action == "change_password":
-            actual_password = request.POST.get("actual_password", "").strip()
-            new_password = request.POST.get("new_password", "").strip()
-            confirm_password = request.POST.get("confirm_password", "").strip()
-            
-            error_msg = validar_password(actual_password, new_password, confirm_password)
-            if error_msg:
-                messages.error(request, error_msg)
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            success, msg = cambiar_password_usuario(usuario, actual_password, new_password, request)
-            messages.success(request, f"✅ {msg}") if success else messages.error(request, f"❌ {msg}")
+    # Cambio de contraseña
+    elif action == "change_password":
+        actual_password = request.POST.get("actual_password", "").strip()
+        new_password = request.POST.get("new_password", "").strip()
+        confirm_password = request.POST.get("confirm_password", "").strip()
+        
+        error_msg = validar_password(actual_password, new_password, confirm_password)
+        if error_msg:
+            messages.error(request, error_msg)
             return redirect(reverse("cuentas:profile") + "?tab=security")
         
-        # Cambio de PIN
-        elif action == "change_pin":
-            current_pin = request.POST.get("actual_pin", "").strip()
-            new_pin = request.POST.get("new_pin", "").strip()
-            confirm_pin = request.POST.get("confirm_pin", "").strip()
-            
-            error_msg = validar_pin_cambio(usuario, current_pin, new_pin, confirm_pin)
-            if error_msg:
-                messages.error(request, error_msg)
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            success, msg = cambiar_pin_usuario(usuario, current_pin, new_pin)
+        success, msg = cambiar_password_usuario(usuario, actual_password, new_password, request)
+        messages.success(request, f"✅ {msg}") if success else messages.error(request, f"❌ {msg}")
+        return redirect(reverse("cuentas:profile") + "?tab=security")
+
+    # Cambio de PIN
+    elif action == "change_pin":
+        current_pin = request.POST.get("actual_pin", "").strip()
+        new_pin = request.POST.get("new_pin", "").strip()
+        confirm_pin = request.POST.get("confirm_pin", "").strip()
+        
+        error_msg = validar_pin_cambio(usuario, current_pin, new_pin, confirm_pin)
+        if error_msg:
+            messages.error(request, error_msg)
+            return redirect(reverse("cuentas:profile") + "?tab=security")
+        
+        success, msg = cambiar_pin_usuario(usuario, current_pin, new_pin)
             messages.success(request, f"✅ {msg}") if success else messages.error(request, f"❌ {msg}")
             return redirect(reverse("cuentas:profile") + "?tab=security")
         
