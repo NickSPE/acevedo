@@ -35,12 +35,12 @@ class SignalLock:
             # Usar cache.add que es atómico - solo crea si no existe
             acquired = cache.add(lock_key, True, timeout)
             if acquired:
-                logger.debug(f"Lock adquirido: {lock_key}")
+                logger.debug("Lock adquirido: %s", lock_key)
             else:
-                logger.debug(f"Lock ya existe: {lock_key}")
+                logger.debug("Lock ya existe: %s", lock_key)
             return acquired
         except Exception as e:
-            logger.error(f"Error adquiriendo lock {lock_key}: {str(e)}")
+            logger.error("Error adquiriendo lock %s: %s", lock_key, str(e))
             return False
     
     @staticmethod
@@ -48,9 +48,9 @@ class SignalLock:
         """Libera un lock"""
         try:
             cache.delete(lock_key)
-            logger.debug(f"Lock liberado: {lock_key}")
+            logger.debug("Lock liberado: %s", lock_key)
         except Exception as e:
-            logger.error(f"Error liberando lock {lock_key}: {str(e)}")
+            logger.error("Error liberando lock %s: %s", lock_key, e)
 
 
 def prevent_duplicate_signals(signal_name, timeout=30):
@@ -81,18 +81,18 @@ def prevent_duplicate_signals(signal_name, timeout=30):
             # Intentar adquirir lock
             if SignalLock.acquire_lock(lock_key, timeout):
                 try:
-                    logger.info(f"Ejecutando signal {signal_name} para {instance.__class__.__name__}:{instance.id}")
+                    logger.info("Ejecutando signal %s para %s:%s", signal_name, instance.__class__.__name__, instance.id)
                     result = func(sender, instance, created, **kwargs)
-                    logger.info(f"Signal {signal_name} ejecutado exitosamente")
+                    logger.info("Signal %s ejecutado exitosamente", signal_name)
                     return result
                 except Exception as e:
-                    logger.error(f"Error en signal {signal_name}: {str(e)}")
+                    logger.error("Error en signal %s: %s", signal_name, str(e))
                     raise
                 finally:
                     # Liberar lock después de un breve delay para evitar race conditions
                     SignalLock.release_lock(lock_key)
             else:
-                logger.warning(f"Signal {signal_name} ya en ejecución para {instance.__class__.__name__}:{instance.id}, saltando...")
+                logger.warning("Signal %s ya en ejecución para %s:%s, saltando...", signal_name, instance.__class__.__name__, instance.id)
                 return None
         
         return wrapper

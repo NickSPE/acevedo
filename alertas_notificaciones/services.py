@@ -31,7 +31,7 @@ class NotificationService:
             try:
                 tipo_obj = TipoNotificacion.objects.get(nombre=tipo_notificacion, activo=True)
             except TipoNotificacion.DoesNotExist:
-                logger.warning(f"Tipo de notificación no encontrado: {tipo_notificacion}")
+                logger.warning("Tipo de notificación no encontrado: %s", tipo_notificacion)
                 return None
             
             # Verificar configuración del usuario
@@ -68,11 +68,11 @@ class NotificationService:
                 # Procesar envío según configuración
                 NotificationProcessor.procesar_notificacion(notificacion, config)
                 
-                logger.info(f"Notificación creada: {notificacion.id} para usuario {usuario.id}")
+                logger.info("Notificación creada: %s para usuario %s", notificacion.id, usuario.id)
                 return notificacion
                 
         except Exception as e:
-            logger.error(f"Error creando notificación: {str(e)}")
+            logger.error("Error creando notificación: %s", e)
             return None
     
     @staticmethod
@@ -95,10 +95,10 @@ class NotificationService:
             notificacion.estado = 'leida'
             notificacion.fecha_lectura = timezone.now()
             notificacion.save()
-            logger.info(f"Notificación {notificacion_id} marcada como leída")
+            logger.info("Notificación %s marcada como leída", notificacion_id)
             return True
         except Notificacion.DoesNotExist:
-            logger.warning(f"Notificación {notificacion_id} no encontrada para usuario {usuario.id}")
+            logger.warning("Notificación %s no encontrada para usuario %s", notificacion_id, usuario.id)
             return False
     
     @staticmethod
@@ -168,12 +168,12 @@ class NotificationProcessor:
             notificacion.fecha_envio = timezone.now()
             notificacion.save()
             
-            logger.info(f"Notificación {notificacion.id} procesada correctamente")
+            logger.info("Notificación %s procesada correctamente", notificacion.id)
             
         except Exception as e:
             notificacion.estado = 'error'
             notificacion.save()
-            logger.error(f"Error procesando notificación {notificacion.id}: {str(e)}")
+            logger.error("Error procesando notificación %s: %s", notificacion.id, e)
 
 
 class EmailService:
@@ -217,10 +217,10 @@ class EmailService:
             notificacion.email_enviado = True
             notificacion.save()
             
-            logger.info(f"Email enviado para notificación {notificacion.id}")
+            logger.info("Email enviado para notificación %s", notificacion.id)
             
         except Exception as e:
-            logger.error(f"Error enviando email para notificación {notificacion.id}: {str(e)}")
+            logger.error("Error enviando email para notificación %s: %s", notificacion.id, str(e))
             raise
     
     @staticmethod
@@ -496,9 +496,9 @@ class ConfigurationNotificationService:
             try:
                 # Enviar email de confirmación directamente
                 EmailService.enviar_email_configuracion(usuario, mensaje_final)
-                logger.info(f"Email de confirmación de configuración enviado a {usuario.correo}")
+                logger.info("Email de confirmación de configuración enviado a %s", usuario.correo)
             except Exception as e:
-                logger.error(f"Error enviando email de configuración: {str(e)}")
+                logger.error("Error enviando email de configuración: %s", str(e))
     
     @staticmethod
     def enviar_email_configuracion(usuario, mensaje):

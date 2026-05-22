@@ -197,7 +197,7 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
         
     except Exception as e:
         print(f"❌ Error en notificación: {str(e)}")
-        logger.error(f"Error en notificación de movimiento: {str(e)}")
+        logger.error("Error en notificación de movimiento: %s", e)
     else:
         print("⚠️ Movimiento actualizado, no se creó notificación")
 
