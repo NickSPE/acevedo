@@ -76,7 +76,7 @@ class EditSubcuentaModal {
     
     const tipoLabel = tipoSubcuenta === 'personal' ? 'Personal' : 'Negocio';
     
-    overlay.innerHTML = `
+    const modalHTML = `
       <div class="edit-subcuenta-modal-backdrop"></div>
       <div class="edit-subcuenta-modal-container">
         <div class="edit-subcuenta-modal-header">
@@ -190,6 +190,8 @@ class EditSubcuentaModal {
       </div>
     `;
 
+    const cleanHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(modalHTML) : modalHTML;
+    overlay.innerHTML = cleanHTML;
     document.body.appendChild(overlay);
     this.modal = overlay;
 
@@ -261,12 +263,13 @@ class EditSubcuentaModal {
   showSuccess() {
     const alertDiv = document.createElement('div');
     alertDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-[10000] flex items-center gap-2';
-    alertDiv.innerHTML = `
+    const successHTML = `
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
       </svg>
       <span>Subcuenta actualizada exitosamente</span>
     `;
+    alertDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(successHTML) : successHTML;
     document.body.appendChild(alertDiv);
     
     setTimeout(() => {
@@ -280,12 +283,13 @@ class EditSubcuentaModal {
     const alertDiv = document.createElement('div');
     alertDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-[10000] flex items-center gap-2';
     const escapedMessage = this.escapeHTML(message);
-    alertDiv.innerHTML = `
+    const errorHTML = `
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
       </svg>
       <span>${escapedMessage}</span>
     `;
+    alertDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(errorHTML) : errorHTML;
     document.body.appendChild(alertDiv);
     
     setTimeout(() => alertDiv.remove(), 3000);

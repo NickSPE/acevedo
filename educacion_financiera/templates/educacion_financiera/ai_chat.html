@@ -187,7 +187,7 @@ function addMessage(content, isUser = false) {
   if (isUser) {
     messageDiv.className += ' justify-end';
     const escapedContent = escapeHTML(content);
-    messageDiv.innerHTML = `
+    const userHTML = `
       <div class="text-white p-4 rounded-lg shadow-sm max-w-md" style="background-color: #227C91;">
         <p class="text-sm">${escapedContent}</p>
       </div>
@@ -195,12 +195,13 @@ function addMessage(content, isUser = false) {
         <span class="text-white text-sm">👤</span>
       </div>
     `;
+    messageDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(userHTML) : userHTML;
   } else {
     // Formatear el contenido de la IA para mejor estructura
     const escapedContent = escapeHTML(content);
     const formattedContent = formatAIResponse(escapedContent);
     
-    messageDiv.innerHTML = `
+    const aiHTML = `
       <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
         <span class="text-white text-sm">🤖</span>
       </div>
@@ -208,6 +209,7 @@ function addMessage(content, isUser = false) {
         <div class="ai-response text-sm">${formattedContent}</div>
       </div>
     `;
+    messageDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(aiHTML) : aiHTML;
   }
   
   chatMessages.appendChild(messageDiv);
@@ -254,7 +256,7 @@ function showTyping() {
   const typingDiv = document.createElement('div');
   typingDiv.id = 'typing-indicator';
   typingDiv.className = 'flex gap-3';
-  typingDiv.innerHTML = `
+  const typingHTML = `
     <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
       <span class="text-white text-sm">🤖</span>
     </div>
@@ -266,6 +268,7 @@ function showTyping() {
       </div>
     </div>
   `;
+  typingDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(typingHTML) : typingHTML;
   chatMessages.appendChild(typingDiv);
   scrollToBottom();
 }

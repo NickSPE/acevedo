@@ -118,7 +118,8 @@ class TransferModal {
         const modal = document.createElement('div');
         modal.id = this.modalId;
         modal.className = 'transfer-modal-overlay';
-        modal.innerHTML = this.getModalHTML();
+        const cleanHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(this.getModalHTML()) : this.getModalHTML();
+        modal.innerHTML = cleanHTML;
         return modal;
     }
 
@@ -331,7 +332,7 @@ class TransferModal {
         const alert = document.getElementById('transfer-form-alert');
         alert.className = 'transfer-form-alert transfer-form-alert-success';
         const escapedMessage = this.escapeHTML(message);
-        alert.innerHTML = `
+        const successHTML = `
             <div class="transfer-alert-content">
                 <svg class="transfer-alert-icon" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
@@ -339,6 +340,7 @@ class TransferModal {
                 <span>${escapedMessage}</span>
             </div>
         `;
+        alert.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(successHTML) : successHTML;
         alert.style.display = 'block';
     }
 
@@ -349,7 +351,7 @@ class TransferModal {
         const alert = document.getElementById('transfer-form-alert');
         alert.className = 'transfer-form-alert transfer-form-alert-danger';
         const escapedMessage = this.escapeHTML(message);
-        alert.innerHTML = `
+        const errorHTML = `
             <div class="transfer-alert-content">
                 <svg class="transfer-alert-icon" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
@@ -357,6 +359,7 @@ class TransferModal {
                 <span>${escapedMessage}</span>
             </div>
         `;
+        alert.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(errorHTML) : errorHTML;
         alert.style.display = 'block';
     }
 
