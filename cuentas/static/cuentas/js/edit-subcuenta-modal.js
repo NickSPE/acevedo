@@ -14,7 +14,7 @@ class EditSubcuentaModal {
     this.init();
   }
 
-  escapeHTML(str) {
+  static escapeHTML(str) {
     if (!str) return '';
     return str.replace(/[&<>'"]/g, 
       tag => ({
@@ -27,7 +27,7 @@ class EditSubcuentaModal {
     );
   }
 
-  getCSRFToken() {
+  static getCSRFToken() {
     const name = 'csrftoken';
     if (document.cookie && document.cookie !== '') {
       const cookie = document.cookie

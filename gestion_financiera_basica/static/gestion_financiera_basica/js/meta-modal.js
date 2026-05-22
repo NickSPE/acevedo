@@ -11,7 +11,7 @@ class MetaModal {
     this.init();
   }
 
-  getCSRFToken() {
+  static getCSRFToken() {
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
       const [name, value] = cookie.trim().split('=');
@@ -267,7 +267,7 @@ class MetaModal {
     }
   }
 
-  getSafeRedirectUrl(url, fallback) {
+  static getSafeRedirectUrl(url, fallback) {
     if (!url) return fallback;
     try {
       if (url.startsWith('http://') || url.startsWith('https://')) {
