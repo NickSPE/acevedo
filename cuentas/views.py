@@ -48,7 +48,7 @@ from .helpers import (
     validar_pin_cambio
 )
 
-""" Views App CUENTAS """
+# Views App CUENTAS
 
 # Función de detección automática eliminada - ahora el usuario selecciona manualmente
 

@@ -7,7 +7,7 @@ from .models import CursoExterno, FavoritoCurso
 import json
 import google.generativeai as genai
 
-""" Views App EDUCACION_FINANCIERA """
+# Views App EDUCACION_FINANCIERA
 @login_required
 @fast_access_pin_verified
 def calculators(request):
@@ -32,7 +32,6 @@ def calculators(request):
                 
                 total_contributed = initial + (monthly * months)
                 interest_earned = future_value - total_contributed
-                
                 result = {
                     'future_value': round(future_value, 2),
                     'total_contributed': round(total_contributed, 2),
