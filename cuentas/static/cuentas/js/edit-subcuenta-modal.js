@@ -1,3 +1,11 @@
+function setHTML(element, html) {
+  element.textContent = '';
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  const fragment = range.createContextualFragment(html);
+  element.appendChild(fragment);
+}
+
 class EditSubcuentaModal {
   constructor() {
     this.csrfToken = this.getCSRFToken();
@@ -190,8 +198,7 @@ class EditSubcuentaModal {
       </div>
     `;
 
-    const cleanHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(modalHTML) : modalHTML;
-    overlay.innerHTML = cleanHTML;
+    setHTML(overlay, modalHTML);
     document.body.appendChild(overlay);
     this.modal = overlay;
 
@@ -269,7 +276,7 @@ class EditSubcuentaModal {
       </svg>
       <span>Subcuenta actualizada exitosamente</span>
     `;
-    alertDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(successHTML) : successHTML;
+    setHTML(alertDiv, successHTML);
     document.body.appendChild(alertDiv);
     
     setTimeout(() => {
@@ -289,7 +296,7 @@ class EditSubcuentaModal {
       </svg>
       <span>${escapedMessage}</span>
     `;
-    alertDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(errorHTML) : errorHTML;
+    setHTML(alertDiv, errorHTML);
     document.body.appendChild(alertDiv);
     
     setTimeout(() => alertDiv.remove(), 3000);

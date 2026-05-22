@@ -1,8 +1,10 @@
-/**
- * Transfer Modal - Ley de Figura Fondo
- * Maneja modales AJAX de transferencia entre subcuentas
- * Implementación Senior: sin dependencies externas, vanilla JS
- */
+function setHTML(element, html) {
+  element.textContent = '';
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  const fragment = range.createContextualFragment(html);
+  element.appendChild(fragment);
+}
 
 class TransferModal {
     constructor(options = {}) {
@@ -118,8 +120,8 @@ class TransferModal {
         const modal = document.createElement('div');
         modal.id = this.modalId;
         modal.className = 'transfer-modal-overlay';
-        const cleanHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(this.getModalHTML()) : this.getModalHTML();
-        modal.innerHTML = cleanHTML;
+        modal.textContent = '';
+        modal.insertAdjacentHTML('beforeend', this.getModalHTML());
         return modal;
     }
 
@@ -340,7 +342,7 @@ class TransferModal {
                 <span>${escapedMessage}</span>
             </div>
         `;
-        alert.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(successHTML) : successHTML;
+        setHTML(alert, successHTML);
         alert.style.display = 'block';
     }
 
@@ -359,7 +361,7 @@ class TransferModal {
                 <span>${escapedMessage}</span>
             </div>
         `;
-        alert.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(errorHTML) : errorHTML;
+        setHTML(alert, errorHTML);
         alert.style.display = 'block';
     }
 

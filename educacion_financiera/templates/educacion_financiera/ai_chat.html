@@ -179,6 +179,14 @@ function escapeHTML(str) {
   );
 }
 
+function setHTML(element, html) {
+  element.textContent = '';
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  const fragment = range.createContextualFragment(html);
+  element.appendChild(fragment);
+}
+
 // Add message to chat
 function addMessage(content, isUser = false) {
   const messageDiv = document.createElement('div');
@@ -195,7 +203,7 @@ function addMessage(content, isUser = false) {
         <span class="text-white text-sm">👤</span>
       </div>
     `;
-    messageDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(userHTML) : userHTML;
+    setHTML(messageDiv, userHTML);
   } else {
     // Formatear el contenido de la IA para mejor estructura
     const escapedContent = escapeHTML(content);
@@ -209,7 +217,7 @@ function addMessage(content, isUser = false) {
         <div class="ai-response text-sm">${formattedContent}</div>
       </div>
     `;
-    messageDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(aiHTML) : aiHTML;
+    setHTML(messageDiv, aiHTML);
   }
   
   chatMessages.appendChild(messageDiv);
@@ -268,7 +276,7 @@ function showTyping() {
       </div>
     </div>
   `;
-  typingDiv.innerHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(typingHTML) : typingHTML;
+  setHTML(typingDiv, typingHTML);
   chatMessages.appendChild(typingDiv);
   scrollToBottom();
 }

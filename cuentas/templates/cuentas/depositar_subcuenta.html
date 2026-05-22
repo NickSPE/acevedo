@@ -123,7 +123,7 @@
           <span class="text-sm font-semibold text-[#227C91]">{{ subcuenta.progreso_meta|floatformat:1 }}%</span>
         </div>
         <div class="w-full bg-[#E5E1DD] rounded-full h-2">
-          <div class="bg-[#227C91] h-2 rounded-full transition-all" style="width: {{ subcuenta.progreso_meta }}%"></div>
+          <div class="bg-[#227C91] h-2 rounded-full transition-all" style="--progress-width: {{ subcuenta.progreso_meta }}%; width: var(--progress-width, 0%);"></div>
         </div>
         <p class="text-xs text-[#736B5E] mt-1">
           {% format_money subcuenta.saldo user %} de {% format_money subcuenta.meta_objetivo user %}

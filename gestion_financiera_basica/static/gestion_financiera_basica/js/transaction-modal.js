@@ -82,8 +82,8 @@ class TransactionModal {
   createModal() {
     const overlay = document.createElement('div');
     overlay.className = 'transaction-modal-overlay';
-    const cleanHTML = typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(this.getModalHTML()) : this.getModalHTML();
-    overlay.innerHTML = cleanHTML;
+    overlay.textContent = '';
+    overlay.insertAdjacentHTML('beforeend', this.getModalHTML());
     document.body.appendChild(overlay);
     this.modal = overlay;
   }

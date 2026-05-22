@@ -1175,19 +1175,17 @@ def exportar_reporte_excel(reporte, datos):
     wb.save(response)
     return response
 
+def safe_csv_cell(value):
+    if value is None:
+        return ""
+    value = str(value)
+    if value.startswith(('=', '+', '-', '@')):
+        value = "'" + value
+    return value
+
 def exportar_csv(reporte, datos):
     """Exporta reporte a CSV"""
     import csv
-    
-    def safe_csv_cell(value):
-        if value is None:
-            return ""
-        val_str = str(value)
-        # Prevenir CSV Injection / Command Injection anteponiendo una comilla simple
-        # si empieza con alguno de los caracteres de fórmula
-        if val_str and val_str[0] in ('=', '+', '-', '@', '\t', '\r'):
-            return f"'{val_str}"
-        return val_str
     
     response = HttpResponse(content_type='text/csv')
     tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')

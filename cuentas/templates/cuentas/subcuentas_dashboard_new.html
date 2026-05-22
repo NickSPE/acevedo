@@ -227,6 +227,7 @@
         height: 100%;
         border-radius: 4px;
         transition: width 0.3s ease;
+        width: var(--progress-width, 0%);
     }
     
     .balance-meta {
@@ -573,7 +574,7 @@
                         <span class="balance-amount">{% format_money subcuenta.saldo user %}</span>
                         {% if subcuenta.meta_objetivo %}
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {{ subcuenta.progreso_meta }}%"></div>
+                            <div class="progress-fill" style="--progress-width: {{ subcuenta.progreso_meta }}%"></div>
                         </div>
                         <span class="balance-meta">Meta: {% format_money subcuenta.meta_objetivo user %} ({{ subcuenta.progreso_meta|floatformat:1 }}%)</span>
                         {% endif %}
@@ -627,7 +628,7 @@
                                 <span class="balance-amount">{% format_money subcuenta.saldo user %}</span>
                                 {% if subcuenta.meta_objetivo %}
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: {{ subcuenta.progreso_meta }}%"></div>
+                                    <div class="progress-fill" style="--progress-width: {{ subcuenta.progreso_meta }}%"></div>
                                 </div>
                                 <span class="balance-meta">Meta: {% format_money subcuenta.meta_objetivo user %} ({{ subcuenta.progreso_meta|floatformat:1 }}%)</span>
                                 {% endif %}
@@ -834,6 +835,14 @@
 </div>
 
 <script>
+function setHTML(element, html) {
+    element.textContent = '';
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    const fragment = range.createContextualFragment(html);
+    element.appendChild(fragment);
+}
+
 // Funciones para manejar modales
 function openModal(modalId) {
     document.getElementById(modalId).classList.add('show');
@@ -876,7 +885,7 @@ function openDepositModal(subcuentaId, subcuentaName, tipoSubcuenta) {
         montoLabel.textContent = 'Monto del ingreso';
         montoInput.placeholder = 'Ingreso recibido';
         descripcionInput.placeholder = 'Fuente del ingreso (venta, servicio, etc.)';
-        transferInfo.innerHTML = `
+        const businessHTML = `
             <div class="transfer-row">
                 <span>Tipo:</span>
                 <span>💰 Ingreso al Negocio</span>
@@ -890,13 +899,14 @@ function openDepositModal(subcuentaId, subcuentaName, tipoSubcuenta) {
                 <span>💼 Dinero externo (ventas, servicios, etc.)</span>
             </div>
         `;
+        setHTML(transferInfo, businessHTML);
     } else {
         // Para subcuentas personales - desde cuenta principal
         modalTitle.textContent = 'Depositar en Subcuenta';
         montoLabel.textContent = 'Monto a depositar';
         montoInput.placeholder = '0.00';
         descripcionInput.placeholder = 'Motivo del depósito';
-        transferInfo.innerHTML = `
+        const personalHTML = `
             <div class="transfer-row">
                 <span>Desde:</span>
                 <span>🏦 Cuenta Principal</span>
@@ -910,6 +920,7 @@ function openDepositModal(subcuentaId, subcuentaName, tipoSubcuenta) {
                 <span>{% if cuenta_principal %}{% format_money cuenta_principal.saldo_disponible user %}{% else %}$0.00{% endif %}</span>
             </div>
         `;
+        setHTML(transferInfo, personalHTML);
     }
     
     openModal('depositModal');
