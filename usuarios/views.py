@@ -75,12 +75,11 @@ def _handle_send_verification(request):
             'success': False,
             'error': 'Correo y nombres son requeridos'
         })
-
-    if Usuario.objects.filter(correo=correo).exists():
-        return JsonResponse({
-            'success': False,
-            'error': 'El correo ya está registrado'
-        })
+if Usuario.objects.filter(correo=correo).exists():
+    return JsonResponse({
+        'success': False,
+        'error': 'El correo ya está registrado'
+    })
 
 
 def Register(request):
@@ -97,35 +96,34 @@ def Register(request):
     print(f"🔍 DEBUG REGISTER: Datos POST: {list(request.POST.keys())}")
 
     if action == 'send_verification':
-        return _handle_send_verification(request)
-            
-            # Generar y enviar PIN
-            PIN = Generar_Pin()
-            request.session['pin_verification'] = PIN
-            request.session['email_for_verification'] = correo
-            
-            print(f"🔍 DEBUG: PIN generado para verificación: {PIN}")
-            print(f"🔍 DEBUG: Enviando PIN a: {correo}")
-            
-            try:
-                result = send_mail(
-                    subject='Código de verificación - FinGest',
-                    message=f'Hola {nombres},\n\nTu código de verificación para registrarte en FinGest es: {PIN}\n\nEste código expira en 10 minutos.\n\n¡Gracias por unirte a FinGest!',        
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[correo],
-                    fail_silently=False,
-                )
-                print(f"🔍 DEBUG: Resultado del envío de verificación: {result}")
-                
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Código enviado exitosamente'
-                })
-                
-            except Exception as e:
-                print(f"❌ ERROR al enviar email de verificación: {str(e)}")
-                return JsonResponse({
-                    'success': False,
+        # Generar y enviar PIN
+        PIN = Generar_Pin()
+        request.session['pin_verification'] = PIN
+        request.session['email_for_verification'] = correo
+
+        print(f"🔍 DEBUG: PIN generado para verificación: {PIN}")
+        print(f"🔍 DEBUG: Enviando PIN a: {correo}")
+
+        try:
+            result = send_mail(
+                subject='Código de verificación - FinGest',
+                message=f'Hola {nombres},\n\nTu código de verificación para registrarte en FinGest es: {PIN}\n\nEste código expira en 10 minutos.\n\n¡Gracias por unirte a FinGest!',        
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[correo],
+                fail_silently=False,
+            )
+            print(f"🔍 DEBUG: Resultado del envío de verificación: {result}")
+
+            return JsonResponse({
+                'success': True,
+                'message': 'Código enviado exitosamente'
+            })
+
+        except Exception as e:
+            print(f"❌ ERROR al enviar email de verificación: {str(e)}")
+            return JsonResponse({
+                'success': False
+            })
                     'error': f'Error al enviar el código: {str(e)}'
                 })
         
