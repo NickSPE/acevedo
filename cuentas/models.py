@@ -11,7 +11,7 @@ class Moneda(models.Model):
 
 class Cuenta(models.Model):
     nombre = models.CharField(max_length=50)
-    descripcion = models.CharField(max_length=300)
+    descripcion = models.TextField()
     saldo_cuenta = models.DecimalField(max_digits=15, decimal_places=2)
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
 
@@ -82,7 +82,7 @@ class SubCuenta(models.Model):
     }
 
     nombre = models.CharField(max_length=50, help_text="Nombre descriptivo de la subcuenta")
-    descripcion = models.CharField(max_length=300, blank=True, default='', help_text="Propósito y objetivo de esta subcuenta")
+    descripcion = models.TextField(blank=True, default='', help_text="Propósito y objetivo de esta subcuenta")
     saldo = models.DecimalField(max_digits=15, decimal_places=2, default=0, help_text="Saldo actual en la subcuenta")
     tipo = models.CharField(max_length=30, choices=TIPOS_SUBCUENTA, default='otros', help_text="Categoría de la subcuenta")
     color = models.CharField(max_length=7, default='#3B82F6', help_text="Color para identificación visual")
@@ -209,7 +209,7 @@ class TransferenciaSubCuenta(models.Model):
     subcuenta_origen = models.ForeignKey(SubCuenta, on_delete=models.CASCADE, related_name='transferencias_enviadas')
     subcuenta_destino = models.ForeignKey(SubCuenta, on_delete=models.CASCADE, related_name='transferencias_recibidas')
     monto = models.DecimalField(max_digits=15, decimal_places=2)
-    descripcion = models.CharField(max_length=300, blank=True, default='')
+    descripcion = models.TextField(blank=True, default='')
     fecha_transferencia = models.DateTimeField(auto_now_add=True)
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
 
@@ -231,7 +231,7 @@ class TransferenciaCuentaPrincipal(models.Model):
     cuenta_destino = models.ForeignKey(Cuenta, on_delete=models.CASCADE, related_name='transferencias_desde_subcuentas')
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     tipo = models.CharField(max_length=20, choices=TIPO_TRANSFERENCIA, default='deposito')
-    descripcion = models.CharField(max_length=300, blank=True, default='')
+    descripcion = models.TextField(blank=True, default='')
     fecha_transferencia = models.DateTimeField(auto_now_add=True)
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
 
