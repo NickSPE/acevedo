@@ -1046,33 +1046,36 @@ def exportar_pdf(reporte, datos):
         ('TOPPADDING', (0, 0), (-1, -1), 8),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
     ]))
-    
+
     story.append(footer_table)
-    
+
     # Marca de agua de seguridad
     story.append(Spacer(1, 10))
     security_style = ParagraphStyle(
-       'SecurityStyle',
-       parent=styles['Normal'],
-       fontSize=8,
-       textColor=colors.HexColor('#95A5A6'),
-       alignment=TA_CENTER,
-       fontName='Helvetica'
-   )
-   story.append(Paragraph("Documento generado con tecnología segura FinGest | ID: " + 
-                         f"FG-{reporte.id}-{reporte.fecha_creacion.strftime('%Y%m%d%H%M')}", security_style))
-   
-   doc.build(story)
-   buffer.seek(0)
-   
-   # Nombre de archivo súper descriptivo
-   tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
-   fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
-   filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.pdf"
-   
-   response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
-   response['Content-Disposition'] = f'attachment; filename="{filename}"'
-   return response
+        'SecurityStyle',
+        parent=styles['Normal'],
+        fontSize=8,
+        textColor=colors.HexColor('#95A5A6'),
+        alignment=TA_CENTER,
+        fontName='Helvetica'
+    )
+    story.append(Paragraph(
+        "Documento generado con tecnología segura FinGest | ID: " +
+        f"FG-{reporte.id}-{reporte.fecha_creacion.strftime('%Y%m%d%H%M')}",
+        security_style
+    ))
+
+    doc.build(story)
+    buffer.seek(0)
+
+    # Nombre de archivo súper descriptivo
+    tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
+    fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
+    filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.pdf"
+
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
 
 def exportar_reporte_excel(reporte, datos):
     """Exporta reporte a Excel con formato ultra profesional y limpio"""
