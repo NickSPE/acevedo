@@ -11,7 +11,7 @@ class SubcuentaModal {
     this.init();
   }
 
-  getCSRFToken() {
+  static getCSRFToken() {
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
       const [name, value] = cookie.trim().split('=');
@@ -297,23 +297,31 @@ class SubcuentaModal {
     }
   }
 
-  getSafeRedirectUrl(url, fallback) {
+  static getSafeRedirectUrl(url, fallback) {
     if (!url) return fallback;
-    try {
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        const parsedUrl = new URL(url);
-        if (parsedUrl.origin === window.location.origin) {
-          return url;
+    const handlers = [
+      {
+        match: u => u.startsWith('http://') || u.startsWith('https://'),
+        handle: u => {
+          const parsedUrl = new URL(u);
+          return parsedUrl.origin === window.location.origin ? u : fallback;
         }
-        return fallback;
+      },
+      {
+        match: u => u.startsWith('/') && !u.startsWith('//'),
+        handle: u => u
       }
-      if (url.startsWith('/') && !url.startsWith('//')) {
-        return url;
+    ];
+    try {
+      for (const { match, handle } of handlers) {
+        if (match(url)) {
+          return handle(url);
+        }
       }
-      return fallback;
     } catch (e) {
       return fallback;
     }
+    return fallback;
   }
 
   showSuccess(message) {

@@ -11,7 +11,7 @@ class MetaModal {
     this.init();
   }
 
-  getCSRFToken() {
+  static getCSRFToken() {
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
       const [name, value] = cookie.trim().split('=');
@@ -267,20 +267,18 @@ class MetaModal {
     }
   }
 
-  getSafeRedirectUrl(url, fallback) {
-    if (!url) return fallback;
-    try {
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        const parsedUrl = new URL(url);
-        if (parsedUrl.origin === window.location.origin) {
-          return url;
-        }
-        return fallback;
-      }
-      if (url.startsWith('/') && !url.startsWith('//')) {
-        return url;
-      }
+  static getSafeRedirectUrl(url, fallback) {
+    if (!url) {
       return fallback;
+    }
+    try {
+      const checks = {
+        'http://': u => new URL(u).origin === window.location.origin,
+        'https://': u => new URL(u).origin === window.location.origin,
+        '/': u => !u.startsWith('//')
+      };
+      const match = Object.keys(checks).find(prefix => url.startsWith(prefix));
+      return match && checks[match](url) ? url : fallback;
     } catch (e) {
       return fallback;
     }

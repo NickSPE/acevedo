@@ -11,7 +11,7 @@ class TransactionModal {
     this.init();
   }
 
-  getCSRFToken() {
+  static getCSRFToken() {
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
       const [name, value] = cookie.trim().split('=');
@@ -20,7 +20,7 @@ class TransactionModal {
     return '';
   }
 
-  escapeHTML(str) {
+  static escapeHTML(str) {
     if (!str) return '';
     return str.replace(/[&<>'"]/g, 
       tag => ({
@@ -321,20 +321,24 @@ class TransactionModal {
     }
   }
 
-  getSafeRedirectUrl(url, fallback) {
+  static getSafeRedirectUrl(url, fallback) {
     if (!url) return fallback;
+    const handlers = {
+      'http://': (u) => {
+        const parsedUrl = new URL(u);
+        return parsedUrl.origin === window.location.origin ? u : fallback;
+      },
+      'https://': (u) => {
+        const parsedUrl = new URL(u);
+        return parsedUrl.origin === window.location.origin ? u : fallback;
+      },
+      '/': (u) => (!u.startsWith('//') ? u : fallback)
+    };
+    const entry = Object.entries(handlers).find(([prefix]) => url.startsWith(prefix));
+    if (!entry) return fallback;
+    const handler = entry[1];
     try {
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        const parsedUrl = new URL(url);
-        if (parsedUrl.origin === window.location.origin) {
-          return url;
-        }
-        return fallback;
-      }
-      if (url.startsWith('/') && !url.startsWith('//')) {
-        return url;
-      }
-      return fallback;
+      return handler(url);
     } catch (e) {
       return fallback;
     }

@@ -20,7 +20,7 @@ class TransferModal {
     /**
      * Extrae token CSRF de cookies
      */
-    getCsrfToken() {
+    static getCsrfToken() {
         const name = 'csrftoken';
         let cookieValue = null;
         
@@ -314,7 +314,7 @@ class TransferModal {
     /**
      * Escapa HTML para prevenir XSS
      */
-    escapeHTML(str) {
+    static escapeHTML(str) {
         if (!str) return '';
         return str.replace(/[&<>'"]/g, 
             tag => ({
@@ -368,7 +368,7 @@ class TransferModal {
     /**
      * Muestra errores de campos específicos
      */
-    showFieldErrors(errors) {
+    static showFieldErrors(errors) {
         for (const [field, message] of Object.entries(errors)) {
             const errorElement = document.getElementById(`error-${field}`);
             if (errorElement) {
@@ -381,7 +381,7 @@ class TransferModal {
     /**
      * Limpia mensajes de error
      */
-    clearErrors() {
+    static clearErrors() {
         document.querySelectorAll('.transfer-form-error').forEach(el => {
             el.textContent = '';
             el.style.display = 'none';
