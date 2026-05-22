@@ -268,19 +268,17 @@ class MetaModal {
   }
 
   static getSafeRedirectUrl(url, fallback) {
-    if (!url) return fallback;
+    if (!url) {
+      return fallback;
+    }
     try {
       const checks = {
         'http://': u => new URL(u).origin === window.location.origin,
         'https://': u => new URL(u).origin === window.location.origin,
         '/': u => !u.startsWith('//')
       };
-      for (const prefix in checks) {
-        if (url.startsWith(prefix)) {
-          return checks[prefix](url) ? url : fallback;
-        }
-      }
-      return fallback;
+      const match = Object.keys(checks).find(prefix => url.startsWith(prefix));
+      return match && checks[match](url) ? url : fallback;
     } catch (e) {
       return fallback;
     }
