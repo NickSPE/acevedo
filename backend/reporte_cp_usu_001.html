@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CP-AUTH-004 - Acceso Rápido con PIN</title>
+    <title>CP-USU-001 - Registro de Usuario Exitoso</title>
     <style>
         * {
             margin: 0;
@@ -196,15 +196,15 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>CP-AUTH-004</h1>
-            <p>Acceso Rápido con PIN</p>
+            <h1>CP-USU-001</h1>
+            <p>Registro de Usuario Exitoso</p>
         </div>
         
         <div class="content">
             <div class="info-grid">
                 <div class="info-card">
                     <label>Prioridad</label>
-                    <value><span class="badge badge-critica">Alta</span></value>
+                    <value><span class="badge badge-critica">Crítica</span></value>
                 </div>
                 <div class="info-card">
                     <label>Nivel de Prueba</label>
@@ -212,7 +212,7 @@
                 </div>
                 <div class="info-card">
                     <label>Fecha Ejecución</label>
-                    <value>21/05/2026 22:16:36</value>
+                    <value>21/05/2026 22:22:04</value>
                 </div>
                 <div class="info-card">
                     <label>Estado</label>
@@ -221,7 +221,7 @@
             </div>
             
             <h2 class="section-title">📝 Descripción</h2>
-            <div class="description">Valida el mecanismo alternativo de autenticación rápida mediante código PIN de cuatro dígitos.</div>
+            <div class="description">El presente caso de prueba valida el proceso completo de registro de un usuario nuevo en el sistema FinGest.</div>
             
             <h2 class="section-title">📥 Datos de Entrada</h2>
             <table class="data-table">
@@ -233,16 +233,20 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>PIN</strong></td>
-                        <td>••••</td>
+                        <td><strong>Email</strong></td>
+                        <td>jcano@empresa.com</td>
                     </tr>
                     <tr>
-                        <td><strong>Usuario</strong></td>
-                        <td>usuario_pin@test.com</td>
+                        <td><strong>Nombres</strong></td>
+                        <td>Juan</td>
                     </tr>
                     <tr>
-                        <td><strong>Tipo de autenticación</strong></td>
-                        <td>PIN (Acceso Rápido)</td>
+                        <td><strong>Apellido Paterno</strong></td>
+                        <td>Cano</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Contraseña</strong></td>
+                        <td>••••••••••••••</td>
                     </tr>
                 </tbody>
             </table>
@@ -257,24 +261,24 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>PIN validado</strong></td>
+                        <td><strong>Usuario creado</strong></td>
                         <td><span class="check-icon">✅ Sí</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Sesión creada</strong></td>
+                        <td><strong>Contraseña hasheada</strong></td>
                         <td><span class="check-icon">✅ Sí</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Tiempo de respuesta</strong></td>
-                        <td><span class="check-icon">< 1 segundo</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Método de acceso</strong></td>
-                        <td><span class="check-icon">✅ PIN Login</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Dashboard accesible</strong></td>
+                        <td><strong>Datos almacenados correctamente</strong></td>
                         <td><span class="check-icon">✅ Sí</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hash</strong></td>
+                        <td><span class="check-icon">pbkdf2_sha256$...</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Estado BD</strong></td>
+                        <td><span class="check-icon">✅ OK</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -282,7 +286,7 @@
         
         <div class="footer">
             <span class="footer-text">Sistema FinGest - Módulo Usuarios - IEEE 829</span>
-            <span class="footer-text">Generado: 21/05/2026 22:16:36</span>
+            <span class="footer-text">Generado: 21/05/2026 22:22:04</span>
         </div>
     </div>
 </body>

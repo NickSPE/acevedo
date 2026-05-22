@@ -38,6 +38,13 @@ google-generativeai>=0.8.5  # Google Gemini AI (usado en educacion_financiera)
 # whitenoise>=6.8.2
 
 # ===========================
+# ARQUITECTURA DESACOPLADA (DRF, CORS, JWT)
+# ===========================
+djangorestframework>=3.15.2
+django-cors-headers>=4.7.0
+djangorestframework-simplejwt>=5.4.0
+
+# ===========================
 # DEPENDENCIAS PYTHON ESTÁNDAR
 # (Ya incluidas en Python - no instalar)
 # ===========================

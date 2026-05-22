@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CP-AUTH-004 - Acceso Rápido con PIN</title>
+    <title>CP-USU-002 - Registración con Email Duplicado</title>
     <style>
         * {
             margin: 0;
@@ -196,8 +196,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>CP-AUTH-004</h1>
-            <p>Acceso Rápido con PIN</p>
+            <h1>CP-USU-002</h1>
+            <p>Registración con Email Duplicado</p>
         </div>
         
         <div class="content">
@@ -212,7 +212,7 @@
                 </div>
                 <div class="info-card">
                     <label>Fecha Ejecución</label>
-                    <value>21/05/2026 22:16:36</value>
+                    <value>21/05/2026 22:22:05</value>
                 </div>
                 <div class="info-card">
                     <label>Estado</label>
@@ -221,7 +221,7 @@
             </div>
             
             <h2 class="section-title">📝 Descripción</h2>
-            <div class="description">Valida el mecanismo alternativo de autenticación rápida mediante código PIN de cuatro dígitos.</div>
+            <div class="description">Valida el manejo de errores cuando se intenta registrar un usuario con email duplicado.</div>
             
             <h2 class="section-title">📥 Datos de Entrada</h2>
             <table class="data-table">
@@ -233,16 +233,20 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>PIN</strong></td>
-                        <td>••••</td>
+                        <td><strong>Email (duplicado)</strong></td>
+                        <td>admin@test.com</td>
                     </tr>
                     <tr>
-                        <td><strong>Usuario</strong></td>
-                        <td>usuario_pin@test.com</td>
+                        <td><strong>Nombres</strong></td>
+                        <td>Nuevo</td>
                     </tr>
                     <tr>
-                        <td><strong>Tipo de autenticación</strong></td>
-                        <td>PIN (Acceso Rápido)</td>
+                        <td><strong>Apellido Paterno</strong></td>
+                        <td>Usuario</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Teléfono</strong></td>
+                        <td>9999999998</td>
                     </tr>
                 </tbody>
             </table>
@@ -257,24 +261,24 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>PIN validado</strong></td>
+                        <td><strong>Registro rechazado</strong></td>
                         <td><span class="check-icon">✅ Sí</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Sesión creada</strong></td>
-                        <td><span class="check-icon">✅ Sí</span></td>
+                        <td><strong>Validación duplicidad</strong></td>
+                        <td><span class="check-icon">✅ Funcionando</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Tiempo de respuesta</strong></td>
-                        <td><span class="check-icon">< 1 segundo</span></td>
+                        <td><strong>Usuarios sin crear</strong></td>
+                        <td><span class="check-icon">✅ Correcto</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Método de acceso</strong></td>
-                        <td><span class="check-icon">✅ PIN Login</span></td>
+                        <td><strong>Mensaje de error</strong></td>
+                        <td><span class="check-icon">✅ Mostrado</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Dashboard accesible</strong></td>
-                        <td><span class="check-icon">✅ Sí</span></td>
+                        <td><strong>Integridad BD</strong></td>
+                        <td><span class="check-icon">✅ Mantenida</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -282,7 +286,7 @@
         
         <div class="footer">
             <span class="footer-text">Sistema FinGest - Módulo Usuarios - IEEE 829</span>
-            <span class="footer-text">Generado: 21/05/2026 22:16:36</span>
+            <span class="footer-text">Generado: 21/05/2026 22:22:05</span>
         </div>
     </div>
 </body>
