@@ -4,11 +4,18 @@ Reemplaza las comparaciones de texto plano por verificación segura con hash
 """
 
 import re
+import os
 from datetime import datetime
 
 def create_backup(file_path):
     """Crear backup de un archivo antes de modificarlo"""
-    backup_path = f"{file_path}.backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    allowed_files = {"view1.sql", "view2.sql", "views_pin.sql"}
+    base_name = os.path.basename(file_path)
+    if base_name not in allowed_files:
+        raise ValueError(f"File '{base_name}' is not permitted for backup")
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    backup_filename = f"{base_name}.backup_{timestamp}"
+    backup_path = os.path.join(os.path.dirname(file_path), backup_filename)
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
     with open(backup_path, 'w', encoding='utf-8') as f:
