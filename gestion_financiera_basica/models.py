@@ -64,7 +64,7 @@ class AporteMetaAhorro(models.Model):
     id_meta_ahorro = models.ForeignKey(MetaAhorro, on_delete=models.CASCADE, related_name='aportes')
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_aporte = models.DateTimeField(auto_now_add=True)
-    descripcion = models.CharField(max_length=300, blank=True, default='')
+    descripcion = models.TextField(blank=True, default='')
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
 
     def __str__(self):
@@ -108,7 +108,7 @@ class Movimiento(models.Model):
     categoria = models.CharField(max_length=25, blank=True, default='', help_text="Categoría del movimiento")
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_movimiento = models.DateTimeField()
-    descripcion = models.CharField(max_length=300, blank=True, default='')
+    descripcion = models.TextField(blank=True, default='')
     id_cuenta = models.ForeignKey("cuentas.Cuenta", on_delete=models.CASCADE)
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
 
