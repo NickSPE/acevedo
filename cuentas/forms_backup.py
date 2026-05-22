@@ -118,12 +118,11 @@ class SubCuentaForm(forms.ModelForm):
         self.fields['tipo'].help_text = 'Selecciona la categoría que mejor describe esta subcuenta personal'
         
         # Si estamos editando, establecer el tipo de subcuenta base actual
-        if self.instance and self.instance.pk:
-            if self.instance.es_negocio:
-                self.fields['tipo_subcuenta_base'].initial = 'negocio'
-                self.fields['tipo'].choices = tipos_negocio
-                self.fields['tipo'].label = 'Categoría de Negocio'
-                self.fields['tipo'].help_text = 'Selecciona la categoría comercial que mejor describe tu actividad'
+        if self.instance and self.instance.pk and self.instance.es_negocio:
+            self.fields['tipo_subcuenta_base'].initial = 'negocio'
+            self.fields['tipo'].choices = tipos_negocio
+            self.fields['tipo'].label = 'Categoría de Negocio'
+            self.fields['tipo'].help_text = 'Selecciona la categoría comercial que mejor describe tu actividad'
     
     def clean(self):
         cleaned_data = super().clean()
@@ -189,14 +188,12 @@ class TransferenciaSubCuentaForm(forms.ModelForm):
         monto = cleaned_data.get('monto')
         
         # Validar que las subcuentas sean diferentes
-        if subcuenta_origen and subcuenta_destino:
-            if subcuenta_origen == subcuenta_destino:
-                raise forms.ValidationError('No puedes transferir a la misma subcuenta.')
+        if subcuenta_origen and subcuenta_destino and subcuenta_origen == subcuenta_destino:
+            raise forms.ValidationError('No puedes transferir a la misma subcuenta.')
         
         # Validar que hay suficiente saldo en la subcuenta origen
-        if subcuenta_origen and monto:
-            if float(monto) > float(subcuenta_origen.saldo):
-                raise forms.ValidationError(f'Saldo insuficiente en {subcuenta_origen.nombre}. Saldo disponible: ${subcuenta_origen.saldo:.2f}')
+        if subcuenta_origen and monto and float(monto) > float(subcuenta_origen.saldo):
+            raise forms.ValidationError(f'Saldo insuficiente en {subcuenta_origen.nombre}. Saldo disponible: ${subcuenta_origen.saldo:.2f}')
         
         return cleaned_data
 
@@ -300,9 +297,8 @@ class RetiroSubCuentaForm(forms.Form):
         subcuenta = cleaned_data.get('subcuenta')
         monto = cleaned_data.get('monto')
         
-        if subcuenta and monto:
-            if float(monto) > float(subcuenta.saldo):
-                raise forms.ValidationError(f'Saldo insuficiente en {subcuenta.nombre}. Saldo disponible: ${subcuenta.saldo:.2f}')
+        if subcuenta and monto and float(monto) > float(subcuenta.saldo):
+            raise forms.ValidationError(f'Saldo insuficiente en {subcuenta.nombre}. Saldo disponible: ${subcuenta.saldo:.2f}')
         
         return cleaned_data
 
