@@ -311,6 +311,9 @@ def transactions(request):
 @login_required
 @fast_access_pin_verified
 def agregar_movimiento(request):
+    from django.http import JsonResponse
+    is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+    
     if request.method == 'POST':
         form = MovimientoForm(request.POST, user=request.user)
         
@@ -330,6 +333,12 @@ def agregar_movimiento(request):
                 cuenta = Cuenta.objects.get(id=id_cuenta.id)
             except Cuenta.DoesNotExist:
                 form.add_error('id_cuenta', 'La cuenta seleccionada no existe.')
+                if is_ajax:
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'La cuenta seleccionada no existe.',
+                        'errors': form.errors
+                    })
                 return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
 
             # Actualizar el saldo de la cuenta según el tipo de movimiento
@@ -348,6 +357,12 @@ def agregar_movimiento(request):
                 
                 if saldo_disponible < monto:
                     form.add_error('monto', f'Saldo insuficiente. Saldo disponible: ${saldo_disponible:.2f}. El saldo en subcuentas no puede usarse para gastos.')
+                    if is_ajax:
+                        return JsonResponse({
+                            'success': False,
+                            'message': 'Saldo insuficiente.',
+                            'errors': form.errors
+                        })
                     return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
                 
                 # Restar egreso del saldo de la cuenta
@@ -361,9 +376,20 @@ def agregar_movimiento(request):
             # 🔔 NOTA: Las notificaciones se envían automáticamente vía señales en signals.py
             print(f"✅ Movimiento guardado: {movimiento.tipo} - ${movimiento.monto} - {movimiento.nombre}")
 
+            if is_ajax:
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Transacción guardada exitosamente'
+                })
             # Redirigir a la vista de transacciones para ver el resultado
             return redirect('gestion_financiera_basica:transactions')
         else:
+            if is_ajax:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Error de validación en el formulario.',
+                    'errors': form.errors
+                })
             # Si el formulario no es válido, renderizar con errores
             # El template mostrará los errores específicos de cada campo
             return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
