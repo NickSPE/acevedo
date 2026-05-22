@@ -9,7 +9,7 @@ from django.shortcuts import redirect
 
 from cuentas.models import Moneda, Cuenta
 from .models import Usuario
-import random
+import secrets
 
 def check_onboarding_required(user):
     """Verificar si el usuario necesita completar onboarding"""
@@ -18,7 +18,7 @@ def check_onboarding_required(user):
     return False
 
 def Generar_Pin():
-    return str(random.randint(100000, 999999))  # 6 dígitos
+    return str(secrets.randbelow(900000) + 100000)  # 6 dígitos
 
 def Login(request):
     # print(f"🔍 DEBUG LOGIN: Método {request.method}, URL: {request.path}") - DESACTIVADO
@@ -489,8 +489,8 @@ def onboarding_view(request):
             'user': request.user
         })
     except Exception as e:
-        from django.http import HttpResponse
-        return HttpResponse(f"Vista de onboarding no disponible: {str(e)}", status=503)
+        from django.http import JsonResponse
+        return JsonResponse({"error": f"Vista de onboarding no disponible: {str(e)}"}, status=503)
 
 def complete_onboarding(request):
     """Completar onboarding y actualizar datos del usuario"""
@@ -602,8 +602,8 @@ def fix_incomplete_onboarding(request):
             'message': 'Sistema de corrección de onboarding no implementado aún'
         })
     except Exception as e:
-        from django.http import HttpResponse
-        return HttpResponse(f"Vista de corrección de onboarding no disponible: {str(e)}", status=503)
+        from django.http import JsonResponse
+        return JsonResponse({"error": f"Vista de corrección de onboarding no disponible: {str(e)}"}, status=503)
 
 def password_reset_request(request):
     """Solicitud de recuperación de contraseña - Paso 1: Enviar código"""
@@ -620,7 +620,7 @@ def password_reset_request(request):
                 print(f"🔍 DEBUG PASSWORD_RESET: Usuario encontrado: {usuario.nombres}")
                 
                 # Generar código de 6 dígitos
-                codigo_recuperacion = str(random.randint(100000, 999999))
+                codigo_recuperacion = str(secrets.randbelow(900000) + 100000)
                 print(f"🔍 DEBUG PASSWORD_RESET: Código generado: {codigo_recuperacion}")
                 
                 # Guardar código y expiración
@@ -702,7 +702,7 @@ def password_reset_request(request):
                 
         elif action == 'reset_password':
             codigo = request.POST.get('codigo', '').strip()
-            nueva_password = request.POST.get('nueva_password', '')
+            nueva_password = request.POST.get('nueva_password') or None
             
             try:
                 usuario = Usuario.objects.get(correo=email)
@@ -714,8 +714,11 @@ def password_reset_request(request):
                     usuario.codigo_expiracion and 
                     usuario.codigo_expiracion > timezone.now()):
                     
-                    # Cambiar contraseña
-                    usuario.set_password(nueva_password)
+                    # Cambiar contraseña de forma segura
+                    if nueva_password:
+                        usuario.set_password(nueva_password)
+                    else:
+                        usuario.set_unusable_password()
                     usuario.codigo_recuperacion = None
                     usuario.codigo_expiracion = None
                     usuario.save()
@@ -752,5 +755,5 @@ def test_view(request):
             'user': request.user if request.user.is_authenticated else None
         })
     except Exception as e:
-        from django.http import HttpResponse
-        return HttpResponse(f"Vista de prueba no disponible: {str(e)}", status=503)
+        from django.http import JsonResponse
+        return JsonResponse({"error": f"Vista de prueba no disponible: {str(e)}"}, status=503)

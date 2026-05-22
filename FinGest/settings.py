@@ -39,7 +39,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-06s9v4)er801*d#8^73_hlr8rzzy6%&h5*pr+u=^t4_*@wc12n"
+SECRET_KEY = config("SECRET_KEY", default="django-insecure-06s9v4)er801*d#8^73_hlr8rzzy6%&h5*pr+u=^t4_*@wc12n")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

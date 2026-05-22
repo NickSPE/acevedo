@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from core.decorators import fast_access_pin_verified
@@ -119,7 +120,9 @@ def generate_ai_explanation(result, calculation_type):
     """Genera explicación usando IA de Gemini"""
     try:
         # Configurar Gemini
-        genai.configure(api_key="AIzaSyDnWhyD5zCArmmEzmRkQH4zuB2NxgtuEHc")
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if api_key:
+            genai.configure(api_key=api_key)
         model = genai.GenerativeModel('gemini-pro')
         
         if calculation_type == 'savings':
@@ -224,8 +227,8 @@ def tips(request):
     
     # Clase para estructurar consejos
     class TipObject:
-        def __init__(self, categoria, titulo, descripcion, prioridad, es_ai=False, link_externo=None, id=None):
-            self.id = id or f"{categoria}_{hash(titulo) % 1000}"
+        def __init__(self, categoria, titulo, descripcion, prioridad, es_ai=False, link_externo=None, tip_id=None):
+            self.id = tip_id or f"{categoria}_{hash(titulo) % 1000}"
             self.categoria = categoria
             self.titulo = titulo
             self.descripcion = descripcion
@@ -307,7 +310,9 @@ def generate_ai_tips(categoria):
     """Genera consejos financieros usando Gemini AI"""
     try:
         # Configurar Gemini
-        genai.configure(api_key="AIzaSyDnWhyD5zCArmmEzmRkQH4zuB2NxgtuEHc")
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if api_key:
+            genai.configure(api_key=api_key)
         
         # Prompt para generar consejos
         prompt = f"""
@@ -413,7 +418,9 @@ def ai_chat(request):
             user_message = data.get('message', '')
             
             # Configurar Gemini sin restricciones
-            genai.configure(api_key="AIzaSyDnWhyD5zCArmmEzmRkQH4zuB2NxgtuEHc")
+            api_key = os.getenv("GOOGLE_API_KEY")
+            if api_key:
+                genai.configure(api_key=api_key)
             
             # Prompt básico sin restricciones
             prompt = f"""

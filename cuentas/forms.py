@@ -19,6 +19,12 @@ class SubCuentaForm(forms.ModelForm):
         help_text='Cantidad a transferir desde tu cuenta principal'
     )
     
+    tipo_subcuenta = forms.CharField(
+        required=False,
+        initial='personal',
+        widget=forms.HiddenInput()
+    )
+    
     class Meta:
         model = SubCuenta
         fields = ['nombre', 'descripcion', 'tipo']

@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from core.decorators import fast_access_pin_verified
 from decimal import Decimal
 import random
+import secrets
 
 def get_nombre_mes_espanol(fecha):
     """Convierte el nombre del mes al español"""
@@ -127,7 +128,7 @@ def generar_consejos_dinamicos(goals, promedio_progreso, metas_completadas):
     ]
     
     # Agregar un consejo motivacional aleatorio
-    consejos.append(random.choice(consejos_motivacionales))
+    consejos.append(secrets.SystemRandom().choice(consejos_motivacionales))
     
     return consejos
 

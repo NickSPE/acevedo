@@ -6,15 +6,28 @@ class EditSubcuentaModal {
     this.init();
   }
 
+  escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+      tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag)
+    );
+  }
+
   getCSRFToken() {
     const name = 'csrftoken';
     if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          return decodeURIComponent(cookie.substring(name.length + 1));
-        }
+      const cookie = document.cookie
+        .split(';')
+        .map(c => c.trim())
+        .find(c => c.startsWith(name + '='));
+      if (cookie) {
+        return decodeURIComponent(cookie.substring(name.length + 1));
       }
     }
     return null;
@@ -51,6 +64,11 @@ class EditSubcuentaModal {
     const overlay = document.createElement('div');
     overlay.className = 'edit-subcuenta-modal-overlay';
     
+    // Escapar inputs para prevenir XSS
+    const escapedNombre = this.escapeHTML(nombre);
+    const escapedSaldo = this.escapeHTML(saldo);
+    const escapedDescripcion = this.escapeHTML(descripcion);
+    
     // Icon based on tipo de subcuenta
     const iconPath = tipoSubcuenta === 'personal' 
       ? 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
@@ -79,7 +97,7 @@ class EditSubcuentaModal {
             </svg>
           </button>
         </div>
-
+ 
         <!-- Info de la subcuenta -->
         <div class="bg-[#F1F0EE] rounded-lg p-4 mb-4 flex items-center gap-3">
           <div class="w-12 h-12 bg-[#227C91] rounded-lg flex items-center justify-center flex-shrink-0">
@@ -88,12 +106,12 @@ class EditSubcuentaModal {
             </svg>
           </div>
           <div class="flex-1 min-w-0">
-            <h4 class="font-semibold text-[#605952] truncate">${nombre}</h4>
-            <p class="text-sm text-[#736B5E]">Saldo actual: <span class="font-semibold text-[#227C91]">${saldo}</span></p>
+            <h4 class="font-semibold text-[#605952] truncate">${escapedNombre}</h4>
+            <p class="text-sm text-[#736B5E]">Saldo actual: <span class="font-semibold text-[#227C91]">${escapedSaldo}</span></p>
           </div>
           <span class="px-3 py-1 rounded-full text-xs font-semibold ${tipoSubcuenta === 'personal' ? 'bg-[#227C91] bg-opacity-10 text-[#227C91]' : 'bg-[#605952] bg-opacity-10 text-[#605952]'}">${tipoLabel}</span>
         </div>
-
+ 
         <form id="editSubcuentaForm" class="edit-subcuenta-modal-body">
           <div class="space-y-4">
             <div>
@@ -104,11 +122,11 @@ class EditSubcuentaModal {
                 type="text" 
                 id="edit_nombre" 
                 name="nombre" 
-                value="${nombre}"
+                value="${escapedNombre}"
                 required
                 class="w-full px-4 py-2.5 border border-[#E5E1DD] rounded-lg focus:ring-2 focus:ring-[#227C91] focus:border-transparent outline-none text-[#605952]">
             </div>
-
+ 
             <div>
               <label for="edit_tipo" class="block text-sm font-medium text-[#605952] mb-1">
                 Categoría <span class="text-red-500">*</span>
@@ -141,7 +159,7 @@ class EditSubcuentaModal {
                 <option value="alquiler_propiedades" ${tipo === 'alquiler_propiedades' ? 'selected' : ''}>Alquiler de Propiedades</option>
               </select>
             </div>
-
+ 
             <div>
               <label for="edit_descripcion" class="block text-sm font-medium text-[#605952] mb-1">
                 Descripción (opcional)
@@ -150,10 +168,10 @@ class EditSubcuentaModal {
                 id="edit_descripcion" 
                 name="descripcion" 
                 rows="3"
-                class="w-full px-4 py-2.5 border border-[#E5E1DD] rounded-lg focus:ring-2 focus:ring-[#227C91] focus:border-transparent outline-none text-[#605952] resize-none">${descripcion}</textarea>
+                class="w-full px-4 py-2.5 border border-[#E5E1DD] rounded-lg focus:ring-2 focus:ring-[#227C91] focus:border-transparent outline-none text-[#605952] resize-none">${escapedDescripcion}</textarea>
             </div>
           </div>
-
+ 
           <div class="edit-subcuenta-modal-footer">
             <button type="button" class="edit-subcuenta-modal-btn-secondary">
               Cancelar
@@ -261,11 +279,12 @@ class EditSubcuentaModal {
   showError(message) {
     const alertDiv = document.createElement('div');
     alertDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-[10000] flex items-center gap-2';
+    const escapedMessage = this.escapeHTML(message);
     alertDiv.innerHTML = `
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
       </svg>
-      <span>${message}</span>
+      <span>${escapedMessage}</span>
     `;
     document.body.appendChild(alertDiv);
     

@@ -3,6 +3,8 @@ from django.utils import timezone
 from decimal import Decimal
 from datetime import timedelta
 import random
+import secrets
+crypto_random = secrets.SystemRandom()
 
 from usuarios.models import Usuario
 from cuentas.models import Cuenta, SubCuenta, Moneda
@@ -249,10 +251,10 @@ class Command(BaseCommand):
             fecha = hoy - timedelta(days=dias_atras)
             
             # 2-4 gastos por día
-            num_gastos = random.randint(1, 4)
+            num_gastos = crypto_random.randint(1, 4)
             for _ in range(num_gastos):
-                categoria, nombre_base, min_monto, max_monto = random.choice(gastos)
-                monto = Decimal(str(random.randint(min_monto, max_monto)))
+                categoria, nombre_base, min_monto, max_monto = crypto_random.choice(gastos)
+                monto = Decimal(str(crypto_random.randint(min_monto, max_monto)))
                 
                 Movimiento.objects.create(
                     nombre=nombre_base,
@@ -267,9 +269,9 @@ class Command(BaseCommand):
                 movimientos_creados += 1
             
             # 0-2 ingresos por día (menos frecuentes)
-            if random.random() < 0.3:  # 30% de probabilidad
-                categoria, nombre_base, min_monto, max_monto = random.choice(ingresos)
-                monto = Decimal(str(random.randint(min_monto, max_monto)))
+            if crypto_random.random() < 0.3:  # 30% de probabilidad
+                categoria, nombre_base, min_monto, max_monto = crypto_random.choice(ingresos)
+                monto = Decimal(str(crypto_random.randint(min_monto, max_monto)))
                 
                 Movimiento.objects.create(
                     nombre=nombre_base,
@@ -337,9 +339,9 @@ class Command(BaseCommand):
             
             if created:
                 # Crear algunos aportes para la meta
-                num_aportes = random.randint(3, 8)
+                num_aportes = crypto_random.randint(3, 8)
                 for i in range(num_aportes):
-                    monto_aporte = data['monto_objetivo'] / Decimal(str(random.randint(10, 20)))
+                    monto_aporte = data['monto_objetivo'] / Decimal(str(crypto_random.randint(10, 20)))
                     AporteMetaAhorro.objects.create(
                         id_meta_ahorro=meta,
                         monto=monto_aporte.quantize(Decimal('0.01')),

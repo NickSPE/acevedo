@@ -1,9 +1,11 @@
-"""Servicios para la app educacion_financiera (IA, procesamiento de datos)"""
-
+import os
 import json
 from google import generativeai as genai
 
-GEMINI_API_KEY = "AIzaSyCGNpJrqFn8gjWU3-DKMl05s-cgaMket2A"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+
 AVAILABLE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-pro-latest']
 
 

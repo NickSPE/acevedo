@@ -52,7 +52,9 @@ def ver_emails_enviados(request):
                     'html_content': html_content
                 })
                 
-            except Exception:
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Error parseando email: {str(e)}")
                 continue
     
     context = {
@@ -65,16 +67,22 @@ def ver_emails_enviados(request):
 
 @login_required
 def ver_email_completo(request, filename):
-    """Vista para ver un email específico en formato HTML"""
+    """Vista para ver un email específico en formato HTML de manera segura"""
     emails_path = getattr(settings, 'EMAIL_FILE_PATH', None)
     
     if not emails_path or not filename:
-        return HttpResponse("Email no encontrado", status=404)
+        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+            'is_html': False,
+            'text_content': "Email no encontrado"
+        }, status=404)
     
     file_path = os.path.join(emails_path, filename)
     
     if not os.path.exists(file_path):
-        return HttpResponse("Archivo de email no encontrado", status=404)
+        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+            'is_html': False,
+            'text_content': "Archivo de email no encontrado"
+        }, status=404)
     
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -87,10 +95,19 @@ def ver_email_completo(request, filename):
                 html_end = content.find('--===============', html_start)
                 if html_end > -1:
                     html_content = content[html_start:html_end].strip()
-                    return HttpResponse(html_content, content_type='text/html')
+                    return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+                        'is_html': True,
+                        'html_content': html_content
+                    })
         
         # Si no hay HTML, mostrar contenido texto
-        return HttpResponse(f"<pre>{content}</pre>", content_type='text/html')
+        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+            'is_html': False,
+            'text_content': content
+        })
         
     except Exception as e:
-        return HttpResponse(f"Error leyendo email: {str(e)}", status=500)
+        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+            'is_html': False,
+            'text_content': f"Error leyendo email: {str(e)}"
+        }, status=500)

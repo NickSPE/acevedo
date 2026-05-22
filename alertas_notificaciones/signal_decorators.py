@@ -25,8 +25,8 @@ class SignalLock:
         rounded_time = int(time.time() // 5) * 5
         lock_data += f"_{rounded_time}"
         
-        # Crear hash MD5
-        return f"signal_lock_{hashlib.md5(lock_data.encode()).hexdigest()}"
+        # Crear hash SHA-256
+        return f"signal_lock_{hashlib.sha256(lock_data.encode()).hexdigest()}"
     
     @staticmethod
     def acquire_lock(lock_key, timeout=30):

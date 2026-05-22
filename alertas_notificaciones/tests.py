@@ -9,7 +9,10 @@ def ask_ai(api_key, question):
     return response.text
 
 if __name__ == "__main__":
-    api_key = os.getenv("GOOGLE_API_KEY", "AIzaSyDnWhyD5zCArmmEzmRkQH4zuB2NxgtuEHc")
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        print("Error: La variable de entorno GOOGLE_API_KEY no está definida.")
+        exit(1)
     print("Escribe tu pregunta para la IA (o 'salir' para terminar):")
     while True:
         user_input = input("> ")

@@ -1159,8 +1159,9 @@ def exportar_reporte_excel(reporte, datos):
             try:
                 if len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
-            except Exception:
-                pass
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"Error calculando ancho de columna: {str(e)}")
         adjusted_width = min(max_length + 2, 50)
         ws.column_dimensions[column_letter].width = adjusted_width
     
@@ -1178,6 +1179,16 @@ def exportar_csv(reporte, datos):
     """Exporta reporte a CSV"""
     import csv
     
+    def safe_csv_cell(value):
+        if value is None:
+            return ""
+        val_str = str(value)
+        # Prevenir CSV Injection / Command Injection anteponiendo una comilla simple
+        # si empieza con alguno de los caracteres de fórmula
+        if val_str and val_str[0] in ('=', '+', '-', '@', '\t', '\r'):
+            return f"'{val_str}"
+        return val_str
+    
     response = HttpResponse(content_type='text/csv')
     tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
     fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
@@ -1187,31 +1198,31 @@ def exportar_csv(reporte, datos):
     writer = csv.writer(response)
     
     # Escribir encabezado
-    writer.writerow(['Reporte:', reporte.nombre])
-    writer.writerow(['Tipo:', reporte.get_tipo_reporte_display()])
-    writer.writerow(['Fecha creación:', reporte.fecha_creacion.strftime('%Y-%m-%d %H:%M')])
-    writer.writerow(['Período:', f"{reporte.fecha_inicio} - {reporte.fecha_fin}"])
+    writer.writerow([safe_csv_cell('Reporte:'), safe_csv_cell(reporte.nombre)])
+    writer.writerow([safe_csv_cell('Tipo:'), safe_csv_cell(reporte.get_tipo_reporte_display())])
+    writer.writerow([safe_csv_cell('Fecha creación:'), safe_csv_cell(reporte.fecha_creacion.strftime('%Y-%m-%d %H:%M'))])
+    writer.writerow([safe_csv_cell('Período:'), safe_csv_cell(f"{reporte.fecha_inicio} - {reporte.fecha_fin}")])
     writer.writerow([])  # Línea vacía
     
     # Escribir datos según el tipo de reporte
     if reporte.tipo_reporte == 'ingresos_gastos':
-        writer.writerow(['Fecha', 'Tipo', 'Descripción', 'Monto', 'Cuenta'])
+        writer.writerow([safe_csv_cell('Fecha'), safe_csv_cell('Tipo'), safe_csv_cell('Descripción'), safe_csv_cell('Monto'), safe_csv_cell('Cuenta')])
         for item in datos.get('transacciones', []):
             writer.writerow([
-                item.fecha_movimiento.strftime('%Y-%m-%d'),
-                item.tipo.title(),
-                item.nombre,
-                f"${item.monto:.2f}",
-                item.id_cuenta.nombre
+                safe_csv_cell(item.fecha_movimiento.strftime('%Y-%m-%d')),
+                safe_csv_cell(item.tipo.title()),
+                safe_csv_cell(item.nombre),
+                safe_csv_cell(f"${item.monto:.2f}"),
+                safe_csv_cell(item.id_cuenta.nombre)
             ])
     elif reporte.tipo_reporte == 'balance_cuentas':
-        writer.writerow(['Cuenta', 'Saldo'])
+        writer.writerow([safe_csv_cell('Cuenta'), safe_csv_cell('Saldo')])
         for item in datos.get('cuentas', []):
-            writer.writerow([item.nombre, f"${item.saldo:.2f}"])
+            writer.writerow([safe_csv_cell(item.nombre), safe_csv_cell(f"${item.saldo:.2f}")])
     elif reporte.tipo_reporte == 'gastos_categoria':
-        writer.writerow(['Categoría', 'Monto', 'Porcentaje'])
+        writer.writerow([safe_csv_cell('Categoría'), safe_csv_cell('Monto'), safe_csv_cell('Porcentaje')])
         for item in datos.get('gastos_categoria', []):
-            writer.writerow([item['nombre'], f"${item['total']:.2f}", f"{item['porcentaje']:.1f}%"])
+            writer.writerow([safe_csv_cell(item['nombre']), safe_csv_cell(f"${item['total']:.2f}"), safe_csv_cell(f"{item['porcentaje']:.1f}%")])
     
     return response
 

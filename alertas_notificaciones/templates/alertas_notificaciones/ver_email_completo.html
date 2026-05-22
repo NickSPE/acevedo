@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-4">
+        <a href="{% url 'alertas_notificaciones:ver_emails' %}" class="inline-flex items-center text-[#227C91] hover:underline">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Volver a la lista de correos
+        </a>
+    </div>
+    
+    <div class="bg-white shadow rounded-lg overflow-hidden border border-[#E5E1DD]">
+        <div class="bg-[#F8F9FA] px-6 py-4 border-b border-[#E5E1DD]">
+            <h2 class="text-xl font-semibold text-[#605952]">Contenido del Correo Enviado</h2>
+        </div>
+        <div class="p-6">
+            {% if is_html %}
+                <iframe srcdoc="{{ html_content }}" class="w-full h-[600px] border-0 rounded"></iframe>
+            {% else %}
+                <pre class="bg-[#F8F9FA] p-4 rounded text-sm text-[#605952] whitespace-pre-wrap overflow-auto">{{ text_content }}</pre>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

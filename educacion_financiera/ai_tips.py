@@ -10,7 +10,7 @@ class FinancialTipsAI:
     """Generador de consejos financieros usando IA Gemini"""
     
     def __init__(self):
-        self.api_key = os.getenv("GOOGLE_API_KEY", "AIzaSyDnWhyD5zCArmmEzmRkQH4zuB2NxgtuEHc")
+        self.api_key = os.getenv("GOOGLE_API_KEY")
         self.model = None
         self._initialize_client()
     

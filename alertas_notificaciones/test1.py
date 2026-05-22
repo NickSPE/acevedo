@@ -15,8 +15,8 @@ app = FastAPI()
 # Configuración del servidor SMTP (ejemplo con Gmail)
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-SMTP_USER = "evaristoj108@gmail.com"
-SMTP_PASSWORD = "qwev hawj elja gcub"
+SMTP_USER = os.getenv("SMTP_USER", "evaristoj108@gmail.com")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 # Configuración de Google OAuth2
 GOOGLE_CLIENT_SECRETS_FILE = "client_secret_696587366927-h9c1slem5ggocbv8v23vgrup6uaug5sj.apps.googleusercontent.com.json"

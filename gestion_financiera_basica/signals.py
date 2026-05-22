@@ -210,28 +210,8 @@ def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
     if not created:  # Solo para actualizaciones, no creaciones
         usuario = instance.id_usuario
         
-        # Verificar si el saldo está bajo (menos de $50)
-        if instance.saldo_cuenta < 50:
-            titulo = "⚠️ Saldo bajo en cuenta"
-            mensaje = f"Tu cuenta '{instance.nombre}' tiene un saldo bajo: ${instance.saldo_cuenta:,.2f}. "
-            mensaje += "Considera revisar tus gastos o hacer un depósito."
-            
-            NotificationService.crear_notificacion(
-                usuario=usuario,
-                tipo_notificacion="saldo_bajo",
-                titulo=titulo,
-                mensaje=mensaje,
-                categoria="Saldo",
-                prioridad='alta',
-                datos_adicionales={
-                    'cuenta_id': instance.id,
-                    'cuenta_nombre': instance.nombre,
-                    'saldo_actual': float(instance.saldo_cuenta)
-                }
-            )
-        
         # Verificar si el saldo está en números rojos
-        elif instance.saldo_cuenta < 0:
+        if instance.saldo_cuenta < 0:
             titulo = "🚨 Saldo negativo"
             mensaje = f"¡Atención! Tu cuenta '{instance.nombre}' tiene saldo negativo: ${instance.saldo_cuenta:,.2f}. "
             mensaje += "Es recomendable hacer un depósito lo antes posible."
@@ -243,6 +223,26 @@ def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
                 mensaje=mensaje,
                 categoria="Saldo",
                 prioridad='urgente',
+                datos_adicionales={
+                    'cuenta_id': instance.id,
+                    'cuenta_nombre': instance.nombre,
+                    'saldo_actual': float(instance.saldo_cuenta)
+                }
+            )
+        
+        # Verificar si el saldo está bajo (menos de $50)
+        elif instance.saldo_cuenta < 50:
+            titulo = "⚠️ Saldo bajo en cuenta"
+            mensaje = f"Tu cuenta '{instance.nombre}' tiene un saldo bajo: ${instance.saldo_cuenta:,.2f}. "
+            mensaje += "Considera revisar tus gastos o hacer un depósito."
+            
+            NotificationService.crear_notificacion(
+                usuario=usuario,
+                tipo_notificacion="saldo_bajo",
+                titulo=titulo,
+                mensaje=mensaje,
+                categoria="Saldo",
+                prioridad='alta',
                 datos_adicionales={
                     'cuenta_id': instance.id,
                     'cuenta_nombre': instance.nombre,

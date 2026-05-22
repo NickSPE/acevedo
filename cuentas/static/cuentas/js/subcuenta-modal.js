@@ -273,7 +273,7 @@ class SubcuentaModal {
       if (response.redirected || response.ok) {
         this.showSuccess('Subcuenta creada correctamente');
         setTimeout(() => {
-          window.location.href = response.url || '/cuentas/subcuentas/';
+          window.location.href = this.getSafeRedirectUrl(response.url, '/cuentas/subcuentas/');
         }, 1500);
       } else {
         const text = await response.text();
@@ -296,6 +296,25 @@ class SubcuentaModal {
     }
   }
 
+  getSafeRedirectUrl(url, fallback) {
+    if (!url) return fallback;
+    try {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        const parsedUrl = new URL(url);
+        if (parsedUrl.origin === window.location.origin) {
+          return url;
+        }
+        return fallback;
+      }
+      if (url.startsWith('/') && !url.startsWith('//')) {
+        return url;
+      }
+      return fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
   showSuccess(message) {
     const alert = this.modal.querySelector('.subcuenta-form-alert-success');
     if (alert) {
@@ -314,7 +333,7 @@ class SubcuentaModal {
 
   clearErrors() {
     const alerts = this.modal.querySelectorAll('.subcuenta-form-alert');
-    alerts.forEach(alert => alert.style.display = 'none');
+    alerts.forEach(alert => { alert.style.display = 'none'; });
   }
 }
 

@@ -208,8 +208,8 @@ def crear_subcuenta(request, cuenta_id=None):
             with transaction.atomic():
                 subcuenta = form.save(commit=False)
                 
-                # Obtener el tipo de subcuenta del POST
-                tipo_subcuenta = request.POST.get('tipo_subcuenta', 'personal')
+                # Obtener el tipo de subcuenta del cleaned_data seguro
+                tipo_subcuenta = form.cleaned_data.get('tipo_subcuenta') or 'personal'
                 
                 if tipo_subcuenta == 'business':
                     # Subcuenta de negocio - COMPLETAMENTE INDEPENDIENTE

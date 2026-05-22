@@ -165,6 +165,20 @@ function scrollToBottom() {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
+// Escape HTML to prevent XSS
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
 // Add message to chat
 function addMessage(content, isUser = false) {
   const messageDiv = document.createElement('div');
@@ -172,9 +186,10 @@ function addMessage(content, isUser = false) {
   
   if (isUser) {
     messageDiv.className += ' justify-end';
+    const escapedContent = escapeHTML(content);
     messageDiv.innerHTML = `
       <div class="text-white p-4 rounded-lg shadow-sm max-w-md" style="background-color: #227C91;">
-        <p class="text-sm">${content}</p>
+        <p class="text-sm">${escapedContent}</p>
       </div>
       <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #736B5E;">
         <span class="text-white text-sm">👤</span>
@@ -182,7 +197,8 @@ function addMessage(content, isUser = false) {
     `;
   } else {
     // Formatear el contenido de la IA para mejor estructura
-    const formattedContent = formatAIResponse(content);
+    const escapedContent = escapeHTML(content);
+    const formattedContent = formatAIResponse(escapedContent);
     
     messageDiv.innerHTML = `
       <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">

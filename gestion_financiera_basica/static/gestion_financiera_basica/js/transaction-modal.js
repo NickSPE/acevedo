@@ -20,6 +20,19 @@ class TransactionModal {
     return '';
   }
 
+  escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/[&<>'"]/g, 
+      tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag)
+    );
+  }
+
   init() {
     document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('click', (e) => {
@@ -88,7 +101,7 @@ class TransactionModal {
         </div>
         
         <form class="transaction-form" id="transaction-form-ajax">
-          <input type="hidden" name="csrfmiddlewaretoken" value="${this.csrfToken}">
+          <input type="hidden" name="csrfmiddlewaretoken" value="${this.escapeHTML(this.csrfToken)}">
           
           <div class="transaction-form-alert transaction-form-alert-danger" style="display: none;"></div>
           <div class="transaction-form-alert transaction-form-alert-success" style="display: none;"></div>
@@ -283,7 +296,7 @@ class TransactionModal {
         if (response.redirected || response.ok) {
           this.showSuccess('Transacción guardada correctamente');
           setTimeout(() => {
-            window.location.href = response.url || '/gestion_financiera_basica/transactions/';
+            window.location.href = this.getSafeRedirectUrl(response.url, '/gestion_financiera_basica/transactions/');
           }, 1500);
         } else {
           const text = await response.text();
@@ -304,6 +317,25 @@ class TransactionModal {
       submitBtn.disabled = false;
       btnText.style.display = 'inline';
       btnSpinner.style.display = 'none';
+    }
+  }
+
+  getSafeRedirectUrl(url, fallback) {
+    if (!url) return fallback;
+    try {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        const parsedUrl = new URL(url);
+        if (parsedUrl.origin === window.location.origin) {
+          return url;
+        }
+        return fallback;
+      }
+      if (url.startsWith('/') && !url.startsWith('//')) {
+        return url;
+      }
+      return fallback;
+    } catch (e) {
+      return fallback;
     }
   }
 
@@ -347,13 +379,13 @@ class TransactionModal {
 
   clearErrors() {
     const alerts = this.modal.querySelectorAll('.transaction-form-alert');
-    alerts.forEach(alert => alert.style.display = 'none');
+    alerts.forEach(alert => { alert.style.display = 'none'; });
     
     const fieldErrors = this.modal.querySelectorAll('.transaction-field-error');
-    fieldErrors.forEach(error => error.remove());
+    fieldErrors.forEach(error => { error.remove(); });
     
     const errorInputs = this.modal.querySelectorAll('.transaction-input-error');
-    errorInputs.forEach(input => input.classList.remove('transaction-input-error'));
+    errorInputs.forEach(input => { input.classList.remove('transaction-input-error'); });
   }
 }
 

@@ -243,7 +243,7 @@ class MetaModal {
       if (response.redirected || response.ok) {
         this.showSuccess('Meta de ahorro creada correctamente');
         setTimeout(() => {
-          window.location.href = response.url || '/gestion_financiera_basica/savings-goals/';
+          window.location.href = this.getSafeRedirectUrl(response.url, '/gestion_financiera_basica/savings-goals/');
         }, 1500);
       } else {
         const text = await response.text();
@@ -266,6 +266,25 @@ class MetaModal {
     }
   }
 
+  getSafeRedirectUrl(url, fallback) {
+    if (!url) return fallback;
+    try {
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        const parsedUrl = new URL(url);
+        if (parsedUrl.origin === window.location.origin) {
+          return url;
+        }
+        return fallback;
+      }
+      if (url.startsWith('/') && !url.startsWith('//')) {
+        return url;
+      }
+      return fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
   showSuccess(message) {
     const alert = this.modal.querySelector('.meta-form-alert-success');
     if (alert) {
@@ -284,7 +303,7 @@ class MetaModal {
 
   clearErrors() {
     const alerts = this.modal.querySelectorAll('.meta-form-alert');
-    alerts.forEach(alert => alert.style.display = 'none');
+    alerts.forEach(alert => { alert.style.display = 'none'; });
   }
 }
 
