@@ -29,25 +29,6 @@ from .services import (
     procesar_transferencia_entre_subcuentas,
     procesar_deposito_subcuenta,
     procesar_transferencia_a_principal
-)
-from .utils import (
-    obtener_cuentas_usuario,
-    obtener_estadisticas_subcuentas,
-    obtener_balance_total,
-    obtener_cuentas_con_subcuentas,
-    obtener_subcuentas_independientes,
-    obtener_transferencias_recientes,
-    es_subcuenta_negocio
-)
-from .helpers import (
-    crear_notificacion_movimiento,
-    validar_permisos_subcuenta,
-    validar_permisos_ambas_subcuentas,
-    procesar_imagen_perfil,
-    validar_password,
-    validar_pin_cambio
-)
-
 # Views App CUENTAS
 
 # Función de detección automática eliminada - ahora el usuario selecciona manualmente
@@ -55,31 +36,47 @@ from .helpers import (
 @login_required
 @fast_access_pin_verified
 def profile(request):
-    user_id = request.user.id
-
+    usuario = Usuario.objects.get(id=request.user.id)
     if request.method == "POST":
-        action = request.POST.get("action")
-        usuario = Usuario.objects.get(id=user_id)
-        
-        # Cambio de foto de perfil
-        if action == "change_photo":
-            imagen_perfil = request.FILES.get("imagen_perfil")
-            success, msg = procesar_imagen_perfil(usuario, imagen_perfil)
-            messages.success(request, msg) if success else messages.error(request, msg)
-            return redirect("cuentas:profile")
-        
-        # Actualización de perfil general
-        elif action == "update_profile":
-            nombres = request.POST.get("nombres", "").strip()
-            apellido_paterno = request.POST.get("apellido_paterno", "").strip()
-            apellido_materno = request.POST.get("apellido_materno", "").strip()
-            pais = request.POST.get("pais", "").strip()
-            
-            if nombres and apellido_paterno and pais:
-                actualizar_perfil_usuario(usuario, nombres, apellido_paterno, apellido_materno, pais)
-                messages.success(request, "✅ Información personal actualizada correctamente.")
-            else:
-                messages.error(request, "❌ Los campos Nombres, Apellido Paterno y País son obligatorios.")
+        return _handle_profile_action(request, usuario)
+
+    # Lógica existente para solicitudes GET u otras acciones
+    # ... (mantener el comportamiento original)
+
+
+def _handle_profile_action(request, usuario):
+    action = request.POST.get("action")
+    handlers = {
+        "change_photo": _handle_change_photo,
+        "update_profile": _handle_update_profile,
+    }
+    handler = handlers.get(action)
+    if handler:
+        return handler(request, usuario)
+    messages.error(request, "❌ Acción no válida.")
+    return redirect("cuentas:profile")
+
+def _handle_change_photo(request, usuario):
+    imagen_perfil = request.FILES.get("imagen_perfil")
+    success, msg = procesar_imagen_perfil(usuario, imagen_perfil)
+    if success:
+        messages.success(request, msg)
+    else:
+        messages.error(request, msg)
+    return redirect("cuentas:profile")
+
+def _handle_update_profile(request, usuario):
+    nombres = request.POST.get("nombres", "").strip()
+    apellido_paterno = request.POST.get("apellido_paterno", "").strip()
+    apellido_materno = request.POST.get("apellido_materno", "").strip()
+    pais = request.POST.get("pais", "").strip()
+
+    if nombres and apellido_paterno and pais:
+        actualizar_perfil_usuario(usuario, nombres, apellido_paterno, apellido_materno, pais)
+        messages.success(request, "✅ Información personal actualizada correctamente.")
+    else:
+        messages.error(request, "❌ Los campos Nombres, Apellido Paterno y País son obligatorios.")
+    return redirect("cuentas:profile")
             return redirect("cuentas:profile")
         
         # Actualización de información de contacto

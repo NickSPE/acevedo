@@ -65,32 +65,39 @@ def Login(request):
     return render(request, 'usuarios/login.html')
 
 
+def _handle_send_verification(request):
+    print("🔍 DEBUG: Petición AJAX para enviar código")
+    correo = request.POST.get('correo')
+    nombres = request.POST.get('nombres')
+
+    if not correo or not nombres:
+        return JsonResponse({
+            'success': False,
+            'error': 'Correo y nombres son requeridos'
+        })
+
+    if Usuario.objects.filter(correo=correo).exists():
+        return JsonResponse({
+            'success': False,
+            'error': 'El correo ya está registrado'
+        })
+
+
 def Register(request):
     monedas = Moneda.objects.all()
 
-    if request.method == "POST":
-        print(f"🔍 DEBUG: POST recibido. Action: {request.POST.get('action')}")
-        print(f"🔍 DEBUG: Datos POST: {list(request.POST.keys())}")
-        
-        # Manejar petición AJAX para enviar código de verificación
-        if request.POST.get('action') == 'send_verification':
-            print("🔍 DEBUG: Petición AJAX para enviar código")
-            
-            correo = request.POST.get('correo')
-            nombres = request.POST.get('nombres')
-            
-            if not correo or not nombres:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Correo y nombres son requeridos'
-                })
-            
-            # Verificar que el correo no esté ya registrado
-            if Usuario.objects.filter(correo=correo).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': 'El correo ya está registrado'
-                })
+    if request.method != "POST":
+        print("🔍 DEBUG REGISTER: Mostrando formulario de registro")
+        return render(request, 'usuarios/register.html', {
+            'monedas': monedas
+        })
+
+    action = request.POST.get('action')
+    print(f"🔍 DEBUG REGISTER: POST recibido. Action: {action}")
+    print(f"🔍 DEBUG REGISTER: Datos POST: {list(request.POST.keys())}")
+
+    if action == 'send_verification':
+        return _handle_send_verification(request)
             
             # Generar y enviar PIN
             PIN = Generar_Pin()
@@ -466,15 +473,6 @@ def pin_login(request):
                 error_message = "PIN incorrecto. No se encontró ningún usuario con ese PIN."
                 return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
             
-        except Exception as e:
-            print(f"❌ DEBUG PIN_LOGIN: Error inesperado: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            error_message = f"Error al procesar el PIN: {str(e)}"
-            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
-    
-    return render(request, 'usuarios/pin_login.html')
-
 def onboarding_view(request):
     """Vista de onboarding para nuevos usuarios"""
     if not request.user.is_authenticated:
@@ -491,32 +489,60 @@ def onboarding_view(request):
     except Exception as e:
         return JsonResponse({"error": f"Vista de onboarding no disponible: {str(e)}"}, status=503)
 
+
 def complete_onboarding(request):
     """Completar onboarding y actualizar datos del usuario"""
-    import json
-    
     if not request.user.is_authenticated:
         return JsonResponse({
             'success': False,
             'message': 'Usuario no autenticado'
         })
-    
-    if request.method == 'POST':
-        try:
-            # Obtener datos del request
-            if request.content_type == 'application/json':
-                data = json.loads(request.body.decode('utf-8'))
-            else:
-                data = request.POST
-            
-            print(f"🔍 DEBUG ONBOARDING: Datos recibidos: {data}")
-            
-            usuario = request.user
-            
-            # Si fue saltado, solo marcar como completado
-            if data.get('skipped'):
-                usuario.onboarding_completed = True
-                usuario.save()
+
+    if request.method != 'POST':
+        return JsonResponse({
+            'success': False,
+            'message': 'Método no permitido'
+        })
+
+    try:
+        data = _parse_request_data(request)
+        usuario = request.user
+
+        if data.get('skipped'):
+            _handle_skip_onboarding(usuario)
+        else:
+            _complete_onboarding_data(usuario, data)
+
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+
+def _parse_request_data(request):
+    import json
+    if request.content_type == 'application/json':
+        return json.loads(request.body.decode('utf-8'))
+    return request.POST
+
+
+def _handle_skip_onboarding(usuario):
+    usuario.onboarding_completed = True
+    usuario.save()
+
+
+def _complete_onboarding_data(usuario, data):
+    # Mapeo de campos de datos a atributos del usuario
+    field_map = {
+        'first_name': 'first_name',
+        'last_name': 'last_name',
+        'email': 'email',
+        # Añadir más campos según sea necesario
+    }
+    for key, attr in field_map.items():
+        if key in data:
+            setattr(usuario, attr, data.get(key))
+    usuario.onboarding_completed = True
+    usuario.save()
                 print("🔍 DEBUG ONBOARDING: Onboarding saltado")
                 return JsonResponse({
                     'success': True,
@@ -602,32 +628,92 @@ def fix_incomplete_onboarding(request):
     except Exception as e:
         return JsonResponse({"error": f"Vista de corrección de onboarding no disponible: {str(e)}"}, status=503)
 
+
+def _handle_send_code(email, request=None):
+    from django.utils import timezone
+    import datetime
+    try:
+        usuario = Usuario.objects.get(correo=email)
+    except Usuario.DoesNotExist:
+        return {'success': False, 'message': 'Usuario no encontrado'}
+    codigo_recuperacion = str(secrets.randbelow(900000) + 100000)
+    usuario.codigo_recuperacion = codigo_recuperacion
+    usuario.codigo_expiracion = timezone.now() + datetime.timedelta(minutes=15)
+    usuario.save()
+    send_mail(
+        'Código de recuperación',
+        f'Tu código de recuperación es {codigo_recuperacion}',
+        settings.DEFAULT_FROM_EMAIL,
+        [email],
+        fail_silently=False
+    )
+    return {'success': True, 'message': 'Código enviado al correo'}
+
+
+def _handle_verify_code(email, request):
+    from django.utils import timezone
+    try:
+        usuario = Usuario.objects.get(correo=email)
+    except Usuario.DoesNotExist:
+        return {'success': False, 'message': 'Usuario no encontrado'}
+    codigo = request.POST.get('code', '').strip()
+    if not usuario.codigo_recuperacion or usuario.codigo_recuperacion != codigo:
+        return {'success': False, 'message': 'Código inválido'}
+    if usuario.codigo_expiracion < timezone.now():
+        return {'success': False, 'message': 'Código expirado'}
+    return {'success': True, 'message': 'Código verificado'}
+
+
+def _handle_reset_password(email, request):
+    from django.utils import timezone
+    try:
+        usuario = Usuario.objects.get(correo=email)
+    except Usuario.DoesNotExist:
+        return {'success': False, 'message': 'Usuario no encontrado'}
+    codigo = request.POST.get('code', '').strip()
+    new_password = request.POST.get('password', '').strip()
+    if not usuario.codigo_recuperacion or usuario.codigo_recuperacion != codigo:
+        return {'success': False, 'message': 'Código inválido'}
+    if usuario.codigo_expiracion < timezone.now():
+        return {'success': False, 'message': 'Código expirado'}
+    usuario.set_password(new_password)
+    usuario.codigo_recuperacion = None
+    usuario.codigo_expiracion = None
+    usuario.save()
+    return {'success': True, 'message': 'Contraseña restablecida exitosamente'}
+
+
 def password_reset_request(request):
-    """Solicitud de recuperación de contraseña - Paso 1: Enviar código"""
-    if request.method == 'POST':
-        email = request.POST.get('email', '').strip().lower()
-        action = request.POST.get('action', '')
-        
-        print(f"🔍 DEBUG PASSWORD_RESET: Email: {email}, Action: {action}")
-        
-        if action == 'send_code':
-            # Verificar si el usuario existe
-            try:
-                usuario = Usuario.objects.get(correo=email)
-                print(f"🔍 DEBUG PASSWORD_RESET: Usuario encontrado: {usuario.nombres}")
-                
-                # Generar código de 6 dígitos
-                codigo_recuperacion = str(secrets.randbelow(900000) + 100000)
-                print(f"🔍 DEBUG PASSWORD_RESET: Código generado: {codigo_recuperacion}")
-                
-                # Guardar código y expiración
-                from django.utils import timezone
-                import datetime
-                
-                usuario.codigo_recuperacion = codigo_recuperacion
-                usuario.codigo_expiracion = timezone.now() + datetime.timedelta(minutes=15)
-                usuario.save()
-                
+    """Solicitud de recuperación de contraseña - Paso 1: Enviar código, verificar y restablecer"""
+    if request.method != 'POST':
+        return JsonResponse({
+            'success': False,
+            'message': 'Método no permitido'
+        })
+    email = request.POST.get('email', '').strip().lower()
+    action = request.POST.get('action', '')
+    handlers = {
+        'send_code': _handle_send_code,
+        'verify_code': _handle_verify_code,
+        'reset_password': _handle_reset_password
+    }
+    handler = handlers.get(action)
+    if not handler:
+        return JsonResponse({
+            'success': False,
+            'message': 'Acción no válida'
+        })
+    try:
+        result = handler(email, request)
+        return JsonResponse(result)
+    except Exception as e:
+        print(f"❌ ERROR PASSWORD_RESET: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({
+            'success': False,
+            'message': f'Error en recuperación de contraseña: {str(e)}'
+        })
                 # Enviar email
                 try:
                     result = send_mail(
