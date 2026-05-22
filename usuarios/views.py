@@ -122,14 +122,13 @@ def Register(request):
         except Exception as e:
             print(f"❌ ERROR al enviar email de verificación: {str(e)}")
             return JsonResponse({
-                'success': False
+                'success': False,
+                'error': f'Error al enviar el código: {str(e)}'
             })
-                    'error': f'Error al enviar el código: {str(e)}'
-                })
-        
+
         # Manejar registro normal (cuando se envía el formulario completo)
         print("🔍 DEBUG: Procesando registro normal")
-        
+
         documento_identidad = request.POST.get('documento_identidad')
         nombres = request.POST.get('nombres')
         apellido_paterno = request.POST.get('apellido_paterno')
@@ -142,13 +141,13 @@ def Register(request):
         verification_code = request.POST.get('codigo_verificacion')
 
         print(f"🔍 DEBUG: Datos recibidos - correo: {correo}, código: {verification_code}")
-        
+
         # Verificar código de verificación
         session_pin = request.session.get('pin_verification')
         session_email = request.session.get('email_for_verification')
-        
+
         print(f"🔍 DEBUG: Sesión - PIN: {session_pin}, Email: {session_email}")
-        
+
         if not session_pin or not session_email or session_email != correo:
             print("🔍 DEBUG: Error - No hay PIN en sesión o email no coincide")
             return render(request, "usuarios/register_simple.html", {

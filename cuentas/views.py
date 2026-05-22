@@ -79,22 +79,21 @@ def _handle_update_profile(request, usuario):
     else:
         messages.error(request, "❌ Los campos Nombres, Apellido Paterno y País son obligatorios.")
     return redirect("cuentas:profile")
-            return redirect("cuentas:profile")
+
+    # Actualización de información de contacto
+    if action == "update_contact":
+        email = request.POST.get("email", "").strip()
+        telefono = request.POST.get("telefono", "").strip()
         
-        # Actualización de información de contacto
-        elif action == "update_contact":
-            email = request.POST.get("email", "").strip()
-            telefono = request.POST.get("telefono", "").strip()
-            
-            if email:
-                if Usuario.objects.filter(correo=email).exclude(id=usuario.id).exists():
-                    messages.error(request, "❌ Este correo electrónico ya está siendo usado por otro usuario.")
-                else:
-                    actualizar_contacto_usuario(usuario, email, telefono)
-                    messages.success(request, "✅ Información de contacto actualizada correctamente.")
+        if email:
+            if Usuario.objects.filter(correo=email).exclude(id=usuario.id).exists():
+                messages.error(request, "❌ Este correo electrónico ya está siendo usado por otro usuario.")
             else:
-                messages.error(request, "❌ El correo electrónico es obligatorio.")
-            return redirect("cuentas:profile")
+                actualizar_contacto_usuario(usuario, email, telefono)
+                messages.success(request, "✅ Información de contacto actualizada correctamente.")
+        else:
+            messages.error(request, "❌ El correo electrónico es obligatorio.")
+        return redirect("cuentas:profile")
         
         # Cambio de contraseña
         elif action == "change_password":
