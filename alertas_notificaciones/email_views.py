@@ -53,7 +53,7 @@ def ver_emails_enviados(request):
                 
             except Exception as e:
                 import logging
-                logging.getLogger(__name__).warning(f"Error parseando email: {str(e)}")
+                logging.getLogger(__name__).warning("Error parseando email: %s", e)
                 continue
     
     context = {
