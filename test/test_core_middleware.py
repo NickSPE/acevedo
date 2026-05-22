@@ -24,7 +24,7 @@ class ServerRestartSessionMiddlewareTestCase(TestCase):
         
         # Inicializar el middleware
         get_response_mock = MagicMock()
-        middleware = ServerRestartSessionMiddleware(get_response_mock)
+        _ = ServerRestartSessionMiddleware(get_response_mock)
         
         # Verificar que se llamó a cache.get con la clave correcta
         mock_cache.get.assert_called_with('server_last_start')
@@ -48,7 +48,7 @@ class ServerRestartSessionMiddlewareTestCase(TestCase):
         mock_cache.get.return_value = time.time() - 10
         
         get_response_mock = MagicMock()
-        middleware = ServerRestartSessionMiddleware(get_response_mock)
+        ServerRestartSessionMiddleware(get_response_mock)
         
         # No se debe haber llamado a all() ni delete() en Session
         mock_session_objects.all.assert_not_called()
@@ -61,7 +61,7 @@ class ServerRestartSessionMiddlewareTestCase(TestCase):
         
         get_response_mock = MagicMock()
         # No debe lanzar excepción
-        middleware = ServerRestartSessionMiddleware(get_response_mock)
+        ServerRestartSessionMiddleware(get_response_mock)
 
     @patch('core.middleware.cache')
     def test_middleware_call(self, mock_cache):

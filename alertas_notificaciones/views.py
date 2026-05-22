@@ -64,7 +64,7 @@ def _manejar_actualizacion_configuracion(request):
         
         for tipo in tipos_notificaciones:
             # Obtener configuración actual o crear una nueva
-            config, created = ConfiguracionNotificacion.objects.get_or_create(
+            config, _ = ConfiguracionNotificacion.objects.get_or_create(
                 usuario=request.user,
                 tipo_notificacion=tipo,
                 defaults={

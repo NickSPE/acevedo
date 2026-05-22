@@ -7,7 +7,7 @@ def crear_notificacion_movimiento(usuario, titulo, mensaje, categoria='Transacci
     """Función auxiliar para crear notificaciones persistentes de movimientos financieros"""
     try:
         # Buscar o crear el tipo de notificación
-        tipo_notificacion, created = TipoNotificacion.objects.get_or_create(
+        tipo_notificacion, _ = TipoNotificacion.objects.get_or_create(
             nombre='Movimiento Financiero',
             defaults={
                 'categoria': 'info',

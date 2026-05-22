@@ -84,7 +84,7 @@ class EducacionFinancieraUtilsTestCase(TestCase):
         """Valida que si se pasa una página inválida (no entera), devuelva la primera página"""
         cursos_queryset = CursoExterno.objects.all().order_by('orden')
         
-        paginator, pagina = paginar_cursos(cursos_queryset, page_number='invalido', items_per_page=4)
+        _, pagina = paginar_cursos(cursos_queryset, page_number='invalido', items_per_page=4)
         
         # Debe reaccionar devolviendo la página 1
         self.assertEqual(pagina.number, 1)
@@ -95,7 +95,7 @@ class EducacionFinancieraUtilsTestCase(TestCase):
         cursos_queryset = CursoExterno.objects.all().order_by('orden')
         
         # Pasamos página 99, solo hay 3 páginas si dividimos de a 4 items
-        paginator, pagina = paginar_cursos(cursos_queryset, page_number=99, items_per_page=4)
+        _, pagina = paginar_cursos(cursos_queryset, page_number=99, items_per_page=4)
         
         # Debe devolver la última página (página 3, ya que hay 10 items total)
         self.assertEqual(pagina.number, 3)

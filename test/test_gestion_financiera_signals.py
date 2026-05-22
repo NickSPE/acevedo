@@ -98,7 +98,7 @@ class GestionFinancieraSignalsTestCase(TestCase):
         Notificacion.objects.all().delete()
 
         # Crear un aporte del 10% (monto 100)
-        aporte = AporteMetaAhorro.objects.create(
+        AporteMetaAhorro.objects.create(
             id_meta_ahorro=meta,
             monto=Decimal('100.00'),
             descripcion='Primer Aporte',
@@ -127,7 +127,7 @@ class GestionFinancieraSignalsTestCase(TestCase):
         Notificacion.objects.all().delete()
 
         # Aporte del total (monto 500)
-        aporte = AporteMetaAhorro.objects.create(
+        AporteMetaAhorro.objects.create(
             id_meta_ahorro=meta,
             monto=Decimal('500.00'),
             descripcion='Aporte final',
@@ -141,7 +141,7 @@ class GestionFinancieraSignalsTestCase(TestCase):
 
     def test_notificar_movimiento_financiero_ingreso(self):
         """Valida que al registrar un ingreso se genere notificación adecuada"""
-        mov = Movimiento.objects.create(
+        Movimiento.objects.create(
             nombre='Freelance Project',
             tipo='ingreso',
             monto=Decimal('1200.00'),
@@ -159,7 +159,7 @@ class GestionFinancieraSignalsTestCase(TestCase):
 
     def test_notificar_movimiento_financiero_egreso(self):
         """Valida que al registrar un egreso se genere notificación de gasto"""
-        mov = Movimiento.objects.create(
+        Movimiento.objects.create(
             nombre='Supermercado',
             tipo='egreso',
             monto=Decimal('150.00'),
@@ -194,7 +194,7 @@ class GestionFinancieraSignalsTestCase(TestCase):
     def test_verificar_metas_vencidas(self):
         """Valida la verificación periódica de metas próximas a vencer"""
         # Crear meta que vence en 3 días (próxima a vencer)
-        meta = MetaAhorro.objects.create(
+        MetaAhorro.objects.create(
             fecha_inicio=timezone.now().date() - timedelta(days=10),
             fecha_limite=timezone.now().date() + timedelta(days=3),
             monto_objetivo=Decimal('1000.00'),
