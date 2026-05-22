@@ -6,7 +6,7 @@ Ubicación: test/test_gestion_financiera_signals.py
 from django.test import TestCase
 from decimal import Decimal
 from django.utils import timezone
-from datetime import date, timedelta
+from datetime import timedelta
 from django.contrib.auth import get_user_model
 from cuentas.models import Moneda, Cuenta
 from gestion_financiera_basica.models import MetaAhorro, AporteMetaAhorro, Movimiento

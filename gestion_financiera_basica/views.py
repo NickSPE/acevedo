@@ -6,7 +6,6 @@ from .models import Movimiento, MetaAhorro, AporteMetaAhorro
 from django.contrib.auth.decorators import login_required
 from core.decorators import fast_access_pin_verified
 from decimal import Decimal
-import random
 import secrets
 
 def get_nombre_mes_espanol(fecha):
