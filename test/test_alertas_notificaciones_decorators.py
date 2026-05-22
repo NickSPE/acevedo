@@ -74,7 +74,7 @@ class SignalDecoratorsTestCase(TestCase):
         decorated_func = prevent_duplicate_signals("dummy_signal")(mock_receiver)
         
         # Ejecución
-        result = decorated_func(sender=None, instance=self.mock_instance, created=True)
+        decorated_func(sender=None, instance=self.mock_instance, created=True)
         
         mock_receiver.assert_called_once_with(None, self.mock_instance, True)
         mock_signal_lock.release_lock.assert_called_with("lock_test_key")

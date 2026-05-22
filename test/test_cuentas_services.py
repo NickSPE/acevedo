@@ -140,7 +140,7 @@ class CuentasServicesTestCase(TestCase):
 
     def test_cambiar_pin_usuario_success(self):
         """Valida cambio exitoso del PIN de acceso rápido"""
-        success, msg = cambiar_pin_usuario(
+        success, _ = cambiar_pin_usuario(
             usuario=self.usuario,
             current_pin='1234',
             new_pin='5678'
@@ -165,7 +165,7 @@ class CuentasServicesTestCase(TestCase):
         saldo_dest = self.subcuenta_personal_2.saldo
         monto = Decimal('50.00')
 
-        success, msg = procesar_transferencia_entre_subcuentas(
+        success, _ = procesar_transferencia_entre_subcuentas(
             subcuenta_origen=self.subcuenta_personal_1,
             subcuenta_destino=self.subcuenta_personal_2,
             monto=monto,
@@ -210,7 +210,7 @@ class CuentasServicesTestCase(TestCase):
         saldo_orig = self.subcuenta_negocio.saldo
         monto = Decimal('150.00')
 
-        success, msg = procesar_deposito_subcuenta(
+        success, _ = procesar_deposito_subcuenta(
             subcuenta=self.subcuenta_negocio,
             monto=monto,
             usuario=self.usuario
@@ -226,7 +226,7 @@ class CuentasServicesTestCase(TestCase):
         saldo_sub_orig = self.subcuenta_personal_1.saldo
         monto = Decimal('100.00')
 
-        success, msg = procesar_deposito_subcuenta(
+        success, _ = procesar_deposito_subcuenta(
             subcuenta=self.subcuenta_personal_1,
             monto=monto,
             usuario=self.usuario
@@ -259,7 +259,7 @@ class CuentasServicesTestCase(TestCase):
         saldo_orig = self.subcuenta_negocio.saldo
         monto = Decimal('50.00')
 
-        success, msg = procesar_retiro_subcuenta(
+        success, _ = procesar_retiro_subcuenta(
             subcuenta=self.subcuenta_negocio,
             monto=monto,
             usuario=self.usuario
@@ -275,7 +275,7 @@ class CuentasServicesTestCase(TestCase):
         saldo_sub_orig = self.subcuenta_personal_1.saldo
         monto = Decimal('80.00')
 
-        success, msg = procesar_retiro_subcuenta(
+        success, _ = procesar_retiro_subcuenta(
             subcuenta=self.subcuenta_personal_1,
             monto=monto,
             usuario=self.usuario,
