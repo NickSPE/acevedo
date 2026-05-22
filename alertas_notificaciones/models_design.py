@@ -71,46 +71,46 @@ class Notificacion(models.Model):
         ('archivada', 'Archivada'),
         ('error', 'Error'),
     )
-    
+
     PRIORIDADES = (
         ('baja', 'Baja'),
         ('media', 'Media'),
         ('alta', 'Alta'),
         ('urgente', 'Urgente'),
     )
-    
+
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     tipo_notificacion = models.ForeignKey(TipoNotificacion, on_delete=models.CASCADE)
-    
+
     # Contenido
     titulo = models.CharField(max_length=200)
     mensaje = models.TextField()
     datos_adicionales = models.JSONField(default=dict, blank=True)  # Datos contextuales
-    
+
     # Metadatos
     categoria = models.CharField(max_length=50)  # ej: 'Saldo', 'Metas', 'Transacciones'
     modulo_origen = models.CharField(max_length=50)  # ej: 'gestion_financiera_basica'
-    objeto_relacionado = models.CharField(max_length=100, null=True, blank=True)  # ID del objeto que generó la notificación
-    
+    objeto_relacionado = models.CharField(max_length=100, blank=True, default='')  # ID del objeto que generó la notificación
+
     # Estado y control
     estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
     prioridad = models.CharField(max_length=20, choices=PRIORIDADES, default='media')
-    
+
     # Canales y entrega
     email_enviado = models.BooleanField(default=False)
     push_enviado = models.BooleanField(default=False)
     sms_enviado = models.BooleanField(default=False)
-    
+
     # Fechas
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_envio = models.DateTimeField(null=True, blank=True)
     fecha_lectura = models.DateTimeField(null=True, blank=True)
     fecha_expiracion = models.DateTimeField(null=True, blank=True)
-    
+
     # Acciones
     url_accion = models.URLField(null=True, blank=True)  # URL para acción relacionada
     etiquetas = models.JSONField(default=list, blank=True)  # Tags para filtrado
-    
+
     class Meta:
         ordering = ['-fecha_creacion']
         indexes = [

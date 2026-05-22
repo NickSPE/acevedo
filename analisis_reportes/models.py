@@ -15,11 +15,11 @@ class Reporte(models.Model):
     
     tipo_reporte = models.CharField(max_length=25, choices=TIPOS_REPORTE)
     titulo = models.CharField(max_length=200, default='Reporte Financiero')
-    descripcion = models.TextField(blank=True, null=True)
+    descripcion = models.TextField(blank=True, default='')
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_inicio = models.DateTimeField(auto_now_add=True)
     fecha_fin = models.DateTimeField(auto_now_add=True)
-    datos_json = models.TextField(blank=True, null=True)  # Para almacenar datos del reporte en JSON
+    datos_json = models.TextField(blank=True, default='')  # Para almacenar datos del reporte en JSON
     id_usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     id_cuenta = models.ForeignKey("cuentas.Cuenta", on_delete=models.CASCADE, null=True, blank=True)
     
