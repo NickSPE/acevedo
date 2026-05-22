@@ -8,7 +8,7 @@ from .services import generate_ai_explanation, generate_ai_tips, process_ai_chat
 from .constants import CONSEJOS_BASE
 import json
 
-""" Views App EDUCACION_FINANCIERA """
+# Views App EDUCACION_FINANCIERA
 
 
 @login_required

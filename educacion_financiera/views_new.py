@@ -4,7 +4,7 @@ from core.decorators import fast_access_pin_verified
 from django.contrib.auth.decorators import login_required
 from .models import CursoExterno, FavoritoCurso
 
-""" Views App EDUCACION_FINANCIERA """
+# Views App EDUCACION_FINANCIERA
 @login_required
 @fast_access_pin_verified
 def calculators(request):

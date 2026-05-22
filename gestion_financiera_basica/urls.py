@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from . import test_views
 
-""" Urls App GESTION_FINANCIERA_BASICA """
+# Urls App GESTION_FINANCIERA_BASICA
 app_name = 'gestion_financiera_basica'
 
 urlpatterns = [
