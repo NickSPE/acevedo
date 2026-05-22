@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from decimal import Decimal
 from datetime import timedelta
-import random
 import secrets
 crypto_random = secrets.SystemRandom()
 

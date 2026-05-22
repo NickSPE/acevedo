@@ -5,7 +5,6 @@ Ubicación: test/test_alertas_notificaciones_decorators.py
 
 from django.test import TestCase
 from unittest.mock import MagicMock, patch
-from django.core.cache import cache
 from alertas_notificaciones.signal_decorators import (
     SignalLock,
     prevent_duplicate_signals

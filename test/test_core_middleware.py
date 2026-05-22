@@ -6,7 +6,6 @@ Ubicación: test/test_core_middleware.py
 import time
 from django.test import TestCase
 from unittest.mock import MagicMock, patch
-from django.contrib.sessions.models import Session
 from core.middleware import ServerRestartSessionMiddleware
 
 
