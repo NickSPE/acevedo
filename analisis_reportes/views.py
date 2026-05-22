@@ -453,7 +453,6 @@ def get_estadisticas_subcuentas(usuario):
 
 def get_flujo_mensual(usuario, fecha_inicio, fecha_fin):
     """Obtiene flujo de efectivo mensual"""
-    from datetime import datetime
     import calendar
     
     labels = []
@@ -1053,33 +1052,31 @@ def exportar_pdf(reporte, datos):
     # Marca de agua de seguridad
     story.append(Spacer(1, 10))
     security_style = ParagraphStyle(
-        'SecurityStyle',
-        parent=styles['Normal'],
-        fontSize=8,
-        textColor=colors.HexColor('#95A5A6'),
-        alignment=TA_CENTER,
-        fontName='Helvetica'
-    )
-    story.append(Paragraph("Documento generado con tecnología segura FinGest | ID: " + 
-                          f"FG-{reporte.id}-{reporte.fecha_creacion.strftime('%Y%m%d%H%M')}", security_style))
-    
-    doc.build(story)
-    buffer.seek(0)
-    
-    # Nombre de archivo súper descriptivo
-    tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
-    fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
-    filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.pdf"
-    
-    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    return response
+       'SecurityStyle',
+       parent=styles['Normal'],
+       fontSize=8,
+       textColor=colors.HexColor('#95A5A6'),
+       alignment=TA_CENTER,
+       fontName='Helvetica'
+   )
+   story.append(Paragraph("Documento generado con tecnología segura FinGest | ID: " + 
+                         f"FG-{reporte.id}-{reporte.fecha_creacion.strftime('%Y%m%d%H%M')}", security_style))
+   
+   doc.build(story)
+   buffer.seek(0)
+   
+   # Nombre de archivo súper descriptivo
+   tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
+   fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
+   filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.pdf"
+   
+   response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+   response['Content-Disposition'] = f'attachment; filename="{filename}"'
+   return response
 
 def exportar_reporte_excel(reporte, datos):
     """Exporta reporte a Excel con formato ultra profesional y limpio"""
     from openpyxl import Workbook
-    from django.http import HttpResponse
-    from datetime import datetime
     
     # Crear workbook
     wb = Workbook()
@@ -1228,8 +1225,6 @@ def exportar_csv(reporte, datos):
 
 def obtener_fechas_periodo(periodo):
     """Obtener fechas de inicio y fin según el período seleccionado"""
-    from django.utils import timezone
-    from datetime import timedelta
     import calendar
     
     now = timezone.now()
@@ -1267,9 +1262,6 @@ def obtener_fechas_periodo(periodo):
 def exportar_excel(request):
     """Exportar datos financieros a Excel"""
     from openpyxl import Workbook
-    from openpyxl.styles import Font, PatternFill
-    from django.http import HttpResponse
-    from datetime import datetime
     
     # Obtener fechas del filtro
     periodo = request.GET.get('periodo', 'mes_actual')
@@ -1377,14 +1369,7 @@ def exportar_excel(request):
 @fast_access_pin_verified
 def exportar_pdf_simple(request):
     """Exportar reporte simple a PDF"""
-    from reportlab.lib.pagesizes import A4
-    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.lib import colors
-    from reportlab.lib.units import inch
-    from io import BytesIO
-    from datetime import datetime
-    
+
     # Obtener fechas del filtro
     periodo = request.GET.get('periodo', 'mes_actual')
     fecha_inicio, fecha_fin = obtener_fechas_periodo(periodo)
