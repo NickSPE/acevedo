@@ -130,9 +130,8 @@ class MetaAhorroForm(forms.ModelForm):
         monto_objetivo = cleaned_data.get('monto_objetivo')
         
         # Validar que la fecha límite sea posterior a la fecha de inicio
-        if fecha_inicio and fecha_limite:
-            if fecha_limite <= fecha_inicio:
-                raise forms.ValidationError('La fecha límite debe ser posterior a la fecha de inicio.')
+        if fecha_inicio and fecha_limite and fecha_limite <= fecha_inicio:
+            raise forms.ValidationError('La fecha límite debe ser posterior a la fecha de inicio.')
         
         # Validar que el monto objetivo sea positivo
         if monto_objetivo and monto_objetivo <= 0:

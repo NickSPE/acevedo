@@ -113,9 +113,8 @@ class SubCuenta(models.Model):
             raise ValueError("Una subcuenta debe tener una cuenta principal o un propietario directo")
         
         # Si tiene ambos, dar prioridad a la cuenta principal
-        if self.id_cuenta and self.propietario:
-            if self.id_cuenta.id_usuario != self.propietario:
-                raise ValueError("El propietario debe coincidir con el usuario de la cuenta principal")
+        if self.id_cuenta and self.propietario and self.id_cuenta.id_usuario != self.propietario:
+            raise ValueError("El propietario debe coincidir con el usuario de la cuenta principal")
         
         # Asignar color automáticamente según el tipo si no se ha establecido uno personalizado
         if self.color == '#3B82F6':  # Color por defecto

@@ -226,14 +226,11 @@ class TransferenciaCuentaPrincipalForm(forms.ModelForm):
         self.fields['descripcion'].label = 'Descripción (opcional)'
         
         # Validar monto máximo según el tipo
-        if self.subcuenta:
-            if 'tipo' in self.data:
-                tipo_selected = self.data['tipo']
-                if tipo_selected == 'deposito':
-                    # Transferir de subcuenta a cuenta principal
-                    max_amount = self.subcuenta.saldo
-                    self.fields['monto'].widget.attrs['max'] = str(max_amount)
-                    self.fields['monto'].help_text = f'Máximo disponible: ${max_amount:.2f}'
+        if self.subcuenta and 'tipo' in self.data and self.data['tipo'] == 'deposito':
+            # Transferir de subcuenta a cuenta principal
+            max_amount = self.subcuenta.saldo
+            self.fields['monto'].widget.attrs['max'] = str(max_amount)
+            self.fields['monto'].help_text = f'Máximo disponible: ${max_amount:.2f}'
     
     def clean_monto(self):
         monto = self.cleaned_data.get('monto')
