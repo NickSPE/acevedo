@@ -82,23 +82,23 @@ class SubCuenta(models.Model):
     }
 
     nombre = models.CharField(max_length=50, help_text="Nombre descriptivo de la subcuenta")
-    descripcion = models.CharField(max_length=300, blank=True, null=True, help_text="Propósito y objetivo de esta subcuenta")
+    descripcion = models.CharField(max_length=300, blank=True, default='', help_text="Propósito y objetivo de esta subcuenta")
     saldo = models.DecimalField(max_digits=15, decimal_places=2, default=0, help_text="Saldo actual en la subcuenta")
     tipo = models.CharField(max_length=30, choices=TIPOS_SUBCUENTA, default='otros', help_text="Categoría de la subcuenta")
     color = models.CharField(max_length=7, default='#3B82F6', help_text="Color para identificación visual")
     activa = models.BooleanField(default=True, help_text="Indica si la subcuenta está activa")
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
-    
+
     # Campos para subcuentas de negocio
     es_negocio = models.BooleanField(default=False, help_text="Marca si es una subcuenta de negocio")
     meta_objetivo = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True, help_text="Meta de ahorro u objetivo financiero")
     fecha_meta = models.DateField(null=True, blank=True, help_text="Fecha límite para alcanzar la meta")
-    
+
     # Relación con cuenta principal (OPCIONAL para subcuentas independientes)
     id_cuenta = models.ForeignKey(Cuenta, on_delete=models.CASCADE, related_name='subcuentas', 
                                   null=True, blank=True, help_text="Cuenta principal (opcional para subcuentas independientes)")
-    
+
     # Para subcuentas independientes se REQUIERE relación directa con usuario
     propietario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE, null=True, blank=True, 
                                    help_text="Propietario directo (requerido para subcuentas independientes)")
@@ -209,7 +209,7 @@ class TransferenciaSubCuenta(models.Model):
     subcuenta_origen = models.ForeignKey(SubCuenta, on_delete=models.CASCADE, related_name='transferencias_enviadas')
     subcuenta_destino = models.ForeignKey(SubCuenta, on_delete=models.CASCADE, related_name='transferencias_recibidas')
     monto = models.DecimalField(max_digits=15, decimal_places=2)
-    descripcion = models.CharField(max_length=300, blank=True, null=True)
+    descripcion = models.CharField(max_length=300, blank=True, default='')
     fecha_transferencia = models.DateTimeField(auto_now_add=True)
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
 
@@ -231,7 +231,7 @@ class TransferenciaCuentaPrincipal(models.Model):
     cuenta_destino = models.ForeignKey(Cuenta, on_delete=models.CASCADE, related_name='transferencias_desde_subcuentas')
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     tipo = models.CharField(max_length=20, choices=TIPO_TRANSFERENCIA, default='deposito')
-    descripcion = models.CharField(max_length=300, blank=True, null=True)
+    descripcion = models.CharField(max_length=300, blank=True, default='')
     fecha_transferencia = models.DateTimeField(auto_now_add=True)
     id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
 
