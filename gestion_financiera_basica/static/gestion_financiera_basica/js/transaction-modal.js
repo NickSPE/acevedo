@@ -4,7 +4,7 @@
  */
 
 class TransactionModal {
-  constructor(options = {}) {
+  constructor() {
     this.modalId = 'transaction-modal';
     this.csrfToken = this.getCSRFToken();
     this.modal = null;
@@ -45,7 +45,7 @@ class TransactionModal {
     });
   }
 
-  open(event) {
+  open() {
     if (this.modal) {
       this.modal.remove();
     }
@@ -339,7 +339,7 @@ class TransactionModal {
     const handler = entry[1];
     try {
       return handler(url);
-    } catch (e) {
+    } catch (_e) {
       return fallback;
     }
   }

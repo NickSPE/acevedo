@@ -4,7 +4,7 @@
  */
 
 class SubcuentaModal {
-  constructor(options = {}) {
+  constructor() {
     this.modalId = 'subcuenta-modal';
     this.csrfToken = this.getCSRFToken();
     this.modal = null;
@@ -32,7 +32,7 @@ class SubcuentaModal {
     });
   }
 
-  open(event) {
+  open() {
     if (this.modal) {
       this.modal.remove();
     }
@@ -318,7 +318,7 @@ class SubcuentaModal {
           return handle(url);
         }
       }
-    } catch (e) {
+    } catch {
       return fallback;
     }
     return fallback;

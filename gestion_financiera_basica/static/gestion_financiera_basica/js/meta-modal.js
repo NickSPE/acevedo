@@ -4,7 +4,7 @@
  */
 
 class MetaModal {
-  constructor(options = {}) {
+  constructor() {
     this.modalId = 'meta-modal';
     this.csrfToken = this.getCSRFToken();
     this.modal = null;
@@ -32,7 +32,7 @@ class MetaModal {
     });
   }
 
-  open(event) {
+  open() {
     if (this.modal) {
       this.modal.remove();
     }
@@ -279,7 +279,7 @@ class MetaModal {
       };
       const match = Object.keys(checks).find(prefix => url.startsWith(prefix));
       return match && checks[match](url) ? url : fallback;
-    } catch (e) {
+    } catch {
       return fallback;
     }
   }
