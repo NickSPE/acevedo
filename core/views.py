@@ -196,7 +196,6 @@ Responder directamente a: {email}
                     full_message,
                     settings.DEFAULT_FROM_EMAIL,
                     ['contacto@fingest.com'],  # Email de destino
-                    reply_to=[email],  # Para poder responder directamente
                     fail_silently=False,
                 )
                 
