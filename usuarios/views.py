@@ -489,12 +489,10 @@ def onboarding_view(request):
             'user': request.user
         })
     except Exception as e:
-        from django.http import JsonResponse
         return JsonResponse({"error": f"Vista de onboarding no disponible: {str(e)}"}, status=503)
 
 def complete_onboarding(request):
     """Completar onboarding y actualizar datos del usuario"""
-    from django.http import JsonResponse
     import json
     
     if not request.user.is_authenticated:
@@ -602,7 +600,6 @@ def fix_incomplete_onboarding(request):
             'message': 'Sistema de corrección de onboarding no implementado aún'
         })
     except Exception as e:
-        from django.http import JsonResponse
         return JsonResponse({"error": f"Vista de corrección de onboarding no disponible: {str(e)}"}, status=503)
 
 def password_reset_request(request):
@@ -755,5 +752,4 @@ def test_view(request):
             'user': request.user if request.user.is_authenticated else None
         })
     except Exception as e:
-        from django.http import JsonResponse
         return JsonResponse({"error": f"Vista de prueba no disponible: {str(e)}"}, status=503)

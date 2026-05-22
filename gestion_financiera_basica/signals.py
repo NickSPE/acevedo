@@ -21,7 +21,6 @@ def notificar_nuevo_aporte(sender, instance, created, **kwargs):
         
     # Verificar duplicados
     from alertas_notificaciones.models import Notificacion
-    from django.utils import timezone
     from datetime import timedelta
     
     hace_5_min = timezone.now() - timedelta(minutes=5)
@@ -105,7 +104,6 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
     
     # Verificar si ya existe una notificación para este movimiento (evitar duplicados)
     from alertas_notificaciones.models import Notificacion
-    from django.utils import timezone
     from datetime import timedelta
     
     # Buscar notificaciones duplicadas en los últimos 5 minutos para el mismo movimiento
@@ -260,7 +258,6 @@ def notificar_nueva_meta_ahorro(sender, instance, created, **kwargs):
         
     # Verificar duplicados
     from alertas_notificaciones.models import Notificacion
-    from django.utils import timezone
     from datetime import timedelta
     
     hace_5_min = timezone.now() - timedelta(minutes=5)
