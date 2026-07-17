@@ -1,23 +1,27 @@
 import os
 import json
-from google import generativeai as genai
+from google import genai
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+_genai_client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 AVAILABLE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-pro-latest']
 
 
 def generate_ai_explanation(result, calculation_type):
     """Genera explicación usando IA de Gemini"""
+    if _genai_client is None:
+        return "No se pudo generar explicación con IA en este momento."
+
     try:
         prompt = _build_explanation_prompt(result, calculation_type)
         
         for model_name in AVAILABLE_MODELS:
             try:
-                model = genai.GenerativeModel(model_name)
-                response = model.generate_content(prompt)
+                response = _genai_client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
                 return response.text
             except Exception as e:
                 print(f"Error con modelo {model_name}: {e}")
@@ -89,6 +93,9 @@ def _build_explanation_prompt(result, calculation_type):
 
 def generate_ai_tips(categoria):
     """Genera consejos financieros usando Gemini AI"""
+    if _genai_client is None:
+        return []
+
     from .models_helpers import TipObject
     
     try:
@@ -112,8 +119,10 @@ Responde SOLO con un JSON array en este formato:
         
         for model_name in AVAILABLE_MODELS:
             try:
-                model = genai.GenerativeModel(model_name)
-                response = model.generate_content(prompt)
+                response = _genai_client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
                 
                 # Limpiar respuesta
                 ai_tips_raw = response.text.strip()
@@ -152,6 +161,12 @@ Responde SOLO con un JSON array en este formato:
 
 def process_ai_chat(user_message):
     """Procesa mensaje de chat con IA"""
+    if _genai_client is None:
+        return {
+            'success': False,
+            'error': 'No se pudo conectar con la IA. Intenta de nuevo.'
+        }
+
     try:
         prompt = f"""
 Eres un asistente financiero experto y amigable. El usuario te pregunta: "{user_message}"
@@ -164,8 +179,10 @@ Sé específico, da ejemplos prácticos y mantén un tono amigable.
         
         for model_name in AVAILABLE_MODELS:
             try:
-                model = genai.GenerativeModel(model_name)
-                response = model.generate_content(prompt)
+                response = _genai_client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
                 
                 return {
                     'success': True,

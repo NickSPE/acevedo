@@ -3,6 +3,7 @@ Tests unitarios para los servicios de la aplicación educacion_financiera
 Ubicación: test/test_educacion_financiera_services.py
 """
 
+import unittest
 from django.test import TestCase
 from unittest.mock import patch, MagicMock
 from educacion_financiera.services import (
@@ -14,16 +15,19 @@ from educacion_financiera.services import (
 
 class EducacionFinancieraServicesTestCase(TestCase):
     
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_explanation_savings(self, mock_generative_model):
+    def setUp(self):
+        self._patcher = patch('educacion_financiera.services._genai_client')
+        self.mock_client = self._patcher.start()
+        self.mock_client.models.generate_content.return_value = MagicMock(text="")
+    
+    def tearDown(self):
+        self._patcher.stop()
+
+    def test_generate_ai_explanation_savings(self):
         """Valida la generación de explicaciones de ahorro usando IA (Gemini mock)"""
-        # Configurar Mock
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        
-        mock_response = MagicMock()
-        mock_response.text = "Explicación de ahorro de prueba."
-        mock_model_instance.generate_content.return_value = mock_response
+        self.mock_client.models.generate_content.return_value = MagicMock(
+            text="Explicación de ahorro de prueba."
+        )
 
         result = {
             'future_value': 12000.00,
@@ -34,18 +38,16 @@ class EducacionFinancieraServicesTestCase(TestCase):
         explanation = generate_ai_explanation(result, 'savings')
         
         self.assertEqual(explanation, "Explicación de ahorro de prueba.")
-        # Verificar que se llamó al modelo
-        mock_generative_model.assert_called_with('gemini-2.0-flash')
-        mock_model_instance.generate_content.assert_called()
+        self.mock_client.models.generate_content.assert_called_once_with(
+            model='gemini-2.0-flash',
+            contents=unittest.mock.ANY
+        )
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_explanation_loan(self, mock_generative_model):
+    def test_generate_ai_explanation_loan(self):
         """Valida la generación de explicaciones de préstamos"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        mock_response = MagicMock()
-        mock_response.text = "Explicación de préstamo."
-        mock_model_instance.generate_content.return_value = mock_response
+        self.mock_client.models.generate_content.return_value = MagicMock(
+            text="Explicación de préstamo."
+        )
 
         result = {
             'monthly_payment': 500.00,
@@ -56,14 +58,11 @@ class EducacionFinancieraServicesTestCase(TestCase):
         explanation = generate_ai_explanation(result, 'loan')
         self.assertEqual(explanation, "Explicación de préstamo.")
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_explanation_budget(self, mock_generative_model):
+    def test_generate_ai_explanation_budget(self):
         """Valida la generación de explicaciones de presupuesto"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        mock_response = MagicMock()
-        mock_response.text = "Explicación de presupuesto."
-        mock_model_instance.generate_content.return_value = mock_response
+        self.mock_client.models.generate_content.return_value = MagicMock(
+            text="Explicación de presupuesto."
+        )
 
         result = {
             'income': 3000.00,
@@ -74,14 +73,11 @@ class EducacionFinancieraServicesTestCase(TestCase):
         explanation = generate_ai_explanation(result, 'budget')
         self.assertEqual(explanation, "Explicación de presupuesto.")
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_explanation_retirement(self, mock_generative_model):
+    def test_generate_ai_explanation_retirement(self):
         """Valida la generación de explicaciones de jubilación"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        mock_response = MagicMock()
-        mock_response.text = "Explicación de jubilación."
-        mock_model_instance.generate_content.return_value = mock_response
+        self.mock_client.models.generate_content.return_value = MagicMock(
+            text="Explicación de jubilación."
+        )
 
         result = {
             'total_at_retirement': 150000.00,
@@ -92,14 +88,11 @@ class EducacionFinancieraServicesTestCase(TestCase):
         explanation = generate_ai_explanation(result, 'retirement')
         self.assertEqual(explanation, "Explicación de jubilación.")
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_explanation_investment(self, mock_generative_model):
+    def test_generate_ai_explanation_investment(self):
         """Valida la generación de explicaciones de inversión"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        mock_response = MagicMock()
-        mock_response.text = "Explicación de inversión."
-        mock_model_instance.generate_content.return_value = mock_response
+        self.mock_client.models.generate_content.return_value = MagicMock(
+            text="Explicación de inversión."
+        )
 
         result = {
             'final_value': 25000.00,
@@ -111,30 +104,18 @@ class EducacionFinancieraServicesTestCase(TestCase):
         explanation = generate_ai_explanation(result, 'investment')
         self.assertEqual(explanation, "Explicación de inversión.")
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_explanation_failure(self, mock_generative_model):
+    def test_generate_ai_explanation_failure(self):
         """Valida que devuelva un mensaje amigable por defecto si la API de Gemini falla"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        
-        # Simular error lanzando excepción
-        mock_model_instance.generate_content.side_effect = Exception("API connection timed out")
+        self.mock_client.models.generate_content.side_effect = Exception("API connection timed out")
 
         result = {'future_value': 1000}
         explanation = generate_ai_explanation(result, 'savings')
         
-        # Debe recuperar el mensaje por defecto amigable
         self.assertEqual(explanation, "No se pudo generar explicación con IA en este momento.")
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_tips_success_json_codeblock(self, mock_generative_model):
+    def test_generate_ai_tips_success_json_codeblock(self):
         """Valida la generación de tips estructurados parseando un bloque de código Markdown JSON"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        
-        mock_response = MagicMock()
-        # Formato común que devuelve la IA con comillas e inicio json
-        mock_response.text = """
+        self.mock_client.models.generate_content.return_value = MagicMock(text="""
         ```json
         [
           {
@@ -144,8 +125,7 @@ class EducacionFinancieraServicesTestCase(TestCase):
           }
         ]
         ```
-        """
-        mock_model_instance.generate_content.return_value = mock_response
+        """)
 
         tips = generate_ai_tips('savings')
         
@@ -156,43 +136,31 @@ class EducacionFinancieraServicesTestCase(TestCase):
         self.assertEqual(tip.prioridad, "alta")
         self.assertTrue(tip.es_ai)
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_tips_success_raw_json(self, mock_generative_model):
+    def test_generate_ai_tips_success_raw_json(self):
         """Valida la generación de tips con JSON plano"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        
-        mock_response = MagicMock()
-        mock_response.text = '[{"titulo": "Inversión", "descripcion": "Diversifica", "prioridad": "media"}]'
-        mock_model_instance.generate_content.return_value = mock_response
+        self.mock_client.models.generate_content.return_value = MagicMock(
+            text='[{"titulo": "Inversión", "descripcion": "Diversifica", "prioridad": "media"}]'
+        )
 
         tips = generate_ai_tips('investment')
         self.assertEqual(len(tips), 1)
         self.assertEqual(tips[0].titulo, "Inversión")
         self.assertEqual(tips[0].prioridad, "media")
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_generate_ai_tips_failure(self, mock_generative_model):
+    def test_generate_ai_tips_failure(self):
         """Valida que devuelva una lista vacía si hay un error en la API o el JSON es inválido"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        
-        mock_response = MagicMock()
-        mock_response.text = "Error interno o texto no estructurado en JSON"
-        mock_model_instance.generate_content.return_value = mock_response
+        self.mock_client.models.generate_content.return_value = MagicMock(
+            text="Error interno o texto no estructurado en JSON"
+        )
 
         tips = generate_ai_tips('savings')
         self.assertEqual(tips, [])
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_process_ai_chat_success(self, mock_generative_model):
+    def test_process_ai_chat_success(self):
         """Valida procesamiento de mensajes en chat conversacional de finanzas"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        
-        mock_response = MagicMock()
-        mock_response.text = "Hola, el presupuesto es importante."
-        mock_model_instance.generate_content.return_value = mock_response
+        self.mock_client.models.generate_content.return_value = MagicMock(
+            text="Hola, el presupuesto es importante."
+        )
 
         chat_res = process_ai_chat("¿Cómo hago un presupuesto?")
         
@@ -200,12 +168,9 @@ class EducacionFinancieraServicesTestCase(TestCase):
         self.assertEqual(chat_res['response'], "Hola, el presupuesto es importante.")
         self.assertEqual(chat_res['model'], "gemini-2.0-flash")
 
-    @patch('educacion_financiera.services.genai.GenerativeModel')
-    def test_process_ai_chat_failure(self, mock_generative_model):
+    def test_process_ai_chat_failure(self):
         """Valida que el chat capture excepciones y devuelva un mensaje estructurado de error"""
-        mock_model_instance = MagicMock()
-        mock_generative_model.return_value = mock_model_instance
-        mock_model_instance.generate_content.side_effect = Exception("General connection issue")
+        self.mock_client.models.generate_content.side_effect = Exception("General connection issue")
 
         chat_res = process_ai_chat("Hola")
         
