@@ -1,0 +1,5 @@
+# Dependencias para pruebas y cobertura (CI y desarrollo local)
+-r requirements.txt
+pytest>=8.3.0
+pytest-django>=4.9.0
+coverage>=7.6.0

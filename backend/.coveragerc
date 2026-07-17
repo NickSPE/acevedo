@@ -1,0 +1,15 @@
+[run]
+source = .
+omit =
+    */migrations/*
+    */venv/*
+    */test1.py
+    */tests_integration.py
+    manage.py
+    FinGest/wsgi.py
+    FinGest/asgi.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if TYPE_CHECKING:
