@@ -29,6 +29,7 @@ google-genai>=1.0.0  # Google Gemini AI (usado en educacion_financiera)
 # google-auth>=2.38.0
 # google-auth-oauthlib>=1.2.1
 # google-auth-httplib2>=0.2.0
+pytest-django>=4.11.1    # Plugin de pytest para inicializar Django durante tests
 
 # ===========================
 # DEPENDENCIAS DE PRODUCCIÓN
