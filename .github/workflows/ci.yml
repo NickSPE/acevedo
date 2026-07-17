@@ -1,5 +1,7 @@
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches: [nueva-rama-cambios]
 jobs:
   test:
     runs-on: ubuntu-latest
