@@ -146,7 +146,8 @@ class CuentasServicesTestCase(TestCase):
             new_pin='5678'
         )
         self.assertTrue(success)
-        self.assertEqual(self.usuario.pin_acceso_rapido, '5678')
+        self.usuario.refresh_from_db()
+        self.assertTrue(self.usuario.check_pin('5678'))
 
     def test_cambiar_pin_usuario_incorrect_pin(self):
         """Valida que falle el cambio de PIN si el PIN actual no coincide"""
@@ -157,7 +158,8 @@ class CuentasServicesTestCase(TestCase):
         )
         self.assertFalse(success)
         self.assertIn("incorrecto", msg)
-        self.assertEqual(self.usuario.pin_acceso_rapido, 1234)
+        self.usuario.refresh_from_db()
+        self.assertTrue(self.usuario.check_pin('1234'))
 
     def test_procesar_transferencia_entre_subcuentas_success(self):
         """Valida transferencia exitosa entre dos subcuentas"""

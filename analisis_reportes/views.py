@@ -281,23 +281,48 @@ def calcular_estadisticas_generales(usuario, fecha_inicio, fecha_fin):
         promedio=Avg('monto')
     )['promedio'] or 0
     
-    # Top gastos
+    # Top gastos (serializable)
     top_gastos = transacciones_periodo.filter(tipo='egreso').order_by('-monto')[:5]
-    
-    # Información de subcuentas
+    top_gastos_data = [
+        {
+            'nombre': g.nombre,
+            'monto': float(g.monto),
+            'fecha': g.fecha_movimiento.strftime('%Y-%m-%d'),
+            'categoria': g.categoria,
+        }
+        for g in top_gastos
+    ]
+
+    # Información de subcuentas (serializable)
     subcuentas_info = SubCuenta.objects.filter(
         Q(id_cuenta__id_usuario=usuario) | Q(propietario=usuario), 
         activa=True
     )[:5]
-    
-    # Metas de ahorro con progreso
+    subcuentas_info_data = [
+        {
+            'nombre': sc.nombre,
+            'tipo': sc.tipo,
+            'saldo': float(sc.saldo),
+            'color': sc.color,
+        }
+        for sc in subcuentas_info
+    ]
+
+    # Metas de ahorro con progreso (serializable)
     from gestion_financiera_basica.models import MetaAhorro
     metas_progreso = MetaAhorro.objects.filter(id_usuario=usuario)[:3]
+    metas_progreso_data = []
     for meta in metas_progreso:
         if meta.monto_objetivo > 0:
-            meta.porcentaje_progreso = (float(meta.monto_ahorrado()) / float(meta.monto_objetivo)) * 100
+            porcentaje = (float(meta.monto_ahorrado()) / float(meta.monto_objetivo)) * 100
         else:
-            meta.porcentaje_progreso = 0
+            porcentaje = 0
+        metas_progreso_data.append({
+            'nombre': meta.nombre,
+            'monto_objetivo': float(meta.monto_objetivo),
+            'monto_ahorrado': meta.monto_ahorrado(),
+            'porcentaje_progreso': porcentaje,
+        })
     
     return {
         'balance_total': float(balance_total),
@@ -309,9 +334,9 @@ def calcular_estadisticas_generales(usuario, fecha_inicio, fecha_fin):
         'num_subcuentas': num_subcuentas,
         'promedio_transaccion': float(promedio_transaccion),
         'total_transacciones': transacciones_periodo.count(),
-        'top_gastos': top_gastos,
-        'subcuentas_info': subcuentas_info,
-        'metas_progreso': metas_progreso,
+        'top_gastos': top_gastos_data,
+        'subcuentas_info': subcuentas_info_data,
+        'metas_progreso': metas_progreso_data,
     }
 
 def get_gastos_por_categoria(usuario, fecha_inicio, fecha_fin):
@@ -1052,27 +1077,27 @@ def exportar_pdf(reporte, datos):
     # Marca de agua de seguridad
     story.append(Spacer(1, 10))
     security_style = ParagraphStyle(
-       'SecurityStyle',
-       parent=styles['Normal'],
-       fontSize=8,
-       textColor=colors.HexColor('#95A5A6'),
-       alignment=TA_CENTER,
-       fontName='Helvetica'
-   )
-   story.append(Paragraph("Documento generado con tecnología segura FinGest | ID: " + 
-                         f"FG-{reporte.id}-{reporte.fecha_creacion.strftime('%Y%m%d%H%M')}", security_style))
+        'SecurityStyle',
+        parent=styles['Normal'],
+        fontSize=8,
+        textColor=colors.HexColor('#95A5A6'),
+        alignment=TA_CENTER,
+        fontName='Helvetica'
+    )
+    story.append(Paragraph("Documento generado con tecnología segura FinGest | ID: " +
+                          f"FG-{reporte.id}-{reporte.fecha_creacion.strftime('%Y%m%d%H%M')}", security_style))
+
+    doc.build(story)
+    buffer.seek(0)
    
-   doc.build(story)
-   buffer.seek(0)
-   
-   # Nombre de archivo súper descriptivo
-   tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
-   fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
-   filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.pdf"
-   
-   response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
-   response['Content-Disposition'] = f'attachment; filename="{filename}"'
-   return response
+    # Nombre de archivo súper descriptivo
+    tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
+    fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
+    filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.pdf"
+
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
 
 def exportar_reporte_excel(reporte, datos):
     """Exporta reporte a Excel con formato ultra profesional y limpio"""
@@ -1151,10 +1176,14 @@ def exportar_reporte_excel(reporte, datos):
     # Ajustar ancho de columnas
     for column in ws.columns:
         max_length = 0
-        column_letter = column[0].column_letter
+        first_cell = column[0]
+        if hasattr(first_cell, 'column_letter'):
+            column_letter = first_cell.column_letter
+        else:
+            continue
         for cell in column:
             try:
-                if len(str(cell.value)) > max_length:
+                if cell.value and len(str(cell.value)) > max_length:
                     max_length = len(str(cell.value))
             except Exception as e:
                 import logging
@@ -1193,7 +1222,7 @@ def exportar_csv(reporte, datos):
     writer = csv.writer(response)
     
     # Escribir encabezado
-    writer.writerow([safe_csv_cell('Reporte:'), safe_csv_cell(reporte.nombre)])
+    writer.writerow([safe_csv_cell('Reporte:'), safe_csv_cell(reporte.titulo)])
     writer.writerow([safe_csv_cell('Tipo:'), safe_csv_cell(reporte.get_tipo_reporte_display())])
     writer.writerow([safe_csv_cell('Fecha creación:'), safe_csv_cell(reporte.fecha_creacion.strftime('%Y-%m-%d %H:%M'))])
     writer.writerow([safe_csv_cell('Período:'), safe_csv_cell(f"{reporte.fecha_inicio} - {reporte.fecha_fin}")])

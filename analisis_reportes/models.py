@@ -57,7 +57,7 @@ class ConfiguracionReporte(models.Model):
     moneda_display = models.CharField(max_length=10, default='USD')
     
     def __str__(self):
-        return f"Configuración de {self.id_usuario.username}"
+        return f"Configuración de {self.id_usuario.correo}"
     
     class Meta:
         verbose_name = 'Configuración de Reporte'

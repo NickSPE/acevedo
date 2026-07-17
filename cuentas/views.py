@@ -30,6 +30,15 @@ from .services import (
     procesar_deposito_subcuenta,
     procesar_transferencia_a_principal
 )
+from .utils import (
+    obtener_estadisticas_subcuentas,
+    obtener_cuentas_con_subcuentas,
+    obtener_subcuentas_independientes,
+    obtener_transferencias_recientes,
+    obtener_balance_total,
+    obtener_cuentas_usuario,
+)
+from .helpers import procesar_imagen_perfil
 
 # Views App CUENTAS
 
@@ -42,8 +51,19 @@ def profile(request):
     if request.method == "POST":
         return _handle_profile_action(request, usuario)
 
-    # Lógica existente para solicitudes GET u otras acciones
-    # ... (mantener el comportamiento original)
+    imagen_base64, formato_imagen = None, None
+    try:
+        from .helpers import procesar_imagen_perfil
+        imagen_base64, formato_imagen = procesar_imagen_perfil(usuario, solo_leer=True)
+    except ImportError:
+        pass
+    tab = request.GET.get("tab", "general")
+    return render(request, "cuentas/profile_modern.html", {
+        "tab": tab,
+        "usuario": usuario,
+        "imagen_base64": imagen_base64,
+        "formato_imagen": formato_imagen,
+    })
 
 
 def _handle_profile_action(request, usuario):
@@ -79,69 +99,6 @@ def _handle_update_profile(request, usuario):
     else:
         messages.error(request, "❌ Los campos Nombres, Apellido Paterno y País son obligatorios.")
     return redirect("cuentas:profile")
-
-    # Actualización de información de contacto
-    if action == "update_contact":
-        email = request.POST.get("email", "").strip()
-        telefono = request.POST.get("telefono", "").strip()
-        
-        if email:
-            if Usuario.objects.filter(correo=email).exclude(id=usuario.id).exists():
-                messages.error(request, "❌ Este correo electrónico ya está siendo usado por otro usuario.")
-            else:
-                actualizar_contacto_usuario(usuario, email, telefono)
-                messages.success(request, "✅ Información de contacto actualizada correctamente.")
-        else:
-            messages.error(request, "❌ El correo electrónico es obligatorio.")
-        return redirect("cuentas:profile")
-        
-        # Cambio de contraseña
-        elif action == "change_password":
-            actual_password = request.POST.get("actual_password", "").strip()
-            new_password = request.POST.get("new_password", "").strip()
-            confirm_password = request.POST.get("confirm_password", "").strip()
-            
-            error_msg = validar_password(actual_password, new_password, confirm_password)
-            if error_msg:
-                messages.error(request, error_msg)
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            success, msg = cambiar_password_usuario(usuario, actual_password, new_password, request)
-            messages.success(request, f"✅ {msg}") if success else messages.error(request, f"❌ {msg}")
-            return redirect(reverse("cuentas:profile") + "?tab=security")
-        
-        # Cambio de PIN
-        elif action == "change_pin":
-            current_pin = request.POST.get("actual_pin", "").strip()
-            new_pin = request.POST.get("new_pin", "").strip()
-            confirm_pin = request.POST.get("confirm_pin", "").strip()
-            
-            error_msg = validar_pin_cambio(usuario, current_pin, new_pin, confirm_pin)
-            if error_msg:
-                messages.error(request, error_msg)
-                return redirect(reverse("cuentas:profile") + "?tab=security")
-            
-            success, msg = cambiar_pin_usuario(usuario, current_pin, new_pin)
-            messages.success(request, f"✅ {msg}") if success else messages.error(request, f"❌ {msg}")
-            return redirect(reverse("cuentas:profile") + "?tab=security")
-        
-        return redirect("cuentas:profile")
-
-    usuario = Usuario.objects.get(id=user_id)
-    
-    if not usuario.pais:
-        usuario.pais = "Peru"
-        usuario.save()
-    
-    imagen_base64, formato_imagen = procesar_imagen_perfil(usuario, solo_leer=True)
-    tab = request.GET.get("tab", "general")
-    
-    return render(request, "cuentas/profile_modern.html", {
-        "tab": tab,
-        "usuario": usuario,
-        "imagen_base64": imagen_base64,
-        "formato_imagen": formato_imagen,
-    })
 
 @login_required
 @fast_access_pin_verified

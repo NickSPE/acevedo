@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate , login
+from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -66,7 +67,6 @@ def Login(request):
 
 
 def _handle_send_verification(request):
-    print("🔍 DEBUG: Petición AJAX para enviar código")
     correo = request.POST.get('correo')
     nombres = request.POST.get('nombres')
 
@@ -75,10 +75,16 @@ def _handle_send_verification(request):
             'success': False,
             'error': 'Correo y nombres son requeridos'
         })
-if Usuario.objects.filter(correo=correo).exists():
+
+    if Usuario.objects.filter(correo=correo).exists():
+        return JsonResponse({
+            'success': False,
+            'error': 'El correo ya está registrado'
+        })
+
     return JsonResponse({
-        'success': False,
-        'error': 'El correo ya está registrado'
+        'success': True,
+        'message': 'Correo disponible para registro'
     })
 
 
@@ -86,8 +92,7 @@ def Register(request):
     monedas = Moneda.objects.all()
 
     if request.method != "POST":
-        print("🔍 DEBUG REGISTER: Mostrando formulario de registro")
-        return render(request, 'usuarios/register.html', {
+        return render(request, 'usuarios/register_simple.html', {
             'monedas': monedas
         })
 
@@ -386,8 +391,7 @@ def Acceso_Rapido(request):
         print(f"🔍 DEBUG ACCESO_RAPIDO: PIN ingresado: '{pin_input}'")
         print(f"🔍 DEBUG ACCESO_RAPIDO: PIN guardado: '{usuario.pin_acceso_rapido}' (tipo: {type(usuario.pin_acceso_rapido)})")
 
-        # Comparar ambos como strings
-        if str(usuario.pin_acceso_rapido) == pin_input:
+        if usuario.check_pin(pin_input):
             request.session['pin_acceso_rapido_validado'] = True
 
             return redirect('core:dashboard') 
@@ -404,6 +408,9 @@ def Reestablecer_Contraseña(request):
 
 def pin_login(request):
     """Login directo usando solo PIN"""
+    if request.method == "GET":
+        return render(request, 'usuarios/pin_login.html')
+
     if request.method == "POST":
         # Intentar obtener PIN de diferentes formatos posibles
         pin_input = request.POST.get('pin_input', '').strip()
@@ -431,44 +438,30 @@ def pin_login(request):
             return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
         
         try:
-            # Buscar usuario por PIN
-            print(f"🔍 DEBUG PIN_LOGIN: Buscando usuario con PIN: '{pin_input}'")
-            
-            # Buscar exactamente por el PIN como string
-            usuario = Usuario.objects.filter(pin_acceso_rapido=pin_input).first()
-            
+            usuario = None
+            for u in Usuario.objects.all():
+                if u.check_pin(pin_input):
+                    usuario = u
+                    break
+
             if usuario:
-                print(f"✅ DEBUG PIN_LOGIN: Usuario encontrado: {usuario.correo} (ID: {usuario.id})")
-                
-                # Verificar si el usuario está activo
                 if not usuario.is_active:
                     error_message = "Esta cuenta está desactivada."
                     return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
-                
-                # Autenticar y hacer login
+
                 login(request, usuario, backend='usuarios.backends.EmailBackend')
                 request.session['pin_acceso_rapido_validado'] = True
-                
-                print(f"✅ DEBUG PIN_LOGIN: Login exitoso para {usuario.correo}")
-                
-                # Verificar si necesita onboarding
+
                 if not usuario.onboarding_completed:
-                    print("🔍 DEBUG PIN_LOGIN: Redirigiendo a onboarding")
                     return redirect('usuarios:onboarding')
-                
-                print("🔍 DEBUG PIN_LOGIN: Redirigiendo a dashboard")
+
                 return redirect('core:dashboard')
             else:
-                print(f"❌ DEBUG PIN_LOGIN: No se encontró usuario con PIN '{pin_input}'")
-                
-                # Debug: Mostrar todos los PINs existentes
-                all_pins = Usuario.objects.values_list('pin_acceso_rapido', 'correo')
-                print("🔍 DEBUG PIN_LOGIN: PINs existentes en BD:")
-                for pin, email in all_pins:
-                    print(f"   PIN: '{pin}' -> {email}")
-                
                 error_message = "PIN incorrecto. No se encontró ningún usuario con ese PIN."
                 return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
+        except Exception:
+            error_message = "Error al verificar PIN."
+            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
             
 def onboarding_view(request):
     """Vista de onboarding para nuevos usuarios"""
@@ -528,93 +521,34 @@ def _handle_skip_onboarding(usuario):
 
 
 def _complete_onboarding_data(usuario, data):
-    # Mapeo de campos de datos a atributos del usuario
-    field_map = {
-        'first_name': 'first_name',
-        'last_name': 'last_name',
-        'email': 'email',
-        # Añadir más campos según sea necesario
-    }
-    for key, attr in field_map.items():
-        if key in data:
-            setattr(usuario, attr, data.get(key))
+    pin_acceso_rapido = data.get('pin_acceso_rapido', '').strip()
+    if pin_acceso_rapido and len(pin_acceso_rapido) == 6 and pin_acceso_rapido.isdigit():
+        usuario.set_pin(pin_acceso_rapido)
+
+    telefono = data.get('telefono', '').strip()
+    if telefono:
+        try:
+            usuario.telefono = int(telefono)
+        except ValueError:
+            pass
+
+    saldo_inicial = data.get('saldo_inicial', '').strip()
+    nombre_cuenta = data.get('nombre_cuenta', '').strip()
+
+    if saldo_inicial or nombre_cuenta:
+        cuenta = Cuenta.objects.filter(id_usuario=usuario).first()
+        if cuenta:
+            if saldo_inicial:
+                try:
+                    cuenta.saldo_cuenta = float(saldo_inicial)
+                except ValueError:
+                    pass
+            if nombre_cuenta:
+                cuenta.nombre = nombre_cuenta
+            cuenta.save()
+
     usuario.onboarding_completed = True
     usuario.save()
-                print("🔍 DEBUG ONBOARDING: Onboarding saltado")
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Onboarding completado (saltado)'
-                })
-            
-            # Actualizar PIN si se proporcionó
-            pin_acceso_rapido = data.get('pin_acceso_rapido', '').strip()
-            if pin_acceso_rapido and len(pin_acceso_rapido) == 6 and pin_acceso_rapido.isdigit():
-                usuario.pin_acceso_rapido = pin_acceso_rapido
-                print(f"🔍 DEBUG ONBOARDING: PIN actualizado: {pin_acceso_rapido}")
-            
-            # Actualizar teléfono si se proporcionó
-            telefono = data.get('telefono', '').strip()
-            codigo_pais = data.get('codigo_pais', '+51')
-            if telefono:
-                # Convertir a int para almacenar (sin código de país)
-                try:
-                    telefono_int = int(telefono)
-                    usuario.telefono = telefono_int
-                    print(f"🔍 DEBUG ONBOARDING: Teléfono actualizado: {codigo_pais}{telefono}")
-                except ValueError:
-                    print(f"⚠️ DEBUG ONBOARDING: Teléfono inválido: {telefono}")
-            
-            # Actualizar saldo de la cuenta principal si se proporcionó
-            saldo_inicial = data.get('saldo_inicial', '').strip()
-            nombre_cuenta = data.get('nombre_cuenta', '').strip()
-            
-            if saldo_inicial or nombre_cuenta:
-                try:
-                    # Buscar la cuenta principal del usuario
-                    cuenta = Cuenta.objects.filter(id_usuario=usuario).first()
-                    if cuenta:
-                        if saldo_inicial:
-                            try:
-                                nuevo_saldo = float(saldo_inicial)
-                                cuenta.saldo_cuenta = nuevo_saldo
-                                print(f"🔍 DEBUG ONBOARDING: Saldo actualizado: {nuevo_saldo}")
-                            except ValueError:
-                                print(f"⚠️ DEBUG ONBOARDING: Saldo inválido: {saldo_inicial}")
-                        
-                        if nombre_cuenta:
-                            cuenta.nombre = nombre_cuenta
-                            print(f"🔍 DEBUG ONBOARDING: Nombre de cuenta actualizado: {nombre_cuenta}")
-                        
-                        cuenta.save()
-                    else:
-                        print("⚠️ DEBUG ONBOARDING: No se encontró cuenta principal")
-                except Exception as e:
-                    print(f"❌ DEBUG ONBOARDING: Error actualizando cuenta: {str(e)}")
-            
-            # Marcar onboarding como completado
-            usuario.onboarding_completed = True
-            usuario.save()
-            
-            print("✅ DEBUG ONBOARDING: Onboarding completado exitosamente")
-            
-            return JsonResponse({
-                'success': True,
-                'message': 'Onboarding completado exitosamente'
-            })
-            
-        except Exception as e:
-            print(f"❌ ERROR ONBOARDING: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            return JsonResponse({
-                'success': False,
-                'message': f'Error al completar onboarding: {str(e)}'
-            })
-    
-    return JsonResponse({
-        'success': False,
-        'message': 'Método no permitido'
-    })
 
 def fix_incomplete_onboarding(request):
     """Placeholder para corregir onboarding incompleto"""
@@ -711,116 +645,7 @@ def password_reset_request(request):
             'success': False,
             'message': f'Error en recuperación de contraseña: {str(e)}'
         })
-                # Enviar email
-                try:
-                    result = send_mail(
-                        subject='Código de recuperación - FinGest',
-                        message=f'Hola {usuario.nombres},\n\nTu código de recuperación de contraseña para FinGest es: {codigo_recuperacion}\n\nEste código expira en 15 minutos.\n\nSi no solicitaste este cambio, ignora este mensaje.',        
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[email],
-                        fail_silently=False,
-                    )
-                    print(f"🔍 DEBUG PASSWORD_RESET: Resultado del envío: {result}")
-                    
-                    if result == 1:
-                        print("✅ DEBUG PASSWORD_RESET: Código enviado exitosamente")
-                        return JsonResponse({
-                            'success': True,
-                            'message': 'Código de recuperación enviado a tu email'
-                        })
-                    else:
-                        print(f"❌ DEBUG PASSWORD_RESET: Error al enviar email, resultado: {result}")
-                        return JsonResponse({
-                            'success': False,
-                            'message': 'Error al enviar el código. Inténtalo de nuevo.'
-                        })
-                except Exception as e:
-                    print(f"❌ DEBUG PASSWORD_RESET: Error en envío: {str(e)}")
-                    return JsonResponse({
-                        'success': False,
-                        'message': f'Error de conexión: {str(e)}'
-                    })
-                    
-            except Usuario.DoesNotExist:
-                print(f"❌ DEBUG PASSWORD_RESET: Usuario no encontrado para email: {email}")
-                # Por seguridad, no revelamos si el email existe o no
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Si tu email está registrado, recibirás un código de recuperación'
-                })
-                
-        elif action == 'verify_code':
-            codigo = request.POST.get('codigo', '').strip()
-            
-            try:
-                usuario = Usuario.objects.get(correo=email)
-                
-                # Verificar código y expiración
-                from django.utils import timezone
-                
-                if (usuario.codigo_recuperacion == codigo and 
-                    usuario.codigo_expiracion and 
-                    usuario.codigo_expiracion > timezone.now()):
-                    
-                    print("✅ DEBUG PASSWORD_RESET: Código verificado correctamente")
-                    return JsonResponse({
-                        'success': True,
-                        'message': 'Código verificado correctamente'
-                    })
-                else:
-                    print("❌ DEBUG PASSWORD_RESET: Código inválido o expirado")
-                    return JsonResponse({
-                        'success': False,
-                        'message': 'Código inválido o expirado'
-                    })
-                    
-            except Usuario.DoesNotExist:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Error en la verificación'
-                })
-                
-        elif action == 'reset_password':
-            codigo = request.POST.get('codigo', '').strip()
-            nueva_password = request.POST.get('nueva_password') or None
-            
-            try:
-                usuario = Usuario.objects.get(correo=email)
-                
-                # Verificar código una vez más
-                from django.utils import timezone
-                
-                if (usuario.codigo_recuperacion == codigo and 
-                    usuario.codigo_expiracion and 
-                    usuario.codigo_expiracion > timezone.now()):
-                    
-                    # Cambiar contraseña de forma segura
-                    if nueva_password:
-                        usuario.set_password(nueva_password)
-                    else:
-                        usuario.set_unusable_password()
-                    usuario.codigo_recuperacion = None
-                    usuario.codigo_expiracion = None
-                    usuario.save()
-                    
-                    print("✅ DEBUG PASSWORD_RESET: Contraseña cambiada exitosamente")
-                    return JsonResponse({
-                        'success': True,
-                        'message': 'Contraseña actualizada exitosamente'
-                    })
-                else:
-                    return JsonResponse({
-                        'success': False,
-                        'message': 'Código inválido o expirado'
-                    })
-                    
-            except Usuario.DoesNotExist:
-                return JsonResponse({
-                    'success': False,
-                    'message': 'Error en el proceso'
-                })
-    
-    # GET request - mostrar formulario
+
     return render(request, 'usuarios/password_reset_modern.html')
 
 def recuperar_con_codigo(request):

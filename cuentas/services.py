@@ -43,12 +43,12 @@ def cambiar_password_usuario(usuario, actual_password, new_password, request=Non
 
 def cambiar_pin_usuario(usuario, current_pin, new_pin):
     """Cambia el PIN de acceso rápido del usuario"""
-    if str(usuario.pin_acceso_rapido) != current_pin:
+    if not usuario.check_pin(current_pin):
         return False, "El PIN actual es incorrecto"
-    
-    usuario.pin_acceso_rapido = new_pin
+
+    usuario.set_pin(new_pin)
     usuario.save()
-    
+
     return True, "PIN actualizado exitosamente"
 
 

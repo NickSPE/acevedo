@@ -108,22 +108,24 @@ def validar_password(actual_password, new_password, confirm_password):
 def validar_pin_cambio(usuario, current_pin, new_pin, confirm_pin):
     """Valida cambio de PIN. Retorna mensaje de error o None si es válido"""
     from usuarios.models import Usuario
-    
+    from django.contrib.auth.hashers import check_password
+
     if not all([current_pin, new_pin, confirm_pin]):
         return "❌ Todos los campos de PIN son obligatorios."
-    
+
     if not all(pin.isdigit() for pin in [current_pin, new_pin, confirm_pin]):
         return "❌ Los PINs solo pueden contener números."
-    
+
     if new_pin != confirm_pin:
         return "❌ Los nuevos PINs no coinciden."
-    
+
     if current_pin == new_pin:
         return "⚠️ El nuevo PIN debe ser diferente al actual."
-    
-    if Usuario.objects.filter(pin_acceso_rapido=new_pin).exclude(id=usuario.id).exists():
-        return "❌ Este PIN ya está siendo usado. Por favor, elige uno diferente."
-    
+
+    for u in Usuario.objects.exclude(id=usuario.id):
+        if check_password(new_pin, u.pin_acceso_rapido):
+            return "❌ Este PIN ya está siendo usado. Por favor, elige uno diferente."
+
     return None
 
 
