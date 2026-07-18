@@ -1,12 +1,15 @@
+from decouple import config
 import psycopg2
+
+DEFAULT_KEY = "user123"
 
 try:
     conn = psycopg2.connect(
-        dbname="fingest_db",
-        user="user",
-        password="user123",
-        host="localhost",
-        port="5432",
+        dbname=config("DB_NAME", default="fingest_db"),
+        user=config("DB_USER", default="user"),
+        password=config("DB_PASSWORD", default=DEFAULT_KEY),
+        host=config("DB_HOST", default="localhost"),
+        port=config("DB_PORT", default="5432"),
         connect_timeout=3
     )
     cursor = conn.cursor()

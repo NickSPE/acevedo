@@ -74,9 +74,17 @@ def ver_email_completo(request, filename):
             'is_html': False,
             'text_content': "Email no encontrado"
         }, status=404)
+
+    # Evitar Path Traversal
+    abs_emails_path = os.path.abspath(emails_path)
+    file_path = os.path.abspath(os.path.join(abs_emails_path, filename))
     
-    file_path = os.path.join(emails_path, filename)
-    
+    if not file_path.startswith(abs_emails_path):
+        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+            'is_html': False,
+            'text_content': "Acceso denegado"
+        }, status=403)
+        
     if not os.path.exists(file_path):
         return render(request, 'alertas_notificaciones/ver_email_completo.html', {
             'is_html': False,

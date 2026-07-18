@@ -7,6 +7,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 from django.shortcuts import redirect
+from django.views.decorators.http import require_http_methods, require_GET
+
 
 from cuentas.models import Moneda, Cuenta
 from .models import Usuario
@@ -258,6 +260,7 @@ def Register(request):
         'monedas': monedas,
     })
 
+@require_http_methods(["GET", "POST"])
 def Pagina_Verificar_Correo(request):
     print("🔍 DEBUG: Entrando a Pagina_Verificar_Correo")
     data = request.session.get('registro_temp')
@@ -401,6 +404,7 @@ def Acceso_Rapido(request):
 
     return render(request , 'usuarios/acceso_rapido.html')
 
+@require_http_methods(["GET", "POST"])
 def Reestablecer_Contraseña(request):
     pass
 
@@ -463,6 +467,7 @@ def pin_login(request):
             error_message = "Error al verificar PIN."
             return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
             
+@require_http_methods(["GET", "POST"])
 def onboarding_view(request):
     """Vista de onboarding para nuevos usuarios"""
     if not request.user.is_authenticated:
@@ -550,6 +555,7 @@ def _complete_onboarding_data(usuario, data):
     usuario.onboarding_completed = True
     usuario.save()
 
+@require_GET
 def fix_incomplete_onboarding(request):
     """Placeholder para corregir onboarding incompleto"""
     try:
@@ -648,10 +654,12 @@ def password_reset_request(request):
 
     return render(request, 'usuarios/password_reset_modern.html')
 
+@require_http_methods(["GET", "POST"])
 def recuperar_con_codigo(request):
     """API para recuperación con código - Alias para password_reset_request"""
     return password_reset_request(request)
 
+@require_GET
 def test_view(request):
     """Vista de prueba para desarrollo"""
     try:

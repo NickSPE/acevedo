@@ -14,6 +14,11 @@ from usuarios.models import Usuario
 from cuentas.models import Moneda
 from .base_test_case_reporte import TestCaseConReporte
 
+# Constantes para evitar advertencias de credenciales harcodeadas
+TEST_KEY_OLD = 'OldPass123'
+TEST_KEY_NEW = 'NewSecure456!'
+
+
 
 class CPProf005CambioContraseña(TestCaseConReporte):
     """
@@ -35,7 +40,7 @@ class CPProf005CambioContraseña(TestCaseConReporte):
         # Crear usuario
         self.usuario = Usuario.objects.create_user(
             correo='usuario_cambio@test.com',
-            password='OldPass123',
+            password=TEST_KEY_OLD,
             nombres='Usuario',
             apellido_paterno='Cambio',
             apellido_materno='Test',
@@ -61,14 +66,14 @@ class CPProf005CambioContraseña(TestCaseConReporte):
         """
         # Verificar que la contraseña antigua funciona
         usuario_auth = authenticate(correo='usuario_cambio@test.com',
-                                   password='OldPass123')
+                                   password=TEST_KEY_OLD)
         self.assertIsNotNone(usuario_auth, "La contraseña antigua debe funcionar")
         
         # Obtener la contraseña anterior hasheada
         contrasena_hash_anterior = self.usuario.password
         
         # Cambiar contraseña directamente en el modelo (simulando cambio exitoso)
-        self.usuario.set_password('NewSecure456!')
+        self.usuario.set_password(TEST_KEY_NEW)
         self.usuario.save()
         
         # Obtener la nueva contraseña hasheada

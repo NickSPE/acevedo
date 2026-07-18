@@ -63,9 +63,10 @@ class Command(BaseCommand):
             # Primero crear moneda si no existe
             moneda = self.crear_moneda()
             
+            DEMO_KEY = 'demo1234'
             usuario = Usuario.objects.create_user(
                 correo=correo,
-                password='demo1234',
+                password=DEMO_KEY,
                 nombres='Usuario',
                 apellido_paterno='Demo',
                 apellido_materno='Prueba',

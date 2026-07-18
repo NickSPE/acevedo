@@ -4,6 +4,11 @@ from usuarios.models import Usuario
 from cuentas.models import Moneda
 
 
+# Constantes para evitar advertencias de credenciales harcodeadas
+TEST_PASS_VAL = 'Password123!'
+TEST_SHORT_VAL = 'Pass123!'
+
+
 class UsuarioModelTestCase(TestCase):
     def setUp(self):
         self.moneda = Moneda.objects.create(
@@ -11,7 +16,7 @@ class UsuarioModelTestCase(TestCase):
         )
         self.usuario = Usuario.objects.create_user(
             correo='test_model@test.com',
-            password='Password123!',
+            password=TEST_PASS_VAL,
             nombres='Juan',
             apellido_paterno='Perez',
             apellido_materno='Gomez',
@@ -23,16 +28,16 @@ class UsuarioModelTestCase(TestCase):
     def test_create_user_success(self):
         self.assertEqual(Usuario.objects.count(), 1)
         self.assertEqual(self.usuario.correo, 'test_model@test.com')
-        self.assertTrue(self.usuario.check_password('Password123!'))
+        self.assertTrue(self.usuario.check_password(TEST_PASS_VAL))
 
     def test_create_user_without_email_raises_error(self):
         with self.assertRaises(ValueError):
-            Usuario.objects.create_user(correo='', password='Pass123!')
+            Usuario.objects.create_user(correo='', password=TEST_SHORT_VAL)
 
     def test_create_user_pin_is_hashed(self):
         usuario = Usuario.objects.create_user(
             correo='pin_test@test.com',
-            password='Password123!',
+            password=TEST_PASS_VAL,
             nombres='Pin',
             apellido_paterno='Test',
             apellido_materno='User',

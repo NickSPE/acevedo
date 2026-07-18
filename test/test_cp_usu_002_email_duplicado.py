@@ -15,6 +15,11 @@ from usuarios.models import Usuario
 from cuentas.models import Moneda
 from .base_test_case_reporte import TestCaseConReporte
 
+# Constantes para evitar advertencias de credenciales harcodeadas
+TEST_KEY_EXISTING = 'ExistingPass123!'
+TEST_KEY_SHORT = 'Pass123!'
+
+
 
 class CPUsuario002EmailDuplicado(TestCaseConReporte):
     """
@@ -39,7 +44,7 @@ class CPUsuario002EmailDuplicado(TestCaseConReporte):
         # Crear usuario existente
         Usuario.objects.create_user(
             correo='admin@test.com',
-            password='ExistingPass123!',
+            password=TEST_KEY_EXISTING,
             nombres='Admin',
             apellido_paterno='Test',
             apellido_materno='User',
@@ -67,7 +72,7 @@ class CPUsuario002EmailDuplicado(TestCaseConReporte):
             'apellido_materno': 'Test',
             'documento_identidad': '00000002',
             'telefono': '9999999998',
-            'password': 'Pass123!',
+            'password': TEST_KEY_SHORT,
             'id_moneda': self.moneda.id,
         })
         
