@@ -10,8 +10,9 @@ django-decouple>=2.1
 psycopg2-binary>=2.9.12  # PostgreSQL adapter (incluye libpq actualizada contra CVE-2021-23222)
 pandas>=2.2.3            # Manipulación de datos (usado en educacion_financiera)
 
-# Procesamiento de imágenes
+# Procesamiento de imágenes y PDF
 Pillow>=10.4.0           # Para PIL/Image processing (resuelve CVE-2024-28219 y mitigaciones de desbordamiento)
+reportlab>=4.4.5         # Generación de reportes PDF
 
 # Inteligencia Artificial
 google-genai>=1.0.0  # Google Gemini AI (usado en educacion_financiera)
