@@ -16,8 +16,8 @@ def get_nombre_mes_espanol(fecha):
         9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"
     }
     mes_numero = fecha.month
-    año = fecha.year
-    return f"{meses_espanol[mes_numero]} {año}"
+    anio = fecha.year
+    return f"{meses_espanol[mes_numero]} {anio}"
 
 def generar_consejos_dinamicos(goals, promedio_progreso, metas_completadas):
     """Genera consejos dinámicos basados en el progreso del usuario"""

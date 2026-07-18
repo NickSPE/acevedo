@@ -20,7 +20,7 @@ TEST_KEY_NEW = 'NewSecure456!'
 
 
 
-class CPProf005CambioContraseña(TestCaseConReporte):
+class CPProf005CambioContrasena(TestCaseConReporte):
     """
     CP-PROF-005: Cambio de Contraseña
     """
@@ -81,12 +81,12 @@ class CPProf005CambioContraseña(TestCaseConReporte):
         contrasena_hash_nueva = self.usuario.password
         
         # Verificar que la contraseña cambió
-        self.assertTrue(self.usuario.check_password('NewSecure456!'),
+        self.assertTrue(self.usuario.check_password(TEST_KEY_NEW),
                        "La nueva contraseña debe funcionar")
         
         # Verificar que la contraseña antigua no funciona
-        self.assertFalse(self.usuario.check_password('OldPass123'),
-                        "La contraseña antigua no debe funcionar")
+        self.assertFalse(self.usuario.check_password(TEST_KEY_OLD),
+                         "La contraseña antigua no debe funcionar")
         
         # Verificar que los hashes son diferentes
         self.assertNotEqual(contrasena_hash_anterior, contrasena_hash_nueva,
