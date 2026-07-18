@@ -371,9 +371,18 @@ const SavingsGoals = () => {
                   <button onClick={nextTip} className="p-1 rounded text-slate-500 hover:bg-slate-200 hover:text-[#0b1c30] transition-colors text-xs font-black">›</button>
                 </div>
               </div>
-              <p className="text-xs text-slate-650 leading-relaxed italic font-bold">
-                "{tips[currentTipIdx]}"
+              <p className="text-xs font-black text-[#0f172a] flex items-center gap-1.5">
+                <span>{tips[currentTipIdx]?.emoji}</span>
+                <span>{tips[currentTipIdx]?.titulo}</span>
               </p>
+              <p className="text-xs text-slate-500 leading-relaxed font-bold mt-0.5">
+                {tips[currentTipIdx]?.mensaje}
+              </p>
+              {tips[currentTipIdx]?.accion && (
+                <p className="text-[10px] text-[#006c49] font-extrabold mt-0.5 italic">
+                  → {tips[currentTipIdx]?.accion}
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const unreadCount = useFinanceStore(state => state.unreadCount);
 
   const menuItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Transacciones', path: '/transacciones', icon: ArrowLeftRight },
     { name: 'Subcuentas & Metas', path: '/metas', icon: PiggyBank },
     { name: 'Reportes & Análisis', path: '/reportes', icon: BarChart2 },

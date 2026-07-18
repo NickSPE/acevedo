@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
+import Landing from './pages/Landing';
 import Transactions from './pages/Transactions';
 import SavingsGoals from './pages/SavingsGoals';
 import Profile from './pages/Profile';
@@ -60,7 +61,7 @@ const PublicRoute = ({ children }) => {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
@@ -144,9 +145,12 @@ const AppContent = () => {
         } 
       />
 
+      {/* Página de Inicio (Pública para todos) */}
+      <Route path="/" element={<Landing />} />
+
       {/* Rutas Protegidas en Main Layout */}
       <Route 
-        path="/" 
+        path="/dashboard" 
         element={
           <ProtectedRoute>
             <MainLayout>
@@ -219,6 +223,7 @@ const AppContent = () => {
 
       {/* Redirección por defecto */}
       <Route path="*" element={<Navigate to="/" replace />} />
+
     </Routes>
   );
 };
