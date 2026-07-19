@@ -17,7 +17,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --only-binary :all: -r requirements.txt pytest==8.3.3 pytest-django==4.9.0 pytest-cov==5.0.0
+          pip install --only-binary :all: -r requirements.txt
+          pip install --only-binary :all: -r requirements-test.txt
 
       - name: Run tests with coverage
         run: pytest
