@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.http import JsonResponse
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
 from .models import TipoNotificacion, ConfiguracionNotificacion, Notificacion
 from .services import NotificationService, ConfigurationNotificationService
@@ -249,7 +249,19 @@ def marcar_todas_leidas(request):
     try:
         count = Notificacion.objects.filter(
             usuario=request.user,
+            estado__in=['enviada', 'pendiente']
+        ).update(
+            estado='leida',
+            fecha_lectura=timezone.now()
         )
+        return JsonResponse({
+            'status': 'success',
+            'message': f'{count} notificaciones marcadas como leídas'
+        })
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
+
 @login_required
 @require_POST
 def marcar_notificaciones_leidas(request):

@@ -118,8 +118,8 @@ def generar_reporte(request):
     if request.method == 'POST':
         tipo_reporte = request.POST.get('tipo_reporte')
         titulo = request.POST.get('titulo', f'Reporte {tipo_reporte}')
-        fecha_inicio = datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d')
-        fecha_fin = datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d')
+        fecha_inicio = timezone.make_aware(datetime.strptime(request.POST.get('fecha_inicio'), '%Y-%m-%d'))
+        fecha_fin = timezone.make_aware(datetime.strptime(request.POST.get('fecha_fin'), '%Y-%m-%d').replace(hour=23, minute=59, second=59))
         
         # Generar datos según el tipo de reporte
         datos_reporte = {}
@@ -243,8 +243,28 @@ def get_periodo_fechas(periodo):
     
     return inicio, fin
 
+def _convertir_a_aware_limites(fecha_inicio, fecha_fin):
+    """
+    Convierte fecha_inicio y fecha_fin (que pueden ser date, datetime naive o aware)
+    en objetos datetime aware con la hora correcta (inicio y fin del día).
+    """
+    if isinstance(fecha_inicio, datetime):
+        if timezone.is_naive(fecha_inicio):
+            fecha_inicio = timezone.make_aware(fecha_inicio)
+    else:  # es date
+        fecha_inicio = timezone.make_aware(datetime.combine(fecha_inicio, datetime.min.time()))
+
+    if isinstance(fecha_fin, datetime):
+        if timezone.is_naive(fecha_fin):
+            fecha_fin = timezone.make_aware(fecha_fin)
+    else:  # es date
+        fecha_fin = timezone.make_aware(datetime.combine(fecha_fin, datetime.max.time().replace(microsecond=0)))
+        
+    return fecha_inicio, fecha_fin
+
 def calcular_estadisticas_generales(usuario, fecha_inicio, fecha_fin):
     """Calcula estadísticas generales del usuario"""
+    fecha_inicio, fecha_fin = _convertir_a_aware_limites(fecha_inicio, fecha_fin)
     cuentas = Cuenta.objects.filter(id_usuario=usuario)
     
     # Balance total
@@ -342,6 +362,7 @@ def calcular_estadisticas_generales(usuario, fecha_inicio, fecha_fin):
 
 def get_gastos_por_categoria(usuario, fecha_inicio, fecha_fin):
     """Obtiene gastos agrupados por categoría de movimientos"""
+    fecha_inicio, fecha_fin = _convertir_a_aware_limites(fecha_inicio, fecha_fin)
     # Obtener gastos agrupados por nombre (categoría)
     gastos_por_categoria = Movimiento.objects.filter(
         id_cuenta__id_usuario=usuario,
@@ -373,8 +394,9 @@ def get_ingresos_vs_egresos(usuario, fecha_inicio, fecha_fin):
     """Obtiene comparación de ingresos vs egresos por mes"""
     import calendar
     
+    fecha_inicio, fecha_fin = _convertir_a_aware_limites(fecha_inicio, fecha_fin)
     # Obtener datos mes por mes en el rango
-    fecha_actual = fecha_inicio.replace(day=1)
+    fecha_actual = fecha_inicio.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     labels = []
     ingresos = []
     gastos = []
@@ -382,7 +404,7 @@ def get_ingresos_vs_egresos(usuario, fecha_inicio, fecha_fin):
     while fecha_actual <= fecha_fin:
         # Último día del mes
         ultimo_dia = calendar.monthrange(fecha_actual.year, fecha_actual.month)[1]
-        fin_mes = fecha_actual.replace(day=ultimo_dia)
+        fin_mes = fecha_actual.replace(day=ultimo_dia, hour=23, minute=59, second=59, microsecond=0)
         
         # Transacciones del mes
         transacciones_mes = Movimiento.objects.filter(
@@ -481,15 +503,16 @@ def get_flujo_mensual(usuario, fecha_inicio, fecha_fin):
     """Obtiene flujo de efectivo mensual"""
     import calendar
     
+    fecha_inicio, fecha_fin = _convertir_a_aware_limites(fecha_inicio, fecha_fin)
     labels = []
     values = []
     
-    fecha_actual = fecha_inicio.replace(day=1)
+    fecha_actual = fecha_inicio.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     
     while fecha_actual <= fecha_fin:
         # Último día del mes
         ultimo_dia = calendar.monthrange(fecha_actual.year, fecha_actual.month)[1]
-        fin_mes = fecha_actual.replace(day=ultimo_dia)
+        fin_mes = fecha_actual.replace(day=ultimo_dia, hour=23, minute=59, second=59, microsecond=0)
         
         # Transacciones del mes
         transacciones_mes = Movimiento.objects.filter(

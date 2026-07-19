@@ -218,6 +218,10 @@ def _handle_register_submit(request, monedas):
             del request.session['email_for_verification']
         
         return render(request, "usuarios/login.html", {})
+    except Exception as e:
+        error = f"Error al crear el usuario: {str(e)}"
+        return render(request, REGISTER_TEMPLATE, {"error": error, 'monedas': monedas})
+
 
 @require_GET
 def Register(request):
@@ -364,6 +368,8 @@ def Acceso_Rapido(request):
 @login_required
 @require_POST
 def Validar_Acceso_Rapido(request):
+    user = request.user
+    pin_input = request.POST.get('pin_input', '').strip()
     print(f"🔍 DEBUG ACCESO_RAPIDO: PIN obtenido: '{pin_input}'")
  
     if not pin_input.isdigit() or len(pin_input) != 6:
@@ -392,38 +398,57 @@ def Reestablecer_Contraseña(request):
     pass
     return None
 
+
+def _parse_and_validate_pin(request):
+    """Extrae y valida el PIN del request. Retorna (pin, error_message)."""
+    pin_input = request.POST.get('pin_input', '').strip()
+    if not pin_input:
+        return None, 'No se recibió ningún PIN'
+    if not pin_input.isdigit():
+        return None, 'El PIN debe contener solo dígitos'
+    return pin_input, None
+
+
+def _find_user_by_pin(pin_input):
+    """Busca un usuario activo cuyo PIN coincida con el dado."""
+    from usuarios.models import Usuario
+    for usuario in Usuario.objects.filter(is_active=True):
+        if usuario.check_pin(pin_input):
+            return usuario
+    return None
+
+
 def pin_login(request):
-    """Login directo usando solo PIN"""
-    if request.method == "GET":
+    """Login directo usando solo PIN. GET renderiza la página, POST procesa el login."""
+    if request.method == 'GET':
         return render(request, PIN_LOGIN_TEMPLATE)
- 
-@require_POST
-def pin_login(request):
+
     pin_input, error_message = _parse_and_validate_pin(request)
     if error_message:
         return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
- 
+
     try:
         usuario = _find_user_by_pin(pin_input)
         if usuario:
             if not usuario.is_active:
-                error_message = "Esta cuenta está desactivada."
+                error_message = 'Esta cuenta está desactivada.'
                 return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
- 
+
             login(request, usuario, backend=EMAIL_BACKEND)
             request.session['pin_acceso_rapido_validado'] = True
- 
+
             if not usuario.onboarding_completed:
                 return redirect('usuarios:onboarding')
- 
+
             return redirect(DASHBOARD_URL)
         else:
-            error_message = "PIN incorrecto. No se encontró ningún usuario con ese PIN."
+            error_message = 'PIN incorrecto. No se encontró ningún usuario con ese PIN.'
             return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
     except Exception:
-        error_message = "Error al verificar PIN."
+        error_message = 'Error al verificar PIN.'
         return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
-            
+
+
 @require_GET
 def onboarding_view(request):
     """Vista de onboarding para nuevos usuarios"""
@@ -440,8 +465,6 @@ def onboarding_view(request):
         })
     except Exception as e:
         return JsonResponse({"error": f"Vista de onboarding no disponible: {str(e)}"}, status=503)
-
-@require_POST
 def complete_onboarding(request):
     """Completar onboarding y actualizar datos del usuario"""
     if not request.user.is_authenticated:
