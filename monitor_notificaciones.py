@@ -108,7 +108,7 @@ def mostrar_estadisticas():
 def eliminar_duplicados_reales():
     """Elimina notificaciones duplicadas manteniendo la más reciente"""
     duplicados = limpiar_duplicados_recientes()
-    contador_eliminados = 0
+    cantidad_eliminados = 0
     
     for dup in duplicados:
         # Mantener la más reciente, eliminar la más antigua
@@ -118,9 +118,9 @@ def eliminar_duplicados_reales():
         else:
             dup['notif1'].delete()
             print(f"🗑️  Eliminado duplicado ID {dup['notif1'].id}")
-        contador_eliminados += 1
+        cantidad_eliminados += 1
     
-    return contador_eliminados
+    return cantidad_eliminados
 
 if __name__ == "__main__":
     import argparse
