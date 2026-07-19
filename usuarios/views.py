@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate , login
-from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
 from django.conf import settings
 

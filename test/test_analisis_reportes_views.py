@@ -21,7 +21,7 @@ from analisis_reportes.views import (
     get_flujo_mensual,
 )
 from cuentas.models import Moneda, Cuenta, SubCuenta
-from gestion_financiera_basica.models import Movimiento, MetaAhorro
+from gestion_financiera_basica.models import Movimiento
 from django.contrib.auth import get_user_model
 
 Usuario = get_user_model()

@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.contrib.auth.hashers import check_password
 from usuarios.models import Usuario
 from cuentas.models import Moneda
 

@@ -8,7 +8,6 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from cuentas.models import Moneda, Cuenta, SubCuenta
-from gestion_financiera_basica.models import Movimiento
 
 Usuario = get_user_model()
 

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from alertas_notificaciones.models import (
     Notificacion, TipoNotificacion, ConfiguracionNotificacion, PlantillaNotificacion
@@ -16,8 +16,7 @@ Usuario = get_user_model()
 class NotificationServiceTestCase(TestCase):
     def setUp(self):
         self.moneda = Moneda.objects.create(
-            codigo='PEN', nombre='Soles', simbolo='S/.'
-        )
+            codigo='PEN', nombre='Soles', simbolo='S/.')
         self.usuario = Usuario.objects.create_user(
             correo='notif_test@test.com', password='Password123!',
             nombres='Notif', apellido_paterno='Test',
