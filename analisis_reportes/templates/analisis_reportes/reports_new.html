@@ -1,8 +1,6 @@
 {% extends "core/base_template.html" %}
 {% load static %}
-
 {% block title %}Análisis y Reportes | FinGest{% endblock %}
-
 {% block content %}
 <div class="p-6 space-y-6">
   <!-- Header -->
@@ -30,7 +28,6 @@
       </button>
     </div>
   </div>
-
   <!-- Filtros Mejorados -->
   <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-6">
     <div class="flex flex-col lg:flex-row items-start lg:items-center gap-4">
@@ -41,7 +38,6 @@
         </svg>
         <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Filtros:</span>
       </div>
-
       <div class="flex flex-wrap items-center gap-3">
         <!-- Período -->
         <label for="select_periodo_new" class="sr-only">Período</label>
@@ -49,11 +45,10 @@
           class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white">
           <option value="mes_actual">Este mes</option>
           <option value="ultimo_mes">Mes pasado</option>
-          <option value="trimestre">Ãšltimo trimestre</option>
+          <option value="trimestre">Último trimestre</option>
           <option value="ano">Este año</option>
           <option value="personalizado">Período personalizado</option>
         </select>
-
         <!-- Tipo de análisis -->
         <label for="select_analisis_new" class="sr-only">Tipo de análisis</label>
         <select id="select_analisis_new"
@@ -63,7 +58,6 @@
           <option value="gastos">Solo gastos</option>
           <option value="subcuentas">Por subcuentas</option>
         </select>
-
         <!-- Cuentas -->
         <label for="select_cuenta_new" class="sr-only">Cuentas</label>
         <select id="select_cuenta_new"
@@ -73,7 +67,6 @@
           <option value="{{ cuenta.id }}">{{ cuenta.nombre }}</option>
           {% endfor %}
         </select>
-
         <button
           class="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
           Aplicar filtros
@@ -81,7 +74,6 @@
       </div>
     </div>
   </div>
-
   <!-- Métricas principales -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <!-- Balance total -->
@@ -100,7 +92,6 @@
         </div>
       </div>
     </div>
-
     <!-- Ingresos del período -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
@@ -116,7 +107,6 @@
         </div>
       </div>
     </div>
-
     <!-- Gastos del período -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
@@ -132,7 +122,6 @@
         </div>
       </div>
     </div>
-
     <!-- Ahorro neto -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
@@ -155,7 +144,6 @@
       </div>
     </div>
   </div>
-
   <!-- Gráficos y análisis -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
     <!-- Gráfico de ingresos vs gastos -->
@@ -173,7 +161,6 @@
         <canvas id="ingresosGastosChart" width="400" height="200"></canvas>
       </div>
     </div>
-
     <!-- Distribución por categorías -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between mb-4">
@@ -193,7 +180,6 @@
       </div>
     </div>
   </div>
-
   <!-- Flujo mensual -->
   <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-6">
     <div class="flex items-center justify-between mb-4">
@@ -208,7 +194,6 @@
       <canvas id="flujoMensualChart" width="800" height="300"></canvas>
     </div>
   </div>
-
   <!-- Análisis detallado -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Top gastos -->
@@ -221,7 +206,6 @@
           </svg>
         </div>
       </div>
-
       <div class="space-y-3">
         {% for gasto in stats.top_gastos|slice:":5" %}
         <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
@@ -236,7 +220,6 @@
         {% endfor %}
       </div>
     </div>
-
     <!-- Análisis de subcuentas -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between mb-4">
@@ -249,7 +232,6 @@
           </svg>
         </div>
       </div>
-
       <div class="space-y-3">
         {% for subcuenta in stats.subcuentas_info|slice:":5" %}
         <div class="flex items-center justify-between">
@@ -267,7 +249,6 @@
         {% endfor %}
       </div>
     </div>
-
     <!-- Resumen de metas -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between mb-4">
@@ -280,7 +261,6 @@
           </svg>
         </div>
       </div>
-
       <div class="space-y-3">
         {% for meta in stats.metas_progreso|slice:":3" %}
         <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
@@ -292,7 +272,6 @@
             <div class="bg-yellow-500 h-2 rounded-full"
               style="--progress: {{ meta.porcentaje_progreso }}%; width: var(--progress)">
             </div>
-
           </div>
           <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
             <span>${{ meta.monto_ahorrado|floatformat:0 }}</span>
@@ -301,12 +280,11 @@
         </div>
         {% empty %}
         <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay metas creadas</p>
+        {% endfor %}
       </div>
     </div>
   </div>
 </div>
-
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -327,8 +305,7 @@
     // Gráfico de Ingresos vs Gastos
     const ingresosGastosCtx = document.getElementById('ingresosGastosChart').getContext('2d');
     const ingresosGastosData = JSON.parse('{{ ingresos_egresos|escapejs }}');
-
-    new Chart(ingresosGastosCtx, {
+    const ingresosGastosChart = new Chart(ingresosGastosCtx, {
       type: 'bar',
       data: {
         labels: ingresosGastosData.labels,
@@ -364,8 +341,7 @@
     // Gráfico de Categorías
     const categoriasCtx = document.getElementById('categoriasChart').getContext('2d');
     const categoriasData = JSON.parse('{{ gastos_categoria|escapejs }}');
-
-    new Chart(categoriasCtx, {
+    const categoriasChart = new Chart(categoriasCtx, {
       type: 'doughnut',
       data: {
         labels: categoriasData.labels,
@@ -395,8 +371,7 @@
     // Gráfico de Flujo Mensual
     const flujoMensualCtx = document.getElementById('flujoMensualChart').getContext('2d');
     const flujoMensualData = JSON.parse('{{ flujo_mensual|escapejs }}');
-
-    new Chart(flujoMensualCtx, {
+    const flujoMensualChart = new Chart(flujoMensualCtx, {
       type: 'line',
       data: {
         labels: flujoMensualData.labels,

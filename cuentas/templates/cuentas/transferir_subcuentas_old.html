@@ -339,228 +339,232 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold">
-                            <i class="fas fa-wallet me-2"></i>¿De qué subcuenta quieres transferir?
-                        </label>
-                        <p class="text-muted small mb-3">Selecciona la subcuenta de donde saldrá el dinero</p>
+                        <fieldset>
+                            <legend class="form-label fw-bold h6">
+                                <i class="fas fa-wallet me-2"></i>¿De qué subcuenta quieres transferir?
+                            </legend>
+                            <p class="text-muted small mb-3">Selecciona la subcuenta de donde saldrá el dinero</p>
 
-                        <div class="subcuenta-selection">
-                            <div class="row" id="subcuentasOrigen">
-                                {% for subcuenta in subcuentas_activas %}
-                                <div class="col-lg-6 mb-3">
-                                    <div class="subcuenta-card" style="--subcuenta-color: {{ subcuenta.color }};"
-                                        data-id="{{ subcuenta.id }}" data-saldo="{{ subcuenta.saldo }}">
-                                        <div class="card-body py-3">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-1 fw-bold">{{ subcuenta.nombre }}</h6>
-                                                    <span class="badge bg-light text-dark">{{ subcuenta.get_tipo_display
-                                                        }}</span>
-                                                </div>
-                                                <div class="text-end">
-                                                    <span class="saldo-display">${{ subcuenta.saldo|floatformat:2
-                                                        }}</span>
-                                                    <small class="d-block text-muted mt-1">Disponible</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        {{ form.subcuenta_origen }}
-                        {% if form.subcuenta_origen.errors %}
-                        <div class="text-danger small mt-2">
-                            {% for error in form.subcuenta_origen.errors %}
-                            <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Flecha indicativa -->
-                    <div class="transfer-arrow-section">
-                        <div class="transfer-arrow">
-                            <i class="fas fa-arrow-down"></i>
-                        </div>
-                    </div>
-
-                    <!-- Subcuenta de Destino -->
-                    <div class="form-section">
-                        <h6><i class="fas fa-download me-2"></i>Seleccionar Destino</h6>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">
-                            <i class="fas fa-piggy-bank me-2"></i>¿Hacia qué subcuenta quieres transferir?
-                        </label>
-                        <p class="text-muted small mb-3">Selecciona la subcuenta que recibirá el dinero</p>
-
-                        <div class="subcuenta-selection">
-                            <div class="row" id="subcuentasDestino">
-                                {% for subcuenta in subcuentas_activas %}
-                                <div class="col-lg-6 mb-3">
-                                    <div class="subcuenta-card subcuenta-destino"
-                                        style="--subcuenta-color: {{ subcuenta.color }};" data-id="{{ subcuenta.id }}">
-                                        <div class="card-body py-3">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-1 fw-bold">{{ subcuenta.nombre }}</h6>
-                                                    <span class="badge bg-light text-dark">{{ subcuenta.get_tipo_display
-                                                        }}</span>
-                                                </div>
-                                                <div class="text-end">
-                                                    <span class="current-saldo">${{ subcuenta.saldo|floatformat:2
-                                                        }}</span>
-                                                    <small class="d-block text-muted mt-1">Actual</small>
+                            <div class="subcuenta-selection">
+                                <div class="row" id="subcuentasOrigen" role="radiogroup"
+                                    aria-label="Subcuentas de origen disponibles">
+                                    {% for subcuenta in subcuentas_activas %}
+                                    <div class="col-lg-6 mb-3">
+                                        <div class="subcuenta-card" style="--subcuenta-color: {{ subcuenta.color }};"
+                                            data-id="{{ subcuenta.id }}" data-saldo="{{ subcuenta.saldo }}" role="radio"
+                                            aria-checked="false" tabindex="0"
+                                            aria-label="{{ subcuenta.nombre }}, {{ subcuenta.get_tipo_display }}, saldo disponible ${{ subcuenta.saldo|floatformat:2 }}">
+                                            <div class="card-body py-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1 fw-bold">{{ subcuenta.nombre }}</h6>
+                                                        <span class="badge bg-light text-dark">{{
+                                                            subcuenta.get_tipo_display }}</span>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <span class="saldo-display">${{ subcuenta.saldo|floatformat:2
+                                                            }}</span>
+                                                        <small class="d-block text-muted mt-1">Disponible</small>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-
-                        {{ form.subcuenta_destino }}
-                        {% if form.subcuenta_destino.errors %}
-                        <div class="text-danger small mt-2">
-                            {% for error in form.subcuenta_destino.errors %}
-                            <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <!-- Monto y Descripción -->
-                    <div class="form-section">
-                        <h6><i class="fas fa-dollar-sign me-2"></i>Detalles de la Transferencia</h6>
-                    </div>
-
-                    <div class="amount-section">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">
-                                    <i class="fas fa-money-bill-wave me-2"></i>Monto a Transferir *
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    {{ form.monto }}
-                                    <button type="button" class="btn btn-outline-secondary" id="btnMaximo" disabled>
-                                        <i class="fas fa-arrow-up me-1"></i>Máximo
-                                    </button>
-                                </div>
-                                {% if form.monto.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.monto.errors %}
-                                    <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
                                     {% endfor %}
                                 </div>
-                                {% endif %}
-                                <div class="form-text mt-1">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Máximo disponible: <strong id="maxDisponible">$0.00</strong>
-                                </div>
                             </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">
-                                    <i class="fas fa-comment me-2"></i>Descripción (Opcional)
-                                </label>
-                                {{ form.descripcion }}
-                                {% if form.descripcion.errors %}
-                                <div class="text-danger small mt-1">
-                                    {% for error in form.descripcion.errors %}
-                                    <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                                {% endif %}
-                                <div class="form-text">Describe el motivo de la transferencia</div>
-                            </div>
-                        </div>
+                        </fieldset>
                     </div>
 
-                    <!-- Resumen de la Transferencia -->
-                    <div class="mb-4" id="resumenTransferencia" style="display: none;">
-                        <div class="form-section">
-                            <h6><i class="fas fa-clipboard-check me-2"></i>Resumen de la Transferencia</h6>
-                        </div>
+                    {{ form.subcuenta_origen }}
+                    {% if form.subcuenta_origen.errors %}
+                    <div class="text-danger small mt-2">
+                        {% for error in form.subcuenta_origen.errors %}
+                        <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+            </div>
 
-                        <div class="summary-card card">
-                            <div class="card-body">
-                                <div class="row text-center">
-                                    <div class="col-md-4 mb-2">
-                                        <i class="fas fa-arrow-circle-up fa-2x mb-2 opacity-75"></i>
-                                        <h6 class="opacity-75 mb-1">Desde</h6>
-                                        <p class="mb-0 fw-bold" id="resumenOrigen">-</p>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <i class="fas fa-dollar-sign fa-2x mb-2 opacity-75"></i>
-                                        <h6 class="opacity-75 mb-1">Monto</h6>
-                                        <p class="mb-0 fw-bold h5" id="resumenMonto">$0.00</p>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <i class="fas fa-arrow-circle-down fa-2x mb-2 opacity-75"></i>
-                                        <h6 class="opacity-75 mb-1">Hacia</h6>
-                                        <p class="mb-0 fw-bold" id="resumenDestino">-</p>
+            <!-- Flecha indicativa -->
+            <div class="transfer-arrow-section">
+                <div class="transfer-arrow">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+            </div>
+
+            <fieldset>
+                <legend class="form-label fw-bold h6">
+                    <i class="fas fa-piggy-bank me-2"></i>¿Hacia qué subcuenta quieres transferir?
+                </legend>
+                <p class="text-muted small mb-3">Selecciona la subcuenta que recibirá el dinero</p>
+
+                <div class="subcuenta-selection">
+                    <div class="row" id="subcuentasDestino" role="radiogroup"
+                        aria-label="Subcuentas de destino disponibles">
+                        {% for subcuenta in subcuentas_activas %}
+                        <div class="col-lg-6 mb-3">
+                            <div class="subcuenta-card subcuenta-destino"
+                                style="--subcuenta-color: {{ subcuenta.color }};" data-id="{{ subcuenta.id }}"
+                                role="radio" aria-checked="false" tabindex="0"
+                                aria-label="{{ subcuenta.nombre }}, {{ subcuenta.get_tipo_display }}, saldo actual ${{ subcuenta.saldo|floatformat:2 }}">
+                                <div class="card-body py-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">{{ subcuenta.nombre }}</h6>
+                                            <span class="badge bg-light text-dark">{{ subcuenta.get_tipo_display
+                                                }}</span>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="current-saldo">${{ subcuenta.saldo|floatformat:2 }}</span>
+                                            <small class="d-block text-muted mt-1">Actual</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
+                </div>
+            </fieldset>
 
-                    <!-- Botones de Acción -->
-                    <div class="action-buttons">
-                        <div class="d-flex justify-content-between flex-wrap gap-2">
-                            <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>Cancelar
-                            </a>
-                            <button type="submit" class="btn btn-success" id="btnTransferir" disabled>
-                                <i class="fas fa-paper-plane me-2"></i>Realizar Transferencia
-                            </button>
-                        </div>
+            {{ form.subcuenta_destino }}
+            {% if form.subcuenta_destino.errors %}
+            <div class="text-danger small mt-2">
+                {% for error in form.subcuenta_destino.errors %}
+                <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Monto y Descripción -->
+        <div class="form-section">
+            <h6><i class="fas fa-dollar-sign me-2"></i>Detalles de la Transferencia</h6>
+        </div>
+
+        <div class="amount-section">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">
+                        <i class="fas fa-money-bill-wave me-2"></i>Monto a Transferir *
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        {{ form.monto }}
+                        <button type="button" class="btn btn-outline-secondary" id="btnMaximo" disabled>
+                            <i class="fas fa-arrow-up me-1"></i>Máximo
+                        </button>
                     </div>
-                </form>
+                    {% if form.monto.errors %}
+                    <div class="text-danger small mt-1">
+                        {% for error in form.monto.errors %}
+                        <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="form-text mt-1">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Máximo disponible: <strong id="maxDisponible">$0.00</strong>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">
+                        <i class="fas fa-comment me-2"></i>Descripción (Opcional)
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.errors %}
+                    <div class="text-danger small mt-1">
+                        {% for error in form.descripcion.errors %}
+                        <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="form-text">Describe el motivo de la transferencia</div>
+                </div>
             </div>
         </div>
 
-        <!-- Información Importante -->
-        <div class="card mt-4">
-            <div class="card-header bg-light">
-                <h6 class="mb-0">
-                    <i class="fas fa-lightbulb me-2"></i>Información Importante
-                </h6>
+        <!-- Resumen de la Transferencia -->
+        <div class="mb-4" id="resumenTransferencia" style="display: none;">
+            <div class="form-section">
+                <h6><i class="fas fa-clipboard-check me-2"></i>Resumen de la Transferencia</h6>
             </div>
-            <div class="card-body">
-                <div class="info-section">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-bolt text-warning me-2"></i>
-                                <span class="fw-bold">Transferencias instantáneas</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-history text-info me-2"></i>
-                                <span class="fw-bold">Historial completo registrado</span>
-                            </div>
+
+            <div class="summary-card card">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-2">
+                            <i class="fas fa-arrow-circle-up fa-2x mb-2 opacity-75"></i>
+                            <h6 class="opacity-75 mb-1">Desde</h6>
+                            <p class="mb-0 fw-bold" id="resumenOrigen">-</p>
                         </div>
-                        <div class="col-md-6">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-shield-alt text-success me-2"></i>
-                                <span class="fw-bold">Solo saldo disponible</span>
-                            </div>
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-check-circle text-primary me-2"></i>
-                                <span class="fw-bold">Subcuentas activas únicamente</span>
-                            </div>
+                        <div class="col-md-4 mb-2">
+                            <i class="fas fa-dollar-sign fa-2x mb-2 opacity-75"></i>
+                            <h6 class="opacity-75 mb-1">Monto</h6>
+                            <p class="mb-0 fw-bold h5" id="resumenMonto">$0.00</p>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <i class="fas fa-arrow-circle-down fa-2x mb-2 opacity-75"></i>
+                            <h6 class="opacity-75 mb-1">Hacia</h6>
+                            <p class="mb-0 fw-bold" id="resumenDestino">-</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Botones de Acción -->
+        <div class="action-buttons">
+            <div class="d-flex justify-content-between flex-wrap gap-2">
+                <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-success" id="btnTransferir" disabled>
+                    <i class="fas fa-paper-plane me-2"></i>Realizar Transferencia
+                </button>
+            </div>
+        </div>
+        </form>
     </div>
+</div>
+
+<!-- Información Importante -->
+<div class="card mt-4">
+    <div class="card-header bg-light">
+        <h6 class="mb-0">
+            <i class="fas fa-lightbulb me-2"></i>Información Importante
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="info-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-bolt text-warning me-2"></i>
+                        <span class="fw-bold">Transferencias instantáneas</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-history text-info me-2"></i>
+                        <span class="fw-bold">Historial completo registrado</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-shield-alt text-success me-2"></i>
+                        <span class="fw-bold">Solo saldo disponible</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-check-circle text-primary me-2"></i>
+                        <span class="fw-bold">Subcuentas activas únicamente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 </div>
 {% endblock %}
 

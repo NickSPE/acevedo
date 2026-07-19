@@ -7,12 +7,13 @@
   <div class="mb-6">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-2xl font-bold mb-1" style="color: #605952;"> Chat con IA</h2>
+        <h2 class="text-2xl font-bold mb-1" style="color: #605952;">🤖 Chat con IA</h2>
         <p style="color: #736B5E;">Pregunta lo que quieras, sin restricciones</p>
       </div>
       <a href="{% url 'educacion_financiera:tips' %}" class="px-4 py-2 text-white rounded-lg transition-colors"
         style="background-color: #227C91;" onmouseover="this.style.backgroundColor='#1a6070'"
-        onmouseout="this.style.backgroundColor='#227C91'">
+        onmouseout="this.style.backgroundColor='#227C91'" onfocus="this.style.backgroundColor='#1a6070'"
+        onblur="this.style.backgroundColor='#227C91'">
         Volver a Tips
       </a>
     </div>
@@ -26,10 +27,11 @@
       <div class="flex gap-3">
         <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
           style="background-color: #227C91;">
-          <span class="text-white text-sm">–</span>
+          <span class="text-white text-sm">🤖</span>
         </div>
         <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
-          <p class="text-sm">¡Hola! ‹ Soy tu asistente de IA. Puedes preguntarme cualquier cosa que necesites saber.</p>
+          <p class="text-sm">¡Hola! 👋 Soy tu asistente de IA. Puedes preguntarme cualquier cosa que necesites saber.
+          </p>
         </div>
       </div>
     </div>
@@ -38,6 +40,7 @@
     <div class="p-4 bg-white border-t">
       <form id="chat-form" class="flex gap-3">
         {% csrf_token %}
+        <label for="user-input" class="sr-only">Escribe tu pregunta</label>
         <input type="text" id="user-input" name="question" placeholder="Escribe tu pregunta aquí..."
           class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
           style="border-color: #E5E1DD;"
@@ -45,7 +48,8 @@
           onblur="this.style.borderColor='#E5E1DD'; this.style.boxShadow='none'" autocomplete="off">
         <button type="submit" id="send-btn" class="px-6 py-3 text-white rounded-lg transition-colors font-medium"
           style="background-color: #227C91;" onmouseover="this.style.backgroundColor='#1a6070'"
-          onmouseout="this.style.backgroundColor='#227C91'">
+          onmouseout="this.style.backgroundColor='#227C91'" onfocus="this.style.backgroundColor='#1a6070'"
+          onblur="this.style.backgroundColor='#227C91'">
           Enviar
         </button>
       </form>
@@ -58,28 +62,33 @@
     <div class="flex flex-wrap gap-2">
       <button onclick="sendQuickMessage('Hola, ¿cómo estás?')" class="px-3 py-1 rounded-full text-sm transition-colors"
         style="background-color: #F1F0EE; color: #605952;" onmouseover="this.style.backgroundColor='#E5E1DD'"
-        onmouseout="this.style.backgroundColor='#F1F0EE'">
-        ðŸ‘‹ Saludo
+        onmouseout="this.style.backgroundColor='#F1F0EE'" onfocus="this.style.backgroundColor='#E5E1DD'"
+        onblur="this.style.backgroundColor='#F1F0EE'">
+        Saludo
       </button>
       <button onclick="sendQuickMessage('¿Qué es Bitcoin?')" class="px-3 py-1 rounded-full text-sm transition-colors"
         style="background-color: #F1F0EE; color: #605952;" onmouseover="this.style.backgroundColor='#E5E1DD'"
-        onmouseout="this.style.backgroundColor='#F1F0EE'">
-        ðŸ’° Bitcoin
+        onmouseout="this.style.backgroundColor='#F1F0EE'" onfocus="this.style.backgroundColor='#E5E1DD'"
+        onblur="this.style.backgroundColor='#F1F0EE'">
+        Bitcoin
       </button>
       <button onclick="sendQuickMessage('Consejos para ahorrar')"
         class="px-3 py-1 rounded-full text-sm transition-colors" style="background-color: #F1F0EE; color: #605952;"
-        onmouseover="this.style.backgroundColor='#E5E1DD'" onmouseout="this.style.backgroundColor='#F1F0EE'">
-        ðŸ’¡ Ahorros
+        onmouseover="this.style.backgroundColor='#E5E1DD'" onmouseout="this.style.backgroundColor='#F1F0EE'"
+        onfocus="this.style.backgroundColor='#E5E1DD'" onblur="this.style.backgroundColor='#F1F0EE'">
+        Ahorros
       </button>
       <button onclick="sendQuickMessage('¿Cómo invertir mi dinero?')"
         class="px-3 py-1 rounded-full text-sm transition-colors" style="background-color: #F1F0EE; color: #605952;"
-        onmouseover="this.style.backgroundColor='#E5E1DD'" onmouseout="this.style.backgroundColor='#F1F0EE'">
-        ðŸ“ˆ Inversiones
+        onmouseover="this.style.backgroundColor='#E5E1DD'" onmouseout="this.style.backgroundColor='#F1F0EE'"
+        onfocus="this.style.backgroundColor='#E5E1DD'" onblur="this.style.backgroundColor='#F1F0EE'">
+        Inversiones
       </button>
       <button onclick="sendQuickMessage('Explícame algo interesante')"
         class="px-3 py-1 rounded-full text-sm transition-colors" style="background-color: #F1F0EE; color: #605952;"
-        onmouseover="this.style.backgroundColor='#E5E1DD'" onmouseout="this.style.backgroundColor='#F1F0EE'">
-        ðŸŽ¯ Sorpréndeme
+        onmouseover="this.style.backgroundColor='#E5E1DD'" onmouseout="this.style.backgroundColor='#F1F0EE'"
+        onfocus="this.style.backgroundColor='#E5E1DD'" onblur="this.style.backgroundColor='#F1F0EE'">
+        Sorpréndeme
       </button>
     </div>
   </div>
@@ -185,7 +194,7 @@
         <p class="text-sm">${escapedContent}</p>
       </div>
       <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #736B5E;">
-        <span class="text-white text-sm">ðŸ‘¤</span>
+        <span class="text-white text-sm">👤</span>
       </div>
     `;
       setHTML(messageDiv, userHTML);
@@ -196,7 +205,7 @@
 
       const aiHTML = `
       <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
-        <span class="text-white text-sm">ðŸ¤–</span>
+        <span class="text-white text-sm">🤖</span>
       </div>
       <div class="bg-white p-4 rounded-lg shadow-sm max-w-2xl border" style="border-color: #F1F0EE;">
         <div class="ai-response text-sm">${formattedContent}</div>
@@ -217,7 +226,7 @@
     formatted = formatted.replace(/^(.+):$/gm, '<h4 class="font-bold mt-3 mb-2 first:mt-0" style="color: #605952;">$1</h4>');
 
     // Convertir listas con guiones
-    formatted = formatted.replace(/^- (.+)$/gm, '<li class="ml-4 mb-1">â€¢ $1</li>');
+    formatted = formatted.replace(/^- (.+)$/gm, '<li class="ml-4 mb-1">• $1</li>');
 
     // Convertir listas numeradas
     formatted = formatted.replace(/^\d+\. (.+)$/gm, '<li class="ml-4 mb-1 list-decimal">$1</li>');
@@ -232,14 +241,14 @@
     formatted = formatted.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
 
     // Convertir párrafos (doble salto de línea)
-    formatted = formatted.replaceAll(/\n\n/g, '</p><p class="mb-3">');
+    formatted = formatted.replaceAll('\n\n', '</p><p class="mb-3">');
     formatted = '<p class="mb-3">' + formatted + '</p>';
 
     // Limpiar párrafos vacíos
     formatted = formatted.replace(/<p[^>]*><\/p>/g, '');
 
     // Convertir saltos de línea simples
-    formatted = formatted.replaceAll(/\n/g, '<br>');
+    formatted = formatted.replaceAll('\n', '<br>');
 
     return formatted;
   }
@@ -251,7 +260,7 @@
     typingDiv.className = 'flex gap-3';
     const typingHTML = `
     <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
-      <span class="text-white text-sm">–</span>
+      <span class="text-white text-sm">🤖</span>
     </div>
     <div class="bg-white p-3 rounded-lg shadow-sm">
       <div class="flex gap-1">
