@@ -878,7 +878,7 @@ def transferir_subcuentas_ajax(request):
     subcuenta_origen = get_object_or_404(SubCuenta, id=subcuenta_origen_id)
     subcuenta_destino = get_object_or_404(SubCuenta, id=subcuenta_destino_id)
     
-    if not validar_permisos_ambas_subcuentas(request.user, subcuenta_origen, subcuenta_destino):
+    if not (validar_permisos_subcuenta(request.user, subcuenta_origen) and validar_permisos_subcuenta(request.user, subcuenta_destino)):
         return JsonResponse({'success': False, 'error': 'No tienes permisos sobre estas subcuentas'})
     
     # Procesar
