@@ -210,10 +210,10 @@ def get_ai_tips(category: str, user_context: Optional[Dict] = None) -> List[tupl
     return ai_tips_generator.generate_tips(category, user_context)
 
 
-def get_personalized_tips(user_age_range: str = None, 
-                         employment_status: str = None,
-                         financial_goals: str = None,
-                         experience_level: str = None) -> List[tuple]:
+def get_personalized_tips(user_age_range: Optional[str] = None, 
+                         employment_status: Optional[str] = None,
+                         financial_goals: Optional[str] = None,
+                         experience_level: Optional[str] = None) -> List[tuple]:
     """
     Obtener consejos personalizados basados en información del usuario
     """
