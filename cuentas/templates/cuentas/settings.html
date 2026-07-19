@@ -12,13 +12,21 @@
     <h3 class="text-lg font-semibold mb-2">Apariencia</h3>
     <p class="text-sm text-gray-500 mb-4">Personaliza la apariencia de la aplicación</p>
     <form class="space-y-3">
-      <select class="w-full border p-2 rounded"><option>Sistema</option></select>
-      <select class="w-full border p-2 rounded"><option>Predeterminado</option></select>
-      <select class="w-full border p-2 rounded"><option>Mediano</option></select>
+      <div>
+        <label for="select_tema" class="block text-sm font-medium mb-1 text-gray-700">Tema</label>
+        <select id="select_tema" class="w-full border p-2 rounded"><option>Sistema</option></select>
+      </div>
+      <div>
+        <label for="select_estilo" class="block text-sm font-medium mb-1 text-gray-700">Estilo de fuente</label>
+        <select id="select_estilo" class="w-full border p-2 rounded"><option>Predeterminado</option></select>
+      </div>
+      <div>
+        <label for="select_tamano" class="block text-sm font-medium mb-1 text-gray-700">Tamaño de fuente</label>
+        <select id="select_tamano" class="w-full border p-2 rounded"><option>Mediano</option></select>
+      </div>
       <button class="w-full py-2 rounded mt-2" style="background-color: #227C91; color: white;">
-  Guardar cambios
-</button>
-
+        Guardar cambios
+      </button>
     </form>
   </div>
 
@@ -27,13 +35,22 @@
     <h3 class="text-lg font-semibold mb-2">Idioma y Localización</h3>
     <p class="text-sm text-gray-500 mb-4">Configura el idioma y las preferencias regionales</p>
     <form class="space-y-3">
-      <select class="w-full border p-2 rounded"><option>Español</option></select>
-      <select class="w-full border p-2 rounded"><option>Euro (€)</option></select>
-      <select class="w-full border p-2 rounded"><option>DD-MM-YYYY</option></select>
+      <div>
+        <label for="select_idioma" class="block text-sm font-medium mb-1 text-gray-700">Idioma</label>
+        <select id="select_idioma" class="w-full border p-2 rounded"><option>Español</option></select>
+      </div>
+      <div>
+        <label for="select_moneda" class="block text-sm font-medium mb-1 text-gray-700">Moneda preferida</label>
+        <select id="select_moneda" class="w-full border p-2 rounded"><option>Euro (€)</option></select>
+      </div>
+      <div>
+        <label for="select_fecha" class="block text-sm font-medium mb-1 text-gray-700">Formato de fecha</label>
+        <select id="select_fecha" class="w-full border p-2 rounded"><option>DD-MM-YYYY</option></select>
+      </div>
       <button class="w-full py-2 rounded mt-2" style="background-color: #227C91; color: white;">
-  Guardar cambios
-</button>
-
+        Guardar cambios
+      </button>
+    </form>
   </div>
 
   <!-- Privacidad -->

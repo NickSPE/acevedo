@@ -93,23 +93,23 @@
                             
                             <div class="form-layout">
                                 <div class="input-group">
-                                    <label>Nombres</label>
-                                    <input type="text" name="nombres" value="{{ usuario.nombres }}" readonly>
+                                    <label for="id_nombres">Nombres</label>
+                                    <input type="text" id="id_nombres" name="nombres" value="{{ usuario.nombres }}" readonly>
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label>Apellido Paterno</label>
-                                    <input type="text" name="apellido_paterno" value="{{ usuario.apellido_paterno }}" readonly>
+                                    <label for="id_apellido_paterno">Apellido Paterno</label>
+                                    <input type="text" id="id_apellido_paterno" name="apellido_paterno" value="{{ usuario.apellido_paterno }}" readonly>
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label>Apellido Materno</label>
-                                    <input type="text" name="apellido_materno" value="{{ usuario.apellido_materno|default:'' }}" readonly>
+                                    <label for="id_apellido_materno">Apellido Materno</label>
+                                    <input type="text" id="id_apellido_materno" name="apellido_materno" value="{{ usuario.apellido_materno|default:'' }}" readonly>
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label>País</label>
-                                    <select name="pais" disabled>
+                                    <label for="id_pais">País</label>
+                                    <select id="id_pais" name="pais" disabled>
                                         <option value="">Selecciona tu país</option>
                                         <option value="Peru" {% if usuario.pais == "Peru" %}selected{% endif %}>Perú</option>
                                         <option value="Spain" {% if usuario.pais == "Spain" %}selected{% endif %}>España</option>
@@ -156,18 +156,18 @@
                             
                             <div class="form-layout">
                                 <div class="input-group full-width">
-                                    <label>Correo Electrónico</label>
+                                    <label for="id_email">Correo Electrónico</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-envelope"></i>
-                                        <input type="email" name="email" value="{{ usuario.correo }}" readonly>
+                                        <input type="email" id="id_email" name="email" value="{{ usuario.correo }}" readonly>
                                     </div>
                                 </div>
                                 
                                 <div class="input-group full-width">
-                                    <label>Teléfono</label>
+                                    <label for="id_telefono">Teléfono</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-phone"></i>
-                                        <input type="tel" name="telefono" value="{{ usuario.telefono|default:'' }}" 
+                                        <input type="tel" id="id_telefono" name="telefono" value="{{ usuario.telefono|default:'' }}" 
                                                placeholder="+51 999 999 999" readonly>
                                     </div>
                                 </div>
@@ -246,7 +246,7 @@
                             
                             <div class="form-layout vertical">
                                 <div class="input-group">
-                                    <label>Contraseña Actual</label>
+                                    <label for="current-pass">Contraseña Actual</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-key"></i>
                                         <input type="password" name="actual_password" id="current-pass">
@@ -257,7 +257,7 @@
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label>Nueva Contraseña</label>
+                                    <label for="new-pass">Nueva Contraseña</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-lock"></i>
                                         <input type="password" name="new_password" id="new-pass">
@@ -268,7 +268,7 @@
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label>Confirmar Contraseña</label>
+                                    <label for="confirm-pass">Confirmar Contraseña</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-check-circle"></i>
                                         <input type="password" name="confirm_password" id="confirm-pass">
@@ -317,7 +317,7 @@
                             
                             <div class="form-layout vertical">
                                 <div class="input-group">
-                                    <label>PIN Actual</label>
+                                    <label for="current-pin">PIN Actual</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-key"></i>
                                         <input type="password" name="actual_pin" maxlength="6" class="pin-input" id="current-pin">
@@ -328,7 +328,7 @@
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label>Nuevo PIN</label>
+                                    <label for="new-pin">Nuevo PIN</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-lock"></i>
                                         <input type="password" name="new_pin" maxlength="6" class="pin-input" id="new-pin">
@@ -339,7 +339,7 @@
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label>Confirmar PIN</label>
+                                    <label for="confirm-pin">Confirmar PIN</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-check-circle"></i>
                                         <input type="password" name="confirm_pin" maxlength="6" class="pin-input" id="confirm-pin">
@@ -394,7 +394,7 @@
                                 </div>
                                 <div class="toggle-switch">
                                     <input type="checkbox" id="dark-mode">
-                                    <label for="dark-mode"></label>
+                                    <label for="dark-mode"><span class="sr-only">Tema Oscuro</span></label>
                                 </div>
                             </div>
                             
@@ -405,7 +405,7 @@
                                 </div>
                                 <div class="toggle-switch">
                                     <input type="checkbox" id="notifications" checked>
-                                    <label for="notifications"></label>
+                                    <label for="notifications"><span class="sr-only">Notificaciones</span></label>
                                 </div>
                             </div>
                         </div>
@@ -1050,7 +1050,7 @@
     gap: 0.5rem;
     padding: 0.5rem;
     font-size: 0.8rem;
-    color: #dc2626;
+    color: #b91c1c;
     background: #fef2f2;
     border-radius: var(--radius-sm);
     border: 1px solid #fecaca;
@@ -1058,7 +1058,7 @@
 }
 
 .indicator.valid {
-    color: #16a34a;
+    color: #15803d;
     background: #f0fdf4;
     border-color: #bbf7d0;
 }

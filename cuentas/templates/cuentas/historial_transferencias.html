@@ -100,16 +100,16 @@
   <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
     <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div>
-        <label class="block text-sm font-medium text-[#605952] mb-1">Fecha Inicio</label>
-        <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
+        <label for="id_fecha_inicio" class="block text-sm font-medium text-[#605952] mb-1">Fecha Inicio</label>
+        <input type="date" id="id_fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
       </div>
       <div>
-        <label class="block text-sm font-medium text-[#605952] mb-1">Fecha Fin</label>
-        <input type="date" name="fecha_fin" value="{{ fecha_fin }}" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
+        <label for="id_fecha_fin" class="block text-sm font-medium text-[#605952] mb-1">Fecha Fin</label>
+        <input type="date" id="id_fecha_fin" name="fecha_fin" value="{{ fecha_fin }}" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
       </div>
       <div>
-        <label class="block text-sm font-medium text-[#605952] mb-1">Subcuenta</label>
-        <select name="subcuenta" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
+        <label for="id_subcuenta" class="block text-sm font-medium text-[#605952] mb-1">Subcuenta</label>
+        <select id="id_subcuenta" name="subcuenta" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
           <option value="">Todas</option>
           {% for sc in todas_subcuentas %}
           <option value="{{ sc.id }}" {% if subcuenta_filtro == sc.id|stringformat:"s" %}selected{% endif %}>{{ sc.nombre }}</option>

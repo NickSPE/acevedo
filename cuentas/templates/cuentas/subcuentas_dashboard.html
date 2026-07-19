@@ -295,13 +295,13 @@
       <input type="hidden" id="subcuentaId" name="subcuenta_id">
       
       <div>
-        <label class="block text-sm font-medium text-[#605952] mb-1">Monto a transferir</label>
+        <label for="transferAmount" class="block text-sm font-medium text-[#605952] mb-1">Monto a transferir</label>
         <input type="number" class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91]" id="transferAmount" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
       </div>
       
       <div>
-        <label class="block text-sm font-medium text-[#605952] mb-1">Descripción (opcional)</label>
-        <input type="text" class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91]" name="descripcion" placeholder="Motivo de la transferencia">
+        <label for="transferDesc" class="block text-sm font-medium text-[#605952] mb-1">Descripción (opcional)</label>
+        <input type="text" id="transferDesc" class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91]" name="descripcion" placeholder="Motivo de la transferencia">
       </div>
       
       <div class="flex gap-2">

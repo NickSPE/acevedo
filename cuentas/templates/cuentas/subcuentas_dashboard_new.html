@@ -692,13 +692,13 @@
             <input type="hidden" id="subcuentaId" name="subcuenta_id">
             
             <div class="modal-form-group">
-                <label class="modal-label">Monto a transferir</label>
+                <label for="transferAmount" class="modal-label">Monto a transferir</label>
                 <input type="number" class="modal-input" id="transferAmount" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
             </div>
             
             <div class="modal-form-group">
-                <label class="modal-label">Descripción (opcional)</label>
-                <input type="text" class="modal-input" name="descripcion" placeholder="Motivo de la transferencia">
+                <label for="transferDescNew" class="modal-label">Descripción (opcional)</label>
+                <input type="text" id="transferDescNew" class="modal-input" name="descripcion" placeholder="Motivo de la transferencia">
             </div>
             
             <div class="modal-actions">
@@ -746,13 +746,13 @@
             <input type="hidden" id="depositTipo" name="tipo_deposito" value="personal">
             
             <div class="modal-form-group">
-                <label class="modal-label">Monto a depositar</label>
+                <label for="depositAmount" class="modal-label">Monto a depositar</label>
                 <input type="number" class="modal-input" id="depositAmount" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
             </div>
             
             <div class="modal-form-group">
-                <label class="modal-label">Descripción (opcional)</label>
-                <input type="text" class="modal-input" name="descripcion" placeholder="Motivo del depósito">
+                <label for="depositDescNew" class="modal-label">Descripción (opcional)</label>
+                <input type="text" id="depositDescNew" class="modal-input" name="descripcion" placeholder="Motivo del depósito">
             </div>
             
             <div class="modal-actions">
@@ -779,8 +779,8 @@
             {% csrf_token %}
             
             <div class="modal-form-group">
-                <label class="modal-label">Desde</label>
-                <select class="modal-input" name="subcuenta_origen" required>
+                <label for="transferSource" class="modal-label">Desde</label>
+                <select id="transferSource" class="modal-input" name="subcuenta_origen" required>
                     <option value="">Selecciona subcuenta origen</option>
                     {% for subcuenta in subcuentas_independientes_activas %}
                         <option value="{{ subcuenta.id }}">{{ subcuenta.nombre }} - {% format_money subcuenta.saldo user %}</option>
@@ -796,8 +796,8 @@
             </div>
             
             <div class="modal-form-group">
-                <label class="modal-label">Hacia</label>
-                <select class="modal-input" name="subcuenta_destino" required>
+                <label for="transferDest" class="modal-label">Hacia</label>
+                <select id="transferDest" class="modal-input" name="subcuenta_destino" required>
                     <option value="">Selecciona subcuenta destino</option>
                     {% for subcuenta in subcuentas_independientes_activas %}
                         <option value="{{ subcuenta.id }}">{{ subcuenta.nombre }}</option>
@@ -813,13 +813,13 @@
             </div>
             
             <div class="modal-form-group">
-                <label class="modal-label">Monto</label>
-                <input type="number" class="modal-input" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
+                <label for="transferAmtBetween" class="modal-label">Monto</label>
+                <input type="number" id="transferAmtBetween" class="modal-input" name="monto" step="0.01" min="0.01" placeholder="0.00" required>
             </div>
             
             <div class="modal-form-group">
-                <label class="modal-label">Descripción (opcional)</label>
-                <input type="text" class="modal-input" name="descripcion" placeholder="Motivo de la transferencia">
+                <label for="transferDescBetween" class="modal-label">Descripción (opcional)</label>
+                <input type="text" id="transferDescBetween" class="modal-input" name="descripcion" placeholder="Motivo de la transferencia">
             </div>
             
             <div class="modal-actions">

@@ -358,4 +358,4 @@ class SubcuentaModal {
 }
 
 // Inicializar modal
-new SubcuentaModal();
+window.subcuentaModal = new SubcuentaModal();

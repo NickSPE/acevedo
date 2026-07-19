@@ -174,7 +174,7 @@
         }
 
         .nav-links a:hover {
-            color: #165d6e;
+            color: #104754;
             background: rgba(34, 197, 94, 0.1);
             transform: translateY(-2px);
         }
@@ -385,8 +385,8 @@
 
         .btn-secondary:hover {
             background: rgba(34, 197, 94, 0.1);
-            border-color: #165d6e;
-            color: #165d6e;
+            border-color: #104754;
+            color: #104754;
             transform: translateY(-4px) scale(1.02);
             box-shadow: 0 15px 40px rgba(34, 197, 94, 0.2);
         }
@@ -1424,7 +1424,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('expenseChart').getContext('2d');
 
-            const indexExpenseChart = new Chart(ctx, {
+            new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Categoría A', 'Categoría B', 'Categoría C', 'Categoría D', 'Categoría E'],
