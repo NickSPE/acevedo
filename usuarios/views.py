@@ -129,7 +129,8 @@ def _handle_register_verification(request):
             'error': f'Error al enviar el código: {str(e)}'
         })
 
-def _handle_register_submit(request, monedas):
+def _validate_register_data(request, monedas):
+    """Valida los datos de registro. Retorna (cleaned_data, error_message)"""
     documento_identidad = request.POST.get('documento_identidad')
     nombres = request.POST.get('nombres')
     apellido_paterno = request.POST.get('apellido_paterno')
@@ -146,36 +147,25 @@ def _handle_register_submit(request, monedas):
     session_email = request.session.get('email_for_verification')
 
     if not session_pin or not session_email or session_email != correo:
-        return render(request, REGISTER_TEMPLATE, {
-            "error": "Por favor solicita un código de verificación primero.", 
-            'monedas': monedas
-        })
+        return None, "Por favor solicita un código de verificación primero."
     
     if verification_code != session_pin:
-        return render(request, REGISTER_TEMPLATE, {
-            "error": "Código de verificación incorrecto.", 
-            'monedas': monedas
-        })
+        return None, "Código de verificación incorrecto."
     
     id_moneda_seleccionada = request.POST.get('id_moneda')
     try:
         moneda_obj = Moneda.objects.get(id=id_moneda_seleccionada)
     except Moneda.DoesNotExist:
-        error = "La moneda seleccionada no es válida."
-        return render(request, REGISTER_TEMPLATE, {"error": error, 'monedas': monedas})
+        return None, "La moneda seleccionada no es válida."
 
-    nombre_cuenta = request.POST.get('nombre_cuenta')
+    nombre_cuenta = request.POST.get('nombre_cuenta') or "Cuenta principal"
     saldo_inicial = request.POST.get('saldo_inicial')
     descripcion = request.POST.get('descripcion_cuenta', "")
-
-    if not nombre_cuenta:
-        nombre_cuenta = "Cuenta principal"
 
     try:
         saldo_inicial_float = float(saldo_inicial) if saldo_inicial else 0.0
     except (ValueError, TypeError):
-        error = "El saldo inicial debe ser un número válido."
-        return render(request, REGISTER_TEMPLATE, {"error": error, 'monedas': monedas})
+        return None, "El saldo inicial debe ser un número válido."
 
     if imagen_perfil:
         import base64
@@ -184,31 +174,52 @@ def _handle_register_submit(request, monedas):
         imagen_b64 = None
 
     if Usuario.objects.filter(correo=correo).exists():
-        error = "El correo ya está registrado."
+        return None, "El correo ya está registrado."
+
+    return {
+        'documento_identidad': documento_identidad or '00000000',
+        'nombres': nombres,
+        'apellido_paterno': apellido_paterno,
+        'apellido_materno': apellido_materno,
+        'correo': correo,
+        'contrasena': contrasena,
+        'telefono': int(telefono) if telefono else 0,
+        'pin_acceso_rapido': pin_acceso_rapido or '000000',
+        'imagen_perfil': imagen_b64,
+        'moneda_obj': moneda_obj,
+        'nombre_cuenta': nombre_cuenta,
+        'saldo_inicial_float': saldo_inicial_float,
+        'descripcion': descripcion
+    }, None
+
+
+def _handle_register_submit(request, monedas):
+    cleaned_data, error = _validate_register_data(request, monedas)
+    if error:
         return render(request, REGISTER_TEMPLATE, {"error": error, 'monedas': monedas})
 
     try:
         # Crear el usuario con valores por defecto para campos requeridos
         nuevo_usuario = Usuario.objects.create_user(
-            documento_identidad=documento_identidad or '00000000',
-            nombres=nombres,
-            apellido_paterno=apellido_paterno,
-            apellido_materno=apellido_materno,
-            correo=correo,
-            password=contrasena,
-            telefono=int(telefono) if telefono else 0,
-            pin_acceso_rapido=pin_acceso_rapido or '000000',
-            imagen_perfil=imagen_b64,
+            documento_identidad=cleaned_data['documento_identidad'],
+            nombres=cleaned_data['nombres'],
+            apellido_paterno=cleaned_data['apellido_paterno'],
+            apellido_materno=cleaned_data['apellido_materno'],
+            correo=cleaned_data['correo'],
+            password=cleaned_data['contrasena'],
+            telefono=cleaned_data['telefono'],
+            pin_acceso_rapido=cleaned_data['pin_acceso_rapido'],
+            imagen_perfil=cleaned_data['imagen_perfil'],
             email_verificado=True,
-            id_moneda=moneda_obj
+            id_moneda=cleaned_data['moneda_obj']
         )
         
         # Crear la cuenta principal
         Cuenta.objects.create(
             id_usuario=nuevo_usuario,
-            nombre=nombre_cuenta,
-            saldo_cuenta=saldo_inicial_float,
-            descripcion=descripcion
+            nombre=cleaned_data['nombre_cuenta'],
+            saldo_cuenta=cleaned_data['saldo_inicial_float'],
+            descripcion=cleaned_data['descripcion']
         )
         
         # Limpiar sesión de verificación
@@ -307,10 +318,9 @@ def Verificacion_Correo(request):
             id_moneda_seleccionada = int(data['id_moneda'])
 
             imagen_binario = None
-            if 'imagen_perfil' in data:
-                if(data['imagen_perfil']):
-                    import base64
-                    imagen_binario = base64.b64decode(data['imagen_perfil'])
+            if 'imagen_perfil' in data and data['imagen_perfil']:
+                import base64
+                imagen_binario = base64.b64decode(data['imagen_perfil'])
 
             moneda = Moneda.objects.get(id=id_moneda_seleccionada)
             usuario = Usuario.objects.create_user(
@@ -336,30 +346,12 @@ def Verificacion_Correo(request):
 
             del request.session['registro_temp']
 
-            login(request, usuario, backend='usuarios.backends.EmailBackend')
+            login(request, usuario, backend=EMAIL_BACKEND)
 
-            return redirect('core:dashboard')
+            return redirect(DASHBOARD_URL)
         else:
             return render(request , 'usuarios/validar_correo.html' , { 'error_message' : 'PIN incorrecto'})
 
-@login_required
-def Acceso_Rapido(request):
-    user = request.user
-    if(not user.is_authenticated):
-        return redirect('usuarios:login')
-    print("Ingreso acceso rapido")
- 
-    if(request.method == "POST"):
-        # Intentar obtener PIN de diferentes formatos posibles
-        pin_input = request.POST.get('pin_input', '')  # Formato del template actual
-        
-        # Si no viene en pin_input, intentar formato individual (pin0, pin1, etc.)
-        if not pin_input:
-            pin_input = ''.join([
-                request.POST.get(f'pin{i}', '') for i in range(6)
-            ])
-        
-        print(f"🔍 DEBUG ACCESO_RAPIDO: Todos los datos POST: {dict(request.POST)}")
 @login_required
 @require_GET
 def Acceso_Rapido(request):
@@ -395,7 +387,6 @@ def Validar_Acceso_Rapido(request):
 
 @require_POST
 def Reestablecer_Contraseña(request):
-    pass
     return None
 
 

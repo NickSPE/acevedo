@@ -301,40 +301,11 @@
         </div>
         {% empty %}
         <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay metas creadas</p>
-        {% endfor %}
-        {% endif %}
       </div>
     </div>
   </div>
 </div>
 
-<!-- Gráficos -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-  <!-- Histórico de Ingresos vs Gastos -->
-  <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-    <h3 class="text-lg font-semibold mb-4 dark:text-white">Ingresos vs Gastos</h3>
-    <div class="h-[300px] relative">
-      <canvas id="ingresosGastosChart"></canvas>
-    </div>
-  </div>
-
-  <!-- Distribución de Gastos -->
-  <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-    <h3 class="text-lg font-semibold mb-4 dark:text-white">Distribución de Gastos</h3>
-    <div class="h-[300px] relative">
-      <canvas id="categoriasChart"></canvas>
-    </div>
-  </div>
-</div>
-
-<!-- Flujo de Caja Mensual -->
-<div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-6">
-  <h3 class="text-lg font-semibold mb-4 dark:text-white">Evolución del Flujo Neto</h3>
-  <div class="h-[300px] relative">
-    <canvas id="flujoMensualChart"></canvas>
-  </div>
-</div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

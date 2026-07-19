@@ -111,6 +111,43 @@ def _es_notificacion_movimiento_duplicada(usuario, cuenta, instance, hace_5_min)
     return duplicado_por_contenido
 
 
+def _obtener_titulo_y_mensaje_movimiento(instance, cuenta, usuario):
+    """Genera el título y mensaje detallado para la notificación de movimiento."""
+    if instance.tipo == 'ingreso':
+        titulo = "💵 Nuevo ingreso registrado"
+        motivacional = f"\n\n¡Excelente! Tus ingresos suman ${instance.monto:,.2f} más a tu patrimonio. 🎉"
+    else:  # egreso
+        titulo = "💸 Nuevo gasto registrado"
+        if instance.monto >= 1000:
+            motivacional = "\n\n⚠️ Este es un gasto considerable. Recuerda revisar tu presupuesto mensual."
+        elif instance.monto >= 500:
+            motivacional = "\n\n💡 Gasto registrado. Mantén el control de tus finanzas."
+        else:
+            motivacional = "\n\n✅ Gasto registrado correctamente en tu historial financiero."
+
+    mensaje = (
+        f"Hola {usuario.nombres},\n\n"
+        f"Se ha registrado un {instance.tipo} con los siguientes detalles:\n\n"
+        f"🏷️ **{instance.nombre}**\n"
+        f"💰 Monto: ${instance.monto:,.2f}\n"
+        f"🏦 Cuenta: {cuenta.nombre}\n"
+    )
+    if instance.descripcion:
+        mensaje += f"📝 Descripción: {instance.descripcion}\n"
+    
+    mensaje += f"\n💳 Saldo actual de la cuenta: ${cuenta.saldo_cuenta:,.2f}" + motivacional
+    return titulo, mensaje
+
+
+def _obtener_prioridad_movimiento(monto):
+    """Determina la prioridad de la notificación basada en el monto."""
+    if monto >= 1000:
+        return 'alta'
+    elif monto >= 500:
+        return 'media'
+    return 'baja'
+
+
 @receiver(post_save, sender=Movimiento)
 @prevent_duplicate_signals('movimiento_financiero', timeout=60)
 def notificar_movimiento_financiero(sender, instance, created, **kwargs):
@@ -133,41 +170,8 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
         return
     
     try:
-        if instance.tipo == 'ingreso':
-            titulo = "💵 Nuevo ingreso registrado"
-        else:  # egreso
-            titulo = "💸 Nuevo gasto registrado"
-        
-        # Mensaje más detallado con el nombre de la transacción
-        mensaje = f"Hola {usuario.nombres},\n\n"
-        mensaje += f"Se ha registrado un {instance.tipo} con los siguientes detalles:\n\n"
-        mensaje += f"🏷️ **{instance.nombre}**\n"
-        mensaje += f"💰 Monto: ${instance.monto:,.2f}\n"
-        mensaje += f"🏦 Cuenta: {cuenta.nombre}\n"
-        
-        if instance.descripcion:
-            mensaje += f"📝 Descripción: {instance.descripcion}\n"
-        
-        mensaje += f"\n💳 Saldo actual de la cuenta: ${cuenta.saldo_cuenta:,.2f}"
-        
-        # Agregar mensaje motivacional o de alerta según el caso
-        if instance.tipo == 'ingreso':
-            mensaje += f"\n\n¡Excelente! Tus ingresos suman ${instance.monto:,.2f} más a tu patrimonio. 🎉"
-        else:
-            if instance.monto >= 1000:
-                mensaje += "\n\n⚠️ Este es un gasto considerable. Recuerda revisar tu presupuesto mensual."
-            elif instance.monto >= 500:
-                mensaje += "\n\n💡 Gasto registrado. Mantén el control de tus finanzas."
-            else:
-                mensaje += "\n\n✅ Gasto registrado correctamente en tu historial financiero."
-        
-        # Determinar prioridad basada en el monto
-        if instance.monto >= 1000:
-            prioridad = 'alta'
-        elif instance.monto >= 500:
-            prioridad = 'media'
-        else:
-            prioridad = 'baja'
+        titulo, mensaje = _obtener_titulo_y_mensaje_movimiento(instance, cuenta, usuario)
+        prioridad = _obtener_prioridad_movimiento(instance.monto)
         
         print(f"🔔 Creando notificación: {titulo}")
         

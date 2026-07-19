@@ -7,6 +7,12 @@ from django.contrib.auth.decorators import login_required
 from core.decorators import fast_access_pin_verified
 from decimal import Decimal
 import secrets
+# Constantes de plantillas y redirecciones
+TEMPLATE_ADD_TRANSACTION = 'gestion_financiera_basica/add_transaction.html'
+TEMPLATE_ADD_SAVINGS_GOAL = 'gestion_financiera_basica/add_savings_goal.html'
+TEMPLATE_ADD_FUND_TO_GOAL = 'gestion_financiera_basica/add_fund_to_goal.html'
+REDIRECT_SAVINGS_GOALS = 'gestion_financiera_basica:savings_goals'
+
 
 def get_nombre_mes_espanol(fecha):
     """Convierte el nombre del mes al español"""
@@ -338,7 +344,7 @@ def agregar_movimiento(request):
                         'message': 'La cuenta seleccionada no existe.',
                         'errors': form.errors
                     })
-                return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
+                return render(request, TEMPLATE_ADD_TRANSACTION, {'form': form})
 
             # Actualizar el saldo de la cuenta según el tipo de movimiento
             # Ingresos: SUMAR al saldo_cuenta
@@ -362,7 +368,7 @@ def agregar_movimiento(request):
                             'message': 'Saldo insuficiente.',
                             'errors': form.errors
                         })
-                    return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
+                    return render(request, TEMPLATE_ADD_TRANSACTION, {'form': form})
                 
                 # Restar egreso del saldo de la cuenta
                 cuenta.saldo_cuenta -= monto
@@ -391,12 +397,12 @@ def agregar_movimiento(request):
                 })
             # Si el formulario no es válido, renderizar con errores
             # El template mostrará los errores específicos de cada campo
-            return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
+            return render(request, TEMPLATE_ADD_TRANSACTION, {'form': form})
 
     else:
         form = MovimientoForm(user=request.user)
 
-    return render(request, 'gestion_financiera_basica/add_transaction.html', {'form': form})
+    return render(request, TEMPLATE_ADD_TRANSACTION, {'form': form})
 
 
 @login_required
@@ -417,21 +423,21 @@ def agregar_meta_ahorro(request):
                 Cuenta.objects.get(id=meta_ahorro.id_cuenta.id, id_usuario=request.user)
             except Cuenta.DoesNotExist:
                 form.add_error('id_cuenta', 'La cuenta seleccionada no existe o no te pertenece.')
-                return render(request, 'gestion_financiera_basica/add_savings_goal.html', {'form': form})
+                return render(request, TEMPLATE_ADD_SAVINGS_GOAL, {'form': form})
 
             # Guardar la meta de ahorro
             meta_ahorro.save()
 
             # Redirigir a la vista de metas de ahorro para ver el resultado
-            return redirect('gestion_financiera_basica:savings_goals')
+            return redirect(REDIRECT_SAVINGS_GOALS)
         else:
             # Si el formulario no es válido, renderizar con errores
-            return render(request, 'gestion_financiera_basica/add_savings_goal.html', {'form': form})
+            return render(request, TEMPLATE_ADD_SAVINGS_GOAL, {'form': form})
 
     else:
         form = MetaAhorroForm(user=request.user)
 
-    return render(request, 'gestion_financiera_basica/add_savings_goal.html', {'form': form})
+    return render(request, TEMPLATE_ADD_SAVINGS_GOAL, {'form': form})
 
 
 @login_required
@@ -464,7 +470,7 @@ def aportar_meta_ahorro(request, meta_id):
             # Verificar si hay suficiente saldo disponible
             if saldo_disponible < monto_aporte:
                 form.add_error('monto', f'Saldo insuficiente. Saldo disponible: ${float(saldo_disponible):.2f}. El saldo en subcuentas no puede usarse.')
-                return render(request, 'gestion_financiera_basica/add_fund_to_goal.html', {
+                return render(request, TEMPLATE_ADD_FUND_TO_GOAL, {
                     'form': form, 
                     'meta': meta
                 })
@@ -474,7 +480,7 @@ def aportar_meta_ahorro(request, meta_id):
             
             if not cuenta_usuario:
                 form.add_error(None, 'No tienes una cuenta principal configurada.')
-                return render(request, 'gestion_financiera_basica/add_fund_to_goal.html', {
+                return render(request, TEMPLATE_ADD_FUND_TO_GOAL, {
                     'form': form, 
                     'meta': meta
                 })
@@ -505,17 +511,17 @@ def aportar_meta_ahorro(request, meta_id):
             print(f"✅ Movimiento creado: Egreso de ${float(monto_aporte)} de cuenta '{cuenta_usuario.nombre}'")
             
             # Redirigir de vuelta a las metas de ahorro
-            return redirect('gestion_financiera_basica:savings_goals')
+            return redirect(REDIRECT_SAVINGS_GOALS)
         else:
             # Si el formulario no es válido, renderizar con errores
-            return render(request, 'gestion_financiera_basica/add_fund_to_goal.html', {
+            return render(request, TEMPLATE_ADD_FUND_TO_GOAL, {
                 'form': form, 
                 'meta': meta
             })
     else:
         form = AporteMetaAhorroForm(meta_ahorro=meta)
     
-    return render(request, 'gestion_financiera_basica/add_fund_to_goal.html', {
+    return render(request, TEMPLATE_ADD_FUND_TO_GOAL, {
         'form': form, 
         'meta': meta
     })
@@ -537,7 +543,7 @@ def editar_meta_ahorro(request, meta_id):
             meta_ahorro.save()
             
             # Redirigir de vuelta a las metas de ahorro
-            return redirect('gestion_financiera_basica:savings_goals')
+            return redirect(REDIRECT_SAVINGS_GOALS)
         else:
             # Si el formulario no es válido, renderizar con errores
             return render(request, 'gestion_financiera_basica/edit_savings_goal.html', {
@@ -572,10 +578,10 @@ def eliminar_meta_ahorro(request, meta_id):
         messages.success(request, f'La meta de ahorro "{nombre_meta}" ha sido eliminada correctamente.')
         
         # Redirigir a la página de metas de ahorro
-        return redirect('gestion_financiera_basica:savings_goals')
+        return redirect(REDIRECT_SAVINGS_GOALS)
     
     # Si no es POST, redirigir de vuelta
-    return redirect('gestion_financiera_basica:savings_goals')
+    return redirect(REDIRECT_SAVINGS_GOALS)
 
 
 @login_required
