@@ -26,6 +26,7 @@
     }
     
     .card-header {
+        background-color: #667eea;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         padding: 2rem;
@@ -139,6 +140,7 @@
     }
     
     .btn-primary {
+        background-color: #6366f1;
         background: linear-gradient(45deg, #6366f1, #8b5cf6);
         color: white;
     }
@@ -311,11 +313,11 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const montoInput = document.getElementById('{{ form.monto.id_for_label }}');
-    const maxSaldo = parseFloat('{{ subcuenta.saldo }}');
+    const maxSaldo = Number.parseFloat('{{ subcuenta.saldo }}');
     
     if (montoInput) {
         montoInput.addEventListener('input', function() {
-            const valor = parseFloat(this.value);
+            const valor = Number.parseFloat(this.value);
             
             if (valor > maxSaldo) {
                 this.style.borderColor = '#ef4444';
@@ -331,8 +333,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Formatear el input con dos decimales cuando pierde el foco
         montoInput.addEventListener('blur', function() {
-            const valor = parseFloat(this.value);
-            if (!isNaN(valor) && valor > 0) {
+            const valor = Number.parseFloat(this.value);
+            if (!Number.isNaN(valor) && valor > 0) {
                 this.value = valor.toFixed(2);
             }
         });

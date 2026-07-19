@@ -54,24 +54,24 @@
     }
     
     .btn-primary {
-        background: #3b82f6;
+        background: #2563eb;
         color: white;
     }
     
     .btn-primary:hover {
-        background: #2563eb;
+        background: #1d4ed8;
         color: white;
         text-decoration: none;
         transform: translateY(-1px);
     }
     
     .btn-secondary {
-        background: #10b981;
+        background: #047857;
         color: white;
     }
     
     .btn-secondary:hover {
-        background: #059669;
+        background: #065f46;
         color: white;
         text-decoration: none;
         transform: translateY(-1px);
@@ -121,7 +121,7 @@
     
     .metric-icon.purple {
         background: #e9d5ff;
-        color: #7c3aed;
+        color: #6d28d9;
     }
     
     .metric-title {
@@ -441,21 +441,21 @@
     }
 
     .modal-btn-primary {
-        background: #3b82f6;
-        color: white;
-    }
-
-    .modal-btn-primary:hover {
         background: #2563eb;
-    }
-
-    .modal-btn-success {
-        background: #10b981;
         color: white;
     }
-
+ 
+    .modal-btn-primary:hover {
+        background: #1d4ed8;
+    }
+ 
+    .modal-btn-success {
+        background: #047857;
+        color: white;
+    }
+ 
     .modal-btn-success:hover {
-        background: #059669;
+        background: #065f46;
     }
 
     @media (max-width: 768px) {
@@ -502,7 +502,7 @@
             {% else %}
                 <a href="{% url 'cuentas:crear_subcuenta_nueva' %}" class="btn-action btn-primary">
                     <i class="fas fa-plus"></i>
-                    Nueva Subcuenta
+                    Nueva Subcuenta Independiente
                 </a>
             {% endif %}
             <button onclick="openTransferModal()" class="btn-action btn-secondary">

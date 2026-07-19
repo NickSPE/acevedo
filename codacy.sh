@@ -10,11 +10,17 @@ l="\033[0;90m" # log test
 r="\033[0m" # reset
 
 
+# Constants
+LINUX_X86_64="Linux x86_64"
+DARWIN_ARM64="Darwin arm64"
+
 # Logger
 # This function log messages
 # Usage: log <LEVEL> <MESSAGE>
 log() {
-    echo -e " $1--> $l$2$r"
+    local level="$1"
+    local msg="$2"
+    echo -e " $level--> $l$msg$r"
 }
 
 
@@ -22,8 +28,10 @@ log() {
 # This function log fatal messages
 # Usage: fatal <MESSAGE> <EXIT_CODE>
 fatal() {
-    log "$e" "$1"
-    exit "$([ $# -eq 2 ] && echo "$2" || echo 1)"
+    local msg="$1"
+    local code="$2"
+    log "$e" "$msg"
+    exit "$([ $# -eq 2 ] && echo "$code" || echo 1)"
 }
 
 
@@ -129,7 +137,7 @@ download() {
 
     download_file "$url"
     checksum "$file_name" "$checksum_url"
-    if [ "$os_name_arch" = "Linux x86_64" ] || [ "$os_name_arch" = "Darwin arm64" ]; then
+    if [ "$os_name_arch" = "$LINUX_X86_64" ] || [ "$os_name_arch" = "$DARWIN_ARM64" ]; then
         mv "$file_name" "$output_filename"
     fi
 
@@ -137,7 +145,7 @@ download() {
 }
 
 download_reporter() {
-    if [ "$os_name_arch" = "Linux x86_64" ] || [ "$os_name_arch" = "Darwin arm64" ]; then
+    if [ "$os_name_arch" = "$LINUX_X86_64" ] || [ "$os_name_arch" = "$DARWIN_ARM64" ]; then
         # OS name lower case
         suffix=$(echo "$os_name" | tr '[:upper:]' '[:lower:]')
     else
@@ -203,7 +211,7 @@ if [ -z "$CODACY_REPORTER_TMP_FOLDER" ]; then
 fi
 
 # Set binary name
-if [ "$os_name_arch" = "Linux x86_64" ] || [ "$os_name_arch" = "Darwin arm64" ]; then
+if [ "$os_name_arch" = "$LINUX_X86_64" ] || [ "$os_name_arch" = "$DARWIN_ARM64" ]; then
     reporter_filename="codacy-coverage-reporter"
 else
     reporter_filename="codacy-coverage-reporter-assembly.jar"
@@ -220,7 +228,7 @@ reporter_path="$reporter_folder"/"$reporter_filename"
 
 download_reporter "$reporter_path" "$reporter_folder" "$reporter_filename"
 
-if [ "$os_name_arch" = "Linux x86_64" ] || [ "$os_name_arch" = "Darwin arm64" ]; then
+if [ "$os_name_arch" = "$LINUX_X86_64" ] || [ "$os_name_arch" = "$DARWIN_ARM64" ]; then
     chmod +x "$reporter_path"
     run_command="$reporter_path"
 else

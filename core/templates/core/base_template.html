@@ -34,15 +34,12 @@
             background-color: #1d293d;
             border-color: #1a1f2e;
             overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         #side-bar::-webkit-scrollbar {
             display: none;
-        }
-
-        #side-bar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
 
         #side-bar .sidebar-link {
@@ -78,12 +75,18 @@
         }
 
         .logout-link:hover {
-            background-color: rgba(239, 68, 68, 0.1) !important;
-            color: #ef4444 !important;
+            background-color: #dc2626 !important;
+            color: #ffffff !important;
         }
 
         .logout-link:hover svg {
-            color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        dialog#ventana_confirmar_cierre_sesion {
+            border: none;
+            background: white;
+            color: inherit;
         }
 
         .section-content {
@@ -200,14 +203,14 @@
 
                 <!-- Aprendizaje -->
                 <div>
-                    <div class="mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between"
+                    <button type="button" class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
                         onclick="toggleSection('aprendizaje')">
                         <span>Aprendizaje</span>
                         <svg id="chevron-aprendizaje" class="h-4 w-4 chevron-icon rotated" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
-                    </div>
+                    </button>
                     <div id="section-aprendizaje" class="section-content collapsed">
                         <ul class="space-y-1">
                             <li>
@@ -249,14 +252,14 @@
 
                 <!-- Configuración -->
                 <div>
-                    <div class="mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between"
+                    <button type="button" class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
                         onclick="toggleSection('configuracion')">
                         <span>Configuración</span>
                         <svg id="chevron-configuracion" class="h-4 w-4 chevron-icon rotated" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
-                    </div>
+                    </button>
                     <div id="section-configuracion" class="section-content collapsed">
                         <ul class="space-y-1">
                             <li>
@@ -318,13 +321,13 @@
             {% block content %}{% endblock %}
         </main>
     </div>
-    <!-- Dialog confirmar cierre sesion -->
     <div id="validate_logout_overlay"
         class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 hidden"
-        onclick="cerrarLogoutModal()">
+        role="button" tabindex="0" onclick="cerrarLogoutModal()"
+        onkeypress="if(event.key === 'Enter' || event.key === ' ') { cerrarLogoutModal(); event.preventDefault(); }">
 
         <!-- Modal -->
-        <div id="ventana_confirmar_cierre_sesion" role="dialog" aria-modal="true" onclick="event.stopPropagation()"
+        <dialog id="ventana_confirmar_cierre_sesion" onclick="event.stopPropagation()"
             class="relative rounded-md p-6 bg-white shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0 pointer-events-none">
 
             <!-- Botón X -->
@@ -344,7 +347,7 @@
                         class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">Continuar</button>
                 </div>
             </form>
-        </div>
+        </dialog>
     </div>
     <script>
         const toggleBtn = document.getElementById("toggleSidebar");
@@ -397,10 +400,10 @@
                 form.addEventListener("submit", function (e) {
                     e.preventDefault();
 
-                    const capital = parseFloat(document.getElementById("capital").value) || 0;
-                    const aporte = parseFloat(document.getElementById("aporte").value) || 0;
-                    const tasa = parseFloat(document.getElementById("tasa").value) || 0;
-                    const duracion = parseFloat(document.getElementById("duracion").value) || 0;
+                    const capital = Number.parseFloat(document.getElementById("capital").value) || 0;
+                    const aporte = Number.parseFloat(document.getElementById("aporte").value) || 0;
+                    const tasa = Number.parseFloat(document.getElementById("tasa").value) || 0;
+                    const duracion = Number.parseFloat(document.getElementById("duracion").value) || 0;
                     const unidad = unidadSelect.value;
 
                     let periodosPorAño = 1;
@@ -438,9 +441,9 @@
                 loanForm.addEventListener("submit", function (e) {
                     e.preventDefault();
 
-                    const monto = parseFloat(document.getElementById("monto").value) || 0;
-                    const interesAnual = parseFloat(document.getElementById("interes").value) || 0;
-                    const plazo = parseFloat(document.getElementById("plazo").value) || 0;
+                    const monto = Number.parseFloat(document.getElementById("monto").value) || 0;
+                    const interesAnual = Number.parseFloat(document.getElementById("interes").value) || 0;
+                    const plazo = Number.parseFloat(document.getElementById("plazo").value) || 0;
                     const unidad = unidadSelectPrestamo.value;
 
                     let periodosPorAnio = 1;

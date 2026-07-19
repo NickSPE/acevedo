@@ -12,7 +12,7 @@ from django.conf import settings
 
 # Views App CORE
 @require_GET
-def Inicio(request):
+def inicio(request):
     if(not request.user.is_authenticated):
         return render(request , 'core/index.html')
     else:
@@ -20,6 +20,35 @@ def Inicio(request):
         if(request.session.get('login_method') == 'pin' and not request.session.get('pin_acceso_rapido_validado')):
             return redirect('usuarios:acceso_rapido')
         return redirect('core:dashboard')
+
+def _obtener_gastos_por_categoria(user_id, total_egresos):
+    """Calcula el desglose de gastos por categoría para el gráfico"""
+    if total_egresos <= 0:
+        return []
+        
+    gastos_por_cat = Movimiento.objects.filter(
+        id_cuenta__id_usuario=user_id, 
+        tipo="egreso"
+    ).values('categoria').annotate(total=Sum('monto')).order_by('-total')
+    
+    gastos_por_categoria = []
+    for gasto in gastos_por_cat:
+        categoria_key = gasto['categoria'] or 'otros'
+        monto = float(gasto['total'])
+        porcentaje = (monto / float(total_egresos)) * 100
+        
+        nombre_categoria = 'Otros'
+        for cat_key, cat_display in Movimiento.CATEGORIAS_GASTOS:
+            if cat_key == categoria_key:
+                nombre_categoria = cat_display
+                break
+        
+        gastos_por_categoria.append({
+            'categoria': nombre_categoria,
+            'monto': monto,
+            'porcentaje': round(porcentaje, 1)
+        })
+    return gastos_por_categoria
 
 @login_required
 @fast_access_pin_verified
@@ -95,32 +124,7 @@ def dashboard(request):
         salud_financiera_score = max(0, 100 - int(porcentaje_de_recursos_para_egresos))  # Score dinámico
 
     # Datos para gráfico de gastos por categoría
-    gastos_por_categoria = []
-    if total_egresos > 0:
-        # Obtener gastos agrupados por categoría
-        gastos_por_cat = Movimiento.objects.filter(
-            id_cuenta__id_usuario=user_id, 
-            tipo="egreso"
-        ).values('categoria').annotate(total=Sum('monto')).order_by('-total')
-        
-        # Convertir a lista para el gráfico con nombres y emojis
-        for gasto in gastos_por_cat:
-            categoria_key = gasto['categoria'] or 'otros'
-            monto = float(gasto['total'])
-            porcentaje = (monto / float(total_egresos)) * 100
-            
-            # Buscar el nombre con emoji para la categoría
-            nombre_categoria = 'Otros'
-            for cat_key, cat_display in Movimiento.CATEGORIAS_GASTOS:
-                if cat_key == categoria_key:
-                    nombre_categoria = cat_display
-                    break
-            
-            gastos_por_categoria.append({
-                'categoria': nombre_categoria,
-                'monto': monto,
-                'porcentaje': round(porcentaje, 1)
-            })
+    gastos_por_categoria = _obtener_gastos_por_categoria(user_id, total_egresos)
     
     tab = request.GET.get("tab", "overview")
 

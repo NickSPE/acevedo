@@ -1,5 +1,7 @@
 from django.db import models
 
+USUARIO_MODEL = "usuarios.Usuario"
+
 class Moneda(models.Model):
     codigo = models.CharField(max_length=5)
     nombre = models.CharField(max_length=50)
@@ -13,7 +15,7 @@ class Cuenta(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField()
     saldo_cuenta = models.DecimalField(max_digits=15, decimal_places=2)
-    id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(USUARIO_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.nombre
@@ -100,7 +102,7 @@ class SubCuenta(models.Model):
                                   null=True, blank=True, help_text="Cuenta principal (opcional para subcuentas independientes)")
 
     # Para subcuentas independientes se REQUIERE relación directa con usuario
-    propietario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE, null=True, blank=True, 
+    propietario = models.ForeignKey(USUARIO_MODEL, on_delete=models.CASCADE, null=True, blank=True, 
                                    help_text="Propietario directo (requerido para subcuentas independientes)")
 
     def __str__(self):
@@ -210,7 +212,7 @@ class TransferenciaSubCuenta(models.Model):
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     descripcion = models.TextField(blank=True, default='')
     fecha_transferencia = models.DateTimeField(auto_now_add=True)
-    id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(USUARIO_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"${self.monto} de {self.subcuenta_origen.nombre} a {self.subcuenta_destino.nombre}"
@@ -232,7 +234,7 @@ class TransferenciaCuentaPrincipal(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPO_TRANSFERENCIA, default='deposito')
     descripcion = models.TextField(blank=True, default='')
     fecha_transferencia = models.DateTimeField(auto_now_add=True)
-    id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(USUARIO_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         direccion = "hacia" if self.tipo == 'deposito' else "desde"

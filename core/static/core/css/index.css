@@ -6,6 +6,7 @@
 body, html {
     height: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #764ba2;
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: #fff;
     display: flex;

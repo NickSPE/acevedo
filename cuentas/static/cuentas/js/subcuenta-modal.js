@@ -4,8 +4,9 @@
  */
 
 class SubcuentaModal {
+  modalId = 'subcuenta-modal';
+
   constructor() {
-    this.modalId = 'subcuenta-modal';
     this.csrfToken = this.getCSRFToken();
     this.modal = null;
     this.init();

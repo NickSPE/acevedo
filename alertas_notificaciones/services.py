@@ -160,8 +160,7 @@ class NotificationProcessor:
                 
             # SMS (futuro)
             if config.sms_habilitado:
-                # TODO: Implementar SMS
-                pass
+                logger.warning("SMS not implemented yet")
             
             # Actualizar estado
             notificacion.estado = 'enviada'

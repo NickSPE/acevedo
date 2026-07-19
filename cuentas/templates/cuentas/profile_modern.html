@@ -1229,7 +1229,6 @@ function switchTab(tabName) {
     // Actualizar indicador visual
     const tabs = document.querySelectorAll('.nav-tab');
     const indicator = document.querySelector('.nav-indicator');
-    const activeTab = document.querySelector(`.nav-tab[data-tab="${tabName}"]`);
     
     tabs.forEach((tab, index) => {
         tab.classList.remove('active');
@@ -1398,7 +1397,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (input) {
             input.addEventListener('input', function(e) {
                 // Solo permitir números
-                this.value = this.value.replace(/[^0-9]/g, '');
+                this.value = this.value.replace(/\D/g, '');
                 validatePIN();
             });
         }

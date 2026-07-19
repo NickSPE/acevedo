@@ -612,7 +612,7 @@ def _evaluar_diversificacion_texto(labels):
     else:
         return 'Limitada'
 
-def _agregar_encabezado_y_info(story, styles, brand_style, title_style, header_style, reporte):
+def _agregar_encabezado_y_info(story, brand_style, title_style, header_style, reporte):
     from reportlab.graphics.shapes import Drawing, Rect
     # ENCABEZADO ULTRA PROFESIONAL
     header_bg = Drawing(500, 60)
@@ -862,6 +862,57 @@ def _agregar_ingresos_egresos(story, header_style, subheader_style, summary_styl
         story.append(Paragraph(f"• {rec}", summary_style))
         story.append(Spacer(1, 5))
 
+def _construir_sc_data(datos, total_saldo, promedio_general):
+    sc_data = [['TIPO DE SUBCUENTA', 'SALDO TOTAL', 'CANTIDAD', '% DEL TOTAL', 'PROMEDIO']]
+    for i, label in enumerate(datos['labels']):
+        saldo = datos['saldos'][i] if i < len(datos['saldos']) else 0
+        skew_val = datos['cantidades'][i] if i < len(datos['cantidades']) else 0
+        promedio = saldo / skew_val if skew_val > 0 else 0
+        porcentaje = (saldo / total_saldo * 100) if total_saldo > 0 else 0
+        
+        sc_data.append([
+            label,
+            f"${saldo:,.2f}",
+            str(skew_val),
+            f"{porcentaje:.1f}%",
+            f"${promedio:,.2f}"
+        ])
+    sc_data.append([
+        'TOTAL PATRIMONIAL', 
+        f"${total_saldo:,.2f}", 
+        str(sum(datos['cantidades'])), 
+        '100.0%',
+        f"${promedio_general:,.2f}"
+    ])
+    return sc_data
+
+def _agregar_recomendaciones_subcuentas(story, datos, total_saldo, promedio_general, summary_style):
+    if not datos['saldos']:
+        return
+    max_saldo_idx = datos['saldos'].index(max(datos['saldos']))
+    subcuenta_principal = datos['labels'][max_saldo_idx]
+    porcentaje_principal = (max(datos['saldos']) / total_saldo * 100) if total_saldo > 0 else 0
+    diversificacion_txt = _evaluar_diversificacion_texto(datos['labels'])
+    
+    analisis = [
+        f"• Subcuenta Principal: '{subcuenta_principal}' concentra {porcentaje_principal:.1f}% del patrimonio",
+        f"• Distribución: {'Balanceada' if porcentaje_principal < 60 else 'Concentrada en una subcuenta'}",
+        f"• Diversificación: {diversificacion_txt}",
+        f"• Saldo promedio por subcuenta: ${promedio_general:,.2f} MXN"
+    ]
+    
+    total_cantidad = sum(datos['cantidades'])
+    if porcentaje_principal > 70:
+        analisis.append("• Recomendación: Considera diversificar más tu patrimonio en diferentes subcuentas")
+    elif total_cantidad < 3:
+        analisis.append("• Sugerencia: Podrías beneficiarte de crear subcuentas adicionales para mejor organización")
+    else:
+        analisis.append("• Excelente organización financiera con buena distribución de subcuentas")
+    
+    for insight in analisis:
+        story.append(Paragraph(insight, summary_style))
+        story.append(Spacer(1, 5))
+
 def _agregar_subcuentas(story, header_style, subheader_style, summary_style, datos):
     story.append(Paragraph("ANÁLISIS INTEGRAL DE SUBCUENTAS", header_style))
     
@@ -901,29 +952,7 @@ def _agregar_subcuentas(story, header_style, subheader_style, summary_style, dat
     
     story.append(Paragraph("DESGLOSE DETALLADO POR TIPO DE SUBCUENTA", subheader_style))
     
-    sc_data = [['TIPO DE SUBCUENTA', 'SALDO TOTAL', 'CANTIDAD', '% DEL TOTAL', 'PROMEDIO']]
-    
-    for i, label in enumerate(datos['labels']):
-        saldo = datos['saldos'][i] if i < len(datos['saldos']) else 0
-        skew_val = datos['cantidades'][i] if i < len(datos['cantidades']) else 0
-        promedio = saldo / skew_val if skew_val > 0 else 0
-        porcentaje = (saldo / total_saldo * 100) if total_saldo > 0 else 0
-        
-        sc_data.append([
-            label,
-            f"${saldo:,.2f}",
-            str(skew_val),
-            f"{porcentaje:.1f}%",
-            f"${promedio:,.2f}"
-        ])
-    
-    sc_data.append([
-        'TOTAL PATRIMONIAL', 
-        f"${total_saldo:,.2f}", 
-        str(total_cantidad), 
-        '100.0%',
-        f"${promedio_general:,.2f}"
-    ])
+    sc_data = _construir_sc_data(datos, total_saldo, promedio_general)
     
     sc_table = Table(sc_data, colWidths=[2.2*inch, 1.4*inch, 1*inch, 1*inch, 1.2*inch])
     sc_table.setStyle(TableStyle([
@@ -954,29 +983,7 @@ def _agregar_subcuentas(story, header_style, subheader_style, summary_style, dat
     story.append(Spacer(1, 25))
     story.append(Paragraph("ANÁLISIS Y RECOMENDACIONES ESTRATÉGICAS", subheader_style))
     
-    if datos['saldos']:
-        max_saldo_idx = datos['saldos'].index(max(datos['saldos']))
-        subcuenta_principal = datos['labels'][max_saldo_idx]
-        porcentaje_principal = (max(datos['saldos']) / total_saldo * 100) if total_saldo > 0 else 0
-        diversificacion_txt = _evaluar_diversificacion_texto(datos['labels'])
-        
-        analisis = [
-            f"• Subcuenta Principal: '{subcuenta_principal}' concentra {porcentaje_principal:.1f}% del patrimonio",
-            f"• Distribución: {'Balanceada' if porcentaje_principal < 60 else 'Concentrada en una subcuenta'}",
-            f"• Diversificación: {diversificacion_txt}",
-            f"• Saldo promedio por subcuenta: ${promedio_general:,.2f} MXN"
-        ]
-        
-        if porcentaje_principal > 70:
-            analisis.append("• Recomendación: Considera diversificar más tu patrimonio en diferentes subcuentas")
-        elif total_cantidad < 3:
-            analisis.append("• Sugerencia: Podrías beneficiarte de crear subcuentas adicionales para mejor organización")
-        else:
-            analisis.append("• Excelente organización financiera con buena distribución de subcuentas")
-        
-        for insight in analisis:
-            story.append(Paragraph(insight, summary_style))
-            story.append(Spacer(1, 5))
+    _agregar_recomendaciones_subcuentas(story, datos, total_saldo, promedio_general, summary_style)
 
 def _agregar_pie_pagina(story, security_style, reporte):
     from reportlab.graphics.shapes import Drawing, Rect
@@ -1033,7 +1040,7 @@ def exportar_pdf(reporte, datos):
     custom_styles = _crear_estilos_pdf(styles)
     
     _agregar_encabezado_y_info(
-        story, styles, custom_styles['brand'], custom_styles['title'],
+        story, custom_styles['brand'], custom_styles['title'],
         custom_styles['header'], reporte
     )
     

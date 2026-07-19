@@ -7,7 +7,11 @@ os.environ.setdefault('DB_PASSWORD', 'test_pass')
 os.environ.setdefault('DB_HOST', 'localhost')
 os.environ.setdefault('DB_PORT', '5432')
 
-from .settings import *  # nosonar
+from . import settings
+
+for key, value in settings.__dict__.items():
+    if not key.startswith('__'):
+        globals()[key] = value
 
 DATABASES = {
     'default': {
