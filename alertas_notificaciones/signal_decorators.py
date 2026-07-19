@@ -40,7 +40,7 @@ class SignalLock:
                 logger.debug("Lock ya existe: %s", lock_key)
             return acquired
         except Exception as e:
-            logger.error("Error adquiriendo lock %s: %s", lock_key, str(e))
+            logger.exception("Error adquiriendo lock %s", lock_key)
             return False
     
     @staticmethod
@@ -50,7 +50,7 @@ class SignalLock:
             cache.delete(lock_key)
             logger.debug("Lock liberado: %s", lock_key)
         except Exception as e:
-            logger.error("Error liberando lock %s: %s", lock_key, e)
+            logger.exception("Error liberando lock %s", lock_key)
 
 
 def prevent_duplicate_signals(signal_name, timeout=30):
@@ -86,7 +86,7 @@ def prevent_duplicate_signals(signal_name, timeout=30):
                     logger.info("Signal %s ejecutado exitosamente", signal_name)
                     return result
                 except Exception as e:
-                    logger.error("Error en signal %s: %s", signal_name, str(e))
+                    logger.exception("Error en signal %s", signal_name)
                     raise
                 finally:
                     # Liberar lock después de un breve delay para evitar race conditions

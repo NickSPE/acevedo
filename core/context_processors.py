@@ -30,7 +30,6 @@ def currency_context(request):
         except Exception as e:
             print(f"❌ DEBUG: Error en context processor: {e}")
             # Si hay error, mantener valores por defecto
-            pass
     else:
         print("🔍 DEBUG: Usuario no autenticado")
     

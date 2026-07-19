@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const statsElements = document.querySelectorAll('[data-stat]');
     
     statsElements.forEach(element => {
-      const currentValue = parseInt(element.textContent);
+      const currentValue = Number.parseInt(element.textContent);
       // Simular cambio aleatorio pequeño usando CSPRNG
       const randomBuffer = new Uint32Array(1);
       window.crypto.getRandomValues(randomBuffer);

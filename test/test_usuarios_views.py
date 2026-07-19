@@ -65,7 +65,7 @@ class LoginViewTestCase(TestCase):
         self.usuario.save()
         response = self.client.post(self.login_url, {
             'email': 'login_test@test.com',
-            'password': 'CorrectPassword123'
+            'password': TEST_CLAVE_CORRECTA
         })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('usuarios:pagina_verificar_correo'))

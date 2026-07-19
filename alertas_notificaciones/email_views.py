@@ -5,6 +5,8 @@ import os
 import glob
 from django.conf import settings
 
+TEMPLATE_VER_EMAIL = 'alertas_notificaciones/ver_email_completo.html'
+
 @login_required
 @require_GET
 def ver_emails_enviados(request):
@@ -73,7 +75,7 @@ def ver_email_completo(request, filename):
     emails_path = getattr(settings, 'EMAIL_FILE_PATH', None)
     
     if not emails_path or not filename:
-        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+        return render(request, TEMPLATE_VER_EMAIL, {
             'is_html': False,
             'text_content': "Email no encontrado"
         }, status=404)
@@ -83,13 +85,13 @@ def ver_email_completo(request, filename):
     file_path = os.path.abspath(os.path.join(abs_emails_path, filename))
     
     if not file_path.startswith(abs_emails_path):
-        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+        return render(request, TEMPLATE_VER_EMAIL, {
             'is_html': False,
             'text_content': "Acceso denegado"
         }, status=403)
         
     if not os.path.exists(file_path):
-        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+        return render(request, TEMPLATE_VER_EMAIL, {
             'is_html': False,
             'text_content': "Archivo de email no encontrado"
         }, status=404)
@@ -105,19 +107,19 @@ def ver_email_completo(request, filename):
                 html_end = content.find('--===============', html_start)
                 if html_end > -1:
                     html_content = content[html_start:html_end].strip()
-                    return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+                    return render(request, TEMPLATE_VER_EMAIL, {
                         'is_html': True,
                         'html_content': html_content
                     })
         
         # Si no hay HTML, mostrar contenido texto
-        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+        return render(request, TEMPLATE_VER_EMAIL, {
             'is_html': False,
             'text_content': content
         })
         
     except Exception as e:
-        return render(request, 'alertas_notificaciones/ver_email_completo.html', {
+        return render(request, TEMPLATE_VER_EMAIL, {
             'is_html': False,
             'text_content': f"Error leyendo email: {str(e)}"
         }, status=500)

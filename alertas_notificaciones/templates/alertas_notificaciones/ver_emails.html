@@ -53,7 +53,7 @@
                                                 <div class="border rounded p-2 bg-light" style="max-height: 300px; overflow-y: auto;">
                                                     {% if email.html_content %}
                                                         <iframe srcdoc="{{ email.html_content|escape }}" 
-                                                                width="100%" height="250" frameborder="0"></iframe>
+                                                                width="100%" height="250" style="border: none;"></iframe>
                                                     {% else %}
                                                         <p class="text-muted">No se pudo extraer el contenido HTML</p>
                                                     {% endif %}

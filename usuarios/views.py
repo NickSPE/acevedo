@@ -425,9 +425,9 @@ def pin_login(request):
                 request.POST.get(f'pin{i}', '') for i in range(6)
             ])
         
-        print(f"🔍 DEBUG PIN_LOGIN: Método: {request.method}")
-        print(f"🔍 DEBUG PIN_LOGIN: Todos los datos POST: {dict(request.POST)}")
-        print(f"🔍 DEBUG PIN_LOGIN: PIN obtenido: '{pin_input}' (longitud: {len(pin_input)})")
+        print(f"DEBUG PIN_LOGIN: Método: {request.method}")
+        print(f"DEBUG PIN_LOGIN: Todos los datos POST: {dict(request.POST)}")
+        print(f"DEBUG PIN_LOGIN: PIN obtenido: '{pin_input}' (longitud: {len(pin_input)})")
         
         if not pin_input:
             error_message = "No se recibió ningún PIN."

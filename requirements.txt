@@ -23,7 +23,7 @@ google-genai>=1.0.0  # Google Gemini AI (usado en educacion_financiera)
 # DEPENDENCIAS OPCIONALES/DESARROLLO
 # ===========================
 
-# FastAPI y dependencias para test1.py (sistema de notificaciones externo)
+# FastAPI y dependencias para external_notifier.py (sistema de notificaciones externo)
 # fastapi>=0.115.11
 # pydantic>=2.10.8
 # google-auth>=2.38.0

@@ -10,6 +10,8 @@ from .services import NotificationService, ConfigurationNotificationService
 
 from .utils import get_relative_time
 
+URL_CONFIGURACIONES = 'alertas_notificaciones:configuraciones'
+
 @login_required
 def configuraciones(request):
     """Vista para la configuración de notificaciones"""
@@ -129,11 +131,11 @@ def _manejar_actualizacion_configuracion(request):
         else:
             messages.info(request, 'No se detectaron cambios en la configuración.')
         
-        return redirect('alertas_notificaciones:configuraciones')
+        return redirect(URL_CONFIGURACIONES)
         
     except Exception as e:
         messages.error(request, f'Error al actualizar configuración: {str(e)}')
-        return redirect('alertas_notificaciones:configuraciones')
+        return redirect(URL_CONFIGURACIONES)
 
 @login_required
 @require_GET
@@ -316,7 +318,7 @@ def test_notification(request):
         except Exception as e:
             messages.error(request, f'❌ Error enviando notificación de prueba: {str(e)}')
     
-    return redirect('alertas_notificaciones:configuraciones')
+    return redirect(URL_CONFIGURACIONES)
 
 @login_required
 @require_GET
