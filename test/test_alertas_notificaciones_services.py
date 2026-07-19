@@ -68,7 +68,7 @@ class NotificationServiceTestCase(TestCase):
 
     @patch('alertas_notificaciones.services.NotificationProcessor.procesar_notificacion')
     def test_crear_notificacion_triggers_processor(self, mock_process):
-        notif = NotificationService.crear_notificacion(
+        NotificationService.crear_notificacion(
             usuario=self.usuario, tipo_notificacion='TestType',
             titulo='Test', mensaje='Test', categoria='Test'
         )
@@ -219,7 +219,7 @@ class EmailServiceTestCase(TestCase):
             plantilla_push='', activa=True
         )
         EmailService.enviar_notificacion(self.notificacion)
-        args, kwargs = mock_send_mail.call_args
+        _, kwargs = mock_send_mail.call_args
         self.assertIn('Custom Subject', kwargs['subject'])
 
     def test_renderizar_plantilla(self):

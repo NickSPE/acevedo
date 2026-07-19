@@ -678,7 +678,7 @@ def _agregar_gastos_categoria(story, header_style, subheader_style, summary_styl
         [f'Promedio por Categoría: ${promedio_por_categoria:,.2f} MXN'],
         [f'Categorías Analizadas: {len(datos["labels"])}']
     ]
-    
+
     summary_table = Table(summary_data, colWidths=[7*inch])
     summary_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3498DB')),
@@ -695,15 +695,15 @@ def _agregar_gastos_categoria(story, header_style, subheader_style, summary_styl
         ('TOPPADDING', (0, 0), (-1, -1), 10),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
     ]))
-    
+
     story.append(summary_table)
     story.append(Spacer(1, 25))
-    
+
     story.append(Paragraph("DESGLOSE DETALLADO POR CATEGORÍA", subheader_style))
-    
+
     gastos_data = [['CATEGORÍA', 'MONTO (MXN)', 'CANTIDAD', 'PORCENTAJE', 'PROMEDIO']]
-    
-    for i, (label, monto, count) in enumerate(zip(datos['labels'], datos['data'], datos.get('counts', [0]*len(datos['labels'])))):
+
+    for _, (label, monto, count) in enumerate(zip(datos['labels'], datos['data'], datos.get('counts', [0]*len(datos['labels'])))):
         porcentaje = (monto / total * 100) if total > 0 else 0
         promedio_item = monto / count if count > 0 else 0
         
@@ -714,7 +714,7 @@ def _agregar_gastos_categoria(story, header_style, subheader_style, summary_styl
             f"{porcentaje:.1f}%",
             f"${promedio_item:,.2f}"
         ])
-    
+
     gastos_data.append([
         'TOTAL GENERAL', 
         f"${total:,.2f}", 
@@ -722,7 +722,7 @@ def _agregar_gastos_categoria(story, header_style, subheader_style, summary_styl
         '100.0%',
         f"${total/len(datos['labels']) if datos['labels'] else 0:,.2f}"
     ])
-    
+
     gastos_table = Table(gastos_data, colWidths=[2.2*inch, 1.3*inch, 1*inch, 1*inch, 1.2*inch])
     gastos_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),

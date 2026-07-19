@@ -62,7 +62,7 @@ def _login(client, usuario):
 
 class GetPeriodoFechasTests(TestCase):
     def test_mes_actual(self):
-        inicio, fin = get_periodo_fechas('mes_actual')
+        inicio, _ = get_periodo_fechas('mes_actual')
         hoy = timezone.now().date()
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.month, hoy.month)
@@ -95,7 +95,7 @@ class GetPeriodoFechasTests(TestCase):
         self.assertEqual(inicio, hoy - timedelta(days=90))
 
     def test_invalid_periodo_defaults_to_mes_actual(self):
-        inicio, fin = get_periodo_fechas('no_existe')
+        inicio, _ = get_periodo_fechas('no_existe')
         hoy = timezone.now().date()
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.month, hoy.month)
@@ -103,7 +103,7 @@ class GetPeriodoFechasTests(TestCase):
 
 class ObtenerFechasPeriodoTests(TestCase):
     def test_mes_actual(self):
-        inicio, fin = obtener_fechas_periodo('mes_actual')
+        inicio, _ = obtener_fechas_periodo('mes_actual')
         now = timezone.now()
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.hour, 0)
@@ -111,24 +111,24 @@ class ObtenerFechasPeriodoTests(TestCase):
         self.assertEqual(inicio.month, now.month)
 
     def test_ultimo_mes(self):
-        inicio, fin = obtener_fechas_periodo('ultimo_mes')
+        inicio, _ = obtener_fechas_periodo('ultimo_mes')
         now = timezone.now()
         expected_month = now.month - 1 if now.month > 1 else 12
         self.assertEqual(inicio.month, expected_month)
 
     def test_trimestre(self):
-        inicio, fin = obtener_fechas_periodo('trimestre')
+        inicio, _ = obtener_fechas_periodo('trimestre')
         self.assertIsInstance(inicio, datetime)
 
     def test_ano(self):
-        inicio, fin = obtener_fechas_periodo('ano')
+        inicio, _ = obtener_fechas_periodo('ano')
         self.assertEqual(inicio.month, 1)
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.hour, 0)
         self.assertEqual(inicio.minute, 0)
 
     def test_default_return_mes_actual(self):
-        inicio, fin = obtener_fechas_periodo('invalido')
+        inicio, _ = obtener_fechas_periodo('invalido')
         now = timezone.now()
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.month, now.month)
