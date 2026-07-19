@@ -98,6 +98,19 @@ def _handle_send_verification(request):
 def _handle_register_verification(request):
     correo = request.POST.get('correo')
     nombres = request.POST.get('nombres')
+
+    if not correo or not nombres:
+        return JsonResponse({
+            'success': False,
+            'error': 'Correo y nombres son requeridos'
+        })
+
+    if Usuario.objects.filter(correo=correo).exists():
+        return JsonResponse({
+            'success': False,
+            'error': 'El correo ya está registrado'
+        })
+
     # Generar y enviar PIN
     PIN = generar_pin()
     request.session['pin_verification'] = PIN

@@ -1,0 +1,59 @@
+{% extends "core/base_template.html" %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}Detalle de Meta | FinGest{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-6">
+    <div class="flex items-center gap-3 mb-4">
+      <a href="{% url 'gestion_financiera_basica:savings_goals' %}"
+        class="text-[#227C91] hover:underline text-sm">&larr; Volver a Metas</a>
+    </div>
+    <h1 class="text-2xl font-bold text-[#605952]">{{ meta.nombre }}</h1>
+    <p class="text-[#736B5E] text-sm mt-1">{{ meta.descripcion }}</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-lg border border-[#E5E1DD] p-4">
+      <p class="text-xs text-[#736B5E] mb-1">Monto Objetivo</p>
+      <p class="text-xl font-bold text-[#605952]">{{ meta.monto_objetivo|format_currency:request.user }}</p>
+    </div>
+    <div class="bg-white rounded-lg border border-[#E5E1DD] p-4">
+      <p class="text-xs text-[#736B5E] mb-1">Ahorrado</p>
+      <p class="text-xl font-bold text-[#227C91]">{{ meta.monto_ahorrado|format_currency:request.user }}</p>
+    </div>
+    <div class="bg-white rounded-lg border border-[#E5E1DD] p-4">
+      <p class="text-xs text-[#736B5E] mb-1">Fecha Límite</p>
+      <p class="text-xl font-bold text-[#605952]">{{ meta.fecha_limite }}</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg border border-[#E5E1DD] p-4">
+    <h2 class="text-lg font-semibold text-[#605952] mb-4">Aportes Realizados</h2>
+    {% if aportes %}
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left text-[#736B5E] border-b border-[#E5E1DD]">
+          <th class="pb-2">Fecha</th>
+          <th class="pb-2">Monto</th>
+          <th class="pb-2">Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for aporte in aportes %}
+        <tr class="border-b border-[#F1F0EE]">
+          <td class="py-2">{{ aporte.fecha_aporte }}</td>
+          <td class="py-2 font-medium text-[#227C91]">{{ aporte.monto|format_currency:request.user }}</td>
+          <td class="py-2 text-[#736B5E]">{{ aporte.descripcion }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="text-[#736B5E] text-sm">No hay aportes registrados aún.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

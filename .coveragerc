@@ -1,0 +1,14 @@
+[run]
+omit =
+    manage.py
+    */migrations/*
+    test/*
+    gestion_financiera_basica/test_views.py
+    gestion_financiera_basica/tests_integration.py
+    cambiar_a_soles.py
+    populate_currencies.py
+    migrar_seguridad_pin.py
+    actualizar_vistas_pin.py
+    monitor_notificaciones.py
+    educacion_financiera/ai_tips.py
+    educacion_financiera/populate_courses.py
