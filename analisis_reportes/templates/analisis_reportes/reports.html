@@ -306,7 +306,7 @@
             <p class="text-xs text-[#736B5E] flex-shrink-0">{{ meta.porcentaje_progreso|floatformat:1 }}%</p>
           </div>
           <div class="w-full bg-[#E5E1DD] rounded-full h-1.5">
-            <div class="bg-[#227C91] h-1.5 rounded-full transition-all duration-300" style="width: {{ meta.porcentaje_progreso }}%"></div>
+            <div class="bg-[#227C91] h-1.5 rounded-full transition-all duration-300" style="--w: {{ meta.porcentaje_progreso }}%; width: var(--w)"></div>
           </div>
           <div class="flex justify-between text-xs text-[#736B5E] mt-1">
             <span>${{ meta.monto_ahorrado|floatformat:0 }}</span>
@@ -424,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gráfico de Ingresos vs Gastos
     const ingresosGastosCtx = document.getElementById('ingresosGastosChart');
     if (ingresosGastosCtx) {
-        const ingresosGastosData = {{ ingresos_egresos|safe }};
+        const ingresosGastosData = JSON.parse('{{ ingresos_egresos|default:"{}" |escapejs }}');
         
         new Chart(ingresosGastosCtx, {
             type: 'bar',

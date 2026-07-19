@@ -590,10 +590,19 @@
                         <a href="{% url 'cuentas:editar_subcuenta' subcuenta.id %}" class="btn-subcuenta btn-edit">
                             <i class="fas fa-edit"></i> Editar
                         </a>
-                        <button onclick="openTransferToPrincipalModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', {{ subcuenta.saldo }})" class="btn-subcuenta btn-transfer">
+                        <button
+                            class="btn-subcuenta btn-transfer"
+                            data-id="{{ subcuenta.id }}"
+                            data-nombre="{{ subcuenta.nombre }}"
+                            data-saldo="{{ subcuenta.saldo }}"
+                            onclick="openTransferToPrincipalModal(this.dataset.id, this.dataset.nombre, this.dataset.saldo)">
                             <i class="fas fa-arrow-right"></i> A Principal
                         </button>
-                        <button onclick="openDepositModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', 'negocio')" class="btn-subcuenta btn-deposit">
+                        <button
+                            class="btn-subcuenta btn-deposit"
+                            data-id="{{ subcuenta.id }}"
+                            data-nombre="{{ subcuenta.nombre }}"
+                            onclick="openDepositModal(this.dataset.id, this.dataset.nombre, 'negocio')">
                             <i class="fas fa-plus"></i> Depositar
                         </button>
                     </div>
@@ -641,7 +650,12 @@
                             {% endif %}
 
                             <div class="subcuenta-actions">
-                                <button onclick="openDepositModal({{ subcuenta.id }}, '{{ subcuenta.nombre }}', 'personal')" class="btn-subcuenta btn-deposit">
+                                <button
+                                    data-id="{{ subcuenta.id }}"
+                                    data-nombre="{{ subcuenta.nombre }}"
+                                    data-tipo="personal"
+                                    onclick="openDepositModal(this.dataset.id, this.dataset.nombre, this.dataset.tipo)"
+                                    class="btn-subcuenta btn-deposit">
                                     <i class="fas fa-plus"></i> Depositar
                                 </button>
                                 <button onclick="openTransferModal()" class="btn-subcuenta btn-transfer">
