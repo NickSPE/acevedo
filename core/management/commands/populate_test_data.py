@@ -11,6 +11,9 @@ from gestion_financiera_basica.models import Movimiento, MetaAhorro, AporteMetaA
 from educacion_financiera.models import CursoExterno
 
 
+LITERAL_ESPANOL = 'Español'
+
+
 class Command(BaseCommand):
     help = 'Rellena la base de datos con datos de prueba para subcuentas, transacciones y cursos'
 
@@ -366,7 +369,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://img.youtube.com/vi/ejemplo1/maxresdefault.jpg',
                 'duracion_estimada': '2 horas (12 videos)',
                 'instructor': 'Juan Ramón Rallo',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': True,
                 'orden': 1,
             },
@@ -379,7 +382,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://img.youtube.com/vi/ejemplo2/maxresdefault.jpg',
                 'duracion_estimada': '4 horas (20 videos)',
                 'instructor': 'Inversiones con Sentido',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': True,
                 'orden': 2,
             },
@@ -392,7 +395,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://img.youtube.com/vi/ejemplo3/maxresdefault.jpg',
                 'duracion_estimada': '3 horas (15 videos)',
                 'instructor': 'Crypto España',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': True,
                 'orden': 3,
             },
@@ -407,7 +410,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://img-c.udemycdn.com/course/480x270/trading.jpg',
                 'duracion_estimada': '25 horas',
                 'instructor': 'Carlos Martínez',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': False,
                 'orden': 4,
             },
@@ -420,7 +423,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://img-c.udemycdn.com/course/480x270/excel.jpg',
                 'duracion_estimada': '15 horas',
                 'instructor': 'Ana García',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': False,
                 'orden': 5,
             },
@@ -435,7 +438,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://d3njjcbhbojbot.cloudfront.net/finanzas.jpg',
                 'duracion_estimada': '20 horas (4 semanas)',
                 'instructor': 'Wharton School',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': True,
                 'orden': 6,
             },
@@ -463,7 +466,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://cdn.kastatic.org/economics.png',
                 'duracion_estimada': '10+ horas',
                 'instructor': 'Khan Academy',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': True,
                 'orden': 8,
             },
@@ -478,7 +481,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://static.platzi.com/bolsa.png',
                 'duracion_estimada': '4 horas',
                 'instructor': 'Platzi',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': False,
                 'orden': 9,
             },
@@ -491,7 +494,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://static.platzi.com/emprendedores.png',
                 'duracion_estimada': '3 horas',
                 'instructor': 'Platzi',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': False,
                 'orden': 10,
             },
@@ -506,7 +509,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://img.youtube.com/vi/ejemplo4/maxresdefault.jpg',
                 'duracion_estimada': '1 hora (6 videos)',
                 'instructor': 'Educación Financiera',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': True,
                 'orden': 11,
             },
@@ -519,7 +522,7 @@ class Command(BaseCommand):
                 'imagen_url': 'https://img.youtube.com/vi/ejemplo5/maxresdefault.jpg',
                 'duracion_estimada': '5 horas (25 videos)',
                 'instructor': 'Dinero y Libertad',
-                'idioma': 'Español',
+                'idioma': LITERAL_ESPANOL,
                 'gratis': True,
                 'orden': 12,
             },

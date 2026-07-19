@@ -208,169 +208,171 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Configurar sliders con valores dinámicos
-  function setupSliders() {
-    const sliders = document.querySelectorAll('input[type="range"]');
-    
-    sliders.forEach(slider => {
-      const updateValue = () => {
-        const value = slider.value;
-        const parent = slider.closest('div');
-        const valueDisplay = parent.querySelector('.font-medium');
-        
-        if (valueDisplay) {
-          if (slider.min === "0" && slider.max === "1000") {
-            valueDisplay.textContent = `S/${value}`;
-          } else if (slider.min === "50" && slider.max === "100") {
-            valueDisplay.textContent = `${value}%`;
-          } else if (slider.min === "100" && slider.max === "5000") {
-            valueDisplay.textContent = `S/${parseInt(value).toLocaleString()}`;
-          }
-        }
-        
-        // Actualizar vista previa
-        updatePreview(slider);
-      };
+// Configurar sliders con valores dinámicos
+function setupSliders() {
+  const sliders = document.querySelectorAll('input[type="range"]');
+  
+  sliders.forEach(slider => {
+    const updateValue = () => {
+      const value = slider.value;
+      const parent = slider.closest('div');
+      const valueDisplay = parent.querySelector('.font-medium');
       
-      slider.addEventListener('input', updateValue);
-      updateValue(); // Inicializar
-    });
-  }
-
-  // Actualizar vista previa según el tipo de alerta
-  function updatePreview(slider) {
-    const card = slider.closest('.bg-white');
-    const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
-    
-    if (!preview) return;
-    
-    const value = slider.value;
-    const previewText = preview.querySelector('p');
-    
-    if (previewText) {
-      if (slider.min === "0" && slider.max === "1000") {
-        // Saldo bajo
-        previewText.textContent = `⚠️ Tu cuenta tiene S/${Math.max(0, value - 50)}, por debajo del límite de S/${value}`;
-      } else if (slider.min === "50" && slider.max === "100") {
-        // Presupuesto
-        previewText.textContent = `⚠️ Has gastado ${value}% de tu presupuesto en Alimentación`;
-      } else if (slider.min === "100" && slider.max === "5000") {
-        // Ingresos
-        previewText.textContent = `💰 Nuevo ingreso registrado: S/${parseInt(value).toLocaleString()} (Salario)`;
+      if (valueDisplay) {
+        if (slider.min === "0" && slider.max === "1000") {
+          valueDisplay.textContent = `S/${value}`;
+        } else if (slider.min === "50" && slider.max === "100") {
+          valueDisplay.textContent = `${value}%`;
+        } else if (slider.min === "100" && slider.max === "5000") {
+          valueDisplay.textContent = `S/${Number.parseInt(value).toLocaleString()}`;
+        }
       }
+      
+      // Actualizar vista previa
+      updatePreview(slider);
+    };
+    
+    slider.addEventListener('input', updateValue);
+    updateValue(); // Inicializar
+  });
+}
+
+// Actualizar vista previa según el tipo de alerta
+function updatePreview(slider) {
+  const card = slider.closest('.bg-white');
+  const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
+  
+  if (!preview) return;
+  
+  const value = slider.value;
+  const previewText = preview.querySelector('p');
+  
+  if (previewText) {
+    if (slider.min === "0" && slider.max === "1000") {
+      // Saldo bajo
+      previewText.textContent = `⚠️ Tu cuenta tiene S/${Math.max(0, value - 50)}, por debajo del límite de S/${value}`;
+    } else if (slider.min === "50" && slider.max === "100") {
+      // Presupuesto
+      previewText.textContent = `⚠️ Has gastado ${value}% de tu presupuesto en Alimentación`;
+    } else if (slider.min === "100" && slider.max === "5000") {
+      // Ingresos
+      previewText.textContent = `💰 Nuevo ingreso registrado: S/${Number.parseInt(value).toLocaleString()} (Salario)`;
     }
   }
+}
 
-  // Manejar toggles de alertas
-  function setupAlertToggles() {
-    const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
-    
-    toggles.forEach(toggle => {
-      toggle.addEventListener('change', function() {
-        const card = this.closest('.bg-white');
-        const isEnabled = this.checked;
-        
-        if (card) {
-          if (isEnabled) {
-            card.style.opacity = '1';
-            card.style.borderColor = '#3B82F6';
-          } else {
-            card.style.opacity = '0.6';
-            card.style.borderColor = '#D1D5DB';
-          }
+// Manejar toggles de alertas
+function setupAlertToggles() {
+  const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+  
+  toggles.forEach(toggle => {
+    toggle.addEventListener('change', function() {
+      const card = this.closest('.bg-white');
+      const isEnabled = this.checked;
+      
+      if (card) {
+        if (isEnabled) {
+          card.style.opacity = '1';
+          card.style.borderColor = '#3B82F6';
+        } else {
+          card.style.opacity = '0.6';
+          card.style.borderColor = '#D1D5DB';
         }
-        
-        showStatusMessage(`Alerta ${isEnabled ? 'activada' : 'desactivada'}`);
-      });
+      }
+      
+      showStatusMessage(`Alerta ${isEnabled ? 'activada' : 'desactivada'}`);
     });
-  }
+  });
+}
 
-  // Manejar botones de prueba
-  function setupTestButtons() {
-    const testButtons = document.querySelectorAll('button:contains("Probar")');
-    
-    testButtons.forEach(button => {
+// Manejar botones de prueba
+function setupTestButtons() {
+  const testButtons = document.querySelectorAll('button:contains("Probar")');
+  
+  testButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const card = this.closest('.bg-white');
+      const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
+      
+      if (preview) {
+        // Simular notificación
+        preview.style.animation = 'pulse 0.5s ease-in-out 2';
+        
+        // Mostrar mensaje temporal
+        const originalText = this.textContent;
+        this.textContent = 'Enviando...';
+        this.disabled = true;
+        
+        setTimeout(() => {
+          this.textContent = originalText;
+          this.disabled = false;
+          showStatusMessage('📱 Notificación de prueba enviada');
+        }, 1500);
+      }
+    });
+  });
+}
+
+// Función para mostrar mensajes de estado
+function showStatusMessage(message) {
+  let statusDiv = document.getElementById('status-message');
+  if (!statusDiv) {
+    statusDiv = document.createElement('div');
+    statusDiv.id = 'status-message';
+    statusDiv.className = 'fixed bottom-4 right-4 px-4 py-2 bg-green-600 text-white rounded-lg shadow-lg transition-all duration-300 transform translate-y-full opacity-0';
+    document.body.appendChild(statusDiv);
+  }
+  
+  statusDiv.textContent = message;
+  statusDiv.style.transform = 'translateY(0)';
+  statusDiv.style.opacity = '1';
+  
+  setTimeout(() => {
+    statusDiv.style.transform = 'translateY(100%)';
+    statusDiv.style.opacity = '0';
+  }, 3000);
+}
+
+// Manejar acciones globales
+function setupGlobalActions() {
+  const buttons = document.querySelectorAll('button');
+  
+  buttons.forEach(button => {
+    if (button.textContent.includes('Activar Todas')) {
       button.addEventListener('click', function() {
-        const card = this.closest('.bg-white');
-        const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
-        
-        if (preview) {
-          // Simular notificación
-          preview.style.animation = 'pulse 0.5s ease-in-out 2';
-          
-          // Mostrar mensaje temporal
-          const originalText = this.textContent;
-          this.textContent = 'Enviando...';
-          this.disabled = true;
-          
-          setTimeout(() => {
-            this.textContent = originalText;
-            this.disabled = false;
-            showStatusMessage('📱 Notificación de prueba enviada');
-          }, 1500);
-        }
+        const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+        toggles.forEach(toggle => {
+          toggle.checked = true;
+          toggle.dispatchEvent(new Event('change'));
+        });
+        showStatusMessage('✅ Todas las alertas activadas');
       });
-    });
-  }
-
-  // Función para mostrar mensajes de estado
-  function showStatusMessage(message) {
-    let statusDiv = document.getElementById('status-message');
-    if (!statusDiv) {
-      statusDiv = document.createElement('div');
-      statusDiv.id = 'status-message';
-      statusDiv.className = 'fixed bottom-4 right-4 px-4 py-2 bg-green-600 text-white rounded-lg shadow-lg transition-all duration-300 transform translate-y-full opacity-0';
-      document.body.appendChild(statusDiv);
+    } else if (button.textContent.includes('Desactivar Todas')) {
+      button.addEventListener('click', function() {
+        const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+        toggles.forEach(toggle => {
+          toggle.checked = false;
+          toggle.dispatchEvent(new Event('change'));
+        });
+        showStatusMessage('❌ Todas las alertas desactivadas');
+      });
+    } else if (button.textContent.includes('Guardar Configuración')) {
+      button.addEventListener('click', function() {
+        const originalText = this.textContent;
+        this.textContent = 'Guardando...';
+        this.disabled = true;
+        
+        setTimeout(() => {
+          this.textContent = originalText;
+          this.disabled = false;
+          showStatusMessage('💾 Configuración guardada exitosamente');
+        }, 2000);
+      });
     }
-    
-    statusDiv.textContent = message;
-    statusDiv.style.transform = 'translateY(0)';
-    statusDiv.style.opacity = '1';
-    
-    setTimeout(() => {
-      statusDiv.style.transform = 'translateY(100%)';
-      statusDiv.style.opacity = '0';
-    }, 3000);
-  }
+  });
+}
 
-  // Manejar acciones globales
-  function setupGlobalActions() {
-    const buttons = document.querySelectorAll('button');
-    
-    buttons.forEach(button => {
-      if (button.textContent.includes('Activar Todas')) {
-        button.addEventListener('click', function() {
-          const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
-          toggles.forEach(toggle => {
-            toggle.checked = true;
-            toggle.dispatchEvent(new Event('change'));
-          });
-          showStatusMessage('✅ Todas las alertas activadas');
-        });
-      } else if (button.textContent.includes('Desactivar Todas')) {
-        button.addEventListener('click', function() {
-          const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
-          toggles.forEach(toggle => {
-            toggle.checked = false;
-            toggle.dispatchEvent(new Event('change'));
-          });
-          showStatusMessage('❌ Todas las alertas desactivadas');
-        });
-      } else if (button.textContent.includes('Guardar Configuración')) {
-        button.addEventListener('click', function() {
-          const originalText = this.textContent;
-          this.textContent = 'Guardando...';
-          this.disabled = true;
-          
-          setTimeout(() => {
-            this.textContent = originalText;
-            this.disabled = false;
-            showStatusMessage('💾 Configuración guardada exitosamente');
-          }, 2000);
-        });
-      }
-    });
-  }
-
+document.addEventListener('DOMContentLoaded', function() {
   // Inicializar todas las funcionalidades
   setupSliders();
   setupAlertToggles();

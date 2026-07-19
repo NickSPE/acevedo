@@ -7,7 +7,7 @@ os.environ.setdefault('DB_PASSWORD', 'test_pass')
 os.environ.setdefault('DB_HOST', 'localhost')
 os.environ.setdefault('DB_PORT', '5432')
 
-from .settings import *
+from .settings import *  # nosonar
 
 DATABASES = {
     'default': {

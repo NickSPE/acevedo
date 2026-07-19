@@ -5,6 +5,9 @@ from django.conf import settings
 from django.db import migrations, models
 
 
+TIPO_NOTIFICACION_MODEL = 'alertas_notificaciones.tiponotificacion'
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -28,17 +31,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='plantillanotificacion',
             name='tipo_notificacion',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='alertas_notificaciones.tiponotificacion'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=TIPO_NOTIFICACION_MODEL),
         ),
         migrations.AddField(
             model_name='notificacion',
             name='tipo_notificacion',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='alertas_notificaciones.tiponotificacion'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=TIPO_NOTIFICACION_MODEL),
         ),
         migrations.AddField(
             model_name='configuracionnotificacion',
             name='tipo_notificacion',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='alertas_notificaciones.tiponotificacion'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=TIPO_NOTIFICACION_MODEL),
         ),
         migrations.AddIndex(
             model_name='notificacion',

@@ -2,6 +2,8 @@
 from django import forms
 from .models import SubCuenta, TransferenciaSubCuenta, TransferenciaCuentaPrincipal
 
+LITERAL_DESCRIPCION_OPCIONAL = 'Descripción (opcional)'
+
 
 class SubCuentaForm(forms.ModelForm):
     # Campo para saldo inicial (solo para subcuentas de negocio)
@@ -53,7 +55,7 @@ class SubCuentaForm(forms.ModelForm):
         
         # Agregar etiquetas personalizadas
         self.fields['nombre'].label = 'Nombre de la subcuenta'
-        self.fields['descripcion'].label = 'Descripción (opcional)'
+        self.fields['descripcion'].label = LITERAL_DESCRIPCION_OPCIONAL
         self.fields['tipo'].label = 'Categoría'
         
         # Todas las opciones de categoría (personales y de negocio)
@@ -121,7 +123,7 @@ class TransferenciaSubCuentaForm(forms.ModelForm):
         self.fields['subcuenta_origen'].label = 'Desde subcuenta'
         self.fields['subcuenta_destino'].label = 'Hacia subcuenta'
         self.fields['monto'].label = 'Monto a transferir'
-        self.fields['descripcion'].label = 'Descripción (opcional)'
+        self.fields['descripcion'].label = LITERAL_DESCRIPCION_OPCIONAL
         
         # Filtrar subcuentas del usuario si se proporciona
         if self.user:
@@ -156,7 +158,7 @@ class DepositoSubCuentaForm(forms.Form):
             'rows': 3,
             'placeholder': 'Motivo del depósito (opcional)...'
         }),
-        label='Descripción (opcional)'
+        label=LITERAL_DESCRIPCION_OPCIONAL
     )
 
 
@@ -179,7 +181,7 @@ class RetiroSubCuentaForm(forms.Form):
             'rows': 3,
             'placeholder': 'Motivo del retiro (opcional)...'
         }),
-        label='Descripción (opcional)'
+        label=LITERAL_DESCRIPCION_OPCIONAL
     )
 
 
@@ -223,7 +225,7 @@ class TransferenciaCuentaPrincipalForm(forms.ModelForm):
         # Personalizar etiquetas
         self.fields['tipo'].label = 'Tipo de transferencia'
         self.fields['monto'].label = 'Monto a transferir'
-        self.fields['descripcion'].label = 'Descripción (opcional)'
+        self.fields['descripcion'].label = LITERAL_DESCRIPCION_OPCIONAL
         
         # Validar monto máximo según el tipo
         if self.subcuenta and 'tipo' in self.data and self.data['tipo'] == 'deposito':

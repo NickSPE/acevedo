@@ -71,7 +71,7 @@ class NotificationService:
                 logger.info("Notificación creada: %s para usuario %s", notificacion.id, usuario.id)
                 return notificacion
                 
-        except Exception as e:
+        except Exception:
             logger.exception("Error creando notificación")
             return None
     
@@ -170,7 +170,7 @@ class NotificationProcessor:
             
             logger.info("Notificación %s procesada correctamente", notificacion.id)
             
-        except Exception as e:
+        except Exception:
             notificacion.estado = 'error'
             notificacion.save()
             logger.exception("Error procesando notificación %s", notificacion.id)
@@ -219,7 +219,7 @@ class EmailService:
             
             logger.info("Email enviado para notificación %s", notificacion.id)
             
-        except Exception as e:
+        except Exception:
             logger.exception("Error enviando email para notificación %s", notificacion.id)
             raise
     
@@ -497,7 +497,7 @@ class ConfigurationNotificationService:
                 # Enviar email de confirmación directamente
                 EmailService.enviar_email_configuracion(usuario, mensaje_final)
                 logger.info("Email de confirmación de configuración enviado a %s", usuario.correo)
-            except Exception as e:
+            except Exception:
                 logger.exception("Error enviando email de configuración")
     
     @staticmethod

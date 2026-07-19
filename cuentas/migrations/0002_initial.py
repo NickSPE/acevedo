@@ -5,6 +5,9 @@ from django.conf import settings
 from django.db import migrations, models
 
 
+SUBCUENTA_MODEL = 'cuentas.subcuenta'
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -43,7 +46,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transferenciacuentaprincipal',
             name='subcuenta',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transferencias_cuenta_principal', to='cuentas.subcuenta'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transferencias_cuenta_principal', to=SUBCUENTA_MODEL),
         ),
         migrations.AddField(
             model_name='transferenciasubcuenta',
@@ -53,11 +56,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='transferenciasubcuenta',
             name='subcuenta_destino',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transferencias_recibidas', to='cuentas.subcuenta'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transferencias_recibidas', to=SUBCUENTA_MODEL),
         ),
         migrations.AddField(
             model_name='transferenciasubcuenta',
             name='subcuenta_origen',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transferencias_enviadas', to='cuentas.subcuenta'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='transferencias_enviadas', to=SUBCUENTA_MODEL),
         ),
     ]
