@@ -17,9 +17,8 @@
         <!-- Contenido del modal -->
         <div class="p-8">
             <!-- Paso 1: Bienvenida y Configuración Básica -->
-            <div id="step1" class="step-content">
-                <div class="text-center mb-6">
-                    <div class="text-6xl mb-4">ðŸŽ‰</div>
+            <div id="step1" class="step-content">                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">🎉</div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Bienvenido a FinGest, {{ user.nombres }}!</h2>
                     <p class="text-gray-600 dark:text-gray-400">Vamos a configurar tu cuenta en 3 pasos rápidos</p>
                 </div>
@@ -28,19 +27,16 @@
                     {% csrf_token %}
                     <!-- Saldo inicial -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ðŸ’° Saldo inicial
-                            (opcional)</label>
-                        <input type="number" name="saldo_inicial" step="0.01" min="0" placeholder="0.00"
+                        <label for="onboarding_saldo_inicial" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">💰 Saldo inicial (opcional)</label>
+                        <input type="number" id="onboarding_saldo_inicial" name="saldo_inicial" step="0.01" min="0" placeholder="0.00"
                             class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Puedes dejarlo en $0 y agregarlo
-                            después</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Puedes dejarlo en $0 y agregarlo después</p>
                     </div>
 
                     <!-- Nombre de cuenta -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ðŸ¦ Nombre de tu
-                            cuenta principal</label>
-                        <input type="text" name="nombre_cuenta" value="Mi Cuenta Principal"
+                        <label for="onboarding_nombre_cuenta" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🏦 Nombre de tu cuenta principal</label>
+                        <input type="text" id="onboarding_nombre_cuenta" name="nombre_cuenta" value="Mi Cuenta Principal"
                             class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
                     </div>
                 </form>
@@ -54,20 +50,19 @@
                         class="px-6 py-3 bg-[#1d293d] text-white rounded-lg hover:bg-[#16202c] transition-all">
                         Continuar
                     </button>
-                </div>
-            </div>
+                </div>             </div>
 
             <!-- Paso 2: PIN de Acceso Rápido -->
             <div id="step2" class="step-content hidden">
                 <div class="text-center mb-6">
-                    <div class="text-6xl mb-4">ðŸ”¢</div>
+                    <div class="text-6xl mb-4">🔢</div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acceso Rápido con PIN</h2>
                     <p class="text-gray-600 dark:text-gray-400">Como Yape - configura un PIN para entrar más fácil</p>
                 </div>
 
                 <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 mb-6">
                     <div class="flex items-center space-x-3">
-                        <div class="text-blue-500">â„¹ï¸</div>
+                        <div class="text-blue-500">ℹ️</div>
                         <div>
                             <p class="text-sm text-blue-800 dark:text-blue-300">Con el PIN puedes acceder rápidamente
                                 sin escribir tu email y contraseña</p>
@@ -77,21 +72,19 @@
 
                 <form id="step2Form" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ðŸ” Crea tu PIN
-                            (exactamente 6 dígitos)</label>
-                        <input type="text" name="pin_acceso_rapido" placeholder="123456" maxlength="6"
+                        <label for="onboarding_pin_acceso_rapido" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">🔒 Crea tu PIN (exactamente 6 dígitos)</label>
+                        <input type="text" id="onboarding_pin_acceso_rapido" name="pin_acceso_rapido" placeholder="123456" maxlength="6"
                             pattern="[0-9]{6}"
                             class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center text-2xl tracking-wider"
                             oninput="validatePin(this)" />
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">Solo números, exactamente 6
-                            dígitos</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">Solo números, exactamente 6 dígitos</p>
                     </div>
                 </form>
 
                 <div class="flex justify-between mt-8">
                     <button onclick="prevStep()"
                         class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
-                        â† Atrás
+                        ← Atrás
                     </button>
                     <div class="space-x-3">
                         <button onclick="skipStep()"
@@ -109,7 +102,7 @@
             <!-- Paso 3: Notificaciones -->
             <div id="step3" class="step-content hidden">
                 <div class="text-center mb-6">
-                    <div class="text-6xl mb-4">ðŸ””</div>
+                    <div class="text-6xl mb-4">🔔</div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Notificaciones</h2>
                     <p class="text-gray-600 dark:text-gray-400">¿Quieres recibir alertas sobre tus finanzas?</p>
                 </div>
@@ -118,26 +111,24 @@
                     <!-- Email notifications -->
                     <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <div>
-                            <div class="font-medium text-gray-900 dark:text-white">ðŸ“§ Notificaciones por Email</div>
-                            <div class="text-sm text-gray-500 dark:text-gray-400">Alertas de gastos, recordatorios, etc.
-                            </div>
+                            <label for="onboarding_notificaciones_email" class="font-medium text-gray-900 dark:text-white block cursor-pointer">📧 Notificaciones por Email</label>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Alertas de gastos, recordatorios, etc.</div>
                         </div>
-                        <input type="checkbox" name="notificaciones_email" checked
+                        <input type="checkbox" id="onboarding_notificaciones_email" name="notificaciones_email" checked
                             class="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     </div>
 
                     <!-- SMS notifications -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ðŸ“± Teléfono
-                            (opcional - para SMS)</label>
+                        <label for="onboarding_telefono" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📱 Teléfono (opcional - para SMS)</label>
                         <div class="flex space-x-2">
-                            <select name="codigo_pais"
+                            <select id="onboarding_codigo_pais" aria-label="Código de país" name="codigo_pais"
                                 class="w-20 p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                                 <option value="+51">+51</option>
                                 <option value="+1">+1</option>
                                 <option value="+54">+54</option>
                             </select>
-                            <input type="tel" name="telefono" placeholder="999999999"
+                            <input type="tel" id="onboarding_telefono" name="telefono" placeholder="999999999"
                                 class="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
                         </div>
                     </div>
@@ -146,33 +137,33 @@
                 <div class="flex justify-between mt-8">
                     <button onclick="prevStep()"
                         class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
-                        â† Atrás
+                        ← Atrás
                     </button>
                     <button onclick="finishOnboarding()"
                         class="px-6 py-3 bg-[#1d293d] text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all">
-                        ¡Empezar! ðŸš€
+                        ¡Empezar! 🚀
                     </button>
                 </div>
             </div>
 
             <!-- Paso final: Completado -->
             <div id="stepFinal" class="step-content hidden text-center">
-                <div class="text-6xl mb-4">âœ¨</div>
+                <div class="text-6xl mb-4">✨</div>
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Todo listo!</h2>
                 <p class="text-gray-600 dark:text-gray-400 mb-6">Tu cuenta está configurada y lista para usar</p>
 
                 <div class="space-y-3 mb-8">
                     <div class="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400">
-                        <span>âœ…</span>
+                        <span>✅</span>
                         <span>Cuenta principal creada</span>
                     </div>
                     <div id="pinConfigured"
                         class="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400 hidden">
-                        <span>âœ…</span>
+                        <span>✅</span>
                         <span>PIN de acceso configurado</span>
                     </div>
                     <div class="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400">
-                        <span>âœ…</span>
+                        <span>✅</span>
                         <span>Notificaciones configuradas</span>
                     </div>
                 </div>

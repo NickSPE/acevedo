@@ -378,13 +378,13 @@
         {% endif %}
       {% else %}
         <div class="rounded border border-red-600 p-2 mb-2 bg-red-50">
-          <h4 class="text-xs font-bold text-red-600 mb-1">âŒ Error</h4>
+          <h4 class="text-xs font-bold text-red-600 mb-1">❌ Error</h4>
           <p class="text-[9px] text-red-700">{{ result.error }}</p>
         </div>
       {% endif %}
     {% else %}
       <div class="rounded border border-[#E5E1DD] p-2 bg-[#F1F0EE]">
-        <h4 class="text-xs font-bold mb-1 text-[#605952]">ðŸ’¡ Info</h4>
+        <h4 class="text-xs font-bold mb-1 text-[#605952]">💡 Info</h4>
         {% if tab == "savings" %}
           <p class="text-[9px] text-[#736B5E]">Cálculo de interés compuesto.</p>
         {% elif tab == "loan" %}

@@ -49,12 +49,12 @@
             {% endif %}
 
             <div class="flex justify-center gap-3">
-            <input type="number" inputmode="numeric" name="pin0" pattern="\d*" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" autofocus oninput="moveFocus(this, 1)" />
-            <input type="number" inputmode="numeric" name="pin1" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 1)" />
-            <input type="number" inputmode="numeric" name="pin2" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 1)" />
-            <input type="number" inputmode="numeric" name="pin3" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 1)" />
-            <input type="number" inputmode="numeric" name="pin4" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 1)" />
-            <input type="number" inputmode="numeric" name="pin5" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 0)" />
+            <input type="text" id="pin0" aria-label="Dígito 1 del PIN" inputmode="numeric" name="pin0" pattern="[0-9]*" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" autofocus oninput="moveFocus(this, 1)" />
+            <input type="text" id="pin1" aria-label="Dígito 2 del PIN" inputmode="numeric" name="pin1" pattern="[0-9]*" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 1)" />
+            <input type="text" id="pin2" aria-label="Dígito 3 del PIN" inputmode="numeric" name="pin2" pattern="[0-9]*" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 1)" />
+            <input type="text" id="pin3" aria-label="Dígito 4 del PIN" inputmode="numeric" name="pin3" pattern="[0-9]*" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 1)" />
+            <input type="text" id="pin4" aria-label="Dígito 5 del PIN" inputmode="numeric" name="pin4" pattern="[0-9]*" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 1)" />
+            <input type="text" id="pin5" aria-label="Dígito 6 del PIN" inputmode="numeric" name="pin5" pattern="[0-9]*" maxlength="1" class="w-12 h-12 text-center text-xl border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400" oninput="moveFocus(this, 0)" />
             </div>
 
             <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-yellow-400 text-white font-bold py-3 rounded-lg shadow hover:scale-105 transition transform duration-150">Entrar</button>
