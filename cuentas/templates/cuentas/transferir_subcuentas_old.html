@@ -10,17 +10,17 @@
         margin: 0 auto;
         padding: 0 15px;
     }
-    
+
     .transfer-header {
-        background-color: #667eea;
-        background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #4c63d2;
+        background-image: linear-gradient(135deg, #4c63d2 0%, #5f3a87 100%);
         border-radius: 15px;
         padding: 2rem;
         color: white;
         margin-bottom: 2rem;
         box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
     }
-    
+
     .transfer-form-card {
         background: white;
         border-radius: 15px;
@@ -28,14 +28,14 @@
         border: none;
         overflow: hidden;
     }
-    
+
     .form-section {
         background: #f8f9fa;
         margin: 0 -1.5rem 1.5rem -1.5rem;
         padding: 1rem 1.5rem;
         border-left: 4px solid #667eea;
     }
-    
+
     .form-section h6 {
         color: #667eea;
         font-weight: 600;
@@ -44,14 +44,14 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    
+
     .subcuenta-selection {
         background: #f8f9fa;
         border-radius: 10px;
         padding: 1rem;
         margin-top: 0.5rem;
     }
-    
+
     .subcuenta-card {
         background: white;
         border-radius: 12px;
@@ -61,7 +61,7 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     .subcuenta-card::before {
         content: '';
         position: absolute;
@@ -72,23 +72,23 @@
         background: var(--subcuenta-color, #667eea);
         transition: width 0.3s ease;
     }
-    
+
     .subcuenta-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         border-color: #667eea;
     }
-    
+
     .subcuenta-card.selected {
         border-color: #667eea;
         background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
         box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
     }
-    
+
     .subcuenta-card.selected::before {
         width: 8px;
     }
-    
+
     .subcuenta-card.selected::after {
         content: 'âœ“';
         position: absolute;
@@ -105,24 +105,24 @@
         font-size: 12px;
         font-weight: bold;
     }
-    
+
     .subcuenta-card.disabled {
         opacity: 0.5;
         cursor: not-allowed;
         background: #f8f9fa;
     }
-    
+
     .subcuenta-card.disabled:hover {
         transform: none;
         box-shadow: none;
     }
-    
+
     .transfer-arrow-section {
         text-align: center;
         margin: 2rem 0;
         position: relative;
     }
-    
+
     .transfer-arrow {
         font-size: 2.5rem;
         color: #4f46e5;
@@ -136,81 +136,90 @@
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
         animation: pulse 2s infinite;
     }
-    
+
     @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
     }
-    
+
     .amount-section {
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-radius: 10px;
         padding: 1.5rem;
         margin-top: 0.5rem;
     }
-    
-    .form-control, .form-select {
+
+    .form-control,
+    .form-select {
         border: 2px solid #e9ecef;
         border-radius: 10px;
         padding: 0.75rem;
         transition: all 0.3s ease;
         font-size: 0.95rem;
     }
-    
+
     .form-control:focus {
         border-color: #667eea;
         box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         transform: translateY(-1px);
     }
-    
+
     .input-group {
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         border-radius: 10px;
         overflow: hidden;
     }
-    
+
     .input-group-text {
-        background-color: #667eea;
+        background-color: #4c63d2;
         color: white;
         border: none;
         font-weight: 600;
     }
-    
+
     .btn-outline-secondary {
         border-color: #667eea;
         color: #667eea;
         font-weight: 600;
     }
-    
+
     .btn-outline-secondary:hover {
         background: #667eea;
         border-color: #667eea;
     }
-    
+
     .summary-card {
-        background-color: #28a745;
-        background-image: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        background-color: #1e7e34;
+        background-image: linear-gradient(135deg, #1e7e34 0%, #0a6b52 100%);
         color: white;
         border-radius: 12px;
         border: none;
         box-shadow: 0 5px 20px rgba(40, 167, 69, 0.2);
     }
-    
+
     .info-section {
         background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
         border-radius: 10px;
         padding: 1.5rem;
         margin-top: 0.5rem;
     }
-    
+
     .action-buttons {
         background: #f8f9fa;
         margin: 0 -1.5rem -1.5rem -1.5rem;
         padding: 1.5rem;
         border-top: 1px solid #dee2e6;
     }
-    
-    .btn-primary, .btn-success {
+
+    .btn-primary,
+    .btn-success {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
         border-radius: 10px;
@@ -218,16 +227,17 @@
         font-weight: 600;
         transition: all 0.3s ease;
     }
-    
+
     .btn-success {
         background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     }
-    
-    .btn-primary:hover, .btn-success:hover {
+
+    .btn-primary:hover,
+    .btn-success:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
     }
-    
+
     .btn-secondary {
         background: #6c757d;
         border: none;
@@ -236,57 +246,59 @@
         font-weight: 600;
         transition: all 0.3s ease;
     }
-    
+
     .btn-secondary:hover {
         background: #5a6268;
         transform: translateY(-2px);
     }
-    
+
     .saldo-display {
-        background-color: #28a745;
-        background-image: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        background-color: #1e7e34;
+        background-image: linear-gradient(135deg, #1e7e34 0%, #0a6b52 100%);
         color: white;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 600;
     }
-    
+
     .current-saldo {
-        background-color: #17a2b8;
-        background-image: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        background-color: #0d6e80;
+        background-image: linear-gradient(135deg, #0d6e80 0%, #6f42c1 100%);
         color: white;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 600;
     }
-    
+
     @media (max-width: 768px) {
         .transfer-container {
             padding: 0 10px;
         }
-        
+
         .transfer-header {
             padding: 1.5rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .subcuenta-card {
             margin-bottom: 1rem;
         }
-        
+
         .transfer-arrow {
             font-size: 2rem;
             width: 50px;
             height: 50px;
         }
-        
+
         .action-buttons {
             padding: 1rem;
         }
-        
-        .btn-primary, .btn-secondary, .btn-success {
+
+        .btn-primary,
+        .btn-secondary,
+        .btn-success {
             padding: 0.65rem 1.5rem;
             font-size: 0.9rem;
         }
@@ -320,34 +332,34 @@
             <div class="card-body p-4">
                 <form method="post" id="transferenciaForm">
                     {% csrf_token %}
-                    
+
                     <!-- Subcuenta de Origen -->
                     <div class="form-section">
                         <h6><i class="fas fa-upload me-2"></i>Seleccionar Origen</h6>
                     </div>
-                    
+
                     <div class="mb-4">
                         <label class="form-label fw-bold">
                             <i class="fas fa-wallet me-2"></i>¿De qué subcuenta quieres transferir?
                         </label>
                         <p class="text-muted small mb-3">Selecciona la subcuenta de donde saldrá el dinero</p>
-                        
+
                         <div class="subcuenta-selection">
                             <div class="row" id="subcuentasOrigen">
                                 {% for subcuenta in subcuentas_activas %}
                                 <div class="col-lg-6 mb-3">
-                                    <div class="subcuenta-card" 
-                                         style="--subcuenta-color: {{ subcuenta.color }};"
-                                         data-id="{{ subcuenta.id }}"
-                                         data-saldo="{{ subcuenta.saldo }}">
+                                    <div class="subcuenta-card" style="--subcuenta-color: {{ subcuenta.color }};"
+                                        data-id="{{ subcuenta.id }}" data-saldo="{{ subcuenta.saldo }}">
                                         <div class="card-body py-3">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
                                                     <h6 class="mb-1 fw-bold">{{ subcuenta.nombre }}</h6>
-                                                    <span class="badge bg-light text-dark">{{ subcuenta.get_tipo_display }}</span>
+                                                    <span class="badge bg-light text-dark">{{ subcuenta.get_tipo_display
+                                                        }}</span>
                                                 </div>
                                                 <div class="text-end">
-                                                    <span class="saldo-display">${{ subcuenta.saldo|floatformat:2 }}</span>
+                                                    <span class="saldo-display">${{ subcuenta.saldo|floatformat:2
+                                                        }}</span>
                                                     <small class="d-block text-muted mt-1">Disponible</small>
                                                 </div>
                                             </div>
@@ -357,14 +369,14 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        
+
                         {{ form.subcuenta_origen }}
                         {% if form.subcuenta_origen.errors %}
-                            <div class="text-danger small mt-2">
-                                {% for error in form.subcuenta_origen.errors %}
-                                    <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
+                        <div class="text-danger small mt-2">
+                            {% for error in form.subcuenta_origen.errors %}
+                            <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
                         {% endif %}
                     </div>
 
@@ -379,28 +391,29 @@
                     <div class="form-section">
                         <h6><i class="fas fa-download me-2"></i>Seleccionar Destino</h6>
                     </div>
-                    
+
                     <div class="mb-4">
                         <label class="form-label fw-bold">
                             <i class="fas fa-piggy-bank me-2"></i>¿Hacia qué subcuenta quieres transferir?
                         </label>
                         <p class="text-muted small mb-3">Selecciona la subcuenta que recibirá el dinero</p>
-                        
+
                         <div class="subcuenta-selection">
                             <div class="row" id="subcuentasDestino">
                                 {% for subcuenta in subcuentas_activas %}
                                 <div class="col-lg-6 mb-3">
-                                    <div class="subcuenta-card subcuenta-destino" 
-                                         style="--subcuenta-color: {{ subcuenta.color }};"
-                                         data-id="{{ subcuenta.id }}">
+                                    <div class="subcuenta-card subcuenta-destino"
+                                        style="--subcuenta-color: {{ subcuenta.color }};" data-id="{{ subcuenta.id }}">
                                         <div class="card-body py-3">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
                                                     <h6 class="mb-1 fw-bold">{{ subcuenta.nombre }}</h6>
-                                                    <span class="badge bg-light text-dark">{{ subcuenta.get_tipo_display }}</span>
+                                                    <span class="badge bg-light text-dark">{{ subcuenta.get_tipo_display
+                                                        }}</span>
                                                 </div>
                                                 <div class="text-end">
-                                                    <span class="current-saldo">${{ subcuenta.saldo|floatformat:2 }}</span>
+                                                    <span class="current-saldo">${{ subcuenta.saldo|floatformat:2
+                                                        }}</span>
                                                     <small class="d-block text-muted mt-1">Actual</small>
                                                 </div>
                                             </div>
@@ -410,14 +423,14 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        
+
                         {{ form.subcuenta_destino }}
                         {% if form.subcuenta_destino.errors %}
-                            <div class="text-danger small mt-2">
-                                {% for error in form.subcuenta_destino.errors %}
-                                    <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                                {% endfor %}
-                            </div>
+                        <div class="text-danger small mt-2">
+                            {% for error in form.subcuenta_destino.errors %}
+                            <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                            {% endfor %}
+                        </div>
                         {% endif %}
                     </div>
 
@@ -440,29 +453,29 @@
                                     </button>
                                 </div>
                                 {% if form.monto.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.monto.errors %}
-                                            <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.monto.errors %}
+                                    <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
                                 {% endif %}
                                 <div class="form-text mt-1">
                                     <i class="fas fa-info-circle me-1"></i>
                                     Máximo disponible: <strong id="maxDisponible">$0.00</strong>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">
                                     <i class="fas fa-comment me-2"></i>Descripción (Opcional)
                                 </label>
                                 {{ form.descripcion }}
                                 {% if form.descripcion.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.descripcion.errors %}
-                                            <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.descripcion.errors %}
+                                    <div><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
                                 {% endif %}
                                 <div class="form-text">Describe el motivo de la transferencia</div>
                             </div>
@@ -474,7 +487,7 @@
                         <div class="form-section">
                             <h6><i class="fas fa-clipboard-check me-2"></i>Resumen de la Transferencia</h6>
                         </div>
-                        
+
                         <div class="summary-card card">
                             <div class="card-body">
                                 <div class="row text-center">
@@ -553,136 +566,136 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('transferenciaForm');
-    const origenInput = document.getElementById('{{ form.subcuenta_origen.id_for_label }}');
-    const destinoInput = document.getElementById('{{ form.subcuenta_destino.id_for_label }}');
-    const montoInput = document.getElementById('{{ form.monto.id_for_label }}');
-    const btnMaximo = document.getElementById('btnMaximo');
-    const btnTransferir = document.getElementById('btnTransferir');
-    const maxDisponible = document.getElementById('maxDisponible');
-    const resumenDiv = document.getElementById('resumenTransferencia');
-    
-    let subcuentaOrigenSeleccionada = null;
-    let subcuentaDestinoSeleccionada = null;
-    let saldoMaximo = 0;
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('transferenciaForm');
+        const origenInput = document.getElementById('{{ form.subcuenta_origen.id_for_label }}');
+        const destinoInput = document.getElementById('{{ form.subcuenta_destino.id_for_label }}');
+        const montoInput = document.getElementById('{{ form.monto.id_for_label }}');
+        const btnMaximo = document.getElementById('btnMaximo');
+        const btnTransferir = document.getElementById('btnTransferir');
+        const maxDisponible = document.getElementById('maxDisponible');
+        const resumenDiv = document.getElementById('resumenTransferencia');
 
-    // Configurar selección de subcuentas origen
-    document.querySelectorAll('.subcuenta-card:not(.subcuenta-destino)').forEach(card => {
-        card.addEventListener('click', function() {
-            if (this.classList.contains('disabled')) return;
-            
-            // Deseleccionar todas las opciones origen
-            document.querySelectorAll('.subcuenta-card:not(.subcuenta-destino)').forEach(c => c.classList.remove('selected'));
-            
-            // Seleccionar esta opción
-            this.classList.add('selected');
-            subcuentaOrigenSeleccionada = this.dataset.id;
-            saldoMaximo = parseFloat(this.dataset.saldo);
-            origenInput.value = subcuentaOrigenSeleccionada;
-            
-            // Actualizar información
-            maxDisponible.textContent = '$' + saldoMaximo.toFixed(2);
-            btnMaximo.disabled = saldoMaximo <= 0;
-            
-            // Deshabilitar la misma subcuenta en destino
-            actualizarOpcionesDestino();
-            validarFormulario();
+        let subcuentaOrigenSeleccionada = null;
+        let subcuentaDestinoSeleccionada = null;
+        let saldoMaximo = 0;
+
+        // Configurar selección de subcuentas origen
+        document.querySelectorAll('.subcuenta-card:not(.subcuenta-destino)').forEach(card => {
+            card.addEventListener('click', function () {
+                if (this.classList.contains('disabled')) return;
+
+                // Deseleccionar todas las opciones origen
+                document.querySelectorAll('.subcuenta-card:not(.subcuenta-destino)').forEach(c => c.classList.remove('selected'));
+
+                // Seleccionar esta opción
+                this.classList.add('selected');
+                subcuentaOrigenSeleccionada = this.dataset.id;
+                saldoMaximo = Number.parseFloat(this.dataset.saldo);
+                origenInput.value = subcuentaOrigenSeleccionada;
+
+                // Actualizar información
+                maxDisponible.textContent = '$' + saldoMaximo.toFixed(2);
+                btnMaximo.disabled = saldoMaximo <= 0;
+
+                // Deshabilitar la misma subcuenta en destino
+                actualizarOpcionesDestino();
+                validarFormulario();
+            });
         });
-    });
 
-    // Configurar selección de subcuentas destino
-    document.querySelectorAll('.subcuenta-destino').forEach(card => {
-        card.addEventListener('click', function() {
-            if (this.classList.contains('disabled')) return;
-            
-            // Deseleccionar todas las opciones destino
-            document.querySelectorAll('.subcuenta-destino').forEach(c => c.classList.remove('selected'));
-            
-            // Seleccionar esta opción
-            this.classList.add('selected');
-            subcuentaDestinoSeleccionada = this.dataset.id;
-            destinoInput.value = subcuentaDestinoSeleccionada;
-            
-            validarFormulario();
-        });
-    });
-
-    // Botón máximo
-    btnMaximo.addEventListener('click', function() {
-        if (saldoMaximo > 0) {
-            montoInput.value = saldoMaximo.toFixed(2);
-            validarFormulario();
-        }
-    });
-
-    // Validación de monto
-    montoInput.addEventListener('input', function() {
-        const valor = parseFloat(this.value) || 0;
-        if (valor > saldoMaximo) {
-            this.classList.add('is-invalid');
-            this.setCustomValidity('El monto no puede ser mayor al saldo disponible');
-        } else if (valor <= 0) {
-            this.classList.add('is-invalid');
-            this.setCustomValidity('El monto debe ser mayor a cero');
-        } else {
-            this.classList.remove('is-invalid');
-            this.setCustomValidity('');
-        }
-        validarFormulario();
-    });
-
-    function actualizarOpcionesDestino() {
+        // Configurar selección de subcuentas destino
         document.querySelectorAll('.subcuenta-destino').forEach(card => {
-            if (card.dataset.id === subcuentaOrigenSeleccionada) {
-                card.classList.add('disabled');
-                if (card.classList.contains('selected')) {
-                    card.classList.remove('selected');
-                    subcuentaDestinoSeleccionada = null;
-                    destinoInput.value = '';
-                }
-            } else {
-                card.classList.remove('disabled');
+            card.addEventListener('click', function () {
+                if (this.classList.contains('disabled')) return;
+
+                // Deseleccionar todas las opciones destino
+                document.querySelectorAll('.subcuenta-destino').forEach(c => c.classList.remove('selected'));
+
+                // Seleccionar esta opción
+                this.classList.add('selected');
+                subcuentaDestinoSeleccionada = this.dataset.id;
+                destinoInput.value = subcuentaDestinoSeleccionada;
+
+                validarFormulario();
+            });
+        });
+
+        // Botón máximo
+        btnMaximo.addEventListener('click', function () {
+            if (saldoMaximo > 0) {
+                montoInput.value = saldoMaximo.toFixed(2);
+                validarFormulario();
             }
         });
-    }
 
-    function validarFormulario() {
-        const origen = subcuentaOrigenSeleccionada;
-        const destino = subcuentaDestinoSeleccionada;
-        const monto = parseFloat(montoInput.value) || 0;
-        
-        const formularioValido = origen && destino && monto > 0 && monto <= saldoMaximo && origen !== destino;
-        
-        btnTransferir.disabled = !formularioValido;
-        
-        if (formularioValido) {
-            actualizarResumen();
-            resumenDiv.style.display = 'block';
-        } else {
-            resumenDiv.style.display = 'none';
-        }
-    }
+        // Validación de monto
+        montoInput.addEventListener('input', function () {
+            const valor = Number.parseFloat(this.value) || 0;
+            if (valor > saldoMaximo) {
+                this.classList.add('is-invalid');
+                this.setCustomValidity('El monto no puede ser mayor al saldo disponible');
+            } else if (valor <= 0) {
+                this.classList.add('is-invalid');
+                this.setCustomValidity('El monto debe ser mayor a cero');
+            } else {
+                this.classList.remove('is-invalid');
+                this.setCustomValidity('');
+            }
+            validarFormulario();
+        });
 
-    function actualizarResumen() {
-        const origenCard = document.querySelector(`[data-id="${subcuentaOrigenSeleccionada}"]:not(.subcuenta-destino)`);
-        const destinoCard = document.querySelector(`[data-id="${subcuentaDestinoSeleccionada}"].subcuenta-destino`);
-        const monto = parseFloat(montoInput.value) || 0;
-        
-        if (origenCard && destinoCard) {
-            document.getElementById('resumenOrigen').textContent = origenCard.querySelector('h6').textContent;
-            document.getElementById('resumenDestino').textContent = destinoCard.querySelector('h6').textContent;
-            document.getElementById('resumenMonto').textContent = '$' + monto.toFixed(2);
+        function actualizarOpcionesDestino() {
+            document.querySelectorAll('.subcuenta-destino').forEach(card => {
+                if (card.dataset.id === subcuentaOrigenSeleccionada) {
+                    card.classList.add('disabled');
+                    if (card.classList.contains('selected')) {
+                        card.classList.remove('selected');
+                        subcuentaDestinoSeleccionada = null;
+                        destinoInput.value = '';
+                    }
+                } else {
+                    card.classList.remove('disabled');
+                }
+            });
         }
-    }
 
-    // Confirmación antes del envío
-    form.addEventListener('submit', function(e) {
-        const monto = parseFloat(montoInput.value) || 0;
-        if (!confirm(`¿Confirmas la transferencia de $${monto.toFixed(2)}?`)) {
-            e.preventDefault();
+        function validarFormulario() {
+            const origen = subcuentaOrigenSeleccionada;
+            const destino = subcuentaDestinoSeleccionada;
+            const monto = Number.parseFloat(montoInput.value) || 0;
+
+            const formularioValido = origen && destino && monto > 0 && monto <= saldoMaximo && origen !== destino;
+
+            btnTransferir.disabled = !formularioValido;
+
+            if (formularioValido) {
+                actualizarResumen();
+                resumenDiv.style.display = 'block';
+            } else {
+                resumenDiv.style.display = 'none';
+            }
         }
+
+        function actualizarResumen() {
+            const origenCard = document.querySelector(`[data-id="${subcuentaOrigenSeleccionada}"]:not(.subcuenta-destino)`);
+            const destinoCard = document.querySelector(`[data-id="${subcuentaDestinoSeleccionada}"].subcuenta-destino`);
+            const monto = Number.parseFloat(montoInput.value) || 0;
+
+            if (origenCard && destinoCard) {
+                document.getElementById('resumenOrigen').textContent = origenCard.querySelector('h6').textContent;
+                document.getElementById('resumenDestino').textContent = destinoCard.querySelector('h6').textContent;
+                document.getElementById('resumenMonto').textContent = '$' + monto.toFixed(2);
+            }
+        }
+
+        // Confirmación antes del envío
+        form.addEventListener('submit', function (e) {
+            const monto = Number.parseFloat(montoInput.value) || 0;
+            if (!confirm(`¿Confirmas la transferencia de $${monto.toFixed(2)}?`)) {
+                e.preventDefault();
+            }
+        });
     });
-});
 </script>
 {% endblock %}

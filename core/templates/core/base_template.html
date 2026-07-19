@@ -7,9 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}FinGest{% endblock %}</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,7 +30,9 @@
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <!-- DOMPurify para prevenir inyección de XSS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" integrity="sha512-421712a23354a55855f750058b88f36c56157f49551c6e11409f98f71120f2628cc0d565612e47e3a967f1396a328574c3e80cc056801901a073f8a002636ed7" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"
+        integrity="sha512-421712a23354a55855f750058b88f36c56157f49551c6e11409f98f71120f2628cc0d565612e47e3a967f1396a328574c3e80cc056801901a073f8a002636ed7"
+        crossorigin="anonymous"></script>
     <style>
         /* Estilos del Sidebar */
         #side-bar {
@@ -48,7 +53,8 @@
         }
 
         #side-bar .sidebar-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.2);
+            /* oscurece en vez de aclarar */
             color: #ffffff;
         }
 
@@ -203,7 +209,8 @@
 
                 <!-- Aprendizaje -->
                 <div>
-                    <button type="button" class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
+                    <button type="button"
+                        class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
                         onclick="toggleSection('aprendizaje')">
                         <span>Aprendizaje</span>
                         <svg id="chevron-aprendizaje" class="h-4 w-4 chevron-icon rotated" fill="none"
@@ -252,7 +259,8 @@
 
                 <!-- Configuración -->
                 <div>
-                    <button type="button" class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
+                    <button type="button"
+                        class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
                         onclick="toggleSection('configuracion')">
                         <span>Configuración</span>
                         <svg id="chevron-configuracion" class="h-4 w-4 chevron-icon rotated" fill="none"
@@ -323,7 +331,7 @@
     </div>
     <div id="validate_logout_overlay"
         class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
- 
+
         <!-- Modal -->
         <dialog id="ventana_confirmar_cierre_sesion"
             class="relative rounded-md p-6 bg-white shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0 pointer-events-none">
@@ -486,15 +494,15 @@
         }
 
         if (logoutOverlay && logoutModal) {
-            logoutOverlay.addEventListener('click', function(e) {
+            logoutOverlay.addEventListener('click', function (e) {
                 if (e.target === logoutOverlay) {
                     cerrarLogoutModal();
                 }
             });
-            logoutModal.addEventListener('click', function(e) {
+            logoutModal.addEventListener('click', function (e) {
                 e.stopPropagation();
             });
-            logoutModal.addEventListener('keydown', function(e) {
+            logoutModal.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
                     cerrarLogoutModal();
                 }
@@ -584,7 +592,9 @@
     </script>
 
     <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
