@@ -249,6 +249,13 @@ def marcar_todas_leidas(request):
     try:
         count = Notificacion.objects.filter(
             usuario=request.user,
+        )
+@login_required
+@require_POST
+def marcar_notificaciones_leidas(request):
+    try:
+        count = Notificacion.objects.filter(
+            usuario=request.user,
             estado__in=['enviada', 'pendiente']
         ).update(
             estado='leida',
@@ -298,8 +305,6 @@ def test_notification(request):
             messages.error(request, f'❌ Error enviando notificación de prueba: {str(e)}')
     
     return redirect(URL_CONFIGURACIONES)
-
-@login_required
 @require_GET
 def marcar_leida_simple(request, notificacion_id):
     """Vista simple para marcar notificación como leída (GET request)"""

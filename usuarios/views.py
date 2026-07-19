@@ -217,25 +217,19 @@ def _handle_register_submit(request, monedas):
         if 'email_for_verification' in request.session:
             del request.session['email_for_verification']
         
-        return render(request, "usuarios/login.html", {
-            "message_success": f"¡Registro exitoso, {nuevo_usuario.nombres}! Ahora inicia sesión con tu nueva cuenta."
-        })
-            
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return render(request, REGISTER_TEMPLATE, {
-            "error": f"Error al registrar usuario: {str(e)}", 
-            'monedas': monedas
-        })
+        return render(request, "usuarios/login.html", {})
 
+@require_GET
 def Register(request):
     monedas = Moneda.objects.all()
 
-    if request.method != "POST":
-        return render(request, REGISTER_TEMPLATE, {
-            'monedas': monedas
-        })
+    return render(request, REGISTER_TEMPLATE, {
+        'monedas': monedas
+    })
+
+@require_POST
+def RegisterPost(request):
+    monedas = Moneda.objects.all()
 
     action = request.POST.get('action')
     if action == 'send_verification':
@@ -362,57 +356,40 @@ def Acceso_Rapido(request):
             ])
         
         print(f"🔍 DEBUG ACCESO_RAPIDO: Todos los datos POST: {dict(request.POST)}")
-        print(f"🔍 DEBUG ACCESO_RAPIDO: PIN obtenido: '{pin_input}'")
+@login_required
+@require_GET
+def Acceso_Rapido(request):
+    return render(request, ACCESO_RAPIDO_TEMPLATE)
+
+@login_required
+@require_POST
+def Validar_Acceso_Rapido(request):
+    print(f"🔍 DEBUG ACCESO_RAPIDO: PIN obtenido: '{pin_input}'")
  
-        if not pin_input.isdigit() or len(pin_input) != 6:
-            error_message = "PIN inválido. Ingrese 6 dígitos numéricos."
-            return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
+    if not pin_input.isdigit() or len(pin_input) != 6:
+        error_message = "PIN inválido. Ingrese 6 dígitos numéricos."
+        return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
  
-        try:
-            usuario = Usuario.objects.get(id=user.id)
-        except Usuario.DoesNotExist:
-            error_message = USUARIO_NO_ENCONTRADO
-            return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
+    try:
+        usuario = Usuario.objects.get(id=user.id)
+    except Usuario.DoesNotExist:
+        error_message = USUARIO_NO_ENCONTRADO
+        return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
  
-        print(f"🔍 DEBUG ACCESO_RAPIDO: PIN ingresado: '{pin_input}'")
-        print(f"🔍 DEBUG ACCESO_RAPIDO: PIN guardado: '{usuario.pin_acceso_rapido}' (tipo: {type(usuario.pin_acceso_rapido)})")
+    print(f"🔍 DEBUG ACCESO_RAPIDO: PIN ingresado: '{pin_input}'")
+    print(f"🔍 DEBUG ACCESO_RAPIDO: PIN guardado: '{usuario.pin_acceso_rapido}' (tipo: {type(usuario.pin_acceso_rapido)})")
  
-        if usuario.check_pin(pin_input):
-            request.session['pin_acceso_rapido_validado'] = True
- 
-            return redirect(DASHBOARD_URL) 
-        else:
-            error_message = "El PIN ingresado es incorrecto."
-            return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
- 
-    return render(request , ACCESO_RAPIDO_TEMPLATE)
- 
+    if usuario.check_pin(pin_input):
+        request.session['pin_acceso_rapido_validado'] = True
+
+        return redirect(DASHBOARD_URL) 
+    else:
+        error_message = "El PIN ingresado es incorrecto."
+        return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
+
 @require_POST
 def Reestablecer_Contraseña(request):
     pass
- 
-# === FUNCIONES PLACEHOLDER PARA URLs FALTANTES ===
- 
-def _parse_and_validate_pin(request):
-    pin_input = request.POST.get('pin_input', '').strip()
-    if not pin_input:
-        pin_input = ''.join([
-            request.POST.get(f'pin{i}', '') for i in range(6)
-        ])
-    
-    if not pin_input:
-        return None, "No se recibió ningún PIN."
-    if not pin_input.isdigit():
-        return None, f"PIN inválido. Solo se permiten números. Recibido: '{pin_input}'"
-    if len(pin_input) != 6:
-        return None, f"PIN inválido. Debe tener exactamente 6 dígitos. Recibido: '{pin_input}' (longitud: {len(pin_input)})"
-        
-    return pin_input, None
-
-def _find_user_by_pin(pin_input):
-    for u in Usuario.objects.all():
-        if u.check_pin(pin_input):
-            return u
     return None
 
 def pin_login(request):
@@ -420,6 +397,8 @@ def pin_login(request):
     if request.method == "GET":
         return render(request, PIN_LOGIN_TEMPLATE)
  
+@require_POST
+def pin_login(request):
     pin_input, error_message = _parse_and_validate_pin(request)
     if error_message:
         return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
@@ -641,12 +620,10 @@ def password_reset_request(request):
             'message': f'Error en recuperación de contraseña: {str(e)}'
         })
 
-    return render(request, 'usuarios/password_reset_modern.html')
-
 @require_GET
 def recuperar_con_codigo(request):
     """Vista para recuperación con código - Renderiza formulario para recuperación"""
-    return password_reset_request(request)
+    return render(request, 'usuarios/password_reset_modern.html')
 
 @require_POST
 def recuperar_con_codigo_post(request):
