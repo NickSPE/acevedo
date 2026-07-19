@@ -33,9 +33,8 @@ def _find_duplications_in_groups(grupos):
     duplicados_encontrados = []
     for key, notifs in grupos.items():
         if len(notifs) > 1:
-            for i in range(len(notifs)):
-                for j in range(i + 1, len(notifs)):
-                    notif1, notif2 = notifs[i], notifs[j]
+            for i, notif1 in enumerate(notifs):
+                for j, notif2 in enumerate(notifs[i+1:], start=i+1):
                     diff = abs((notif1.fecha_creacion - notif2.fecha_creacion).total_seconds())
                     if diff < 300:  # 5 minutos
                         duplicados_encontrados.append({
