@@ -400,9 +400,12 @@ def validar_acceso_rapido(request):
 @require_http_methods(["GET", "POST"])
 def reestablecer_contrasena(request):
     if request.method == 'POST':
+        password = request.POST.get('password', '').strip()
+        if not password:
+            raise ValueError("Se requiere una nueva contraseña para restablecer la cuenta.")
         # TODO: lógica para procesar el nuevo password
         return redirect('usuarios:login')
-    
+
     return render(request, 'usuarios/reestablecer_contrasena.html')
 
 def _parse_and_validate_pin(request):
