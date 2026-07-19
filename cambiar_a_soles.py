@@ -18,34 +18,34 @@ def verificar_usuario_actual():
     
     # Buscar usuarios con nombres comunes
     
-    usuarios = Usuario.objects.all()
+    lista_usuarios = Usuario.objects.all()
     print("\n👥 TODOS LOS USUARIOS EN EL SISTEMA:")
-    for i, usuario in enumerate(usuarios, 1):
-        print(f"  {i}. {usuario.nombres} {usuario.apellido_paterno} ({usuario.correo})")
-        if usuario.id_moneda:
-            print(f"     Moneda: {usuario.id_moneda.simbolo} ({usuario.id_moneda.codigo})")
+    for i, usuario_item in enumerate(lista_usuarios, 1):
+        print(f"  {i}. {usuario_item.nombres} {usuario_item.apellido_paterno} ({usuario_item.correo})")
+        if usuario_item.id_moneda:
+            print(f"     Moneda: {usuario_item.id_moneda.simbolo} ({usuario_item.id_moneda.codigo})")
         else:
             print("     Moneda: NO ASIGNADA")
     
-    return usuarios
+    return lista_usuarios
 
 def cambiar_a_soles(email_usuario):
     """Cambia la moneda del usuario a soles peruanos"""
     try:
-        usuario = Usuario.objects.get(correo=email_usuario)
+        usuario_obj = Usuario.objects.get(correo=email_usuario)
         moneda_soles = Moneda.objects.get(codigo='PEN')
         
         print("\n🔄 CAMBIANDO MONEDA...")
-        print(f"Usuario: {usuario.nombres} {usuario.apellido_paterno}")
-        print(f"Email: {usuario.correo}")
-        print(f"Moneda anterior: {usuario.id_moneda.simbolo if usuario.id_moneda else 'NINGUNA'}")
+        print(f"Usuario: {usuario_obj.nombres} {usuario_obj.apellido_paterno}")
+        print(f"Email: {usuario_obj.correo}")
+        print(f"Moneda anterior: {usuario_obj.id_moneda.simbolo if usuario_obj.id_moneda else 'NINGUNA'}")
         print(f"Nueva moneda: {moneda_soles.simbolo} ({moneda_soles.codigo})")
         
-        usuario.id_moneda = moneda_soles
-        usuario.save()
+        usuario_obj.id_moneda = moneda_soles
+        usuario_obj.save()
         
         print("✅ ¡CAMBIADO EXITOSAMENTE!")
-        print(f"Ahora {usuario.nombres} tiene la moneda: {moneda_soles.simbolo} (Soles)")
+        print(f"Ahora {usuario_obj.nombres} tiene la moneda: {moneda_soles.simbolo} (Soles)")
         
         return True
     except Usuario.DoesNotExist:
