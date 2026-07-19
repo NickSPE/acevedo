@@ -170,16 +170,14 @@ download_reporter() {
 }
 
 is_self_hosted_instance() {
-  if [[ "$CODACY_API_BASE_URL" == "https://api.codacy.com"* ]] || \
-     [[ "$CODACY_API_BASE_URL" == "https://app.codacy.com"* ]] || \
-     [[ "$CODACY_API_BASE_URL" == "https://app.staging.codacy.org"* ]] || \
-     [[ "$CODACY_API_BASE_URL" == "https://api.staging.codacy.org"* ]] || \
-     [[ "$CODACY_API_BASE_URL" == "https://app.dev.codacy.org"* ]] || \
-     [[ "$CODACY_API_BASE_URL" == "https://api.dev.codacy.org"* ]]; then
-    false
-  else
-    true
-  fi
+  case "$CODACY_API_BASE_URL" in
+    https://api.codacy.com*|https://app.codacy.com*|https://app.staging.codacy.org*|https://api.staging.codacy.org*|https://app.dev.codacy.org*|https://api.dev.codacy.org*)
+      false
+      ;;
+    *)
+      true
+      ;;
+  esac
 }
 
 os_name=$(uname)
