@@ -127,7 +127,7 @@ def generar_consejos_dinamicos(goals, promedio_progreso, metas_completadas):
     ]
     
     # Agregar un consejo motivacional aleatorio
-    consejos.append(secrets.SystemRandom().choice(consejos_motivacionales))
+    consejos.append(secrets.choice(consejos_motivacionales))
     
     return consejos
 

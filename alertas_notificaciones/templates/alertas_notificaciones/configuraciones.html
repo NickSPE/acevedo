@@ -313,8 +313,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     statsElements.forEach(element => {
       const currentValue = parseInt(element.textContent);
-      // Simular cambio aleatorio pequeño
-      const change = Math.floor(Math.random() * 3) - 1; // -1, 0, o 1
+      // Simular cambio aleatorio pequeño usando CSPRNG
+      const randomBuffer = new Uint32Array(1);
+      window.crypto.getRandomValues(randomBuffer);
+      const change = (randomBuffer[0] % 3) - 1; // -1, 0, o 1
       const newValue = Math.max(0, currentValue + change);
       element.textContent = newValue;
     });
