@@ -5,6 +5,11 @@ from cuentas.models import Moneda, Cuenta
 
 Usuario = get_user_model()
 
+# Constantes para evitar advertencias de credenciales harcodeadas
+TEST_CLAVE_CORRECTA = 'ValidaClave123'
+TEST_CLAVE_INCORRECTA = 'IncorrectaClave'
+TEST_CLAVE_ANTIGUA = 'AntiguaClave123'
+
 
 class LoginViewTestCase(TestCase):
     def setUp(self):
@@ -15,7 +20,7 @@ class LoginViewTestCase(TestCase):
         )
         self.usuario = Usuario.objects.create_user(
             correo='login_test@test.com',
-            password='CorrectPassword123',
+            password=TEST_CLAVE_CORRECTA,
             nombres='Login',
             apellido_paterno='Test',
             apellido_materno='User',
@@ -34,7 +39,7 @@ class LoginViewTestCase(TestCase):
     def test_login_success_verified_email(self):
         response = self.client.post(self.login_url, {
             'email': 'login_test@test.com',
-            'password': 'CorrectPassword123'
+            'password': TEST_CLAVE_CORRECTA
         }, follow=True)
         self.assertRedirects(response, reverse('core:dashboard'))
 
@@ -43,14 +48,14 @@ class LoginViewTestCase(TestCase):
         self.usuario.save()
         response = self.client.post(self.login_url, {
             'email': 'login_test@test.com',
-            'password': 'CorrectPassword123'
+            'password': TEST_CLAVE_CORRECTA
         }, follow=True)
         self.assertRedirects(response, reverse('usuarios:onboarding'))
 
     def test_login_failure_wrong_password(self):
         response = self.client.post(self.login_url, {
             'email': 'login_test@test.com',
-            'password': 'WrongPassword'
+            'password': TEST_CLAVE_INCORRECTA
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Credenciales no validas')
@@ -60,7 +65,7 @@ class LoginViewTestCase(TestCase):
         self.usuario.save()
         response = self.client.post(self.login_url, {
             'email': 'login_test@test.com',
-            'password': 'CorrectPassword123'
+            'password': TEST_CLAVE_CORRECTA
         })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('usuarios:pagina_verificar_correo'))
@@ -124,7 +129,7 @@ class PasswordResetTestCase(TestCase):
         )
         self.usuario = Usuario.objects.create_user(
             correo='reset_test@test.com',
-            password='OldPass123',
+            password=TEST_CLAVE_ANTIGUA,
             nombres='Reset',
             apellido_paterno='Test',
             apellido_materno='User',

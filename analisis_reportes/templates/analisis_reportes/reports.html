@@ -67,7 +67,8 @@
         
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
           <!-- Período -->
-          <select name="periodo" class="w-full sm:w-44 border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
+          <label for="select_periodo" class="sr-only">Período</label>
+          <select id="select_periodo" name="periodo" class="w-full sm:w-44 border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
             <option value="mes_actual" {% if periodo_actual == 'mes_actual' %}selected{% endif %}>Este mes</option>
             <option value="ultimo_mes" {% if periodo_actual == 'ultimo_mes' %}selected{% endif %}>Mes pasado</option>
             <option value="trimestre" {% if periodo_actual == 'trimestre' %}selected{% endif %}>Último trimestre</option>
@@ -77,7 +78,8 @@
 
           <!-- Cuentas -->
           {% if cuentas %}
-          <select name="cuenta" class="w-full sm:w-44 border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
+          <label for="select_cuenta" class="sr-only">Cuenta</label>
+          <select id="select_cuenta" name="cuenta" class="w-full sm:w-44 border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
             <option value="">Todas las cuentas</option>
             {% for cuenta in cuentas %}
             <option value="{{ cuenta.id }}">{{ cuenta.nombre }}</option>
@@ -97,13 +99,13 @@
       <!-- Fechas personalizadas -->
       <div id="fechasPersonalizadas" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 {% if periodo_actual != 'personalizado' %}hidden{% endif %}">
         <div>
-          <label class="block text-xs font-medium text-[#605952] mb-1">Fecha inicio:</label>
-          <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}" 
+          <label for="fecha_inicio" class="block text-xs font-medium text-[#605952] mb-1">Fecha inicio:</label>
+          <input type="date" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}" 
                  class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
         </div>
         <div>
-          <label class="block text-xs font-medium text-[#605952] mb-1">Fecha fin:</label>
-          <input type="date" name="fecha_fin" value="{{ fecha_fin }}" 
+          <label for="fecha_fin" class="block text-xs font-medium text-[#605952] mb-1">Fecha fin:</label>
+          <input type="date" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}" 
                  class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
         </div>
       </div>
@@ -479,7 +481,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gráfico de Categorías (Gastos por Categoría)
     const categoriasCtx = document.getElementById('categoriasChart');
     if (categoriasCtx) {
-        const categoriasData = {{ gastos_categoria|safe }};
+        const categoriasData = JSON.parse('{{ gastos_categoria|escapejs }}');
         
         new Chart(categoriasCtx, {
             type: 'doughnut',
@@ -556,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gráfico de Flujo Mensual (Ingresos - Gastos = Ahorro/Déficit)
     const flujoMensualCtx = document.getElementById('flujoMensualChart');
     if (flujoMensualCtx) {
-        const flujoMensualData = {{ flujo_mensual|safe }};
+        const flujoMensualData = JSON.parse('{{ flujo_mensual|escapejs }}');
         
         new Chart(flujoMensualCtx, {
             type: 'line',

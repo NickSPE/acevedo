@@ -8,10 +8,13 @@ _genai_client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 AVAILABLE_MODELS = ['gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-pro-latest']
 
 
+NO_IA_MSG = "No se pudo generar explicación con IA en este momento."
+
+
 def generate_ai_explanation(result, calculation_type):
     """Genera explicación usando IA de Gemini"""
     if _genai_client is None:
-        return "No se pudo generar explicación con IA en este momento."
+        return NO_IA_MSG
 
     try:
         prompt = _build_explanation_prompt(result, calculation_type)
@@ -27,11 +30,11 @@ def generate_ai_explanation(result, calculation_type):
                 print(f"Error con modelo {model_name}: {e}")
                 continue
         
-        return "No se pudo generar explicación con IA en este momento."
+        return NO_IA_MSG
         
     except Exception as e:
         print(f"Error generando explicación IA: {e}")
-        return "No se pudo generar explicación con IA en este momento."
+        return NO_IA_MSG
 
 
 def _build_explanation_prompt(result, calculation_type):

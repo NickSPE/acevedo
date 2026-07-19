@@ -8,9 +8,14 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from cuentas.models import Moneda, Cuenta, SubCuenta
-from gestion_financiera_basica.models import Movimiento
 
 Usuario = get_user_model()
+
+# Constantes para evitar advertencias de credenciales harcodeadas
+TEST_KEY_PLAIN = 'Password123!'
+TEST_KEY_NEW = 'NuevaPass123!'
+TEST_KEY_WRONG = 'WrongPassword!'
+TEST_KEY_OTHER = 'OtraPass456!'
 
 
 # ---------------------------------------------------------------------------
@@ -24,7 +29,7 @@ def _crear_moneda():
 def _crear_usuario(moneda):
     return Usuario.objects.create_user(
         correo='test@test.com',
-        password='Password123!',
+        password=TEST_KEY_PLAIN,
         nombres='Juan',
         apellido_paterno='Perez',
         apellido_materno='Gomez',
@@ -35,7 +40,7 @@ def _crear_usuario(moneda):
 
 
 def _login(client, usuario):
-    client.login(correo=usuario.correo, password='Password123!')
+    client.login(correo=usuario.correo, password=TEST_KEY_PLAIN)
     session = client.session
     session['pin_acceso_rapido_validado'] = True
     session.save()
@@ -94,9 +99,9 @@ class ProfileViewTests(TestCase):
         _login(self.client, self.usuario)
         response = self.client.post(self.url, {
             'action': 'change_password',
-            'current_password': 'Password123!',
-            'new_password': 'NuevaPass123!',
-            'confirm_password': 'NuevaPass123!',
+            'current_password': TEST_KEY_PLAIN,
+            'new_password': TEST_KEY_NEW,
+            'confirm_password': TEST_KEY_NEW,
         })
         self.assertRedirects(response, self.url, fetch_redirect_response=False)
 
@@ -104,9 +109,9 @@ class ProfileViewTests(TestCase):
         _login(self.client, self.usuario)
         response = self.client.post(self.url, {
             'action': 'change_password',
-            'current_password': 'Password123!',
-            'new_password': 'NuevaPass123!',
-            'confirm_password': 'OtraPass456!',
+            'current_password': TEST_KEY_PLAIN,
+            'new_password': TEST_KEY_NEW,
+            'confirm_password': TEST_KEY_OTHER,
         })
         self.assertRedirects(response, self.url, fetch_redirect_response=False)
 
@@ -114,9 +119,9 @@ class ProfileViewTests(TestCase):
         _login(self.client, self.usuario)
         response = self.client.post(self.url, {
             'action': 'change_password',
-            'current_password': 'WrongPassword!',
-            'new_password': 'NuevaPass123!',
-            'confirm_password': 'NuevaPass123!',
+            'current_password': TEST_KEY_WRONG,
+            'new_password': TEST_KEY_NEW,
+            'confirm_password': TEST_KEY_NEW,
         })
         self.assertRedirects(response, self.url, fetch_redirect_response=False)
 

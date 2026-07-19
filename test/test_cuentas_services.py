@@ -42,7 +42,7 @@ class CuentasServicesTestCase(TestCase):
             id_moneda=self.moneda
         )
         # Asignar PIN inicial
-        self.usuario.pin_acceso_rapido = 1234
+        self.usuario.pin_acceso_rapido = '123456'
         self.usuario.save()
 
         # Crear cuenta principal
@@ -142,24 +142,24 @@ class CuentasServicesTestCase(TestCase):
         """Valida cambio exitoso del PIN de acceso rápido"""
         success, _ = cambiar_pin_usuario(
             usuario=self.usuario,
-            current_pin='1234',
-            new_pin='5678'
+            current_pin='123456',
+            new_pin='654321'
         )
         self.assertTrue(success)
         self.usuario.refresh_from_db()
-        self.assertTrue(self.usuario.check_pin('5678'))
+        self.assertTrue(self.usuario.check_pin('654321'))
 
     def test_cambiar_pin_usuario_incorrect_pin(self):
         """Valida que falle el cambio de PIN si el PIN actual no coincide"""
         success, msg = cambiar_pin_usuario(
             usuario=self.usuario,
-            current_pin='9999',
-            new_pin='5678'
+            current_pin='999999',
+            new_pin='654321'
         )
         self.assertFalse(success)
         self.assertIn("incorrecto", msg)
         self.usuario.refresh_from_db()
-        self.assertTrue(self.usuario.check_pin('1234'))
+        self.assertTrue(self.usuario.check_pin('123456'))
 
     def test_procesar_transferencia_entre_subcuentas_success(self):
         """Valida transferencia exitosa entre dos subcuentas"""

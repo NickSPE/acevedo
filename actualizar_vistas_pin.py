@@ -42,32 +42,25 @@ def update_usuarios_views():
         content = re.sub(import_pattern, replacement, content)
     
     # Actualizar verificación de PIN en acceso_rapido
-    # Buscar: if str(usuario.pin_acceso_rapido) == pin_input:
-    pattern1 = r'if str\(usuario\.pin_acceso_rapido\) == pin_input:'
     replacement1 = 'if check_password(pin_input, usuario.pin_acceso_rapido):'
-    content = re.sub(pattern1, replacement1, content)
+    content = content.replace('if str(usuario.pin_acceso_rapido) == pin_input:', replacement1)
     
     # Actualizar búsqueda de usuario por PIN en pin_login
-    # Buscar: usuario = Usuario.objects.filter(pin_acceso_rapido=pin_input).first()
-    pattern2 = r'usuario = Usuario\.objects\.filter\(pin_acceso_rapido=pin_input\)\.first\(\)'
     replacement2 = '''# Buscar usuario que tenga este PIN (necesario iterar porque está hasheado)
             usuario = None
             for u in Usuario.objects.all():
                 if check_password(pin_input, u.pin_acceso_rapido):
                     usuario = u
                     break'''
-    content = re.sub(pattern2, replacement2, content)
+    content = content.replace('usuario = Usuario.objects.filter(pin_acceso_rapido=pin_input).first()', replacement2)
     
     # Actualizar creación de usuario para hashear el PIN
-    # Buscar: pin_acceso_rapido=pin_acceso_rapido or '000000',
-    pattern3 = r'pin_acceso_rapido=pin_acceso_rapido or \'000000\','
     replacement3 = 'pin_acceso_rapido=make_password(pin_acceso_rapido or \'000000\'),'
-    content = re.sub(pattern3, replacement3, content)
+    content = content.replace("pin_acceso_rapido=pin_acceso_rapido or '000000',", replacement3)
     
     # Buscar otra instancia similar
-    pattern4 = r'pin_acceso_rapido=data\[\'pin_acceso_rapido\'\],'
     replacement4 = 'pin_acceso_rapido=make_password(data[\'pin_acceso_rapido\']),'
-    content = re.sub(pattern4, replacement4, content)
+    content = content.replace("pin_acceso_rapido=data['pin_acceso_rapido'],", replacement4)
     
     # Escribir archivo actualizado
     with open(file_path, 'w', encoding='utf-8') as f:
@@ -94,12 +87,10 @@ def update_cuentas_views():
         content = re.sub(import_pattern, replacement, content)
     
     # Actualizar verificación del PIN actual
-    pattern1 = r'if str\(usuario\.pin_acceso_rapido\) != current_pin:'
     replacement1 = 'if not check_password(current_pin, usuario.pin_acceso_rapido):'
-    content = re.sub(pattern1, replacement1, content)
+    content = content.replace('if str(usuario.pin_acceso_rapido) != current_pin:', replacement1)
     
     # Actualizar verificación de unicidad de PIN (esta es más compleja)
-    pattern2 = r'if Usuario\.objects\.filter\(pin_acceso_rapido=new_pin\)\.exclude\(id=usuario\.id\)\.exists\(\):'
     replacement2 = '''# Verificar que el nuevo PIN no esté siendo usado por otro usuario
             pin_duplicado = False
             for u in Usuario.objects.exclude(id=usuario.id):
@@ -108,12 +99,11 @@ def update_cuentas_views():
                     break
             
             if pin_duplicado:'''
-    content = re.sub(pattern2, replacement2, content)
+    content = content.replace('if Usuario.objects.filter(pin_acceso_rapido=new_pin).exclude(id=usuario.id).exists():', replacement2)
     
     # Actualizar asignación del nuevo PIN
-    pattern3 = r'usuario\.pin_acceso_rapido = new_pin'
     replacement3 = 'usuario.pin_acceso_rapido = make_password(new_pin)'
-    content = re.sub(pattern3, replacement3, content)
+    content = content.replace('usuario.pin_acceso_rapido = new_pin', replacement3)
     
     # Escribir archivo actualizado
     with open(file_path, 'w', encoding='utf-8') as f:
@@ -134,9 +124,8 @@ def update_model_comments():
         content = f.read()
     
     # Actualizar comentario del campo PIN
-    pattern = r'pin_acceso_rapido = models\.CharField\(max_length=6, default=\'000000\'\)  # PIN de 6 dígitos exactos'
     replacement = 'pin_acceso_rapido = models.CharField(max_length=128, default=\'000000\')  # PIN hasheado con PBKDF2'
-    content = re.sub(pattern, replacement, content)
+    content = content.replace("pin_acceso_rapido = models.CharField(max_length=6, default='000000')  # PIN de 6 dígitos exactos", replacement)
     
     # Escribir archivo actualizado
     with open(file_path, 'w', encoding='utf-8') as f:

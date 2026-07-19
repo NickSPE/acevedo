@@ -71,8 +71,8 @@ class NotificationService:
                 logger.info("Notificación creada: %s para usuario %s", notificacion.id, usuario.id)
                 return notificacion
                 
-        except Exception as e:
-            logger.error("Error creando notificación: %s", e)
+        except Exception:
+            logger.exception("Error creando notificación")
             return None
     
     @staticmethod
@@ -160,8 +160,7 @@ class NotificationProcessor:
                 
             # SMS (futuro)
             if config.sms_habilitado:
-                # TODO: Implementar SMS
-                pass
+                logger.warning("SMS not implemented yet")
             
             # Actualizar estado
             notificacion.estado = 'enviada'
@@ -170,10 +169,10 @@ class NotificationProcessor:
             
             logger.info("Notificación %s procesada correctamente", notificacion.id)
             
-        except Exception as e:
+        except Exception:
             notificacion.estado = 'error'
             notificacion.save()
-            logger.error("Error procesando notificación %s: %s", notificacion.id, e)
+            logger.exception("Error procesando notificación %s", notificacion.id)
 
 
 class EmailService:
@@ -219,8 +218,8 @@ class EmailService:
             
             logger.info("Email enviado para notificación %s", notificacion.id)
             
-        except Exception as e:
-            logger.error("Error enviando email para notificación %s: %s", notificacion.id, str(e))
+        except Exception:
+            logger.exception("Error enviando email para notificación %s", notificacion.id)
             raise
     
     @staticmethod
@@ -261,10 +260,10 @@ class EmailService:
             icon_color = "#8B5CF6"  # Morado para metas
         elif "saldo" in notificacion.titulo.lower():
             icon_color = "#F59E0B"  # Naranja para alertas de saldo
-        
+
         # Obtener datos adicionales
         datos = notificacion.datos_adicionales or {}
-        
+
         # Crear secciones de información adicional
         info_adicional = ""
         if datos.get('movimiento_tipo'):
@@ -279,7 +278,7 @@ class EmailService:
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <span style="color: #6b7280;"><strong>Monto:</strong></span>
-                    <span style="color: #1f2937; font-weight: bold; font-size: 18px;">{NotificationService._format_currency(datos.get('monto', 0), usuario)}</span>
+                    <span style="color: #1f2937; font-weight: bold; font-size: 18px;">{NotificationService.format_currency(datos.get('monto', 0), usuario)}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <span style="color: #6b7280;"><strong>Cuenta:</strong></span>
@@ -287,11 +286,11 @@ class EmailService:
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: #6b7280;"><strong>Saldo actual:</strong></span>
-                    <span style="color: #059669; font-weight: bold;">{NotificationService._format_currency(datos.get('saldo_actual', 0), usuario)}</span>
+                    <span style="color: #059669; font-weight: bold;">{NotificationService.format_currency(datos.get('saldo_actual', 0), usuario)}</span>
                 </div>
             </div>
             """
-        
+
         # Información para metas de ahorro
         if datos.get('meta_nombre'):
             info_adicional += f"""
@@ -307,11 +306,11 @@ class EmailService:
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: #6b7280;"><strong>Objetivo:</strong></span>
-                    <span style="color: #1f2937; font-weight: bold;">{NotificationService._format_currency(datos.get('monto_objetivo', 0), usuario)}</span>
+                    <span style="color: #1f2937; font-weight: bold;">{NotificationService.format_currency(datos.get('monto_objetivo', 0), usuario)}</span>
                 </div>
             </div>
             """
-        
+
         return f"""
         <!DOCTYPE html>
         <html>
@@ -497,8 +496,8 @@ class ConfigurationNotificationService:
                 # Enviar email de confirmación directamente
                 EmailService.enviar_email_configuracion(usuario, mensaje_final)
                 logger.info("Email de confirmación de configuración enviado a %s", usuario.correo)
-            except Exception as e:
-                logger.error("Error enviando email de configuración: %s", str(e))
+            except Exception:
+                logger.exception("Error enviando email de configuración")
     
     @staticmethod
     def enviar_email_configuracion(usuario, mensaje):

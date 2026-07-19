@@ -14,23 +14,10 @@ django.setup()
 from alertas_notificaciones.models import Notificacion
 from django.utils import timezone
 
-def limpiar_duplicados_recientes():
-    """Limpia notificaciones duplicadas de las últimas 2 horas"""
-    hace_2h = timezone.now() - timedelta(hours=2)
-    
-    # Encontrar grupos de notificaciones potencialmente duplicadas
-    notificaciones = Notificacion.objects.filter(
-        fecha_creacion__gte=hace_2h
-    ).order_by('usuario', 'tipo_notificacion', 'fecha_creacion')
-    
-    duplicados_encontrados = []
+def _group_notifications(notificaciones):
     grupos = {}
-    
     for notif in notificaciones:
-        # Crear clave de agrupación
         key = f"{notif.usuario.id}_{notif.tipo_notificacion.nombre}"
-        
-        # Agregar información específica si está disponible
         if notif.datos_adicionales:
             if 'movimiento_id' in notif.datos_adicionales:
                 key += f"_mov_{notif.datos_adicionales['movimiento_id']}"
@@ -40,18 +27,15 @@ def limpiar_duplicados_recientes():
         if key not in grupos:
             grupos[key] = []
         grupos[key].append(notif)
-    
-    # Identificar duplicados reales
+    return grupos
+
+def _find_duplications_in_groups(grupos):
+    duplicados_encontrados = []
     for key, notifs in grupos.items():
         if len(notifs) > 1:
-            # Verificar si son duplicados reales (mismo contenido en poco tiempo)
-            for i in range(len(notifs)):
-                for j in range(i + 1, len(notifs)):
-                    notif1, notif2 = notifs[i], notifs[j]
-                    
-                    # Verificar si son duplicados temporales (menos de 5 minutos de diferencia)
+            for i, notif1 in enumerate(notifs):
+                for j, notif2 in enumerate(notifs[i+1:], start=i+1):
                     diff = abs((notif1.fecha_creacion - notif2.fecha_creacion).total_seconds())
-                    
                     if diff < 300:  # 5 minutos
                         duplicados_encontrados.append({
                             'notif1': notif1,
@@ -59,8 +43,19 @@ def limpiar_duplicados_recientes():
                             'diferencia_segundos': diff,
                             'key': key
                         })
-    
     return duplicados_encontrados
+
+def limpiar_duplicados_recientes():
+    """Limpia notificaciones duplicadas de las últimas 2 horas"""
+    hace_2h = timezone.now() - timedelta(hours=2)
+    
+    # Encontrar grupos de notificaciones potencialmente duplicadas
+    notificaciones = Notificacion.objects.filter(
+        fecha_creacion__gte=hace_2h
+    ).select_related('usuario', 'tipo_notificacion').order_by('usuario', 'tipo_notificacion', 'fecha_creacion')
+    
+    grupos = _group_notifications(notificaciones)
+    return _find_duplications_in_groups(grupos)
 
 def mostrar_estadisticas():
     """Muestra estadísticas actuales del sistema"""
@@ -108,7 +103,7 @@ def mostrar_estadisticas():
 def eliminar_duplicados_reales():
     """Elimina notificaciones duplicadas manteniendo la más reciente"""
     duplicados = limpiar_duplicados_recientes()
-    eliminados = 0
+    cantidad_eliminados = 0
     
     for dup in duplicados:
         # Mantener la más reciente, eliminar la más antigua
@@ -118,9 +113,9 @@ def eliminar_duplicados_reales():
         else:
             dup['notif1'].delete()
             print(f"🗑️  Eliminado duplicado ID {dup['notif1'].id}")
-        eliminados += 1
+        cantidad_eliminados += 1
     
-    return eliminados
+    return cantidad_eliminados
 
 if __name__ == "__main__":
     import argparse

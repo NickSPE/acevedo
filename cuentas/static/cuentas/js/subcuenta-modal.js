@@ -4,8 +4,9 @@
  */
 
 class SubcuentaModal {
+  modalId = 'subcuenta-modal';
+
   constructor() {
-    this.modalId = 'subcuenta-modal';
     this.csrfToken = this.getCSRFToken();
     this.modal = null;
     this.init();
@@ -271,22 +272,32 @@ class SubcuentaModal {
         }
       });
 
-      if (response.redirected || response.ok) {
-        this.showSuccess('Subcuenta creada correctamente');
-        setTimeout(() => {
-          window.location.href = this.getSafeRedirectUrl(response.url, '/cuentas/subcuentas/');
-        }, 1500);
-      } else {
-        const text = await response.text();
-        if (text.includes('error') || text.includes('Error')) {
-          this.showError('Error al crear la subcuenta');
-        } else {
+      const outcomes = {
+        successRedirect: () => {
+          this.showSuccess('Subcuenta creada correctamente');
+          setTimeout(() => {
+            window.location.href = this.getSafeRedirectUrl(response.url, '/cuentas/subcuentas/');
+          }, 1500);
+        },
+        successStatic: () => {
           this.showSuccess('Subcuenta creada correctamente');
           setTimeout(() => {
             window.location.href = '/cuentas/subcuentas/';
           }, 1500);
+        },
+        error: () => {
+          this.showError('Error al crear la subcuenta');
         }
+      };
+
+      let key;
+      if (response.redirected || response.ok) {
+        key = 'successRedirect';
+      } else {
+        const text = await response.text();
+        key = /error/i.test(text) ? 'error' : 'successStatic';
       }
+      outcomes[key]();
     } catch (error) {
       console.error('Error:', error);
       this.showError('Error de conexión. Intenta nuevamente.');
@@ -347,4 +358,4 @@ class SubcuentaModal {
 }
 
 // Inicializar modal
-new SubcuentaModal();
+window.subcuentaModal = new SubcuentaModal();

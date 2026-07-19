@@ -21,7 +21,7 @@ from analisis_reportes.views import (
     get_flujo_mensual,
 )
 from cuentas.models import Moneda, Cuenta, SubCuenta
-from gestion_financiera_basica.models import Movimiento, MetaAhorro
+from gestion_financiera_basica.models import Movimiento
 from django.contrib.auth import get_user_model
 
 Usuario = get_user_model()
@@ -30,6 +30,7 @@ Usuario = get_user_model()
 # --------------------------------------------------------------------------
 # Helpers
 # --------------------------------------------------------------------------
+
 
 def _crear_moneda():
     return Moneda.objects.create(codigo='PEN', nombre='Soles', simbolo='S/.')
@@ -61,7 +62,7 @@ def _login(client, usuario):
 
 class GetPeriodoFechasTests(TestCase):
     def test_mes_actual(self):
-        inicio, fin = get_periodo_fechas('mes_actual')
+        inicio, _ = get_periodo_fechas('mes_actual')
         hoy = timezone.now().date()
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.month, hoy.month)
@@ -94,7 +95,7 @@ class GetPeriodoFechasTests(TestCase):
         self.assertEqual(inicio, hoy - timedelta(days=90))
 
     def test_invalid_periodo_defaults_to_mes_actual(self):
-        inicio, fin = get_periodo_fechas('no_existe')
+        inicio, _ = get_periodo_fechas('no_existe')
         hoy = timezone.now().date()
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.month, hoy.month)
@@ -102,7 +103,7 @@ class GetPeriodoFechasTests(TestCase):
 
 class ObtenerFechasPeriodoTests(TestCase):
     def test_mes_actual(self):
-        inicio, fin = obtener_fechas_periodo('mes_actual')
+        inicio, _ = obtener_fechas_periodo('mes_actual')
         now = timezone.now()
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.hour, 0)
@@ -110,24 +111,24 @@ class ObtenerFechasPeriodoTests(TestCase):
         self.assertEqual(inicio.month, now.month)
 
     def test_ultimo_mes(self):
-        inicio, fin = obtener_fechas_periodo('ultimo_mes')
+        inicio, _ = obtener_fechas_periodo('ultimo_mes')
         now = timezone.now()
         expected_month = now.month - 1 if now.month > 1 else 12
         self.assertEqual(inicio.month, expected_month)
 
     def test_trimestre(self):
-        inicio, fin = obtener_fechas_periodo('trimestre')
+        inicio, _ = obtener_fechas_periodo('trimestre')
         self.assertIsInstance(inicio, datetime)
 
     def test_ano(self):
-        inicio, fin = obtener_fechas_periodo('ano')
+        inicio, _ = obtener_fechas_periodo('ano')
         self.assertEqual(inicio.month, 1)
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.hour, 0)
         self.assertEqual(inicio.minute, 0)
 
     def test_default_return_mes_actual(self):
-        inicio, fin = obtener_fechas_periodo('invalido')
+        inicio, _ = obtener_fechas_periodo('invalido')
         now = timezone.now()
         self.assertEqual(inicio.day, 1)
         self.assertEqual(inicio.month, now.month)
@@ -140,7 +141,8 @@ class CalcularEstadisticasGeneralesTests(TestCase):
         self.fecha_inicio = timezone.localdate() - timedelta(days=30)
         self.fecha_fin = timezone.localdate()
 
-    def _dt(self, d):
+    @staticmethod
+    def _dt(d):
         return timezone.make_aware(datetime.combine(d, datetime.min.time()))
 
     def test_sin_datos_retorna_ceros(self):
@@ -193,7 +195,8 @@ class GetGastosPorCategoriaTests(TestCase):
         self.fecha_inicio = timezone.localdate() - timedelta(days=30)
         self.fecha_fin = timezone.localdate()
 
-    def _dt(self, d):
+    @staticmethod
+    def _dt(d):
         return timezone.make_aware(datetime.combine(d, datetime.min.time()))
 
     def test_sin_gastos_retorna_default(self):
@@ -209,17 +212,17 @@ class GetGastosPorCategoriaTests(TestCase):
         medio = self.fecha_inicio + (self.fecha_fin - self.fecha_inicio) // 2
         Movimiento.objects.create(
             nombre='Comida', tipo='egreso', monto=Decimal('200'),
-            fecha_movimiento=self._dt(medio), id_cuenta=cuenta,
+            fecha_movimiento=GetGastosPorCategoriaTests._dt(medio), id_cuenta=cuenta,
             id_usuario=self.usuario
         )
         Movimiento.objects.create(
             nombre='Comida', tipo='egreso', monto=Decimal('150'),
-            fecha_movimiento=self._dt(medio), id_cuenta=cuenta,
+            fecha_movimiento=GetGastosPorCategoriaTests._dt(medio), id_cuenta=cuenta,
             id_usuario=self.usuario
         )
         Movimiento.objects.create(
             nombre='Transporte', tipo='egreso', monto=Decimal('100'),
-            fecha_movimiento=self._dt(medio), id_cuenta=cuenta,
+            fecha_movimiento=GetGastosPorCategoriaTests._dt(medio), id_cuenta=cuenta,
             id_usuario=self.usuario
         )
         resultado = get_gastos_por_categoria(self.usuario, self.fecha_inicio, self.fecha_fin)
@@ -236,7 +239,8 @@ class GetIngresosVsEgresosTests(TestCase):
         self.fecha_inicio = timezone.localdate().replace(day=1)
         self.fecha_fin = timezone.localdate()
 
-    def _dt(self, d):
+    @staticmethod
+    def _dt(d):
         return timezone.make_aware(datetime.combine(d, datetime.min.time()))
 
     def test_retorna_estructura_correcta(self):
@@ -431,7 +435,8 @@ class GetFlujoMensualTests(TestCase):
         self.fecha_inicio = timezone.localdate().replace(day=1)
         self.fecha_fin = timezone.localdate()
 
-    def _dt(self, d):
+    @staticmethod
+    def _dt(d):
         return timezone.make_aware(datetime.combine(d, datetime.min.time()))
 
     def test_sin_datos_retorna_estructura(self):

@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_GET
 from django.utils import timezone
 from datetime import timedelta
 from django.db.models import Count, Q
 from .models import Notificacion
 
 @staff_member_required
+@require_GET
 def admin_notificaciones(request):
     """Vista administrativa para revisar el estado de las notificaciones"""
     
@@ -84,6 +86,7 @@ def admin_notificaciones(request):
 
 
 @staff_member_required
+@require_GET
 def debug_duplicados(request):
     """Vista para debuggear notificaciones duplicadas"""
     

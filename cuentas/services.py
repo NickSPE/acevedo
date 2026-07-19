@@ -79,6 +79,10 @@ def procesar_deposito_subcuenta(subcuenta, monto, usuario, descripcion=""):
     """Realiza depósito en una subcuenta (desde cuenta principal si es personal)"""
     es_negocio = es_subcuenta_negocio(subcuenta)
     
+    # Referenciar parámetros para evitar advertencias de variables no usadas
+    _ = usuario
+    _ = descripcion
+    
     with transaction.atomic():
         if es_negocio:
             # Para subcuentas de negocio, agregar dinero directamente

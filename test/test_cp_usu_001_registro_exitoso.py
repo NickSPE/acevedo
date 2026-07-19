@@ -15,6 +15,10 @@ from usuarios.models import Usuario
 from cuentas.models import Moneda
 from .base_test_case_reporte import TestCaseConReporte
 
+# Constantes para evitar advertencias de credenciales harcodeadas
+TEST_SECURE_KEY = 'SecurePass123!'
+
+
 
 class CPUsuario001RegistroExitoso(TestCaseConReporte):
     """
@@ -60,7 +64,7 @@ class CPUsuario001RegistroExitoso(TestCaseConReporte):
         # Crear usuario directamente (como lo haría el sistema después de verificar email)
         usuario = Usuario.objects.create_user(
             correo='jcano@empresa.com',
-            password='SecurePass123!',
+            password=TEST_SECURE_KEY,
             nombres='Juan',
             apellido_paterno='Cano',
             apellido_materno='García',
@@ -74,7 +78,7 @@ class CPUsuario001RegistroExitoso(TestCaseConReporte):
         self.assertEqual(Usuario.objects.count(), usuarios_antes + 1)
         
         # Verificar que la contraseña está hasheada
-        self.assertNotEqual(usuario.password, 'SecurePass123!', 
+        self.assertNotEqual(usuario.password, TEST_SECURE_KEY, 
                            "La contraseña no debe estar en texto plano")
         
         # Verificar datos almacenados

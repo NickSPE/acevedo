@@ -3,6 +3,9 @@ from django import forms
 from .models import Movimiento, MetaAhorro, AporteMetaAhorro
 from cuentas.models import Cuenta
 
+WIDGET_CLASS_LIGHT = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+WIDGET_CLASS_DARK = 'w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
+
 
 class MovimientoForm(forms.ModelForm):
     class Meta:
@@ -10,30 +13,30 @@ class MovimientoForm(forms.ModelForm):
         fields = ['nombre', 'tipo', 'categoria', 'monto', 'fecha_movimiento', 'descripcion', 'id_cuenta']
         widgets = {
             'nombre': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                'class': WIDGET_CLASS_LIGHT,
                 'placeholder': 'Nombre de la transacción'
             }),
             'monto': forms.NumberInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                'class': WIDGET_CLASS_LIGHT,
                 'step': '0.01',
                 'min': '0'
             }),
             'fecha_movimiento': forms.DateInput(attrs={
                 'type': 'date',
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                'class': WIDGET_CLASS_LIGHT
             }),
             'descripcion': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                'class': WIDGET_CLASS_LIGHT,
                 'rows': 3,
                 'placeholder': 'Descripción opcional...'
             }),
             'tipo': forms.RadioSelect(),
             'categoria': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+                'class': WIDGET_CLASS_LIGHT,
                 'id': 'id_categoria'
             }),
             'id_cuenta': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+                'class': WIDGET_CLASS_LIGHT
             }),
         }
         
@@ -71,11 +74,11 @@ class MetaAhorroForm(forms.ModelForm):
         fields = ['nombre', 'descripcion', 'monto_objetivo', 'fecha_inicio', 'fecha_limite', 'frecuencia_aporte', 'id_cuenta']
         widgets = {
             'nombre': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white',
+                'class': WIDGET_CLASS_DARK,
                 'placeholder': 'Nombre de la meta de ahorro'
             }),
             'descripcion': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white',
+                'class': WIDGET_CLASS_DARK,
                 'rows': 3,
                 'placeholder': 'Describe tu meta de ahorro...'
             }),
@@ -87,17 +90,17 @@ class MetaAhorroForm(forms.ModelForm):
             }),
             'fecha_inicio': forms.DateInput(attrs={
                 'type': 'date',
-                'class': 'w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
+                'class': WIDGET_CLASS_DARK
             }),
             'fecha_limite': forms.DateInput(attrs={
                 'type': 'date',
-                'class': 'w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
+                'class': WIDGET_CLASS_DARK
             }),
             'frecuencia_aporte': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
+                'class': WIDGET_CLASS_DARK
             }),
             'id_cuenta': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white'
+                'class': WIDGET_CLASS_DARK
             }),
         }
         

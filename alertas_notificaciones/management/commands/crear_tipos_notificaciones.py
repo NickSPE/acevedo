@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand
 from alertas_notificaciones.models import TipoNotificacion, PlantillaNotificacion
 
+VAR_USUARIO_NOMBRES = 'usuario.nombres'
+
 class Command(BaseCommand):
     help = 'Crea los tipos de notificaciones iniciales del sistema'
 
@@ -197,7 +199,7 @@ Saludos,
 El equipo de FinGest
                 ''',
                 'plantilla_push': 'Configuración de notificaciones actualizada',
-                'variables_disponibles': ['usuario.nombres', 'mensaje', 'fecha']
+                'variables_disponibles': [VAR_USUARIO_NOMBRES, 'mensaje', 'fecha']
             },
             {
                 'tipo_nombre': 'meta_alcanzada',
@@ -216,7 +218,7 @@ Saludos,
 El equipo de FinGest
                 ''',
                 'plantilla_push': '🎉 ¡Meta "{meta_nombre}" completada!',
-                'variables_disponibles': ['usuario.nombres', 'meta_nombre', 'meta_objetivo', 'fecha']
+                'variables_disponibles': [VAR_USUARIO_NOMBRES, 'meta_nombre', 'meta_objetivo', 'fecha']
             },
             {
                 'tipo_nombre': 'aporte_realizado',
@@ -236,7 +238,7 @@ Saludos,
 El equipo de FinGest
                 ''',
                 'plantilla_push': 'Aporte de ${aporte_monto} registrado en {meta_nombre}',
-                'variables_disponibles': ['usuario.nombres', 'aporte_monto', 'meta_nombre', 'progreso_actual', 'monto_faltante']
+                'variables_disponibles': [VAR_USUARIO_NOMBRES, 'aporte_monto', 'meta_nombre', 'progreso_actual', 'monto_faltante']
             },
             {
                 'tipo_nombre': 'saldo_bajo',
@@ -256,7 +258,7 @@ Saludos,
 El equipo de FinGest
                 ''',
                 'plantilla_push': '🚨 Saldo bajo en {cuenta_nombre}: ${saldo_actual}',
-                'variables_disponibles': ['usuario.nombres', 'cuenta_nombre', 'saldo_actual', 'limite_configurado']
+                'variables_disponibles': [VAR_USUARIO_NOMBRES, 'cuenta_nombre', 'saldo_actual', 'limite_configurado']
             }
         ]
         

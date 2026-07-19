@@ -6,7 +6,7 @@ Clasificación: Prueba Funcional - Camino Positivo
 Prioridad: Alta
 
 Descripción: Valida el mecanismo alternativo de autenticación rápida 
-mediante código PIN de cuatro dígitos.
+mediante código PIN de seis dígitos.
 """
 
 from django.test import Client
@@ -25,7 +25,7 @@ class CPAuth004AccesoPIN(TestCaseConReporte):
     nombre_caso = 'Acceso Rápido con PIN'
     prioridad = 'Alta'
     nivel_prueba = 'Sistema'
-    descripcion = 'Valida el mecanismo alternativo de autenticación rápida mediante código PIN de cuatro dígitos.'
+    descripcion = 'Valida el mecanismo alternativo de autenticación rápida mediante código PIN de seis dígitos.'
 
     def setUp(self):
         self.client = Client()
@@ -50,7 +50,7 @@ class CPAuth004AccesoPIN(TestCaseConReporte):
         )
         
         # Configurar PIN (se hashea automáticamente si existe método set_password para PIN)
-        self.usuario.pin_acceso_rapido = '1234'
+        self.usuario.pin_acceso_rapido = '123456'
         self.usuario.email_verificado = True
         self.usuario.save()
 
@@ -67,14 +67,14 @@ class CPAuth004AccesoPIN(TestCaseConReporte):
         start_time = time.time()
         
         self.client.post(self.pin_login_url, {
-            'pin': '1234'
+            'pin': '123456'
         }, follow=True)
         
         (time.time() - start_time) * 1000  # en milisegundos
         
         # Configurar datos de entrada y resultados
         self.datos_entrada = {
-            'PIN': '••••',
+            'PIN': '••••••',
             'Usuario': 'usuario_pin@test.com',
             'Tipo de autenticación': 'PIN (Acceso Rápido)'
         }

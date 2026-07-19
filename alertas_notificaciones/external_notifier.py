@@ -92,13 +92,13 @@ def send_email_with_gmail_api(to_email: str, subject: str, message: str, credent
         
         return sent_message
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error enviando email: {str(e)}")
+        raise RuntimeError(f"Error enviando email: {str(e)}")
 
 @app.get("/")
 def root():
     return {"message": "API de Notificaciones funcionando correctamente"}
 
-@app.get("/auth")
+@app.get("/auth", responses={500: {"description": "Error del servidor"}})
 def google_auth():
     """Inicia el flujo de autenticación de Google"""
     credentials_info = load_google_credentials()
@@ -138,7 +138,7 @@ def google_callback(code: str, state: str):
     
     return {"detail": "Autenticación exitosa - Credenciales guardadas"}
 
-@app.post("/test-email")
+@app.post("/test-email", responses={500: {"description": "Error del servidor"}})
 def test_email():
     """Endpoint de prueba que envía un email a princs2112@gmail.com"""
     test_request = NotificationRequest(
@@ -153,7 +153,7 @@ def test_email():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error enviando email de prueba: {str(e)}")
 
-@app.post("/test-email-gmail")
+@app.post("/test-email-gmail", responses={401: {"description": "No autorizado"}, 500: {"description": "Error del servidor"}})
 def test_email_gmail():
     """Endpoint de prueba que envía email usando Gmail API"""
     credentials = load_user_credentials()
@@ -174,7 +174,7 @@ def test_email_gmail():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error enviando email via Gmail API: {str(e)}")
 
-@app.post("/send-notification/")
+@app.post("/send-notification/", responses={500: {"description": "Error del servidor"}})
 def send_notification(request: NotificationRequest):
     try:
         send_email(request.email, request.subject, request.message)
@@ -182,7 +182,7 @@ def send_notification(request: NotificationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/send-notification-gmail/")
+@app.post("/send-notification-gmail/", responses={401: {"description": "No autorizado"}, 500: {"description": "Error del servidor"}})
 def send_notification_gmail(request: NotificationRequest):
     """Envía notificación usando Gmail API"""
     credentials = load_user_credentials()

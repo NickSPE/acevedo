@@ -3,6 +3,9 @@ from django.db.models import Sum
 
 # Create your models here.
 
+USUARIOS_USUARIO = "usuarios.Usuario"
+OTROS_EMOJI = "📦 Otros"
+
 class MetaAhorro(models.Model):
     FRECUENCIAS = (
         ('diaria', 'Diaria'),
@@ -21,7 +24,7 @@ class MetaAhorro(models.Model):
     frecuencia_aporte = models.CharField(max_length=20, choices=FRECUENCIAS, default='mensual')
     descripcion = models.CharField(max_length=255)
     nombre = models.CharField(max_length=50)
-    id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(USUARIOS_USUARIO, on_delete=models.CASCADE)
     id_cuenta = models.ForeignKey("cuentas.Cuenta", on_delete=models.CASCADE)
 
     def __str__(self):
@@ -65,7 +68,7 @@ class AporteMetaAhorro(models.Model):
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_aporte = models.DateTimeField(auto_now_add=True)
     descripcion = models.TextField(blank=True, default='')
-    id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(USUARIOS_USUARIO, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Aporte ${self.monto} a {self.id_meta_ahorro.nombre}"
@@ -91,7 +94,7 @@ class Movimiento(models.Model):
         ('vivienda', '🏠 Vivienda'),
         ('trabajo', '💼 Trabajo'),
         ('ahorros', '🎯 Ahorros/Metas'),
-        ('otros', '📦 Otros'),
+        ('otros', OTROS_EMOJI),
     )
 
     CATEGORIAS_INGRESOS = (
@@ -100,7 +103,7 @@ class Movimiento(models.Model):
         ('negocio', '🏢 Negocio'),
         ('inversion', '📈 Inversión'),
         ('regalo', '🎁 Regalo'),
-        ('otros', '📦 Otros'),
+        ('otros', OTROS_EMOJI),
     )
 
     nombre = models.CharField(max_length=50)
@@ -110,7 +113,7 @@ class Movimiento(models.Model):
     fecha_movimiento = models.DateTimeField()
     descripcion = models.TextField(blank=True, default='')
     id_cuenta = models.ForeignKey("cuentas.Cuenta", on_delete=models.CASCADE)
-    id_usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(USUARIOS_USUARIO, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.tipo} - {self.monto}"
@@ -125,4 +128,4 @@ class Movimiento(models.Model):
             for cat_key, cat_display in self.CATEGORIAS_INGRESOS:
                 if cat_key == self.categoria:
                     return cat_display
-        return '📦 Otros'
+        return OTROS_EMOJI

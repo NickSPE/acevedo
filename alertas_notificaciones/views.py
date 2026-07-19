@@ -3,12 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_GET, require_POST
 
 from .models import TipoNotificacion, ConfiguracionNotificacion, Notificacion
 from .services import NotificationService, ConfigurationNotificationService
 
 from .utils import get_relative_time
+
+URL_CONFIGURACIONES = 'alertas_notificaciones:configuraciones'
 
 @login_required
 def configuraciones(request):
@@ -129,35 +131,56 @@ def _manejar_actualizacion_configuracion(request):
         else:
             messages.info(request, 'No se detectaron cambios en la configuración.')
         
-        return redirect('alertas_notificaciones:configuraciones')
+        return redirect(URL_CONFIGURACIONES)
         
     except Exception as e:
         messages.error(request, f'Error al actualizar configuración: {str(e)}')
-        return redirect('alertas_notificaciones:configuraciones')
+        return redirect(URL_CONFIGURACIONES)
+
+def _map_notification_to_dict(notif):
+    """Mapea una notificación a un diccionario con tipos visuales y timestamps formateados"""
+    if notif.prioridad == 'urgente':
+        visual_type = 'critical'
+    elif notif.prioridad == 'alta':
+        visual_type = 'warning'
+    else:
+        visual_type = 'info'
+        
+    timestamp = notif.fecha_creacion
+    timestamp_str = timestamp.isoformat() if hasattr(timestamp, 'isoformat') else timestamp
+    relative_time = get_relative_time(timestamp)
+    
+    return {
+        "id": notif.id,
+        "type": visual_type,
+        "title": notif.titulo,
+        "message": notif.mensaje,
+        "timestamp": timestamp,
+        "timestamp_str": timestamp_str,
+        "relative_time": relative_time,
+        "read": notif.estado == 'leida',
+        "category": notif.categoria,
+        "action": notif.url_accion,
+        "priority": notif.prioridad,
+        "tipo_notificacion": notif.tipo_notificacion.nombre,
+        "estado": notif.estado,
+        "email_enviado": notif.email_enviado,
+        "push_enviado": notif.push_enviado,
+    }
 
 @login_required
+@require_GET
 def historial(request):
     """Vista para el historial de notificaciones - 3 más recientes con opción de ver todas"""
-    # Verificar si se quiere mostrar todas las notificaciones
     show_all = request.GET.get('show_all', 'false') == 'true'
-    
-    if show_all:
-        print(f"🔍 HISTORIAL: Cargando TODAS las notificaciones para {request.user.nombres}")
-    else:
-        print(f"🔍 HISTORIAL: Cargando las 3 notificaciones más recientes para {request.user.nombres}")
     
     # Query base de notificaciones del usuario
     query = Notificacion.objects.filter(usuario=request.user)
-    
-    # Ordenar por fecha de creación (más recientes primero)
     query_ordered = query.select_related('tipo_notificacion').order_by('-fecha_creacion')
-    
-    # Obtener total de notificaciones para mostrar el contador
     total_notifications = query.count()
     
     # Limitar según la opción seleccionada
     if show_all:
-        # Mostrar todas las notificaciones con paginación
         from django.core.paginator import Paginator
         paginator = Paginator(query_ordered, 20)  # 20 por página
         page = request.GET.get('page', 1)
@@ -165,53 +188,12 @@ def historial(request):
             notificaciones_db = paginator.page(page)
         except Exception:
             notificaciones_db = paginator.page(1)
-        print(f"📄 COMPLETO: Mostrando página {notificaciones_db.number} de {paginator.num_pages} ({total_notifications} total)")
     else:
-        # Solo las 3 más recientes
         notificaciones_db = list(query_ordered[:3])
         paginator = None
-        print(f"📄 LIMITADO: Mostrando {len(notificaciones_db)} notificaciones (máximo 3 de {total_notifications} total)")
     
     # Convertir a formato esperado por el template
-    notifications = []
-    for notif in notificaciones_db:
-        # Mapear tipo de notificación a categoría visual
-        if notif.prioridad == 'urgente':
-            visual_type = 'critical'
-        elif notif.prioridad == 'alta':
-            visual_type = 'warning'
-        elif notif.prioridad == 'media':
-            visual_type = 'info'
-        else:
-            visual_type = 'info'
-        
-        notifications.append({
-            "id": notif.id,
-            "type": visual_type,
-            "title": notif.titulo,
-            "message": notif.mensaje,
-            "timestamp": notif.fecha_creacion,
-            "read": notif.estado == 'leida',
-            "category": notif.categoria,
-            "action": notif.url_accion,
-            "priority": notif.prioridad,
-            "tipo_notificacion": notif.tipo_notificacion.nombre,
-            "estado": notif.estado,
-            "email_enviado": notif.email_enviado,
-            "push_enviado": notif.push_enviado,
-        })
-    
-    # Procesar timestamps para el template
-    for notification in notifications:
-        if hasattr(notification['timestamp'], 'isoformat'):
-            notification['timestamp_str'] = notification['timestamp'].isoformat()
-        else:
-            notification['timestamp_str'] = notification['timestamp']
-        notification['relative_time'] = get_relative_time(notification['timestamp'])
-    
-    print(f"✅ HISTORIAL: Enviando {len(notifications)} notificaciones al template")
-    
-    # Calcular conteo de no leídas
+    notifications = [_map_notification_to_dict(notif) for notif in notificaciones_db]
     unread_in_page = sum(1 for notif in notifications if not notif['read'])
     
     context = {
@@ -220,8 +202,8 @@ def historial(request):
         'showing_total': len(notifications),
         'unread_in_page': unread_in_page,
         'show_all': show_all,
-        'is_limited': not show_all,  # True si está limitado a 3
-        'has_more': total_notifications > 3,  # True si hay más de 3 notificaciones
+        'is_limited': not show_all,
+        'has_more': total_notifications > 3,
     }
     
     # Agregar paginación solo si se muestran todas
@@ -231,15 +213,17 @@ def historial(request):
             'paginator': paginator,
             'is_paginated': paginator.num_pages > 1,
         })
-    
+        
     return render(request, 'alertas_notificaciones/historial.html', context)
 
 @login_required
+@require_GET
 def alertas_automaticas(request):
     """Vista para alertas automáticas"""
     return render(request, 'alertas_notificaciones/alertas_automaticas.html')
 
 @login_required
+@require_GET
 def index(request):
     """Vista principal del módulo de alertas"""
     return render(request, 'alertas_notificaciones/index.html')
@@ -279,6 +263,7 @@ def marcar_todas_leidas(request):
         return JsonResponse({'status': 'error', 'message': str(e)})
 
 @login_required
+@require_GET
 def obtener_contador_notificaciones(request):
     """API para obtener contador de notificaciones no leídas"""
     try:
@@ -289,6 +274,7 @@ def obtener_contador_notificaciones(request):
 
 # Función de prueba para enviar notificación
 @login_required
+@require_POST
 def test_notification(request):
     """Vista de prueba para enviar notificación (solo para desarrollo)"""
     if request.method == 'POST':
@@ -311,9 +297,10 @@ def test_notification(request):
         except Exception as e:
             messages.error(request, f'❌ Error enviando notificación de prueba: {str(e)}')
     
-    return redirect('alertas_notificaciones:configuraciones')
+    return redirect(URL_CONFIGURACIONES)
 
 @login_required
+@require_GET
 def marcar_leida_simple(request, notificacion_id):
     """Vista simple para marcar notificación como leída (GET request)"""
     try:
@@ -342,6 +329,7 @@ def marcar_leida_simple(request, notificacion_id):
     return redirect('alertas_notificaciones:historial')
 
 @login_required
+@require_GET
 def marcar_todas_leidas_simple(request):
     """Vista simple para marcar todas las notificaciones como leídas (GET request)"""
     try:
@@ -364,11 +352,13 @@ def marcar_todas_leidas_simple(request):
     return redirect('alertas_notificaciones:historial')
 
 @login_required
+@require_GET
 def test_currency(request):
     """Vista de prueba para mostrar el formateo de moneda"""
     return render(request, 'alertas_notificaciones/test_currency.html')
 
 @login_required
+@require_GET
 def debug_currency(request):
     """Vista de debug para verificar la moneda del usuario"""
     debug_info = {
@@ -408,6 +398,7 @@ def debug_currency(request):
     })
 
 @login_required
+@require_GET
 def debug_simple(request):
     """Vista de debug simple para verificar moneda"""
     context = {

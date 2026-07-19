@@ -181,3 +181,7 @@ cython_debug/
 .test/
 sonar-scanner*/
 docs/
+
+# Frontend Node modules and build output
+frontend/node_modules/
+frontend/dist/

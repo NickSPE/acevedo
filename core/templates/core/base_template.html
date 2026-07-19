@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}FinGest{% endblock %}</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,22 +27,19 @@
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <!-- DOMPurify para prevenir inyección de XSS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" integrity="sha512-421712a23354a55855f750058b88f36c56157f49551c6e11409f98f71120f2628cc0d565612e47e3a967f1396a328574c3e80cc056801901a073f8a002636ed7" crossorigin="anonymous"></script>
     <style>
         /* Estilos del Sidebar */
         #side-bar {
             background-color: #1d293d;
             border-color: #1a1f2e;
             overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         #side-bar::-webkit-scrollbar {
             display: none;
-        }
-
-        #side-bar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
 
         #side-bar .sidebar-link {
@@ -78,12 +75,18 @@
         }
 
         .logout-link:hover {
-            background-color: rgba(239, 68, 68, 0.1) !important;
-            color: #ef4444 !important;
+            background-color: #dc2626 !important;
+            color: #ffffff !important;
         }
 
         .logout-link:hover svg {
-            color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+
+        dialog#ventana_confirmar_cierre_sesion {
+            border: none;
+            background: white;
+            color: inherit;
         }
 
         .section-content {
@@ -200,14 +203,14 @@
 
                 <!-- Aprendizaje -->
                 <div>
-                    <div class="mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between"
+                    <button type="button" class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
                         onclick="toggleSection('aprendizaje')">
                         <span>Aprendizaje</span>
                         <svg id="chevron-aprendizaje" class="h-4 w-4 chevron-icon rotated" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
-                    </div>
+                    </button>
                     <div id="section-aprendizaje" class="section-content collapsed">
                         <ul class="space-y-1">
                             <li>
@@ -249,14 +252,14 @@
 
                 <!-- Configuración -->
                 <div>
-                    <div class="mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between"
+                    <button type="button" class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
                         onclick="toggleSection('configuracion')">
                         <span>Configuración</span>
                         <svg id="chevron-configuracion" class="h-4 w-4 chevron-icon rotated" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
-                    </div>
+                    </button>
                     <div id="section-configuracion" class="section-content collapsed">
                         <ul class="space-y-1">
                             <li>
@@ -318,13 +321,11 @@
             {% block content %}{% endblock %}
         </main>
     </div>
-    <!-- Dialog confirmar cierre sesion -->
     <div id="validate_logout_overlay"
-        class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 hidden"
-        onclick="cerrarLogoutModal()">
-
+        class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+ 
         <!-- Modal -->
-        <div id="ventana_confirmar_cierre_sesion" role="dialog" aria-modal="true" onclick="event.stopPropagation()"
+        <dialog id="ventana_confirmar_cierre_sesion"
             class="relative rounded-md p-6 bg-white shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0 pointer-events-none">
 
             <!-- Botón X -->
@@ -344,7 +345,7 @@
                         class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm">Continuar</button>
                 </div>
             </form>
-        </div>
+        </dialog>
     </div>
     <script>
         const toggleBtn = document.getElementById("toggleSidebar");
@@ -397,10 +398,10 @@
                 form.addEventListener("submit", function (e) {
                     e.preventDefault();
 
-                    const capital = parseFloat(document.getElementById("capital").value) || 0;
-                    const aporte = parseFloat(document.getElementById("aporte").value) || 0;
-                    const tasa = parseFloat(document.getElementById("tasa").value) || 0;
-                    const duracion = parseFloat(document.getElementById("duracion").value) || 0;
+                    const capital = Number.parseFloat(document.getElementById("capital").value) || 0;
+                    const aporte = Number.parseFloat(document.getElementById("aporte").value) || 0;
+                    const tasa = Number.parseFloat(document.getElementById("tasa").value) || 0;
+                    const duracion = Number.parseFloat(document.getElementById("duracion").value) || 0;
                     const unidad = unidadSelect.value;
 
                     let periodosPorAño = 1;
@@ -438,9 +439,9 @@
                 loanForm.addEventListener("submit", function (e) {
                     e.preventDefault();
 
-                    const monto = parseFloat(document.getElementById("monto").value) || 0;
-                    const interesAnual = parseFloat(document.getElementById("interes").value) || 0;
-                    const plazo = parseFloat(document.getElementById("plazo").value) || 0;
+                    const monto = Number.parseFloat(document.getElementById("monto").value) || 0;
+                    const interesAnual = Number.parseFloat(document.getElementById("interes").value) || 0;
+                    const plazo = Number.parseFloat(document.getElementById("plazo").value) || 0;
                     const unidad = unidadSelectPrestamo.value;
 
                     let periodosPorAnio = 1;
@@ -484,10 +485,20 @@
             }, 200);
         }
 
-        function cerrarLogoutModalPorFondo(event) {
-            if (event.target === logoutOverlay) {
-                cerrarLogoutModal();
-            }
+        if (logoutOverlay && logoutModal) {
+            logoutOverlay.addEventListener('click', function(e) {
+                if (e.target === logoutOverlay) {
+                    cerrarLogoutModal();
+                }
+            });
+            logoutModal.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            logoutModal.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    cerrarLogoutModal();
+                }
+            });
         }
     </script>
 
@@ -573,7 +584,7 @@
     </script>
 
     <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

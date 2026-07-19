@@ -92,16 +92,16 @@
   <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
     <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div>
-        <label class="block text-sm font-medium text-[#605952] mb-1">Fecha Inicio</label>
-        <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
+        <label for="id_fecha_inicio" class="block text-sm font-medium text-[#605952] mb-1">Fecha Inicio</label>
+        <input type="date" id="id_fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
       </div>
       <div>
-        <label class="block text-sm font-medium text-[#605952] mb-1">Fecha Fin</label>
-        <input type="date" name="fecha_fin" value="{{ fecha_fin }}" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
+        <label for="id_fecha_fin" class="block text-sm font-medium text-[#605952] mb-1">Fecha Fin</label>
+        <input type="date" id="id_fecha_fin" name="fecha_fin" value="{{ fecha_fin }}" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
       </div>
       <div>
-        <label class="block text-sm font-medium text-[#605952] mb-1">Tipo</label>
-        <select name="tipo" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
+        <label for="id_tipo" class="block text-sm font-medium text-[#605952] mb-1">Tipo</label>
+        <select id="id_tipo" name="tipo" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
           <option value="">Todos</option>
           <option value="deposito" {% if tipo_filtro == 'deposito' %}selected{% endif %}>Depósitos</option>
           <option value="retiro" {% if tipo_filtro == 'retiro' %}selected{% endif %}>Retiros</option>

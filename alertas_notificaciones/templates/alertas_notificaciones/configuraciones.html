@@ -131,11 +131,11 @@
                   <div class="mb-3">
                     <span class="font-medium text-gray-900 block">Críticas</span>
                     <p class="text-xs text-gray-600 mt-1">Saldo bajo, límites excedidos</p>
-                  </div>
-                  <div class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" class="sr-only peer" checked>
+                                 <label for="toggle_critica" class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggle_critica" class="sr-only peer" checked>
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
-                  </div>
+                    <span class="sr-only">Notificaciones Críticas</span>
+                  </label>
                 </div>
 
                 <!-- Advertencias -->
@@ -149,10 +149,11 @@
                     <span class="font-medium text-gray-900 block">Advertencias</span>
                     <p class="text-xs text-gray-600 mt-1">Presupuesto cerca del límite</p>
                   </div>
-                  <div class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" class="sr-only peer" checked>
+                  <label for="toggle_advertencia" class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggle_advertencia" class="sr-only peer" checked>
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
-                  </div>
+                    <span class="sr-only">Notificaciones de Advertencia</span>
+                  </label>
                 </div>
 
                 <!-- Informativas -->
@@ -166,23 +167,24 @@
                     <span class="font-medium text-gray-900 block">Informativas</span>
                     <p class="text-xs text-gray-600 mt-1">Metas alcanzadas, recordatorios</p>
                   </div>
-                  <div class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" class="sr-only peer" checked>
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after-border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                  </div>
+                  <label for="toggle_informativa" class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="toggle_informativa" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <span class="sr-only">Notificaciones Informativas</span>
+                  </label>
                 </div>
               </div>
             </div>
 
             <!-- Frecuencia de resúmenes -->
             <div>
-              <h3 class="font-semibold text-gray-800 mb-4 flex items-center">
+              <label for="frecuencia_resumenes" class="font-semibold text-gray-800 mb-4 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Frecuencia de Resúmenes
-              </h3>
-              <select class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+              </label>
+              <select id="frecuencia_resumenes" class="w-full p-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                 <option value="daily">📅 Diario - Resumen al final del día</option>
                 <option value="weekly" selected>📊 Semanal - Resumen cada domingo</option>
                 <option value="monthly">🗓️ Mensual - Resumen al final del mes</option>
@@ -312,9 +314,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const statsElements = document.querySelectorAll('[data-stat]');
     
     statsElements.forEach(element => {
-      const currentValue = parseInt(element.textContent);
-      // Simular cambio aleatorio pequeño
-      const change = Math.floor(Math.random() * 3) - 1; // -1, 0, o 1
+      const currentValue = Number.parseInt(element.textContent);
+      // Simular cambio aleatorio pequeño usando CSPRNG
+      const randomBuffer = new Uint32Array(1);
+      window.crypto.getRandomValues(randomBuffer);
+      const change = (randomBuffer[0] % 3) - 1; // -1, 0, o 1
       const newValue = Math.max(0, currentValue + change);
       element.textContent = newValue;
     });

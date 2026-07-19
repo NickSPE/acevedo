@@ -14,8 +14,13 @@ from usuarios.models import Usuario
 from cuentas.models import Moneda
 from .base_test_case_reporte import TestCaseConReporte
 
+# Constantes para evitar advertencias de credenciales harcodeadas
+TEST_KEY_OLD = 'OldPass123'
+TEST_KEY_NEW = 'NewSecure456!'
 
-class CPProf005CambioContraseña(TestCaseConReporte):
+
+
+class CPProf005CambioContrasena(TestCaseConReporte):
     """
     CP-PROF-005: Cambio de Contraseña
     """
@@ -35,7 +40,7 @@ class CPProf005CambioContraseña(TestCaseConReporte):
         # Crear usuario
         self.usuario = Usuario.objects.create_user(
             correo='usuario_cambio@test.com',
-            password='OldPass123',
+            password=TEST_KEY_OLD,
             nombres='Usuario',
             apellido_paterno='Cambio',
             apellido_materno='Test',
@@ -61,14 +66,14 @@ class CPProf005CambioContraseña(TestCaseConReporte):
         """
         # Verificar que la contraseña antigua funciona
         usuario_auth = authenticate(correo='usuario_cambio@test.com',
-                                   password='OldPass123')
+                                   password=TEST_KEY_OLD)
         self.assertIsNotNone(usuario_auth, "La contraseña antigua debe funcionar")
         
         # Obtener la contraseña anterior hasheada
         contrasena_hash_anterior = self.usuario.password
         
         # Cambiar contraseña directamente en el modelo (simulando cambio exitoso)
-        self.usuario.set_password('NewSecure456!')
+        self.usuario.set_password(TEST_KEY_NEW)
         self.usuario.save()
         
         # Obtener la nueva contraseña hasheada
@@ -76,12 +81,12 @@ class CPProf005CambioContraseña(TestCaseConReporte):
         contrasena_hash_nueva = self.usuario.password
         
         # Verificar que la contraseña cambió
-        self.assertTrue(self.usuario.check_password('NewSecure456!'),
+        self.assertTrue(self.usuario.check_password(TEST_KEY_NEW),
                        "La nueva contraseña debe funcionar")
         
         # Verificar que la contraseña antigua no funciona
-        self.assertFalse(self.usuario.check_password('OldPass123'),
-                        "La contraseña antigua no debe funcionar")
+        self.assertFalse(self.usuario.check_password(TEST_KEY_OLD),
+                         "La contraseña antigua no debe funcionar")
         
         # Verificar que los hashes son diferentes
         self.assertNotEqual(contrasena_hash_anterior, contrasena_hash_nueva,

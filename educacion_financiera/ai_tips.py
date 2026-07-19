@@ -23,7 +23,8 @@ class FinancialTipsAI:
             print(f"Error inicializando cliente Gemini: {e}")
             self.model = None
     
-    def _generate_prompt(self, category: str, user_context: Optional[Dict] = None) -> str:
+    @staticmethod
+    def _generate_prompt(category: str, user_context: Optional[Dict] = None) -> str:
         """Generar prompt específico para cada categoría"""
         
         base_prompts = {
@@ -105,9 +106,8 @@ class FinancialTipsAI:
         Args:
             category: Categoría de consejos (daily, savings, debt, investment, personalized)
             user_context: Información del usuario para consejos personalizados
-            
-        Returns:
-            Lista de tuplas (emoji, título, descripción)
+            Returns:
+                Lista de tuplas (emoji, título, descripción)
         """
         if not self.model:
             return self._get_fallback_tips(category)
@@ -129,8 +129,9 @@ class FinancialTipsAI:
         except Exception as e:
             print(f"Error generando consejos con IA: {e}")
             return self._get_fallback_tips(category)
-    
-    def _parse_ai_response(self, response_text: str) -> List[tuple]:
+        
+    @staticmethod
+    def _parse_ai_response(response_text: str) -> List[tuple]:
         """Parsear respuesta de IA al formato esperado"""
         tips = []
         lines = response_text.strip().split('\n')
@@ -151,8 +152,9 @@ class FinancialTipsAI:
                     tips.append((emoji, title, description))
         
         return tips[:6]  # Máximo 6 consejos
-    
-    def _get_fallback_tips(self, category: str) -> List[tuple]:
+
+    @staticmethod
+    def _get_fallback_tips(category: str) -> List[tuple]:
         """Consejos de respaldo en caso de error con IA"""
         
         fallback_tips = {
@@ -184,7 +186,7 @@ class FinancialTipsAI:
                 ("📚", "Educación Continua", "Invierte en tu educación financiera primero."),
                 ("💵", "Fondo de Emergencia", "Ten 6 meses de gastos antes de invertir."),
                 ("🐌", "Invierte Gradualmente", "Comienza con montos pequeños y aprende."),
-            ]
+            ],
         }
         
         return fallback_tips.get(category, fallback_tips["daily"])
@@ -208,10 +210,10 @@ def get_ai_tips(category: str, user_context: Optional[Dict] = None) -> List[tupl
     return ai_tips_generator.generate_tips(category, user_context)
 
 
-def get_personalized_tips(user_age_range: str = None, 
-                         employment_status: str = None,
-                         financial_goals: str = None,
-                         experience_level: str = None) -> List[tuple]:
+def get_personalized_tips(user_age_range: Optional[str] = None, 
+                         employment_status: Optional[str] = None,
+                         financial_goals: Optional[str] = None,
+                         experience_level: Optional[str] = None) -> List[tuple]:
     """
     Obtener consejos personalizados basados en información del usuario
     """

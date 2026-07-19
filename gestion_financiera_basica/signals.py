@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=AporteMetaAhorro)
 @prevent_duplicate_signals('aporte_meta_ahorro', timeout=60)
-def notificar_nuevo_aporte(sender, instance, created, **kwargs):
+def notificar_nuevo_aporte(_sender, instance, created, **kwargs):
     """Notifica cuando se realiza un nuevo aporte a una meta de ahorro"""
     if not created:
         return
@@ -88,6 +88,29 @@ def notificar_nuevo_aporte(sender, instance, created, **kwargs):
     )
 
 
+def _es_notificacion_movimiento_duplicada(usuario, cuenta, instance, hace_5_min):
+    from alertas_notificaciones.models import Notificacion
+    existe_notificacion = Notificacion.objects.filter(
+        usuario=usuario,
+        tipo_notificacion__nombre="movimiento_financiero",
+        datos_adicionales__movimiento_id=instance.id,
+        fecha_creacion__gte=hace_5_min
+    ).exists()
+    
+    if existe_notificacion:
+        return True
+    
+    duplicado_por_contenido = Notificacion.objects.filter(
+        usuario=usuario,
+        tipo_notificacion__nombre="movimiento_financiero",
+        datos_adicionales__monto=float(instance.monto),
+        datos_adicionales__movimiento_tipo=instance.tipo,
+        datos_adicionales__cuenta_id=cuenta.id,
+        fecha_creacion__gte=hace_5_min
+    ).exists()
+    return duplicado_por_contenido
+
+
 @receiver(post_save, sender=Movimiento)
 @prevent_duplicate_signals('movimiento_financiero', timeout=60)
 def notificar_movimiento_financiero(sender, instance, created, **kwargs):
@@ -102,35 +125,11 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
     usuario = instance.id_usuario
     cuenta = instance.id_cuenta
     
-    # Verificar si ya existe una notificación para este movimiento (evitar duplicados)
-    from alertas_notificaciones.models import Notificacion
     from datetime import timedelta
-    
-    # Buscar notificaciones duplicadas en los últimos 5 minutos para el mismo movimiento
     hace_5_min = timezone.now() - timedelta(minutes=5)
-    existe_notificacion = Notificacion.objects.filter(
-        usuario=usuario,
-        tipo_notificacion__nombre="movimiento_financiero",
-        datos_adicionales__movimiento_id=instance.id,
-        fecha_creacion__gte=hace_5_min
-    ).exists()
     
-    if existe_notificacion:
-        print(f"⚠️ Ya existe notificación para movimiento ID {instance.id}, saltando...")
-        return
-    
-    # Verificar también por monto, fecha y tipo para evitar duplicados por problemas de timing
-    duplicado_por_contenido = Notificacion.objects.filter(
-        usuario=usuario,
-        tipo_notificacion__nombre="movimiento_financiero",
-        datos_adicionales__monto=float(instance.monto),
-        datos_adicionales__movimiento_tipo=instance.tipo,
-        datos_adicionales__cuenta_id=cuenta.id,
-        fecha_creacion__gte=hace_5_min
-    ).exists()
-    
-    if duplicado_por_contenido:
-        print("⚠️ Ya existe notificación similar para este tipo de movimiento, saltando...")
+    if _es_notificacion_movimiento_duplicada(usuario, cuenta, instance, hace_5_min):
+        print(f"⚠️ Ya existe notificación duplicada para movimiento ID {instance.id}, saltando...")
         return
     
     try:
@@ -195,15 +194,14 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
         
         print("✅ Notificación creada exitosamente")
         
-    except Exception as e:
-        print(f"❌ Error en notificación: {str(e)}")
-        logger.error("Error en notificación de movimiento: %s", e)
+    except Exception:
+        logger.exception("Error en notificación de movimiento")
     else:
         print("⚠️ Movimiento actualizado, no se creó notificación")
 
 
 @receiver(post_save, sender=Cuenta)
-def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
+def notificar_cambio_saldo_cuenta(_sender, instance, created, **kwargs):
     """Notifica sobre cambios importantes en el saldo de una cuenta"""
     if not created:  # Solo para actualizaciones, no creaciones
         usuario = instance.id_usuario
@@ -251,7 +249,7 @@ def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=MetaAhorro)
 @prevent_duplicate_signals('nueva_meta_ahorro', timeout=60)
-def notificar_nueva_meta_ahorro(sender, instance, created, **kwargs):
+def notificar_nueva_meta_ahorro(_sender, instance, created, **_kwargs):
     """Notifica cuando se crea una nueva meta de ahorro"""
     if not created:
         return

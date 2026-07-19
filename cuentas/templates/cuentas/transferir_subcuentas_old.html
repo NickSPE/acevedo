@@ -12,7 +12,8 @@
     }
     
     .transfer-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #667eea;
+        background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 15px;
         padding: 2rem;
         color: white;
@@ -93,7 +94,7 @@
         position: absolute;
         top: 10px;
         right: 10px;
-        background: #667eea;
+        background: #4f46e5;
         color: white;
         border-radius: 50%;
         width: 24px;
@@ -124,7 +125,7 @@
     
     .transfer-arrow {
         font-size: 2.5rem;
-        color: #667eea;
+        color: #4f46e5;
         background: white;
         border-radius: 50%;
         width: 60px;
@@ -169,7 +170,7 @@
     }
     
     .input-group-text {
-        background: #667eea;
+        background-color: #667eea;
         color: white;
         border: none;
         font-weight: 600;
@@ -187,7 +188,8 @@
     }
     
     .summary-card {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        background-color: #28a745;
+        background-image: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;
         border-radius: 12px;
         border: none;
@@ -241,7 +243,8 @@
     }
     
     .saldo-display {
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        background-color: #28a745;
+        background-image: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
@@ -250,7 +253,8 @@
     }
     
     .current-saldo {
-        background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        background-color: #17a2b8;
+        background-image: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
         color: white;
         padding: 0.25rem 0.75rem;
         border-radius: 20px;
@@ -539,123 +543,6 @@
                                 <span class="fw-bold">Subcuentas activas únicamente</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                
-                                {{ form.subcuenta_destino }}
-                                {% if form.subcuenta_destino.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.subcuenta_destino.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Monto -->
-                            <div class="mb-4">
-                                <label for="{{ form.monto.id_for_label }}" class="form-label">
-                                    <i class="fas fa-dollar-sign me-2"></i>Monto a Transferir *
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    {{ form.monto }}
-                                    <button type="button" class="btn btn-outline-secondary" id="btnMaximo" disabled>
-                                        Máximo
-                                    </button>
-                                </div>
-                                {% if form.monto.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.monto.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text">
-                                    Máximo disponible: <span id="maxDisponible">$0.00</span>
-                                </div>
-                            </div>
-
-                            <!-- Descripción -->
-                            <div class="mb-4">
-                                <label for="{{ form.descripcion.id_for_label }}" class="form-label">
-                                    <i class="fas fa-comment me-2"></i>Descripción
-                                </label>
-                                {{ form.descripcion }}
-                                {% if form.descripcion.errors %}
-                                    <div class="text-danger small mt-1">
-                                        {% for error in form.descripcion.errors %}
-                                            <div>{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text">Opcional: describe el motivo de la transferencia</div>
-                            </div>
-
-                            <!-- Resumen -->
-                            <div class="mb-4" id="resumenTransferencia" style="display: none;">
-                                <div class="card summary-card">
-                                    <div class="card-body">
-                                        <h6 class="card-title">
-                                            <i class="fas fa-clipboard-list me-2"></i>
-                                            Resumen de la Transferencia
-                                        </h6>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <small>De:</small>
-                                                <p class="mb-0 fw-bold" id="resumenOrigen">-</p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <small>Hacia:</small>
-                                                <p class="mb-0 fw-bold" id="resumenDestino">-</p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <small>Monto:</small>
-                                                <p class="mb-0 fw-bold" id="resumenMonto">$0.00</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Botones -->
-                            <div class="d-flex justify-content-between">
-                                <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
-                                    <i class="fas fa-times me-2"></i>Cancelar
-                                </a>
-                                <button type="submit" class="btn btn-success" id="btnTransferir" disabled>
-                                    <i class="fas fa-paper-plane me-2"></i>Realizar Transferencia
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Información adicional -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <h6 class="text-muted">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Información importante
-                        </h6>
-                        <ul class="list-unstyled mb-0">
-                            <li><i class="fas fa-check text-success me-2"></i>Las transferencias son instantáneas</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Se registra un historial de todas las transferencias</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Solo puedes transferir el saldo disponible</li>
-                            <li><i class="fas fa-check text-success me-2"></i>Las subcuentas deben estar activas para recibir transferencias</li>
-                        </ul>
                     </div>
                 </div>
             </div>

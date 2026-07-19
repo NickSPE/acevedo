@@ -21,12 +21,16 @@ from .models import Reporte, ConfiguracionReporte
 from cuentas.models import Cuenta, SubCuenta
 from gestion_financiera_basica.models import Movimiento
 
+FORMATO_MES_ANIO = '%b %Y'
+LITERAL_DESCRIPCION = 'Descripción'
+FORMATO_FECHA_ES = '%d/%m/%Y'
+
 @login_required
 @fast_access_pin_verified
 def reports(request):
     """Vista principal de reportes con dashboard interactivo"""
     # Configuración del usuario
-    config, created = ConfiguracionReporte.objects.get_or_create(
+    config, _ = ConfiguracionReporte.objects.get_or_create(
         id_usuario=request.user,
         defaults={'periodo_default': 'mes_actual'}
     )
@@ -219,9 +223,6 @@ def get_periodo_fechas(periodo):
     if periodo == 'semana_actual':
         inicio = hoy - timedelta(days=hoy.weekday())
         fin = inicio + timedelta(days=6)
-    elif periodo == 'mes_actual':
-        inicio = hoy.replace(day=1)
-        fin = (inicio + timedelta(days=32)).replace(day=1) - timedelta(days=1)
     elif periodo == 'trimestre_actual':
         mes_inicio = ((hoy.month - 1) // 3) * 3 + 1
         inicio = hoy.replace(month=mes_inicio, day=1)
@@ -236,7 +237,7 @@ def get_periodo_fechas(periodo):
         fin = hoy
         inicio = hoy - timedelta(days=90)
     else:
-        # Por defecto, mes actual
+        # Por defecto (incluyendo 'mes_actual'), mes actual
         inicio = hoy.replace(day=1)
         fin = (inicio + timedelta(days=32)).replace(day=1) - timedelta(days=1)
     
@@ -247,7 +248,7 @@ def calcular_estadisticas_generales(usuario, fecha_inicio, fecha_fin):
     cuentas = Cuenta.objects.filter(id_usuario=usuario)
     
     # Balance total
-    balance_total = sum([cuenta.saldo_cuenta for cuenta in cuentas])
+    balance_total = sum(cuenta.saldo_cuenta for cuenta in cuentas)
     
     # Total en subcuentas (incluir independientes)
     total_subcuentas = SubCuenta.objects.filter(
@@ -394,7 +395,7 @@ def get_ingresos_vs_egresos(usuario, fecha_inicio, fecha_fin):
         gastos_mes = transacciones_mes.filter(tipo='egreso').aggregate(
             total=Sum('monto'))['total'] or 0
         
-        labels.append(fecha_actual.strftime('%b %Y'))
+        labels.append(fecha_actual.strftime(FORMATO_MES_ANIO))
         ingresos.append(float(ingresos_mes))
         gastos.append(float(gastos_mes))
         
@@ -503,7 +504,7 @@ def get_flujo_mensual(usuario, fecha_inicio, fecha_fin):
         
         flujo_neto = float(ingresos_mes - gastos_mes)
         
-        labels.append(fecha_actual.strftime('%b %Y'))
+        labels.append(fecha_actual.strftime(FORMATO_MES_ANIO))
         values.append(flujo_neto)
         
         # Siguiente mes
@@ -514,7 +515,7 @@ def get_flujo_mensual(usuario, fecha_inicio, fecha_fin):
     
     # Si no hay datos, mostrar al menos el mes actual
     if not labels:
-        labels = [datetime.now().strftime('%b %Y')]
+        labels = [datetime.now().strftime(FORMATO_MES_ANIO)]
         values = [0]
     
     return {
@@ -522,14 +523,14 @@ def get_flujo_mensual(usuario, fecha_inicio, fecha_fin):
         'values': values,
     }
 
-def get_balance_general(usuario, fecha_inicio, fecha_fin):
+def get_balance_general(usuario, _fecha_inicio, _fecha_fin):
     """Obtiene balance general del período"""
     cuentas = Cuenta.objects.filter(id_usuario=usuario)
     
     balance_data = []
     for cuenta in cuentas:
         subcuentas = SubCuenta.objects.filter(id_cuenta=cuenta, activa=True)
-        total_subcuentas = sum([sc.saldo for sc in subcuentas])
+        total_subcuentas = sum(sc.saldo for sc in subcuentas)
         
         balance_data.append({
             'cuenta': cuenta.nombre,
@@ -545,98 +546,90 @@ def get_balance_general(usuario, fecha_inicio, fecha_fin):
     
     return balance_data
 
-def exportar_pdf(reporte, datos):
-    """Exporta reporte a PDF con formato ultra profesional y visualmente atractivo"""
+def _crear_estilos_pdf(styles):
     from reportlab.lib.enums import TA_CENTER
+    return {
+        'title': ParagraphStyle(
+            'UltraTitle', parent=styles['Heading1'], fontSize=28,
+            textColor=colors.HexColor('#2C3E50'), alignment=TA_CENTER,
+            spaceAfter=35, fontName='Helvetica-Bold', leading=32
+        ),
+        'brand': ParagraphStyle(
+            'BrandStyle', parent=styles['Normal'], fontSize=14,
+            textColor=colors.HexColor('#6C5CE7'), alignment=TA_CENTER,
+            spaceBefore=5, spaceAfter=25, fontName='Helvetica-Bold'
+        ),
+        'header': ParagraphStyle(
+            'ProfessionalHeader', parent=styles['Heading2'], fontSize=18,
+            textColor=colors.HexColor('#34495E'), spaceBefore=25,
+            spaceAfter=15, fontName='Helvetica-Bold', borderWidth=0, borderPadding=0
+        ),
+        'subheader': ParagraphStyle(
+            'SubHeader', parent=styles['Heading3'], fontSize=14,
+            textColor=colors.HexColor('#5D6D7E'), spaceBefore=15,
+            spaceAfter=10, fontName='Helvetica-Bold'
+        ),
+        'summary': ParagraphStyle(
+            'SummaryStyle', parent=styles['Normal'], fontSize=11,
+            textColor=colors.HexColor('#2C3E50'), spaceBefore=5,
+            spaceAfter=5, fontName='Helvetica', leading=14
+        ),
+        'security': ParagraphStyle(
+            'SecurityStyle', parent=styles['Normal'], fontSize=8,
+            textColor=colors.HexColor('#95A5A6'), alignment=TA_CENTER, fontName='Helvetica'
+        )
+    }
+
+def _evaluar_egresos(egresos, ingresos):
+    if ingresos <= 0:
+        return 'Controlado'
+    ratio = egresos / ingresos
+    if ratio > 0.8:
+        return 'Alto'
+    elif ratio <= 0.6:
+        return 'Controlado'
+    else:
+        return 'Moderado'
+
+def _evaluar_balance(balance):
+    return 'Excelente' if balance > 0 else 'Déficit'
+
+def _evaluar_diversificacion(labels):
+    n = len(labels)
+    if n >= 3:
+        return 'Alta'
+    elif n == 2:
+        return 'Media'
+    else:
+        return 'Baja'
+
+def _evaluar_diversificacion_texto(labels):
+    n = len(labels)
+    if n >= 4:
+        return 'Excelente'
+    elif n >= 2:
+        return 'Buena'
+    else:
+        return 'Limitada'
+
+def _agregar_encabezado_y_info(story, brand_style, title_style, header_style, reporte):
     from reportlab.graphics.shapes import Drawing, Rect
-    
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(
-        buffer, 
-        pagesize=A4,
-        rightMargin=50, leftMargin=50,
-        topMargin=80, bottomMargin=80
-    )
-    styles = getSampleStyleSheet()
-    story = []
-    
-    # Estilos personalizados ultra profesionales
-    title_style = ParagraphStyle(
-        'UltraTitle',
-        parent=styles['Heading1'],
-        fontSize=28,
-        textColor=colors.HexColor('#2C3E50'),
-        alignment=TA_CENTER,
-        spaceAfter=35,
-        fontName='Helvetica-Bold',
-        leading=32
-    )
-    
-    brand_style = ParagraphStyle(
-        'BrandStyle',
-        parent=styles['Normal'],
-        fontSize=14,
-        textColor=colors.HexColor('#6C5CE7'),
-        alignment=TA_CENTER,
-        spaceBefore=5,
-        spaceAfter=25,
-        fontName='Helvetica-Bold'
-    )
-    
-    header_style = ParagraphStyle(
-        'ProfessionalHeader',
-        parent=styles['Heading2'],
-        fontSize=18,
-        textColor=colors.HexColor('#34495E'),
-        spaceBefore=25,
-        spaceAfter=15,
-        fontName='Helvetica-Bold',
-        borderWidth=0,
-        borderPadding=0
-    )
-    
-    subheader_style = ParagraphStyle(
-        'SubHeader',
-        parent=styles['Heading3'],
-        fontSize=14,
-        textColor=colors.HexColor('#5D6D7E'),
-        spaceBefore=15,
-        spaceAfter=10,
-        fontName='Helvetica-Bold'
-    )
-    
-    summary_style = ParagraphStyle(
-        'SummaryStyle',
-        parent=styles['Normal'],
-        fontSize=11,
-        textColor=colors.HexColor('#2C3E50'),
-        spaceBefore=5,
-        spaceAfter=5,
-        fontName='Helvetica',
-        leading=14
-    )
-    
     # ENCABEZADO ULTRA PROFESIONAL
-    # Crear un rectángulo de fondo para el header
     header_bg = Drawing(500, 60)
     header_bg.add(Rect(0, 0, 500, 60, fillColor=colors.HexColor('#F8F9FA'), strokeColor=None))
     story.append(header_bg)
     story.append(Spacer(1, -50))
     
-    # Logo y brand (simulado con texto estilizado)
     story.append(Paragraph("FINGEST", brand_style))
     story.append(Paragraph("REPORTE FINANCIERO PROFESIONAL", title_style))
     
-    # Línea decorativa
     line_drawing = Drawing(500, 5)
     line_drawing.add(Rect(0, 2, 500, 1, fillColor=colors.HexColor('#6C5CE7'), strokeColor=None))
     story.append(line_drawing)
     story.append(Spacer(1, 20))
     
-    # INFORMACIÓN DEL REPORTE CON DISEÑO PREMIUM
     story.append(Paragraph("INFORMACIÓN DEL REPORTE", header_style))
     
-    # Crear tabla de información más elegante
     info_data = [
         ['Tipo de Reporte:', reporte.get_tipo_reporte_display()],
         ['Fecha de Generación:', reporte.fecha_creacion.strftime('%d de %B de %Y a las %H:%M hrs')],
@@ -649,23 +642,16 @@ def exportar_pdf(reporte, datos):
     
     info_table = Table(info_data, colWidths=[2.8*inch, 4.2*inch])
     info_table.setStyle(TableStyle([
-        # Estilo del encabezado
         ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#E8F4FD')),
         ('BACKGROUND', (1, 0), (1, -1), colors.HexColor('#FFFFFF')),
-        
-        # Bordes y líneas
         ('LINEBELOW', (0, 0), (-1, -1), 0.5, colors.HexColor('#BDC3C7')),
         ('LINEBEFORE', (1, 0), (1, -1), 0.5, colors.HexColor('#BDC3C7')),
         ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#34495E')),
-        
-        # Fuentes y colores
         ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
         ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
         ('FONTSIZE', (0, 0), (-1, -1), 11),
         ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#2C3E50')),
         ('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor('#34495E')),
-        
-        # Alineación y espaciado
         ('ALIGN', (0, 0), (0, -1), 'LEFT'),
         ('ALIGN', (1, 0), (1, -1), 'LEFT'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
@@ -677,376 +663,337 @@ def exportar_pdf(reporte, datos):
     
     story.append(info_table)
     story.append(Spacer(1, 35))
+
+def _agregar_gastos_categoria(story, header_style, subheader_style, summary_style, datos):
+    story.append(Paragraph("ANÁLISIS DETALLADO DE GASTOS POR CATEGORÍA", header_style))
     
-    # Contenido específico según tipo de reporte con diseño ultra premium
-    if reporte.tipo_reporte == 'gastos_categoria' and 'labels' in datos:
-        story.append(Paragraph("ANÁLISIS DETALLADO DE GASTOS POR CATEGORÍA", header_style))
+    total = sum(datos['data'])
+    total_transacciones = sum(datos.get('counts', []))
+    promedio_por_categoria = total / len(datos['labels']) if datos['labels'] else 0
+    
+    summary_data = [
+        ['RESUMEN EJECUTIVO'],
+        [f'Gasto Total: ${total:,.2f} MXN'],
+        [f'Total de Transacciones: {total_transacciones:,}'],
+        [f'Promedio por Categoría: ${promedio_por_categoria:,.2f} MXN'],
+        [f'Categorías Analizadas: {len(datos["labels"])}']
+    ]
+
+    summary_table = Table(summary_data, colWidths=[7*inch])
+    summary_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3498DB')),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#EBF5FF')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#2C3E50')),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, 0), 14),
+        ('FONTSIZE', (0, 1), (-1, -1), 11),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('BOX', (0, 0), (-1, -1), 1.5, colors.HexColor('#3498DB')),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+    ]))
+
+    story.append(summary_table)
+    story.append(Spacer(1, 25))
+
+    story.append(Paragraph("DESGLOSE DETALLADO POR CATEGORÍA", subheader_style))
+
+    gastos_data = [['CATEGORÍA', 'MONTO (MXN)', 'CANTIDAD', 'PORCENTAJE', 'PROMEDIO']]
+
+    for _, (label, monto, count) in enumerate(zip(datos['labels'], datos['data'], datos.get('counts', [0]*len(datos['labels'])))):
+        porcentaje = (monto / total * 100) if total > 0 else 0
+        promedio_item = monto / count if count > 0 else 0
         
-        # Resumen ejecutivo
-        total = sum(datos['data'])
-        total_transacciones = sum(datos.get('counts', []))
-        promedio_por_categoria = total / len(datos['labels']) if datos['labels'] else 0
-        
-        summary_data = [
-            ['RESUMEN EJECUTIVO'],
-            [f'Gasto Total: ${total:,.2f} MXN'],
-            [f'Total de Transacciones: {total_transacciones:,}'],
-            [f'Promedio por Categoría: ${promedio_por_categoria:,.2f} MXN'],
-            [f'Categorías Analizadas: {len(datos["labels"])}']
-        ]
-        
-        summary_table = Table(summary_data, colWidths=[7*inch])
-        summary_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3498DB')),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#EBF5FF')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#2C3E50')),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, 0), 14),
-            ('FONTSIZE', (0, 1), (-1, -1), 11),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('BOX', (0, 0), (-1, -1), 1.5, colors.HexColor('#3498DB')),
-            ('TOPPADDING', (0, 0), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
-        ]))
-        
-        story.append(summary_table)
-        story.append(Spacer(1, 25))
-        
-        # Tabla principal de gastos con diseño premium
-        story.append(Paragraph("DESGLOSE DETALLADO POR CATEGORÍA", subheader_style))
-        
-        gastos_data = [['CATEGORÍA', 'MONTO (MXN)', 'CANTIDAD', 'PORCENTAJE', 'PROMEDIO']]
-        
-        for i, (label, monto, count) in enumerate(zip(datos['labels'], datos['data'], datos.get('counts', [0]*len(datos['labels'])))):
-            porcentaje = (monto / total * 100) if total > 0 else 0
-            promedio_item = monto / count if count > 0 else 0
-            
-            gastos_data.append([
-                label,
-                f"${monto:,.2f}",
-                f"{count:,}",
-                f"{porcentaje:.1f}%",
-                f"${promedio_item:,.2f}"
-            ])
-        
-        # Fila de total con estilo especial
         gastos_data.append([
-            'TOTAL GENERAL', 
-            f"${total:,.2f}", 
-            f"{sum(datos.get('counts', [])):,}", 
-            '100.0%',
-            f"${total/len(datos['labels']) if datos['labels'] else 0:,.2f}"
+            label,
+            f"${monto:,.2f}",
+            f"{count:,}",
+            f"{porcentaje:.1f}%",
+            f"${promedio_item:,.2f}"
         ])
-        
-        gastos_table = Table(gastos_data, colWidths=[2.2*inch, 1.3*inch, 1*inch, 1*inch, 1.2*inch])
-        gastos_table.setStyle(TableStyle([
-            # Encabezado principal
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-            
-            # Filas de datos
-            ('FONTNAME', (0, 1), (-1, -2), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -2), 10),
-            ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
-            ('ALIGN', (0, 1), (0, -1), 'LEFT'),
-            
-            # Fila de total
-            ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#E8F8F5')),
-            ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, -1), (-1, -1), 11),
-            ('TEXTCOLOR', (0, -1), (-1, -1), colors.HexColor('#27AE60')),
-            
-            # Alternancia de colores en filas
-            ('ROWBACKGROUNDS', (0, 1), (-1, -2), [colors.white, colors.HexColor('#F8F9FA')]),
-            
-            # Bordes y líneas
-            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#BDC3C7')),
-            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#2C3E50')),
-            ('LINEABOVE', (0, -1), (-1, -1), 2, colors.HexColor('#27AE60')),
-            
-            # Espaciado
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('TOPPADDING', (0, 0), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
-            ('LEFTPADDING', (0, 0), (-1, -1), 8),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
-        ]))
-        
-        story.append(gastos_table)
-        
-        # Insights automáticos
-        story.append(Spacer(1, 25))
-        story.append(Paragraph("INSIGHTS AUTOMÁTICOS", subheader_style))
-        
-        # Encontrar la categoría con mayor gasto
-        max_index = datos['data'].index(max(datos['data'])) if datos['data'] else 0
-        categoria_mayor = datos['labels'][max_index] if max_index < len(datos['labels']) else 'N/A'
-        porcentaje_mayor = (max(datos['data']) / total * 100) if total > 0 else 0
-        
-        insights = [
-            f"• La categoría '{categoria_mayor}' representa el mayor gasto con {porcentaje_mayor:.1f}% del total",
-            f"• Promedio de gasto por transacción: ${total/total_transacciones if total_transacciones > 0 else 0:,.2f} MXN",
-            f"• Distribución: {len([x for x in datos['data'] if x > promedio_por_categoria])} categorías están por encima del promedio"
-        ]
-        
-        for insight in insights:
-            story.append(Paragraph(insight, summary_style))
-            story.append(Spacer(1, 5))
-        
-    elif reporte.tipo_reporte == 'ingresos_egresos':
-        story.append(Paragraph("ANÁLISIS FINANCIERO: INGRESOS VS EGRESOS", header_style))
-        
-        ingresos = datos['data'][0] if len(datos['data']) > 0 else 0
-        egresos = datos['data'][1] if len(datos['data']) > 1 else 0
-        balance = ingresos - egresos
-        tasa_ahorro = (balance / ingresos * 100) if ingresos > 0 else 0
-        
-        # Dashboard financiero visual
-        dashboard_data = [
-            ['DASHBOARD FINANCIERO EJECUTIVO'],
-            [f'Total de Ingresos: ${ingresos:,.2f} MXN'],
-            [f'Total de Egresos: ${egresos:,.2f} MXN'],
-            [f'Balance Neto: ${balance:,.2f} MXN'],
-            [f'Tasa de Ahorro: {tasa_ahorro:.1f}%'],
-            [f'Ratio de Gastos: {(egresos/ingresos*100) if ingresos > 0 else 0:.1f}%']
-        ]
-        
-        # Color del balance
-        balance_color = colors.HexColor('#27AE60') if balance >= 0 else colors.HexColor('#E74C3C')
-        
-        dashboard_table = Table(dashboard_data, colWidths=[7*inch])
-        dashboard_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#34495E')),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8F9FA')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('TEXTCOLOR', (0, 1), (0, 2), colors.HexColor('#2C3E50')),
-            ('TEXTCOLOR', (0, 3), (0, 3), balance_color),  # Color del balance
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, 0), 14),
-            ('FONTSIZE', (0, 1), (-1, -1), 12),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('BOX', (0, 0), (-1, -1), 1.5, colors.HexColor('#34495E')),
-            ('TOPPADDING', (0, 0), (-1, -1), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-        ]))
-        
-        story.append(dashboard_table)
-        story.append(Spacer(1, 25))
-        
-        # Tabla comparativa detallada
-        story.append(Paragraph("ANÁLISIS COMPARATIVO DETALLADO", subheader_style))
-        
-        ie_data = [
-            ['CONCEPTO', 'MONTO (MXN)', 'PORCENTAJE', 'EVALUACIÓN'],
-            ['Ingresos Totales', f"${ingresos:,.2f}", '100.0%', 'Base de cálculo'],
-            ['Egresos Totales', f"${egresos:,.2f}", f"{(egresos/ingresos*100):.1f}%" if ingresos > 0 else '0.0%', 
-             'Alto' if egresos/ingresos > 0.8 else 'Controlado' if egresos/ingresos <= 0.6 else 'Moderado'],
-            ['Balance Final', f"${balance:,.2f}", f"{(balance/ingresos*100):.1f}%" if ingresos > 0 else '0.0%',
-             'Excelente' if balance > 0 else 'Déficit'],
-        ]
-        
-        ie_table = Table(ie_data, colWidths=[2*inch, 1.8*inch, 1.5*inch, 1.7*inch])
-        ie_table.setStyle(TableStyle([
-            # Encabezado
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-            
-            # Filas de datos
-            ('FONTNAME', (0, 1), (-1, -2), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -2), 10),
-            ('ALIGN', (1, 1), (2, -1), 'CENTER'),
-            ('ALIGN', (0, 1), (0, -1), 'LEFT'),
-            ('ALIGN', (3, 1), (3, -1), 'CENTER'),
-            
-            # Colores especiales para balance
-            ('TEXTCOLOR', (0, -1), (-1, -1), balance_color),
-            ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
-            
-            # Alternancia de colores
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#F8F9FA')]),
-            
-            # Bordes
-            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#BDC3C7')),
-            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#2C3E50')),
-            
-            # Espaciado
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('TOPPADDING', (0, 0), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
-        ]))
-        
-        story.append(ie_table)
-        
-        # Recomendaciones automáticas
-        story.append(Spacer(1, 25))
-        story.append(Paragraph("RECOMENDACIONES FINANCIERAS", subheader_style))
-        
-        recomendaciones = []
-        if balance < 0:
-            recomendaciones.append("URGENTE: Tienes un déficit financiero. Revisa tus gastos y busca reducir egresos.")
-            recomendaciones.append("Elabora un presupuesto detallado para identificar gastos innecesarios.")
-        elif tasa_ahorro < 10:
-            recomendaciones.append("Tu tasa de ahorro es baja. Considera incrementar tus ingresos o reducir gastos.")
-            recomendaciones.append("Meta recomendada: Ahorra al menos el 15-20% de tus ingresos.")
-        else:
-            recomendaciones.append("¡Excelente! Mantienes un balance positivo.")
-            recomendaciones.append("Considera invertir tu excedente para hacer crecer tu patrimonio.")
-        
-        for rec in recomendaciones:
-            story.append(Paragraph(f"• {rec}", summary_style))
-            story.append(Spacer(1, 5))
-        
-    elif reporte.tipo_reporte == 'subcuentas_analisis' and 'labels' in datos:
-        story.append(Paragraph("ANÁLISIS INTEGRAL DE SUBCUENTAS", header_style))
-        
-        # Resumen ejecutivo de subcuentas
-        total_saldo = sum(datos['saldos'])
-        total_cantidad = sum(datos['cantidades'])
-        promedio_general = total_saldo / total_cantidad if total_cantidad > 0 else 0
-        
-        resumen_data = [
-            ['RESUMEN EJECUTIVO DE SUBCUENTAS'],
-            [f'Patrimonio Total: ${total_saldo:,.2f} MXN'],
-            [f'Subcuentas Activas: {total_cantidad}'],
-            [f'Saldo Promedio: ${promedio_general:,.2f} MXN'],
-            [f'Tipos de Cuenta: {len(datos["labels"])}'],
-            [f'Diversificación: {"Alta" if len(datos["labels"]) >= 3 else "Media" if len(datos["labels"]) == 2 else "Baja"}']
-        ]
-        
-        resumen_table = Table(resumen_data, colWidths=[7*inch])
-        resumen_table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#8E44AD')),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F4F2FF')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#2C3E50')),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 0), (-1, 0), 14),
-            ('FONTSIZE', (0, 1), (-1, -1), 11),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('BOX', (0, 0), (-1, -1), 1.5, colors.HexColor('#8E44AD')),
-            ('TOPPADDING', (0, 0), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
-        ]))
-        
-        story.append(resumen_table)
-        story.append(Spacer(1, 25))
-        
-        # Tabla detallada de subcuentas
-        story.append(Paragraph("DESGLOSE DETALLADO POR TIPO DE SUBCUENTA", subheader_style))
-        
-        sc_data = [['TIPO DE SUBCUENTA', 'SALDO TOTAL', 'CANTIDAD', '% DEL TOTAL', 'PROMEDIO']]
-        
-        for i, label in enumerate(datos['labels']):
-            saldo = datos['saldos'][i] if i < len(datos['saldos']) else 0
-            cantidad = datos['cantidades'][i] if i < len(datos['cantidades']) else 0
-            promedio = saldo / cantidad if cantidad > 0 else 0
-            porcentaje = (saldo / total_saldo * 100) if total_saldo > 0 else 0
-            
-            sc_data.append([
-                label,
-                f"${saldo:,.2f}",
-                str(cantidad),
-                f"{porcentaje:.1f}%",
-                f"${promedio:,.2f}"
-            ])
-        
-        # Fila de totales
-        sc_data.append([
-            'TOTAL PATRIMONIAL', 
-            f"${total_saldo:,.2f}", 
-            str(total_cantidad), 
-            '100.0%',
-            f"${promedio_general:,.2f}"
-        ])
-        
-        sc_table = Table(sc_data, colWidths=[2.2*inch, 1.4*inch, 1*inch, 1*inch, 1.2*inch])
-        sc_table.setStyle(TableStyle([
-            # Encabezado
-            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#8E44AD')),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
-            
-            # Filas de datos
-            ('FONTNAME', (0, 1), (-1, -2), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -2), 10),
-            ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
-            ('ALIGN', (0, 1), (0, -1), 'LEFT'),
-            
-            # Fila de total
-            ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#E8F5E8')),
-            ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, -1), (-1, -1), 11),
-            ('TEXTCOLOR', (0, -1), (-1, -1), colors.HexColor('#27AE60')),
-            
-            # Alternancia de colores
-            ('ROWBACKGROUNDS', (0, 1), (-1, -2), [colors.white, colors.HexColor('#F8F9FA')]),
-            
-            # Bordes
-            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#BDC3C7')),
-            ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#8E44AD')),
-            ('LINEABOVE', (0, -1), (-1, -1), 2, colors.HexColor('#27AE60')),
-            
-            # Espaciado
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('TOPPADDING', (0, 0), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
-        ]))
-        
-        story.append(sc_table)
-        
-        # Análisis y recomendaciones
-        story.append(Spacer(1, 25))
-        story.append(Paragraph("ANÁLISIS Y RECOMENDACIONES ESTRATÉGICAS", subheader_style))
-        
-        # Encontrar la subcuenta principal
-        if datos['saldos']:
-            max_saldo_idx = datos['saldos'].index(max(datos['saldos']))
-            subcuenta_principal = datos['labels'][max_saldo_idx]
-            porcentaje_principal = (max(datos['saldos']) / total_saldo * 100) if total_saldo > 0 else 0
-            
-            analisis = [
-                f"• Subcuenta Principal: '{subcuenta_principal}' concentra {porcentaje_principal:.1f}% del patrimonio",
-                f"• Distribución: {'Balanceada' if porcentaje_principal < 60 else 'Concentrada en una subcuenta'}",
-                f"• Diversificación: {'Excelente' if len(datos['labels']) >= 4 else 'Buena' if len(datos['labels']) >= 2 else 'Limitada'}",
-                f"• Saldo promedio por subcuenta: ${promedio_general:,.2f} MXN"
-            ]
-            
-            if porcentaje_principal > 70:
-                analisis.append("• Recomendación: Considera diversificar más tu patrimonio en diferentes subcuentas")
-            elif total_cantidad < 3:
-                analisis.append("• Sugerencia: Podrías beneficiarte de crear subcuentas adicionales para mejor organización")
-            else:
-                analisis.append("• Excelente organización financiera con buena distribución de subcuentas")
-            
-            for insight in analisis:
-                story.append(Paragraph(insight, summary_style))
-                story.append(Spacer(1, 5))
+
+    gastos_data.append([
+        'TOTAL GENERAL', 
+        f"${total:,.2f}", 
+        f"{sum(datos.get('counts', [])):,}", 
+        '100.0%',
+        f"${total/len(datos['labels']) if datos['labels'] else 0:,.2f}"
+    ])
+
+    gastos_table = Table(gastos_data, colWidths=[2.2*inch, 1.3*inch, 1*inch, 1*inch, 1.2*inch])
+    gastos_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTNAME', (0, 1), (-1, -2), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -2), 10),
+        ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
+        ('ALIGN', (0, 1), (0, -1), 'LEFT'),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#E8F8F5')),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, -1), (-1, -1), 11),
+        ('TEXTCOLOR', (0, -1), (-1, -1), colors.HexColor('#27AE60')),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -2), [colors.white, colors.HexColor('#F8F9FA')]),
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#BDC3C7')),
+        ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#2C3E50')),
+        ('LINEABOVE', (0, -1), (-1, -1), 2, colors.HexColor('#27AE60')),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+    ]))
     
-    # PIE DE PÁGINA PROFESIONAL Y BRAND
+    story.append(gastos_table)
+    
+    story.append(Spacer(1, 25))
+    story.append(Paragraph("INSIGHTS AUTOMÁTICOS", subheader_style))
+    
+    max_index = datos['data'].index(max(datos['data'])) if datos['data'] else 0
+    categoria_mayor = datos['labels'][max_index] if max_index < len(datos['labels']) else 'N/A'
+    porcentaje_mayor = (max(datos['data']) / total * 100) if total > 0 else 0
+    
+    insights = [
+        f"• La categoría '{categoria_mayor}' representa el mayor gasto con {porcentaje_mayor:.1f}% del total",
+        f"• Promedio de gasto por transacción: ${total/total_transacciones if total_transacciones > 0 else 0:,.2f} MXN",
+        f"• Distribución: {len([x for x in datos['data'] if x > promedio_por_categoria])} categorías están por encima del promedio"
+    ]
+    
+    for insight in insights:
+        story.append(Paragraph(insight, summary_style))
+        story.append(Spacer(1, 5))
+
+def _agregar_ingresos_egresos(story, header_style, subheader_style, summary_style, datos):
+    story.append(Paragraph("ANÁLISIS FINANCIERO: INGRESOS VS EGRESOS", header_style))
+    
+    ingresos = datos['data'][0] if len(datos['data']) > 0 else 0
+    egresos = datos['data'][1] if len(datos['data']) > 1 else 0
+    balance = ingresos - egresos
+    tasa_ahorro = (balance / ingresos * 100) if ingresos > 0 else 0
+    
+    dashboard_data = [
+        ['DASHBOARD FINANCIERO EJECUTIVO'],
+        [f'Total de Ingresos: ${ingresos:,.2f} MXN'],
+        [f'Total de Egresos: ${egresos:,.2f} MXN'],
+        [f'Balance Neto: ${balance:,.2f} MXN'],
+        [f'Tasa de Ahorro: {tasa_ahorro:.1f}%'],
+        [f'Ratio de Gastos: {(egresos/ingresos*100) if ingresos > 0 else 0:.1f}%']
+    ]
+    
+    balance_color = colors.HexColor('#27AE60') if balance >= 0 else colors.HexColor('#E74C3C')
+    
+    dashboard_table = Table(dashboard_data, colWidths=[7*inch])
+    dashboard_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#34495E')),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8F9FA')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('TEXTCOLOR', (0, 1), (0, 2), colors.HexColor('#2C3E50')),
+        ('TEXTCOLOR', (0, 3), (0, 3), balance_color),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, 0), 14),
+        ('FONTSIZE', (0, 1), (-1, -1), 12),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('BOX', (0, 0), (-1, -1), 1.5, colors.HexColor('#34495E')),
+        ('TOPPADDING', (0, 0), (-1, -1), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+    ]))
+    
+    story.append(dashboard_table)
+    story.append(Spacer(1, 25))
+    
+    story.append(Paragraph("ANÁLISIS COMPARATIVO DETALLADO", subheader_style))
+    
+    ratio_eval = _evaluar_egresos(egresos, ingresos)
+    balance_eval = _evaluar_balance(balance)
+    
+    ie_data = [
+        ['CONCEPTO', 'MONTO (MXN)', 'PORCENTAJE', 'EVALUACIÓN'],
+        ['Ingresos Totales', f"${ingresos:,.2f}", '100.0%', 'Base de cálculo'],
+        ['Egresos Totales', f"${egresos:,.2f}", f"{(egresos/ingresos*100):.1f}%" if ingresos > 0 else '0.0%', ratio_eval],
+        ['Balance Final', f"${balance:,.2f}", f"{(balance/ingresos*100):.1f}%" if ingresos > 0 else '0.0%', balance_eval],
+    ]
+    
+    ie_table = Table(ie_data, colWidths=[2*inch, 1.8*inch, 1.5*inch, 1.7*inch])
+    ie_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTNAME', (0, 1), (-1, -2), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -2), 10),
+        ('ALIGN', (1, 1), (2, -1), 'CENTER'),
+        ('ALIGN', (0, 1), (0, -1), 'LEFT'),
+        ('ALIGN', (3, 1), (3, -1), 'CENTER'),
+        ('TEXTCOLOR', (0, -1), (-1, -1), balance_color),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#F8F9FA')]),
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#BDC3C7')),
+        ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#2C3E50')),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+    ]))
+    
+    story.append(ie_table)
+    
+    story.append(Spacer(1, 25))
+    story.append(Paragraph("RECOMENDACIONES FINANCIERAS", subheader_style))
+    
+    recomendaciones = []
+    if balance < 0:
+        recomendaciones.append("URGENTE: Tienes un déficit financiero. Revisa tus gastos y busca reducir egresos.")
+        recomendaciones.append("Elabora un presupuesto detallado para identificar gastos innecesarios.")
+    elif tasa_ahorro < 10:
+        recomendaciones.append("Tu tasa de ahorro es baja. Considera incrementar tus ingresos o reducir gastos.")
+        recomendaciones.append("Meta recomendada: Ahorra al menos el 15-20% de tus ingresos.")
+    else:
+        recomendaciones.append("¡Excelente! Mantienes un balance positivo.")
+        recomendaciones.append("Considera invertir tu excedente para hacer crecer tu patrimonio.")
+    
+    for rec in recomendaciones:
+        story.append(Paragraph(f"• {rec}", summary_style))
+        story.append(Spacer(1, 5))
+
+def _construir_sc_data(datos, total_saldo, promedio_general):
+    sc_data = [['TIPO DE SUBCUENTA', 'SALDO TOTAL', 'CANTIDAD', '% DEL TOTAL', 'PROMEDIO']]
+    for i, label in enumerate(datos['labels']):
+        saldo = datos['saldos'][i] if i < len(datos['saldos']) else 0
+        skew_val = datos['cantidades'][i] if i < len(datos['cantidades']) else 0
+        promedio = saldo / skew_val if skew_val > 0 else 0
+        porcentaje = (saldo / total_saldo * 100) if total_saldo > 0 else 0
+        
+        sc_data.append([
+            label,
+            f"${saldo:,.2f}",
+            str(skew_val),
+            f"{porcentaje:.1f}%",
+            f"${promedio:,.2f}"
+        ])
+    sc_data.append([
+        'TOTAL PATRIMONIAL', 
+        f"${total_saldo:,.2f}", 
+        str(sum(datos['cantidades'])), 
+        '100.0%',
+        f"${promedio_general:,.2f}"
+    ])
+    return sc_data
+
+def _agregar_recomendaciones_subcuentas(story, datos, total_saldo, promedio_general, summary_style):
+    if not datos['saldos']:
+        return
+    max_saldo_idx = datos['saldos'].index(max(datos['saldos']))
+    subcuenta_principal = datos['labels'][max_saldo_idx]
+    porcentaje_principal = (max(datos['saldos']) / total_saldo * 100) if total_saldo > 0 else 0
+    diversificacion_txt = _evaluar_diversificacion_texto(datos['labels'])
+    
+    analisis = [
+        f"• Subcuenta Principal: '{subcuenta_principal}' concentra {porcentaje_principal:.1f}% del patrimonio",
+        f"• Distribución: {'Balanceada' if porcentaje_principal < 60 else 'Concentrada en una subcuenta'}",
+        f"• Diversificación: {diversificacion_txt}",
+        f"• Saldo promedio por subcuenta: ${promedio_general:,.2f} MXN"
+    ]
+    
+    total_cantidad = sum(datos['cantidades'])
+    if porcentaje_principal > 70:
+        analisis.append("• Recomendación: Considera diversificar más tu patrimonio en diferentes subcuentas")
+    elif total_cantidad < 3:
+        analisis.append("• Sugerencia: Podrías beneficiarte de crear subcuentas adicionales para mejor organización")
+    else:
+        analisis.append("• Excelente organización financiera con buena distribución de subcuentas")
+    
+    for insight in analisis:
+        story.append(Paragraph(insight, summary_style))
+        story.append(Spacer(1, 5))
+
+def _agregar_subcuentas(story, header_style, subheader_style, summary_style, datos):
+    story.append(Paragraph("ANÁLISIS INTEGRAL DE SUBCUENTAS", header_style))
+    
+    total_saldo = sum(datos['saldos'])
+    total_cantidad = sum(datos['cantidades'])
+    promedio_general = total_saldo / total_cantidad if total_cantidad > 0 else 0
+    diversificacion_eval = _evaluar_diversificacion(datos['labels'])
+    
+    resumen_data = [
+        ['RESUMEN EJECUTIVO DE SUBCUENTAS'],
+        [f'Patrimonio Total: ${total_saldo:,.2f} MXN'],
+        [f'Subcuentas Activas: {total_cantidad}'],
+        [f'Saldo Promedio: ${promedio_general:,.2f} MXN'],
+        [f'Tipos de Cuenta: {len(datos["labels"])}'],
+        [f'Diversificación: {diversificacion_eval}']
+    ]
+    
+    resumen_table = Table(resumen_data, colWidths=[7*inch])
+    resumen_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#8E44AD')),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F4F2FF')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#2C3E50')),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, 0), 14),
+        ('FONTSIZE', (0, 1), (-1, -1), 11),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('BOX', (0, 0), (-1, -1), 1.5, colors.HexColor('#8E44AD')),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+    ]))
+    
+    story.append(resumen_table)
+    story.append(Spacer(1, 25))
+    
+    story.append(Paragraph("DESGLOSE DETALLADO POR TIPO DE SUBCUENTA", subheader_style))
+    
+    sc_data = _construir_sc_data(datos, total_saldo, promedio_general)
+    
+    sc_table = Table(sc_data, colWidths=[2.2*inch, 1.4*inch, 1*inch, 1*inch, 1.2*inch])
+    sc_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#8E44AD')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTNAME', (0, 1), (-1, -2), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -2), 10),
+        ('ALIGN', (1, 1), (-1, -1), 'CENTER'),
+        ('ALIGN', (0, 1), (0, -1), 'LEFT'),
+        ('BACKGROUND', (0, -1), (-1, -1), colors.HexColor('#E8F5E8')),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, -1), (-1, -1), 11),
+        ('TEXTCOLOR', (0, -1), (-1, -1), colors.HexColor('#27AE60')),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -2), [colors.white, colors.HexColor('#F8F9FA')]),
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#BDC3C7')),
+        ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#8E44AD')),
+        ('LINEABOVE', (0, -1), (-1, -1), 2, colors.HexColor('#27AE60')),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+    ]))
+    
+    story.append(sc_table)
+    
+    story.append(Spacer(1, 25))
+    story.append(Paragraph("ANÁLISIS Y RECOMENDACIONES ESTRATÉGICAS", subheader_style))
+    
+    _agregar_recomendaciones_subcuentas(story, datos, total_saldo, promedio_general, summary_style)
+
+def _agregar_pie_pagina(story, security_style, reporte):
+    from reportlab.graphics.shapes import Drawing, Rect
     story.append(Spacer(1, 40))
     
-    # Línea separadora elegante
     separator = Drawing(500, 3)
     separator.add(Rect(0, 1, 500, 1, fillColor=colors.HexColor('#6C5CE7'), strokeColor=None))
     story.append(separator)
     story.append(Spacer(1, 20))
     
-    # Información de contacto y legal
     footer_content = [
         ['FinGest - Gestión Financiera Inteligente'],
         ['Soporte: soporte@fingest.com | Tel: +52 (55) 1234-5678'],
@@ -1074,32 +1021,78 @@ def exportar_pdf(reporte, datos):
     
     story.append(footer_table)
     
-    # Marca de agua de seguridad
     story.append(Spacer(1, 10))
-    security_style = ParagraphStyle(
-        'SecurityStyle',
-        parent=styles['Normal'],
-        fontSize=8,
-        textColor=colors.HexColor('#95A5A6'),
-        alignment=TA_CENTER,
-        fontName='Helvetica'
-    )
     story.append(Paragraph("Documento generado con tecnología segura FinGest | ID: " +
                           f"FG-{reporte.id}-{reporte.fecha_creacion.strftime('%Y%m%d%H%M')}", security_style))
 
+def exportar_pdf(reporte, datos):
+    """Exporta reporte a PDF con formato ultra profesional y visualmente atractivo"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer, 
+        pagesize=A4,
+        rightMargin=50, leftMargin=50,
+        topMargin=80, bottomMargin=80
+    )
+    styles = getSampleStyleSheet()
+    story = []
+    
+    custom_styles = _crear_estilos_pdf(styles)
+    
+    _agregar_encabezado_y_info(
+        story, custom_styles['brand'], custom_styles['title'],
+        custom_styles['header'], reporte
+    )
+    
+    if reporte.tipo_reporte == 'gastos_categoria' and 'labels' in datos:
+        _agregar_gastos_categoria(
+            story, custom_styles['header'], custom_styles['subheader'],
+            custom_styles['summary'], datos
+        )
+    elif reporte.tipo_reporte == 'ingresos_egresos':
+        _agregar_ingresos_egresos(
+            story, custom_styles['header'], custom_styles['subheader'],
+            custom_styles['summary'], datos
+        )
+    elif reporte.tipo_reporte == 'subcuentas_analisis' and 'labels' in datos:
+        _agregar_subcuentas(
+            story, custom_styles['header'], custom_styles['subheader'],
+            custom_styles['summary'], datos
+        )
+        
+    _agregar_pie_pagina(story, custom_styles['security'], reporte)
+    
     doc.build(story)
     buffer.seek(0)
-   
-    # Nombre de archivo súper descriptivo
+    
     tipo_clean = reporte.get_tipo_reporte_display().replace(' ', '_').replace('/', '-')
     fecha_str = reporte.fecha_creacion.strftime('%Y%m%d_%H%M')
     filename = f"FinGest_Reporte_{tipo_clean}_{fecha_str}.pdf"
-
+    
     response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
 
-def exportar_reporte_excel(reporte, datos):
+def _ajustar_ancho_columnas(ws):
+    """Ajusta el ancho de las columnas de Excel dinámicamente"""
+    for column in ws.columns:
+        max_length = 0
+        first_cell = column[0]
+        if hasattr(first_cell, 'column_letter'):
+            column_letter = first_cell.column_letter
+        else:
+            continue
+        for cell in column:
+            try:
+                if cell.value and len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except Exception:
+                import logging
+                logging.getLogger(__name__).warning("Error calculando ancho de columna")
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = adjusted_width
+
+def exportar_reporte_excel(reporte, _datos):
     """Exporta reporte a Excel con formato ultra profesional y limpio"""
     from openpyxl import Workbook
     
@@ -1152,7 +1145,7 @@ def exportar_reporte_excel(reporte, datos):
     
     # Headers de transacciones
     row += 4
-    headers = ['Fecha', 'Descripción', 'Tipo', 'Monto', 'Cuenta']
+    headers = ['Fecha', LITERAL_DESCRIPCION, 'Tipo', 'Monto', 'Cuenta']
     for col, header in enumerate(headers, 1):
         cell = ws.cell(row=row, column=col, value=header)
         cell.font = header_font
@@ -1162,11 +1155,11 @@ def exportar_reporte_excel(reporte, datos):
     transacciones = Movimiento.objects.filter(
         id_cuenta__id_usuario=reporte.id_usuario,
         fecha_movimiento__range=[reporte.fecha_inicio, reporte.fecha_fin]
-    ).order_by('-fecha_movimiento')
+    ).select_related('id_cuenta').order_by('-fecha_movimiento')
     
     for transaccion in transacciones:
         row += 1
-        ws[f'A{row}'] = transaccion.fecha_movimiento.strftime('%d/%m/%Y')
+        ws[f'A{row}'] = transaccion.fecha_movimiento.strftime(FORMATO_FECHA_ES)
         ws[f'B{row}'] = transaccion.nombre
         ws[f'C{row}'] = transaccion.tipo.title()
         monto = transaccion.monto if transaccion.tipo == 'ingreso' else -transaccion.monto
@@ -1174,22 +1167,7 @@ def exportar_reporte_excel(reporte, datos):
         ws[f'E{row}'] = transaccion.id_cuenta.nombre
     
     # Ajustar ancho de columnas
-    for column in ws.columns:
-        max_length = 0
-        first_cell = column[0]
-        if hasattr(first_cell, 'column_letter'):
-            column_letter = first_cell.column_letter
-        else:
-            continue
-        for cell in column:
-            try:
-                if cell.value and len(str(cell.value)) > max_length:
-                    max_length = len(str(cell.value))
-            except Exception as e:
-                import logging
-                logging.getLogger(__name__).warning(f"Error calculando ancho de columna: {str(e)}")
-        adjusted_width = min(max_length + 2, 50)
-        ws.column_dimensions[column_letter].width = adjusted_width
+    _ajustar_ancho_columnas(ws)
     
     # Preparar respuesta
     response = HttpResponse(
@@ -1230,7 +1208,7 @@ def exportar_csv(reporte, datos):
     
     # Escribir datos según el tipo de reporte
     if reporte.tipo_reporte == 'ingresos_gastos':
-        writer.writerow([safe_csv_cell('Fecha'), safe_csv_cell('Tipo'), safe_csv_cell('Descripción'), safe_csv_cell('Monto'), safe_csv_cell('Cuenta')])
+        writer.writerow([safe_csv_cell('Fecha'), safe_csv_cell('Tipo'), safe_csv_cell(LITERAL_DESCRIPCION), safe_csv_cell('Monto'), safe_csv_cell('Cuenta')])
         for item in datos.get('transacciones', []):
             writer.writerow([
                 safe_csv_cell(item.fecha_movimiento.strftime('%Y-%m-%d')),
@@ -1258,11 +1236,7 @@ def obtener_fechas_periodo(periodo):
     
     now = timezone.now()
     
-    if periodo == 'mes_actual':
-        fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        ultimo_dia = calendar.monthrange(now.year, now.month)[1]
-        fecha_fin = now.replace(day=ultimo_dia, hour=23, minute=59, second=59)
-    elif periodo == 'ultimo_mes':
+    if periodo == 'ultimo_mes':
         if now.month == 1:
             mes_anterior = now.replace(year=now.year-1, month=12, day=1)
         else:
@@ -1277,7 +1251,7 @@ def obtener_fechas_periodo(periodo):
         fecha_inicio = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
         fecha_fin = now.replace(hour=23, minute=59, second=59)
     else:
-        # Por defecto mes actual
+        # Por defecto mes actual (incluyendo 'mes_actual')
         fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         ultimo_dia = calendar.monthrange(now.year, now.month)[1]
         fecha_fin = now.replace(day=ultimo_dia, hour=23, minute=59, second=59)
@@ -1310,7 +1284,7 @@ def exportar_excel(request):
     ws['A1'].font = Font(bold=True, size=16)
     ws.merge_cells('A1:D1')
     
-    ws['A2'] = f"Período: {fecha_inicio.strftime('%d/%m/%Y')} - {fecha_fin.strftime('%d/%m/%Y')}"
+    ws['A2'] = f"Período: {fecha_inicio.strftime(FORMATO_FECHA_ES)} - {fecha_fin.strftime(FORMATO_FECHA_ES)}"
     ws['A2'].font = Font(bold=True)
     ws.merge_cells('A2:D2')
     
@@ -1350,7 +1324,7 @@ def exportar_excel(request):
     ws.merge_cells(f'A{row}:E{row}')
     
     row += 1
-    headers = ['Fecha', 'Descripción', 'Tipo', 'Cuenta', 'Monto']
+    headers = ['Fecha', LITERAL_DESCRIPCION, 'Tipo', 'Cuenta', 'Monto']
     for col, header in enumerate(headers, 1):
         cell = ws.cell(row=row, column=col, value=header)
         cell.font = header_font
@@ -1360,11 +1334,11 @@ def exportar_excel(request):
     transacciones = Movimiento.objects.filter(
         id_cuenta__id_usuario=request.user,
         fecha_movimiento__range=[fecha_inicio, fecha_fin]
-    ).order_by('-fecha_movimiento')
+    ).select_related('id_cuenta').order_by('-fecha_movimiento')
     
     for transaccion in transacciones:
         row += 1
-        ws[f'A{row}'] = transaccion.fecha_movimiento.strftime('%d/%m/%Y')
+        ws[f'A{row}'] = transaccion.fecha_movimiento.strftime(FORMATO_FECHA_ES)
         ws[f'B{row}'] = transaccion.nombre
         ws[f'C{row}'] = transaccion.tipo.title()
         ws[f'D{row}'] = transaccion.id_cuenta.nombre
@@ -1467,11 +1441,11 @@ def exportar_pdf_simple(request):
         trans_title = Paragraph("<b>TRANSACCIONES RECIENTES</b>", styles['Heading2'])
         story.append(trans_title)
         
-        trans_data = [['Fecha', 'Descripción', 'Tipo', 'Monto']]
+        trans_data = [['Fecha', LITERAL_DESCRIPCION, 'Tipo', 'Monto']]
         
         for transaccion in transacciones:
             trans_data.append([
-                transaccion.fecha_movimiento.strftime('%d/%m/%Y'),
+                transaccion.fecha_movimiento.strftime(FORMATO_FECHA_ES),
                 transaccion.nombre[:30],
                 transaccion.tipo.title(),
                 f"${transaccion.monto:,.2f}"
@@ -1503,94 +1477,108 @@ def exportar_pdf_simple(request):
     
     return response
 
+def procesar_datos_para_template(_tipo_reporte, _datos):
+    """Procesa los datos del reporte para que sean más fáciles de usar en el template"""
+def _procesar_gastos_categoria(datos):
+    total = sum(datos.get('data', []))
+    resultado = []
+    
+    for i, label in enumerate(datos['labels']):
+        monto = datos['data'][i] if i < len(datos['data']) else 0
+        cantidad = datos.get('counts', [])[i] if i < len(datos.get('counts', [])) else 0
+        porcentaje = (monto / total * 100) if total > 0 else 0
+        
+        resultado.append({
+            'categoria': label,
+            'monto': monto,
+            'cantidad': cantidad,
+            'porcentaje': porcentaje
+        })
+    
+    return {
+        'tipo': 'gastos_categoria',
+        'items': resultado,
+        'total': total,
+        'total_cantidad': sum(datos.get('counts', []))
+    }
+
+def _procesar_ingresos_egresos(datos):
+    ingresos = datos['data'][0] if len(datos['data']) > 0 else 0
+    egresos = datos['data'][1] if len(datos['data']) > 1 else 0
+    balance = ingresos - egresos
+    
+    return {
+        'tipo': 'ingresos_egresos',
+        'ingresos': ingresos,
+        'egresos': egresos,
+        'balance': balance,
+        'porcentaje_egresos': (egresos / ingresos * 100) if ingresos > 0 else 0,
+        'porcentaje_balance': (balance / ingresos * 100) if ingresos > 0 else 0
+    }
+
+def _procesar_subcuentas_analisis(datos):
+    resultado = []
+    
+    for i, label in enumerate(datos['labels']):
+        saldo = datos['saldos'][i] if i < len(datos['saldos']) else 0
+        cantidad = datos['cantidades'][i] if i < len(datos['cantidades']) else 0
+        promedio = saldo / cantidad if cantidad > 0 else 0
+        
+        resultado.append({
+            'tipo': label,
+            'saldo': saldo,
+            'cantidad': cantidad,
+            'promedio': promedio
+        })
+    
+    total_saldo = sum(datos['saldos'])
+    total_cantidad = sum(datos['cantidades'])
+    promedio_total = total_saldo / total_cantidad if total_cantidad > 0 else 0
+    
+    return {
+        'tipo': 'subcuentas_analisis',
+        'items': resultado,
+    'total_saldo': total_saldo,
+    'total_cantidad': total_cantidad,
+    'promedio_total': promedio_total
+}
+
+
+
+
+
+def _procesar_flujo_efectivo_por_periodo(datos):
+    resultado = []
+    
+    for i, periodo in enumerate(datos['labels']):
+        ingresos = datos['ingresos'][i] if i < len(datos['ingresos']) else 0
+        egresos = datos['egresos'][i] if i < len(datos['egresos']) else 0
+        balance = ingresos - egresos
+        
+        resultado.append({
+            'periodo': periodo,
+            'ingresos': ingresos,
+            'egresos': egresos,
+            'balance': balance
+        })
+    
+    return {
+        'tipo': 'flujo_efectivo',
+        'items': resultado
+    }
+
 def procesar_datos_para_template(tipo_reporte, datos):
     """Procesa los datos del reporte para que sean más fáciles de usar en el template"""
     if not datos:
         return {}
     
     if tipo_reporte == 'gastos_categoria' and 'labels' in datos:
-        # Crear lista de diccionarios para gastos por categoría
-        total = sum(datos.get('data', []))
-        resultado = []
-        
-        for i, label in enumerate(datos['labels']):
-            monto = datos['data'][i] if i < len(datos['data']) else 0
-            cantidad = datos.get('counts', [])[i] if i < len(datos.get('counts', [])) else 0
-            porcentaje = (monto / total * 100) if total > 0 else 0
-            
-            resultado.append({
-                'categoria': label,
-                'monto': monto,
-                'cantidad': cantidad,
-                'porcentaje': porcentaje
-            })
-        
-        return {
-            'tipo': 'gastos_categoria',
-            'items': resultado,
-            'total': total,
-            'total_cantidad': sum(datos.get('counts', []))
-        }
-    
+        return _procesar_gastos_categoria(datos)
     elif tipo_reporte == 'ingresos_egresos' and 'data' in datos:
-        ingresos = datos['data'][0] if len(datos['data']) > 0 else 0
-        egresos = datos['data'][1] if len(datos['data']) > 1 else 0
-        balance = ingresos - egresos
-        
-        return {
-            'tipo': 'ingresos_egresos',
-            'ingresos': ingresos,
-            'egresos': egresos,
-            'balance': balance,
-            'porcentaje_egresos': (egresos / ingresos * 100) if ingresos > 0 else 0,
-            'porcentaje_balance': (balance / ingresos * 100) if ingresos > 0 else 0
-        }
-    
+        return _procesar_ingresos_egresos(datos)
     elif tipo_reporte == 'subcuentas_analisis' and 'labels' in datos:
-        resultado = []
-        
-        for i, label in enumerate(datos['labels']):
-            saldo = datos['saldos'][i] if i < len(datos['saldos']) else 0
-            cantidad = datos['cantidades'][i] if i < len(datos['cantidades']) else 0
-            promedio = saldo / cantidad if cantidad > 0 else 0
-            
-            resultado.append({
-                'tipo': label,
-                'saldo': saldo,
-                'cantidad': cantidad,
-                'promedio': promedio
-            })
-        
-        total_saldo = sum(datos['saldos'])
-        total_cantidad = sum(datos['cantidades'])
-        promedio_total = total_saldo / total_cantidad if total_cantidad > 0 else 0
-        
-        return {
-            'tipo': 'subcuentas_analisis',
-            'items': resultado,
-            'total_saldo': total_saldo,
-            'total_cantidad': total_cantidad,
-            'promedio_total': promedio_total
-        }
-    
+        return _procesar_subcuentas_analisis(datos)
     elif tipo_reporte == 'flujo_efectivo' and 'labels' in datos:
-        resultado = []
-        
-        for i, periodo in enumerate(datos['labels']):
-            ingresos = datos['ingresos'][i] if i < len(datos['ingresos']) else 0
-            egresos = datos['egresos'][i] if i < len(datos['egresos']) else 0
-            balance = ingresos - egresos
-            
-            resultado.append({
-                'periodo': periodo,
-                'ingresos': ingresos,
-                'egresos': egresos,
-                'balance': balance
-            })
-        
-        return {
-            'tipo': 'flujo_efectivo',
-            'items': resultado
-        }
+        return _procesar_flujo_efectivo_por_periodo(datos)
     
     return {'tipo': 'otros', 'datos_raw': datos}

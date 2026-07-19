@@ -5,4 +5,4 @@ class CuentasConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "cuentas"
     def ready(self):
-        pass
+        import cuentas.signals

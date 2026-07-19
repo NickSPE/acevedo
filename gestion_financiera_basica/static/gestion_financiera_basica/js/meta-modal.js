@@ -230,6 +230,28 @@ class MetaModal {
     btnText.style.display = 'none';
     btnSpinner.style.display = 'inline-flex';
     
+    const outcomes = {
+      successRedirect: () => {
+        this.showSuccess('Meta de ahorro creada correctamente');
+        var response;
+        setTimeout(() => {
+          window.location.href = this.getSafeRedirectUrl(response.url, '/gestion_financiera_basica/savings-goals/');
+        }, 1500);
+      },
+      successDefaultRedirect: () => {
+        this.showSuccess('Meta de ahorro creada correctamente');
+        setTimeout(() => {
+          window.location.href = '/gestion_financiera_basica/savings-goals/';
+        }, 1500);
+      },
+      errorCreate: () => {
+        this.showError('Error al crear la meta de ahorro');
+      },
+      errorConnection: () => {
+        this.showError('Error de conexión. Intenta nuevamente.');
+      }
+    };
+    
     const formData = new FormData(e.target);
     
     try {
@@ -241,25 +263,16 @@ class MetaModal {
         }
       });
 
-      if (response.redirected || response.ok) {
-        this.showSuccess('Meta de ahorro creada correctamente');
-        setTimeout(() => {
-          window.location.href = this.getSafeRedirectUrl(response.url, '/gestion_financiera_basica/savings-goals/');
-        }, 1500);
-      } else {
-        const text = await response.text();
-        if (text.includes('error') || text.includes('Error')) {
-          this.showError('Error al crear la meta de ahorro');
-        } else {
-          this.showSuccess('Meta de ahorro creada correctamente');
-          setTimeout(() => {
-            window.location.href = '/gestion_financiera_basica/savings-goals/';
-          }, 1500);
-        }
-      }
+      const key = (response.redirected || response.ok)
+        ? 'successRedirect'
+        : (await response.text()).toLowerCase().includes('error')
+          ? 'errorCreate'
+          : 'successDefaultRedirect';
+
+      outcomes[key]();
     } catch (error) {
       console.error('Error:', error);
-      this.showError('Error de conexión. Intenta nuevamente.');
+      outcomes.errorConnection();
     } finally {
       submitBtn.disabled = false;
       btnText.style.display = 'inline';

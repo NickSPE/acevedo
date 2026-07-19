@@ -104,7 +104,6 @@ class SignalDecoratorsTestCase(TestCase):
         with patch('alertas_notificaciones.signal_decorators.SignalLock') as mock_signal_lock:
             decorated_func = prevent_duplicate_signals("dummy_signal")(mock_receiver)
             
-            # created=False
             decorated_func(sender=None, instance=self.mock_instance, created=False)
             
             mock_receiver.assert_called_once_with(None, self.mock_instance, False)

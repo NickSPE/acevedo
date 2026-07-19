@@ -45,7 +45,6 @@ class FastAccessPinVerifiedDecoratorTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_pin_login_not_validated_redirects(self):
-        from django.shortcuts import redirect
         from django.urls import reverse
 
         request = self.factory.get('/test/')

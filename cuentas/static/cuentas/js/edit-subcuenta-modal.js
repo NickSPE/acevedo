@@ -84,6 +84,33 @@ class EditSubcuentaModal {
     
     const tipoLabel = tipoSubcuenta === 'personal' ? 'Personal' : 'Negocio';
     
+    const categories = [
+      { value: 'ahorros', display: 'Ahorros' },
+      { value: 'emergencia', display: 'Fondo de Emergencia' },
+      { value: 'gastos_fijos', display: 'Gastos Fijos' },
+      { value: 'gastos_variables', display: 'Gastos Variables' },
+      { value: 'entretenimiento', display: 'Entretenimiento' },
+      { value: 'viajes', display: 'Viajes' },
+      { value: 'educacion', display: 'Educación' },
+      { value: 'salud', display: 'Salud' },
+      { value: 'familia', display: 'Familia' },
+      { value: 'inversion', display: 'Inversiones' },
+      { value: 'otros', display: 'Otros' },
+      { value: 'tienda_fisica', display: 'Tienda Física' },
+      { value: 'tienda_online', display: 'Tienda Online' },
+      { value: 'servicios_profesionales', display: 'Servicios Profesionales' },
+      { value: 'freelance', display: 'Trabajo Freelance' },
+      { value: 'negocio_propio', display: 'Negocio Propio' },
+      { value: 'ingresos_pasivos', display: 'Ingresos Pasivos' },
+      { value: 'ventas_productos', display: 'Ventas de Productos' },
+      { value: 'consultoria', display: 'Consultoría' },
+      { value: 'alquiler_propiedades', display: 'Alquiler de Propiedades' }
+    ];
+    
+    const optionsHTML = categories.map(cat => 
+      `<option value="${cat.value}" ${tipo === cat.value ? 'selected' : ''}>${cat.display}</option>`
+    ).join('\n');
+
     const modalHTML = `
       <div class="edit-subcuenta-modal-backdrop"></div>
       <div class="edit-subcuenta-modal-container">
@@ -145,26 +172,7 @@ class EditSubcuentaModal {
                 required
                 class="w-full px-4 py-2.5 border border-[#E5E1DD] rounded-lg focus:ring-2 focus:ring-[#227C91] focus:border-transparent outline-none text-[#605952]">
                 <option value="">Selecciona una categoría</option>
-                <option value="ahorros" ${tipo === 'ahorros' ? 'selected' : ''}>Ahorros</option>
-                <option value="emergencia" ${tipo === 'emergencia' ? 'selected' : ''}>Fondo de Emergencia</option>
-                <option value="gastos_fijos" ${tipo === 'gastos_fijos' ? 'selected' : ''}>Gastos Fijos</option>
-                <option value="gastos_variables" ${tipo === 'gastos_variables' ? 'selected' : ''}>Gastos Variables</option>
-                <option value="entretenimiento" ${tipo === 'entretenimiento' ? 'selected' : ''}>Entretenimiento</option>
-                <option value="viajes" ${tipo === 'viajes' ? 'selected' : ''}>Viajes</option>
-                <option value="educacion" ${tipo === 'educacion' ? 'selected' : ''}>Educación</option>
-                <option value="salud" ${tipo === 'salud' ? 'selected' : ''}>Salud</option>
-                <option value="familia" ${tipo === 'familia' ? 'selected' : ''}>Familia</option>
-                <option value="inversion" ${tipo === 'inversion' ? 'selected' : ''}>Inversiones</option>
-                <option value="otros" ${tipo === 'otros' ? 'selected' : ''}>Otros</option>
-                <option value="tienda_fisica" ${tipo === 'tienda_fisica' ? 'selected' : ''}>Tienda Física</option>
-                <option value="tienda_online" ${tipo === 'tienda_online' ? 'selected' : ''}>Tienda Online</option>
-                <option value="servicios_profesionales" ${tipo === 'servicios_profesionales' ? 'selected' : ''}>Servicios Profesionales</option>
-                <option value="freelance" ${tipo === 'freelance' ? 'selected' : ''}>Trabajo Freelance</option>
-                <option value="negocio_propio" ${tipo === 'negocio_propio' ? 'selected' : ''}>Negocio Propio</option>
-                <option value="ingresos_pasivos" ${tipo === 'ingresos_pasivos' ? 'selected' : ''}>Ingresos Pasivos</option>
-                <option value="ventas_productos" ${tipo === 'ventas_productos' ? 'selected' : ''}>Ventas de Productos</option>
-                <option value="consultoria" ${tipo === 'consultoria' ? 'selected' : ''}>Consultoría</option>
-                <option value="alquiler_propiedades" ${tipo === 'alquiler_propiedades' ? 'selected' : ''}>Alquiler de Propiedades</option>
+                ${optionsHTML}
               </select>
             </div>
  
@@ -239,10 +247,29 @@ class EditSubcuentaModal {
         body: formData
       });
 
-      if (response.ok) {
-        const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get('content-type') || '';
+      const handlers = {
+        'application/json': async (res) => res.json(),
+        'text/html': async (res) => res.text(),
+        'text/plain': async (res) => res.text()
+      };
+      const handlerKey = Object.keys(handlers).find(key => contentType.includes(key));
+      const result = handlerKey ? await handlers[handlerKey](response) : null;
+
+      if (response.ok && handlerKey) {
+        return result;
+      }
+      return result;
+    } catch (error) {
+      throw error;
+    } finally {
+      spinner.style.display = 'none';
+      btnText.style.display = '';
+      submitBtn.disabled = false;
+    }
+  }
         
-        if (contentType && contentType.includes('application/json')) {
+        if (contentType?.includes('application/json')) {
           const data = await response.json();
           if (data.success) {
             this.showSuccess();
@@ -310,8 +337,8 @@ class EditSubcuentaModal {
     container.style.transform = 'translateY(-20px)';
     
     setTimeout(() => {
-      if (this.modal && this.modal.parentNode) {
-        this.modal.parentNode.removeChild(this.modal);
+      if (this.modal) {
+        this.modal.remove();
       }
       this.modal = null;
       document.removeEventListener('keydown', this.escHandler);

@@ -28,7 +28,7 @@ class TransferModal {
             const cookies = document.cookie.split(';');
             for (let cookie of cookies) {
                 cookie = cookie.trim();
-                if (cookie.substring(0, name.length + 1) === name + '=') {
+                if (cookie.startsWith(name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
                 }
@@ -89,7 +89,8 @@ class TransferModal {
         this.isOpen = true;
         
         // Trigger reflow para activar animación
-        void modal.offsetHeight;
+        const _reflow = modal.offsetHeight;
+        console.log("Reflow triggered: ", _reflow);
         
         // Focus en el formulario
         const form = document.getElementById(this.formId);
@@ -291,12 +292,10 @@ class TransferModal {
                         }
                     }));
                 }, 1500);
+            } else if (data.errors) {
+                this.showFieldErrors(data.errors);
             } else {
-                if (data.errors) {
-                    this.showFieldErrors(data.errors);
-                } else {
-                    this.showError(data.error || 'Error al procesar la transferencia');
-                }
+                this.showError(data.error || 'Error al procesar la transferencia');
             }
         })
         .catch(error => {
@@ -396,7 +395,7 @@ class TransferModal {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof TransferModal !== 'undefined') {
+    if (TransferModal !== undefined) {
         window.transferModal = new TransferModal({
             modalId: 'transferModal',
             formId: 'transferForm',

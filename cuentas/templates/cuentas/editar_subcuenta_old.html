@@ -95,7 +95,7 @@
       
       {% if form.activa %}
       <div class="bg-[#F1F0EE] rounded-lg p-3">
-        <label class="flex items-center cursor-pointer">
+        <label for="{{ form.activa.id_for_label }}" class="flex items-center cursor-pointer">
           {{ form.activa }}
           <span class="ml-2 text-sm text-[#605952]">Subcuenta activa</span>
         </label>

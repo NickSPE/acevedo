@@ -84,12 +84,13 @@
               </div>
             </div>
             <!-- Toggle Switch -->
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only peer" checked>
+            <label for="toggle_alert_1" class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="toggle_alert_1" class="sr-only peer" checked>
               <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+              <span class="sr-only">Activar alerta de saldo bajo</span>
             </label>
           </div>
-
+ 
         <!-- Extended Settings -->
         <div class="mt-6 space-y-6">
           <!-- Notification Channels -->
@@ -108,9 +109,10 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <span class="text-sm font-medium">Correo</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked>
+                <label for="toggle_email_1" class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="toggle_email_1" class="sr-only peer" checked>
                   <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <span class="sr-only">Notificar por correo</span>
                 </label>
               </div>
               <div class="flex items-center gap-3">
@@ -118,16 +120,17 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
                 <span class="text-sm font-medium">Push</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked>
+                <label for="toggle_push_1" class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="toggle_push_1" class="sr-only peer" checked>
                   <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                  <span class="sr-only">Notificar por push</span>
                 </label>
               </div>
             </div>
           </div>
-
+ 
           <hr class="border-t border-gray-200">
-
+ 
           <!-- Specific Settings -->
           <div class="space-y-4">
             <h4 class="text-sm font-semibold">Configuración Específica</h4>
@@ -135,19 +138,19 @@
             <div class="grid gap-4 md:grid-cols-2">
               <!-- Threshold Slider -->
               <div class="space-y-3">
-                <label class="text-sm font-medium">Límite de Saldo Mínimo (S/500)</label>
-                <input type="range" min="0" max="1000" value="500" step="10" 
+                <label for="limite_saldo_1" class="text-sm font-medium">Límite de Saldo Mínimo (S/500)</label>
+                <input type="range" id="limite_saldo_1" min="0" max="1000" value="500" step="10" 
                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                 <div class="flex justify-between text-xs text-gray-500">
                   <span>Min: S/0</span>
                   <span>Max: S/1000</span>
                 </div>
               </div>
-
+ 
               <!-- Frequency Select -->
               <div class="space-y-3">
-                <label class="text-sm font-medium">Frecuencia de Recordatorio</label>
-                <select class="w-full border rounded-lg p-2 text-sm">
+                <label for="frecuencia_recordatorio_1" class="text-sm font-medium">Frecuencia de Recordatorio</label>
+                <select id="frecuencia_recordatorio_1" class="w-full border rounded-lg p-2 text-sm">
                   <option value="daily">📅 Diario</option>
                   <option value="3days">⏰ 3 días antes</option>
                   <option value="weekly">📊 Semanal</option>
@@ -208,169 +211,171 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   // Configurar sliders con valores dinámicos
-  function setupSliders() {
-    const sliders = document.querySelectorAll('input[type="range"]');
-    
-    sliders.forEach(slider => {
-      const updateValue = () => {
-        const value = slider.value;
-        const parent = slider.closest('div');
-        const valueDisplay = parent.querySelector('.font-medium');
-        
-        if (valueDisplay) {
-          if (slider.min === "0" && slider.max === "1000") {
-            valueDisplay.textContent = `S/${value}`;
-          } else if (slider.min === "50" && slider.max === "100") {
-            valueDisplay.textContent = `${value}%`;
-          } else if (slider.min === "100" && slider.max === "5000") {
-            valueDisplay.textContent = `S/${parseInt(value).toLocaleString()}`;
-          }
-        }
-        
-        // Actualizar vista previa
-        updatePreview(slider);
-      };
+// Configurar sliders con valores dinámicos
+function setupSliders() {
+  const sliders = document.querySelectorAll('input[type="range"]');
+  
+  sliders.forEach(slider => {
+    const updateValue = () => {
+      const value = slider.value;
+      const parent = slider.closest('div');
+      const valueDisplay = parent.querySelector('.font-medium');
       
-      slider.addEventListener('input', updateValue);
-      updateValue(); // Inicializar
-    });
-  }
-
-  // Actualizar vista previa según el tipo de alerta
-  function updatePreview(slider) {
-    const card = slider.closest('.bg-white');
-    const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
-    
-    if (!preview) return;
-    
-    const value = slider.value;
-    const previewText = preview.querySelector('p');
-    
-    if (previewText) {
-      if (slider.min === "0" && slider.max === "1000") {
-        // Saldo bajo
-        previewText.textContent = `⚠️ Tu cuenta tiene S/${Math.max(0, value - 50)}, por debajo del límite de S/${value}`;
-      } else if (slider.min === "50" && slider.max === "100") {
-        // Presupuesto
-        previewText.textContent = `⚠️ Has gastado ${value}% de tu presupuesto en Alimentación`;
-      } else if (slider.min === "100" && slider.max === "5000") {
-        // Ingresos
-        previewText.textContent = `💰 Nuevo ingreso registrado: S/${parseInt(value).toLocaleString()} (Salario)`;
+      if (valueDisplay) {
+        if (slider.min === "0" && slider.max === "1000") {
+          valueDisplay.textContent = `S/${value}`;
+        } else if (slider.min === "50" && slider.max === "100") {
+          valueDisplay.textContent = `${value}%`;
+        } else if (slider.min === "100" && slider.max === "5000") {
+          valueDisplay.textContent = `S/${Number.parseInt(value).toLocaleString()}`;
+        }
       }
+      
+      // Actualizar vista previa
+      updatePreview(slider);
+    };
+    
+    slider.addEventListener('input', updateValue);
+    updateValue(); // Inicializar
+  });
+}
+
+// Actualizar vista previa según el tipo de alerta
+function updatePreview(slider) {
+  const card = slider.closest('.bg-white');
+  const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
+  
+  if (!preview) return;
+  
+  const value = slider.value;
+  const previewText = preview.querySelector('p');
+  
+  if (previewText) {
+    if (slider.min === "0" && slider.max === "1000") {
+      // Saldo bajo
+      previewText.textContent = `⚠️ Tu cuenta tiene S/${Math.max(0, value - 50)}, por debajo del límite de S/${value}`;
+    } else if (slider.min === "50" && slider.max === "100") {
+      // Presupuesto
+      previewText.textContent = `⚠️ Has gastado ${value}% de tu presupuesto en Alimentación`;
+    } else if (slider.min === "100" && slider.max === "5000") {
+      // Ingresos
+      previewText.textContent = `💰 Nuevo ingreso registrado: S/${Number.parseInt(value).toLocaleString()} (Salario)`;
     }
   }
+}
 
-  // Manejar toggles de alertas
-  function setupAlertToggles() {
-    const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
-    
-    toggles.forEach(toggle => {
-      toggle.addEventListener('change', function() {
-        const card = this.closest('.bg-white');
-        const isEnabled = this.checked;
-        
-        if (card) {
-          if (isEnabled) {
-            card.style.opacity = '1';
-            card.style.borderColor = '#3B82F6';
-          } else {
-            card.style.opacity = '0.6';
-            card.style.borderColor = '#D1D5DB';
-          }
+// Manejar toggles de alertas
+function setupAlertToggles() {
+  const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+  
+  toggles.forEach(toggle => {
+    toggle.addEventListener('change', function() {
+      const card = this.closest('.bg-white');
+      const isEnabled = this.checked;
+      
+      if (card) {
+        if (isEnabled) {
+          card.style.opacity = '1';
+          card.style.borderColor = '#3B82F6';
+        } else {
+          card.style.opacity = '0.6';
+          card.style.borderColor = '#D1D5DB';
         }
-        
-        showStatusMessage(`Alerta ${isEnabled ? 'activada' : 'desactivada'}`);
-      });
+      }
+      
+      showStatusMessage(`Alerta ${isEnabled ? 'activada' : 'desactivada'}`);
     });
-  }
+  });
+}
 
-  // Manejar botones de prueba
-  function setupTestButtons() {
-    const testButtons = document.querySelectorAll('button:contains("Probar")');
-    
-    testButtons.forEach(button => {
+// Manejar botones de prueba
+function setupTestButtons() {
+  const testButtons = document.querySelectorAll('button:contains("Probar")');
+  
+  testButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const card = this.closest('.bg-white');
+      const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
+      
+      if (preview) {
+        // Simular notificación
+        preview.style.animation = 'pulse 0.5s ease-in-out 2';
+        
+        // Mostrar mensaje temporal
+        const originalText = this.textContent;
+        this.textContent = 'Enviando...';
+        this.disabled = true;
+        
+        setTimeout(() => {
+          this.textContent = originalText;
+          this.disabled = false;
+          showStatusMessage('📱 Notificación de prueba enviada');
+        }, 1500);
+      }
+    });
+  });
+}
+
+// Función para mostrar mensajes de estado
+function showStatusMessage(message) {
+  let statusDiv = document.getElementById('status-message');
+  if (!statusDiv) {
+    statusDiv = document.createElement('div');
+    statusDiv.id = 'status-message';
+    statusDiv.className = 'fixed bottom-4 right-4 px-4 py-2 bg-green-600 text-white rounded-lg shadow-lg transition-all duration-300 transform translate-y-full opacity-0';
+    document.body.appendChild(statusDiv);
+  }
+  
+  statusDiv.textContent = message;
+  statusDiv.style.transform = 'translateY(0)';
+  statusDiv.style.opacity = '1';
+  
+  setTimeout(() => {
+    statusDiv.style.transform = 'translateY(100%)';
+    statusDiv.style.opacity = '0';
+  }, 3000);
+}
+
+// Manejar acciones globales
+function setupGlobalActions() {
+  const buttons = document.querySelectorAll('button');
+  
+  buttons.forEach(button => {
+    if (button.textContent.includes('Activar Todas')) {
       button.addEventListener('click', function() {
-        const card = this.closest('.bg-white');
-        const preview = card.querySelector('.bg-red-50, .bg-orange-50, .bg-green-50, .bg-blue-50');
-        
-        if (preview) {
-          // Simular notificación
-          preview.style.animation = 'pulse 0.5s ease-in-out 2';
-          
-          // Mostrar mensaje temporal
-          const originalText = this.textContent;
-          this.textContent = 'Enviando...';
-          this.disabled = true;
-          
-          setTimeout(() => {
-            this.textContent = originalText;
-            this.disabled = false;
-            showStatusMessage('📱 Notificación de prueba enviada');
-          }, 1500);
-        }
+        const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+        toggles.forEach(toggle => {
+          toggle.checked = true;
+          toggle.dispatchEvent(new Event('change'));
+        });
+        showStatusMessage('✅ Todas las alertas activadas');
       });
-    });
-  }
-
-  // Función para mostrar mensajes de estado
-  function showStatusMessage(message) {
-    let statusDiv = document.getElementById('status-message');
-    if (!statusDiv) {
-      statusDiv = document.createElement('div');
-      statusDiv.id = 'status-message';
-      statusDiv.className = 'fixed bottom-4 right-4 px-4 py-2 bg-green-600 text-white rounded-lg shadow-lg transition-all duration-300 transform translate-y-full opacity-0';
-      document.body.appendChild(statusDiv);
+    } else if (button.textContent.includes('Desactivar Todas')) {
+      button.addEventListener('click', function() {
+        const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
+        toggles.forEach(toggle => {
+          toggle.checked = false;
+          toggle.dispatchEvent(new Event('change'));
+        });
+        showStatusMessage('❌ Todas las alertas desactivadas');
+      });
+    } else if (button.textContent.includes('Guardar Configuración')) {
+      button.addEventListener('click', function() {
+        const originalText = this.textContent;
+        this.textContent = 'Guardando...';
+        this.disabled = true;
+        
+        setTimeout(() => {
+          this.textContent = originalText;
+          this.disabled = false;
+          showStatusMessage('💾 Configuración guardada exitosamente');
+        }, 2000);
+      });
     }
-    
-    statusDiv.textContent = message;
-    statusDiv.style.transform = 'translateY(0)';
-    statusDiv.style.opacity = '1';
-    
-    setTimeout(() => {
-      statusDiv.style.transform = 'translateY(100%)';
-      statusDiv.style.opacity = '0';
-    }, 3000);
-  }
+  });
+}
 
-  // Manejar acciones globales
-  function setupGlobalActions() {
-    const buttons = document.querySelectorAll('button');
-    
-    buttons.forEach(button => {
-      if (button.textContent.includes('Activar Todas')) {
-        button.addEventListener('click', function() {
-          const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
-          toggles.forEach(toggle => {
-            toggle.checked = true;
-            toggle.dispatchEvent(new Event('change'));
-          });
-          showStatusMessage('✅ Todas las alertas activadas');
-        });
-      } else if (button.textContent.includes('Desactivar Todas')) {
-        button.addEventListener('click', function() {
-          const toggles = document.querySelectorAll('input[type="checkbox"]:not([class*="rounded"])');
-          toggles.forEach(toggle => {
-            toggle.checked = false;
-            toggle.dispatchEvent(new Event('change'));
-          });
-          showStatusMessage('❌ Todas las alertas desactivadas');
-        });
-      } else if (button.textContent.includes('Guardar Configuración')) {
-        button.addEventListener('click', function() {
-          const originalText = this.textContent;
-          this.textContent = 'Guardando...';
-          this.disabled = true;
-          
-          setTimeout(() => {
-            this.textContent = originalText;
-            this.disabled = false;
-            showStatusMessage('💾 Configuración guardada exitosamente');
-          }, 2000);
-        });
-      }
-    });
-  }
-
+document.addEventListener('DOMContentLoaded', function() {
   // Inicializar todas las funcionalidades
   setupSliders();
   setupAlertToggles();

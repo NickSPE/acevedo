@@ -16,8 +16,8 @@ def get_nombre_mes_espanol(fecha):
         9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"
     }
     mes_numero = fecha.month
-    año = fecha.year
-    return f"{meses_espanol[mes_numero]} {año}"
+    anio = fecha.year
+    return f"{meses_espanol[mes_numero]} {anio}"
 
 def generar_consejos_dinamicos(goals, promedio_progreso, metas_completadas):
     """Genera consejos dinámicos basados en el progreso del usuario"""
@@ -127,7 +127,7 @@ def generar_consejos_dinamicos(goals, promedio_progreso, metas_completadas):
     ]
     
     # Agregar un consejo motivacional aleatorio
-    consejos.append(secrets.SystemRandom().choice(consejos_motivacionales))
+    consejos.append(secrets.choice(consejos_motivacionales))
     
     return consejos
 
@@ -169,11 +169,11 @@ def savings_goals(request):
 
     # Calcular estadísticas para consejos personalizados
     porcentaje_total = (float(total_ahorrado) / float(total_objetivo) * 100) if total_objetivo > 0 else 0
-    promedio_progreso = sum([goal['porcentaje_num'] for goal in goals]) / len(goals) if goals else 0
-    
+    promedio_progreso = sum(goal['porcentaje_num'] for goal in goals) / len(goals) if goals else 0
+
     # Generar consejos dinámicos basados en el progreso
     tips_dinamicos = generar_consejos_dinamicos(goals, promedio_progreso, metas_completadas)
-    
+
     # Consejos estáticos base
     tips_base = [
         ("📂", "Regla 50/30/20", "Destina 50% de ingresos a necesidades, 30% a gustos, y 20% a ahorros."),

@@ -13,6 +13,8 @@ django.setup()
 from educacion_financiera.models import CursoExterno
 
 
+IDIOMA_ESP = 'Español'
+
 def populate_courses():
     """Poblar la base de datos con cursos externos de ejemplo"""
     
@@ -26,7 +28,7 @@ def populate_courses():
             'imagen_url': 'https://img.youtube.com/vi/0lMDd6iX85c/maxresdefault.jpg',
             'duracion_estimada': '8 horas',
             'instructor': 'Finanzas y Proyectos',
-            'idioma': 'Español',
+            'idioma': IDIOMA_ESP,
             'gratis': True,
             'orden': 1,
         },
@@ -38,19 +40,19 @@ def populate_courses():
             'url_externa': 'https://www.youtube.com/playlist?list=PLqBLmGEGTI4cjsHiQY-e6BuQGPe0Q_UwQ',
             'duracion_estimada': '4 horas',
             'instructor': 'Platzi',
-            'idioma': 'Español',
+            'idioma': IDIOMA_ESP,
             'gratis': True,
             'orden': 2,
         },
         {
             'titulo': 'Presupuesto Familiar Efectivo',
-            'descripcion': 'Aprende a crear y mantener un presupuesto familiar que realmente funcione.',
+            'descripcion': 'Aprende a crear and mantener un presupuesto familiar que realmente funcione.',
             'nivel': 'basico',
             'plataforma': 'youtube',
             'url_externa': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
             'duracion_estimada': '2 horas',
             'instructor': 'Finanzas Prácticas',
-            'idioma': 'Español',
+            'idioma': IDIOMA_ESP,
             'gratis': True,
             'orden': 3,
         },
@@ -62,7 +64,7 @@ def populate_courses():
             'url_externa': 'https://www.udemy.com/course/inversiones-principiantes/',
             'duracion_estimada': '6 horas',
             'instructor': 'Academia de Inversión',
-            'idioma': 'Español',
+            'idioma': IDIOMA_ESP,
             'gratis': False,
             'orden': 4,
         },
@@ -74,7 +76,7 @@ def populate_courses():
             'url_externa': 'https://www.youtube.com/playlist?list=PLrAHZDfL-FDSy3rY5e2t6yy6Ss8K4K5wZ',
             'duracion_estimada': '3 horas',
             'instructor': 'Experto en Crédito',
-            'idioma': 'Español',
+            'idioma': IDIOMA_ESP,
             'gratis': True,
             'orden': 5,
         },
@@ -86,7 +88,7 @@ def populate_courses():
             'url_externa': 'https://www.coursera.org/learn/retirement-planning',
             'duracion_estimada': '4 semanas',
             'instructor': 'Universidad Financiera',
-            'idioma': 'Español',
+            'idioma': IDIOMA_ESP,
             'gratis': False,
             'orden': 6,
         },
@@ -98,7 +100,7 @@ def populate_courses():
             'url_externa': 'https://platzi.com/cursos/criptomonedas/',
             'duracion_estimada': '5 horas',
             'instructor': 'Platzi',
-            'idioma': 'Español',
+            'idioma': IDIOMA_ESP,
             'gratis': False,
             'orden': 7,
         },
@@ -110,7 +112,7 @@ def populate_courses():
             'url_externa': 'https://www.youtube.com/playlist?list=PLB6uyJ6wKkPzT5pE-7LFpJ9D2LMh2gTAA',
             'duracion_estimada': '4 horas',
             'instructor': 'Emprende Aprendiendo',
-            'idioma': 'Español',
+            'idioma': IDIOMA_ESP,
             'gratis': True,
             'orden': 8,
         }
