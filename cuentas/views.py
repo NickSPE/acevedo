@@ -137,7 +137,7 @@ def subcuentas_dashboard(request):
 
 @login_required
 @fast_access_pin_verified
-def crear_subcuenta(request, cuenta_id=None):
+def crear_subcuenta(request, _cuenta_id=None):
     """Vista para crear una nueva subcuenta"""
     cuenta_principal = None
     

@@ -1477,7 +1477,7 @@ def exportar_pdf_simple(request):
     
     return response
 
-def procesar_datos_para_template(tipo_reporte, datos):
+def procesar_datos_para_template(_tipo_reporte, _datos):
     """Procesa los datos del reporte para que sean más fáciles de usar en el template"""
 def _procesar_gastos_categoria(datos):
     total = sum(datos.get('data', []))

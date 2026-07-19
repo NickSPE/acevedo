@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=AporteMetaAhorro)
 @prevent_duplicate_signals('aporte_meta_ahorro', timeout=60)
-def notificar_nuevo_aporte(sender, instance, created, **kwargs):
+def notificar_nuevo_aporte(_sender, instance, created, **kwargs):
     """Notifica cuando se realiza un nuevo aporte a una meta de ahorro"""
     if not created:
         return
@@ -203,7 +203,7 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Cuenta)
-def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
+def notificar_cambio_saldo_cuenta(_sender, instance, created, **kwargs):
     """Notifica sobre cambios importantes en el saldo de una cuenta"""
     if not created:  # Solo para actualizaciones, no creaciones
         usuario = instance.id_usuario
@@ -251,7 +251,7 @@ def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=MetaAhorro)
 @prevent_duplicate_signals('nueva_meta_ahorro', timeout=60)
-def notificar_nueva_meta_ahorro(sender, instance, created, **kwargs):
+def notificar_nueva_meta_ahorro(_sender, instance, created, **_kwargs):
     """Notifica cuando se crea una nueva meta de ahorro"""
     if not created:
         return
