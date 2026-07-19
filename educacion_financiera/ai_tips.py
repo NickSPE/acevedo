@@ -180,15 +180,13 @@ class FinancialTipsAI:
                 ("🚫", "Parar Nuevas Deudas", "No uses crédito mientras pagas deudas existentes."),
                 ("📝", "Plan de Pagos", "Crea un calendario con fechas y montos específicos."),
             ],
-        }
-        return fallback_tips.get(category, [])
             "investment": [
                 ("🎯", "Diversificación", "No pongas todos los huevos en una canasta."),
                 ("⏰", "Tiempo en Mercado", "El tiempo en el mercado supera al timing del mercado."),
                 ("📚", "Educación Continua", "Invierte en tu educación financiera primero."),
                 ("💵", "Fondo de Emergencia", "Ten 6 meses de gastos antes de invertir."),
                 ("🐌", "Invierte Gradualmente", "Comienza con montos pequeños y aprende."),
-            ]
+            ],
         }
         
         return fallback_tips.get(category, fallback_tips["daily"])
