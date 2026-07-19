@@ -127,23 +127,6 @@ checksum() {
 
 download() {
     local url="$1"
-    local file_name="$2"
-    local output_folder="$3"
-    local output_filename="$4"
-    local checksum_url="$5"
-    local original_folder="$(pwd)"
-
-    cd "$output_folder"
-
-    download_file "$url"
-    checksum "$file_name" "$checksum_url"
-    if [[ "$os_name_arch" = "$LINUX_X86_64" ]] || [[ "$os_name_arch" = "$DARWIN_ARM64" ]]; then
-        mv "$file_name" "$output_filename"
-    fi
-
-    cd "$original_folder"
-}
-
 download_reporter() {
     if [[ "$os_name_arch" = "$LINUX_X86_64" ]] || [[ "$os_name_arch" = "$DARWIN_ARM64" ]]; then
         # OS name lower case
@@ -152,9 +135,9 @@ download_reporter() {
         suffix="assembly.jar"
     fi
     local binary_name="codacy-coverage-reporter-$suffix"
-    local reporter_path=$1
-    local reporter_folder=$2
-    local reporter_filename=$3
+    local reporter_path="$1"
+    local reporter_folder="$2"
+    local reporter_filename="$3"
 
     if [[ ! -f "$reporter_path" ]]
     then
@@ -168,18 +151,6 @@ download_reporter() {
         log "$i" "Codacy reporter $binary_name already in cache"
     fi
 }
-
-is_self_hosted_instance() {
-  case "$CODACY_API_BASE_URL" in
-    https://api.codacy.com*|https://app.codacy.com*|https://app.staging.codacy.org*|https://api.staging.codacy.org*|https://app.dev.codacy.org*|https://api.dev.codacy.org*)
-      false
-      ;;
-    *)
-      true
-      ;;
-  esac
-}
-
 os_name=$(uname)
 os_name_arch=$(uname -sm)
 
