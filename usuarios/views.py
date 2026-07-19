@@ -217,7 +217,8 @@ def _handle_register_submit(request, monedas):
         if 'email_for_verification' in request.session:
             del request.session['email_for_verification']
         
-        return render(request, "usuarios/login.html", {
+        return render(request, "usuarios/login.html", {})
+
 @require_GET
 def Register(request):
     monedas = Moneda.objects.all()

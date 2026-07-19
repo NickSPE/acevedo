@@ -249,6 +249,7 @@ def marcar_todas_leidas(request):
     try:
         count = Notificacion.objects.filter(
             usuario=request.user,
+        )
 @login_required
 @require_POST
 def marcar_notificaciones_leidas(request):
