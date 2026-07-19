@@ -1,0 +1,48 @@
+# ===========================
+# DEPENDENCIAS PRINCIPALES
+# ===========================
+
+# Django y dependencias core
+Django>=4.2.30,<5.3.0
+python-decouple>=3.8
+
+# Base de datos
+psycopg2-binary>=2.9.12  # PostgreSQL adapter (incluye libpq actualizada contra CVE-2021-23222)
+pandas>=2.2.3            # Manipulación de datos (usado en educacion_financiera)
+
+# Procesamiento de imágenes y PDF
+Pillow>=10.4.0           # Para PIL/Image processing (resuelve CVE-2024-28219 y mitigaciones de desbordamiento)
+reportlab>=4.4.10        # Generación de reportes PDF (usado en analisis_reportes)
+matplotlib>=3.10.9       # Generación de gráficos para reportes (backend Agg)
+openpyxl>=3.1.5          # Exportación y estilo de reportes Excel
+
+# Inteligencia Artificial
+google-genai>=1.0.0  # Google Gemini AI (usado en educacion_financiera)
+
+# ===========================
+# DEPENDENCIAS OPCIONALES/DESARROLLO
+# ===========================
+
+# FastAPI y dependencias para external_notifier.py (sistema de notificaciones externo)
+# fastapi>=0.115.11
+# pydantic>=2.10.8
+# google-auth>=2.38.0
+# google-auth-oauthlib>=1.2.1
+# google-auth-httplib2>=0.2.0
+
+# ===========================
+# DEPENDENCIAS DE PRODUCCIÓN
+# ===========================
+
+# Servidor WSGI para producción
+# gunicorn>=23.0.0
+
+# Servir archivos estáticos en producción
+# whitenoise>=6.8.2
+
+# ===========================
+# DEPENDENCIAS PYTHON ESTÁNDAR
+# (Ya incluidas en Python - no instalar)
+# ===========================
+# json, random, decimal, datetime, logging
+# os, sys, pathlib, base64, smtplib

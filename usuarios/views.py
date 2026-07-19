@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+import logging
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate , login
 from django.core.mail import send_mail
+from django.views.decorators.http import require_http_methods
 from django.conf import settings
 
 from django.shortcuts import redirect
@@ -262,45 +264,44 @@ def register_view(request):
     })
 
 
+logger = logging.getLogger(__name__)
+ 
+ 
+@require_GET
 def pagina_verificar_correo(request):
-    print("DEBUG: Entrando a pagina_verificar_correo")
+    logger.debug("Entrando a pagina_verificar_correo")
     data = request.session.get('registro_temp')
-    print(f"DEBUG: Datos de sesión: {data}")
-    
+    logger.debug("Datos de sesión: %s", data)
+ 
     if data and 'correo' in data:
         user_email = data['correo']
-        print(f"DEBUG: Enviando PIN a: {user_email}")
-
+        logger.debug("Enviando PIN a: %s", user_email)
+ 
         PIN = generar_pin()
         request.session['pin_acceso'] = PIN
         request.session['correo_usuario'] = user_email
-        
-        print(f"DEBUG: PIN generado: {PIN}")
-        print(f"DEBUG: EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
-        print(f"DEBUG: DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
-
+ 
+        logger.debug("PIN generado: %s", PIN)
+        logger.debug("EMAIL_HOST_USER: %s", settings.EMAIL_HOST_USER)
+        logger.debug("DEFAULT_FROM_EMAIL: %s", settings.DEFAULT_FROM_EMAIL)
+ 
         try:
             result = send_mail(
                 subject='Tu código de acceso rápido - FinGest',
-                message=f'Tu código de acceso rapido para es: {PIN}',        
+                message=f'Tu código de acceso rapido para es: {PIN}',
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[user_email],
                 fail_silently=False,
             )
-            print(f"DEBUG: Resultado del envío: {result}")
-            print("OK: Email enviado exitosamente")
+            logger.debug("Resultado del envío: %s", result)
+            logger.info("Email enviado exitosamente a %s", user_email)
         except Exception as e:
-            print(f"ERROR al enviar email: {str(e)}")
-            print(f"ERROR: Tipo de error: {type(e).__name__}")
-            import traceback
-            traceback.print_exc()
-
-        return render(request , 'usuarios/validar_correo.html')
+            logger.error("Error al enviar email: %s (%s)", str(e), type(e).__name__, exc_info=True)
+ 
+        return render(request, 'usuarios/validar_correo.html')
     else:
-        print("DEBUG: No hay datos de registro en la sesión")
+        logger.debug("No hay datos de registro en la sesión")
         return redirect('usuarios:register')
-
-
 def verificacion_correo(request):
     print("DEBUG: Entrando a Verificacion_Correo")
     print(f"DEBUG: Método: {request.method}")
@@ -395,9 +396,14 @@ def validar_acceso_rapido(request):
         error_message = "El PIN ingresado es incorrecto."
         return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
 
-def reestablecer_contrasena(request):
-    return None
 
+@require_http_methods(["GET", "POST"])
+def reestablecer_contrasena(request):
+    if request.method == 'POST':
+        # TODO: lógica para procesar el nuevo password
+        return redirect('usuarios:login')
+    
+    return render(request, 'usuarios/reestablecer_contrasena.html')
 
 def _parse_and_validate_pin(request):
     """Extrae y valida el PIN del request. Retorna (pin, error_message)."""
