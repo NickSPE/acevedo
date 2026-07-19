@@ -174,10 +174,9 @@ class NotificationProcessorTestCase(TestCase):
             titulo='Bad', mensaje='Test', categoria='Test',
             estado='pendiente'
         )
-        with patch('alertas_notificaciones.services.logger'):
-            with patch.object(bad_notif, 'save', side_effect=[Exception("DB Error"), None]):
-                NotificationProcessor.procesar_notificacion(bad_notif, self.config)
-                self.assertEqual(bad_notif.estado, 'error')
+        with patch('alertas_notificaciones.services.logger'), patch.object(bad_notif, 'save', side_effect=[Exception("DB Error"), None]):
+            NotificationProcessor.procesar_notificacion(bad_notif, self.config)
+            self.assertEqual(bad_notif.estado, 'error')
 
 
 class EmailServiceTestCase(TestCase):
