@@ -12,9 +12,9 @@ pandas>=2.2.3            # Manipulación de datos (usado en educacion_financiera
 
 # Procesamiento de imágenes y PDF
 Pillow>=10.4.0           # Para PIL/Image processing (resuelve CVE-2024-28219 y mitigaciones de desbordamiento)
-reportlab>=4.4.5         # Generación de reportes PDF
-matplotlib>=3.10.3       # Generación de gráficos y diagramas
-openpyxl>=3.1.5          # Lectura y escritura de archivos Excel
+reportlab>=4.4.10        # Generación de reportes PDF (usado en analisis_reportes)
+matplotlib>=3.10.9       # Generación de gráficos para reportes (backend Agg)
+openpyxl>=3.1.5          # Exportación y estilo de reportes Excel
 
 # Inteligencia Artificial
 google-genai>=1.0.0  # Google Gemini AI (usado en educacion_financiera)
