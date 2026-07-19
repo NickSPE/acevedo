@@ -201,7 +201,7 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Cuenta)
-def notificar_cambio_saldo_cuenta(sender, instance, created, **kwargs):
+def notificar_cambio_saldo_cuenta(_sender, instance, created, **kwargs):
     """Notifica sobre cambios importantes en el saldo de una cuenta"""
     if not created:  # Solo para actualizaciones, no creaciones
         usuario = instance.id_usuario
