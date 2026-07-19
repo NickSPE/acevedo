@@ -84,12 +84,13 @@
               </div>
             </div>
             <!-- Toggle Switch -->
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only peer" checked>
+            <label for="toggle_alert_1" class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="toggle_alert_1" class="sr-only peer" checked>
               <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+              <span class="sr-only">Activar alerta de saldo bajo</span>
             </label>
           </div>
-
+ 
         <!-- Extended Settings -->
         <div class="mt-6 space-y-6">
           <!-- Notification Channels -->
@@ -108,9 +109,10 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <span class="text-sm font-medium">Correo</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked>
+                <label for="toggle_email_1" class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="toggle_email_1" class="sr-only peer" checked>
                   <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <span class="sr-only">Notificar por correo</span>
                 </label>
               </div>
               <div class="flex items-center gap-3">
@@ -118,16 +120,17 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
                 <span class="text-sm font-medium">Push</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" class="sr-only peer" checked>
+                <label for="toggle_push_1" class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="toggle_push_1" class="sr-only peer" checked>
                   <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                  <span class="sr-only">Notificar por push</span>
                 </label>
               </div>
             </div>
           </div>
-
+ 
           <hr class="border-t border-gray-200">
-
+ 
           <!-- Specific Settings -->
           <div class="space-y-4">
             <h4 class="text-sm font-semibold">Configuración Específica</h4>
@@ -135,19 +138,19 @@
             <div class="grid gap-4 md:grid-cols-2">
               <!-- Threshold Slider -->
               <div class="space-y-3">
-                <label class="text-sm font-medium">Límite de Saldo Mínimo (S/500)</label>
-                <input type="range" min="0" max="1000" value="500" step="10" 
+                <label for="limite_saldo_1" class="text-sm font-medium">Límite de Saldo Mínimo (S/500)</label>
+                <input type="range" id="limite_saldo_1" min="0" max="1000" value="500" step="10" 
                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
                 <div class="flex justify-between text-xs text-gray-500">
                   <span>Min: S/0</span>
                   <span>Max: S/1000</span>
                 </div>
               </div>
-
+ 
               <!-- Frequency Select -->
               <div class="space-y-3">
-                <label class="text-sm font-medium">Frecuencia de Recordatorio</label>
-                <select class="w-full border rounded-lg p-2 text-sm">
+                <label for="frecuencia_recordatorio_1" class="text-sm font-medium">Frecuencia de Recordatorio</label>
+                <select id="frecuencia_recordatorio_1" class="w-full border rounded-lg p-2 text-sm">
                   <option value="daily">📅 Diario</option>
                   <option value="3days">⏰ 3 días antes</option>
                   <option value="weekly">📊 Semanal</option>

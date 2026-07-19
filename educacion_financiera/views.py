@@ -11,8 +11,6 @@ import json
 # Views App EDUCACION_FINANCIERA
 
 
-@login_required
-@fast_access_pin_verified
 # Constantes para evitar duplicados de literales
 ERROR_VALORES_INGRESADOS = "Error en los valores ingresados"
 METODO_NO_PERMITIDO = "Método no permitido"
