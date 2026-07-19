@@ -247,8 +247,27 @@ class EditSubcuentaModal {
         body: formData
       });
 
-      if (response.ok) {
-        const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get('content-type') || '';
+      const handlers = {
+        'application/json': async (res) => res.json(),
+        'text/html': async (res) => res.text(),
+        'text/plain': async (res) => res.text()
+      };
+      const handlerKey = Object.keys(handlers).find(key => contentType.includes(key));
+      const result = handlerKey ? await handlers[handlerKey](response) : null;
+
+      if (response.ok && handlerKey) {
+        return result;
+      }
+      return result;
+    } catch (error) {
+      throw error;
+    } finally {
+      spinner.style.display = 'none';
+      btnText.style.display = '';
+      submitBtn.disabled = false;
+    }
+  }
         
         if (contentType?.includes('application/json')) {
           const data = await response.json();
