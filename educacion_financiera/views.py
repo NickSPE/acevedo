@@ -41,6 +41,7 @@ def _calculate_savings(post_data):
             'interest_earned': round(interest_earned, 2),
             'type': 'savings'
         }
+        }
     except Exception:
         return {"error": ERROR_VALORES_INGRESADOS}
 
