@@ -1543,7 +1543,7 @@ def _procesar_subcuentas_analisis(datos):
         'promedio_total': promedio_total
     }
 
-def _procesar_flujo_efectivo(datos):
+def _procesar_flujo_efectivo_periodo(datos):
     resultado = []
     
     for i, periodo in enumerate(datos['labels']):
@@ -1575,6 +1575,6 @@ def procesar_datos_para_template(tipo_reporte, datos):
     elif tipo_reporte == 'subcuentas_analisis' and 'labels' in datos:
         return _procesar_subcuentas_analisis(datos)
     elif tipo_reporte == 'flujo_efectivo' and 'labels' in datos:
-        return _procesar_flujo_efectivo(datos)
+        return _procesar_flujo_efectivo_periodo(datos)
     
     return {'tipo': 'otros', 'datos_raw': datos}

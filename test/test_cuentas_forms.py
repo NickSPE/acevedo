@@ -99,7 +99,7 @@ class DepositoSubCuentaFormTestCase(TestCase):
         form = DepositoSubCuentaForm(data={})
         self.assertFalse(form.is_valid())
 
-    def test_deposito_form_valid(self):
+    def test_deposito_form_valid_monto_50(self):
         form = DepositoSubCuentaForm(data={'monto': '50.00'})
         self.assertTrue(form.is_valid())
 
