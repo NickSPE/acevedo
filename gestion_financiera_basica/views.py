@@ -196,7 +196,6 @@ def savings_goals(request):
             "promedio_progreso": promedio_progreso
         }
     })
-    })
 
 @login_required
 @fast_access_pin_verified
