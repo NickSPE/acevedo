@@ -233,6 +233,7 @@ class MetaModal {
     const outcomes = {
       successRedirect: () => {
         this.showSuccess('Meta de ahorro creada correctamente');
+        var response;
         setTimeout(() => {
           window.location.href = this.getSafeRedirectUrl(response.url, '/gestion_financiera_basica/savings-goals/');
         }, 1500);
