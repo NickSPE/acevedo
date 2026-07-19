@@ -997,36 +997,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Formatear números mientras se escriben
-function formatNumber(input) {
-    let value = input.value.replace(/[^\d.]/g, '');
-    if (value) {
-        const number = parseFloat(value);
-        if (!isNaN(number)) {
-            input.value = number.toLocaleString();
-        }
-    }
-}
-
-// Agregar formateo a inputs numéricos
-document.addEventListener('DOMContentLoaded', function() {
-    const numberInputs = document.querySelectorAll('input[type="number"]');
-    numberInputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.value) {
-                const number = parseFloat(this.value);
-                if (!isNaN(number) && number >= 1000) {
-                    this.dataset.formatted = number.toLocaleString();
-                }
-            }
-        });
-        
-        input.addEventListener('focus', function() {
-            if (this.dataset.formatted) {
-                this.value = this.value.replace(/,/g, '');
-            }
-        });
-    });
-});
 </script>
 {% endblock %}

@@ -17,8 +17,7 @@ def check_onboarding_required(user):
     if user.is_authenticated and not user.onboarding_completed:
         return True
     return False
-
-def Generar_Pin():
+def generar_pin():
     return str(secrets.randbelow(900000) + 100000)  # 6 dígitos
 
 # Constantes para evitar duplicados de literales
@@ -29,7 +28,7 @@ ACCESO_RAPIDO_TEMPLATE = 'usuarios/acceso_rapido.html'
 PIN_LOGIN_TEMPLATE = 'usuarios/pin_login.html'
 USUARIO_NO_ENCONTRADO = 'Usuario no encontrado'
 
-def Login(request):
+def login_view(request):
     # print(f"🔍 DEBUG LOGIN: Método {request.method}, URL: {request.path}") - DESACTIVADO
     
     if request.method == "POST":
@@ -51,26 +50,26 @@ def Login(request):
 
             email_verificado = request.user.email_verificado
             
-            print(f"🔍 DEBUG LOGIN: Email verificado: {email_verificado}")
+            print(f"DEBUG LOGIN: Email verificado: {email_verificado}")
 
             if(email_verificado):
                 # Verificar si necesita onboarding
                 if check_onboarding_required(request.user):
-                    print("🔍 DEBUG LOGIN: Redirigiendo a onboarding")
+                    print("DEBUG LOGIN: Redirigiendo a onboarding")
                     return redirect('usuarios:onboarding')
                 # Ir directamente al dashboard sin requerir PIN
-                print("🔍 DEBUG LOGIN: Redirigiendo a dashboard")
+                print("DEBUG LOGIN: Redirigiendo a dashboard")
                 return redirect(DASHBOARD_URL)
             else:
-                print("🔍 DEBUG LOGIN: Email no verificado, redirigiendo a verificación")
+                print("DEBUG LOGIN: Email no verificado, redirigiendo a verificación")
                 return redirect('usuarios:pagina_verificar_correo')
         else:
-            print("🔍 DEBUG LOGIN: Credenciales inválidas")
+            print("DEBUG LOGIN: Credenciales inválidas")
             return render(request, 'usuarios/login.html' , {
                 "message_error": "Credenciales no validas.",
             })
 
-    print("🔍 DEBUG LOGIN: Mostrando formulario de login")
+    print("DEBUG LOGIN: Mostrando formulario de login")
     return render(request, 'usuarios/login.html')
 
 
@@ -100,12 +99,12 @@ def _handle_register_verification(request):
     correo = request.POST.get('correo')
     nombres = request.POST.get('nombres')
     # Generar y enviar PIN
-    PIN = Generar_Pin()
+    PIN = generar_pin()
     request.session['pin_verification'] = PIN
     request.session['email_for_verification'] = correo
 
-    print(f"🔍 DEBUG: PIN generado para verificación: {PIN}")
-    print(f"🔍 DEBUG: Enviando PIN a: {correo}")
+    print(f"DEBUG: PIN generado para verificación: {PIN}")
+    print(f"DEBUG: Enviando PIN a: {correo}")
 
     try:
         result = send_mail(
@@ -115,7 +114,7 @@ def _handle_register_verification(request):
             recipient_list=[correo],
             fail_silently=False,
         )
-        print(f"🔍 DEBUG: Resultado del envío de verificación: {result}")
+        print(f"DEBUG: Resultado del envío de verificación: {result}")
 
         return JsonResponse({
             'success': True,
@@ -123,7 +122,7 @@ def _handle_register_verification(request):
         })
 
     except Exception as e:
-        print(f"❌ ERROR al enviar email de verificación: {str(e)}")
+        print(f"ERROR al enviar email de verificación: {str(e)}")
         return JsonResponse({
             'success': False,
             'error': f'Error al enviar el código: {str(e)}'
@@ -233,42 +232,39 @@ def _handle_register_submit(request, monedas):
         error = f"Error al crear el usuario: {str(e)}"
         return render(request, REGISTER_TEMPLATE, {"error": error, 'monedas': monedas})
 
-
-@require_GET
-def Register(request):
+def register_post(request):
     monedas = Moneda.objects.all()
+    action = request.POST.get('action')
+    if action == 'send_verification':
+        return _handle_register_verification(request)
+    return _handle_register_submit(request, monedas)
 
+
+def register_view(request):
+    if request.method == 'POST':
+        return register_post(request)
+    monedas = Moneda.objects.all()
     return render(request, REGISTER_TEMPLATE, {
         'monedas': monedas
     })
 
-@require_POST
-def RegisterPost(request):
-    monedas = Moneda.objects.all()
 
-    action = request.POST.get('action')
-    if action == 'send_verification':
-        return _handle_register_verification(request)
-        
-    return _handle_register_submit(request, monedas)
-
-@require_POST
-def Pagina_Verificar_Correo(request):
-    print("🔍 DEBUG: Entrando a Pagina_Verificar_Correo")
+def pagina_verificar_correo(request):
+    print("DEBUG: Entrando a pagina_verificar_correo")
     data = request.session.get('registro_temp')
-    print(f"🔍 DEBUG: Datos de sesión: {data}")
+    print(f"DEBUG: Datos de sesión: {data}")
     
     if data and 'correo' in data:
         user_email = data['correo']
-        print(f"🔍 DEBUG: Enviando PIN a: {user_email}")
+        print(f"DEBUG: Enviando PIN a: {user_email}")
 
-        PIN = Generar_Pin()
+        PIN = generar_pin()
         request.session['pin_acceso'] = PIN
         request.session['correo_usuario'] = user_email
         
-        print(f"🔍 DEBUG: PIN generado: {PIN}")
-        print(f"🔍 DEBUG: EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
-        print(f"🔍 DEBUG: DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
+        print(f"DEBUG: PIN generado: {PIN}")
+        print(f"DEBUG: EMAIL_HOST_USER: {settings.EMAIL_HOST_USER}")
+        print(f"DEBUG: DEFAULT_FROM_EMAIL: {settings.DEFAULT_FROM_EMAIL}")
 
         try:
             result = send_mail(
@@ -278,35 +274,36 @@ def Pagina_Verificar_Correo(request):
                 recipient_list=[user_email],
                 fail_silently=False,
             )
-            print(f"🔍 DEBUG: Resultado del envío: {result}")
-            print("✅ Email enviado exitosamente")
+            print(f"DEBUG: Resultado del envío: {result}")
+            print("OK: Email enviado exitosamente")
         except Exception as e:
-            print(f"❌ ERROR al enviar email: {str(e)}")
-            print(f"❌ Tipo de error: {type(e).__name__}")
+            print(f"ERROR al enviar email: {str(e)}")
+            print(f"ERROR: Tipo de error: {type(e).__name__}")
             import traceback
             traceback.print_exc()
 
         return render(request , 'usuarios/validar_correo.html')
     else:
-        print("🔍 DEBUG: No hay datos de registro en la sesión")
+        print("DEBUG: No hay datos de registro en la sesión")
         return redirect('usuarios:register')
 
-def Verificacion_Correo(request):
-    print("🔍 DEBUG: Entrando a Verificacion_Correo")
-    print(f"🔍 DEBUG: Método: {request.method}")
+
+def verificacion_correo(request):
+    print("DEBUG: Entrando a Verificacion_Correo")
+    print(f"DEBUG: Método: {request.method}")
     
     if(request.method == 'POST'):
         input_pin = ''.join([
             request.POST.get(f'pin{i}', '') for i in range(6)
         ])
         
-        print(f"🔍 DEBUG: PIN ingresado: {input_pin}")
+        print(f"DEBUG: PIN ingresado: {input_pin}")
         
         session_pin = request.session.get('pin_acceso')
-        print(f"🔍 DEBUG: PIN de sesión: {session_pin}")
+        print(f"DEBUG: PIN de sesión: {session_pin}")
         
         if(input_pin == session_pin):
-            print("🔍 DEBUG: PIN correcto, creando usuario...")
+            print("DEBUG: PIN correcto, creando usuario...")
             data = request.session.get('registro_temp')
 
             request.session['pin_validado'] = True
@@ -353,16 +350,16 @@ def Verificacion_Correo(request):
             return render(request , 'usuarios/validar_correo.html' , { 'error_message' : 'PIN incorrecto'})
 
 @login_required
-@require_GET
-def Acceso_Rapido(request):
+def acceso_rapido(request):
+    if request.method == "POST":
+        return validar_acceso_rapido(request)
     return render(request, ACCESO_RAPIDO_TEMPLATE)
 
 @login_required
-@require_POST
-def Validar_Acceso_Rapido(request):
+def validar_acceso_rapido(request):
     user = request.user
     pin_input = request.POST.get('pin_input', '').strip()
-    print(f"🔍 DEBUG ACCESO_RAPIDO: PIN obtenido: '{pin_input}'")
+    print(f"DEBUG ACCESO_RAPIDO: PIN obtenido: '{pin_input}'")
  
     if not pin_input.isdigit() or len(pin_input) != 6:
         error_message = "PIN inválido. Ingrese 6 dígitos numéricos."
@@ -374,8 +371,8 @@ def Validar_Acceso_Rapido(request):
         error_message = USUARIO_NO_ENCONTRADO
         return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
  
-    print(f"🔍 DEBUG ACCESO_RAPIDO: PIN ingresado: '{pin_input}'")
-    print(f"🔍 DEBUG ACCESO_RAPIDO: PIN guardado: '{usuario.pin_acceso_rapido}' (tipo: {type(usuario.pin_acceso_rapido)})")
+    print(f"DEBUG ACCESO_RAPIDO: PIN ingresado: '{pin_input}'")
+    print(f"DEBUG ACCESO_RAPIDO: PIN guardado: '{usuario.pin_acceso_rapido}' (tipo: {type(usuario.pin_acceso_rapido)})")
  
     if usuario.check_pin(pin_input):
         request.session['pin_acceso_rapido_validado'] = True
@@ -385,8 +382,7 @@ def Validar_Acceso_Rapido(request):
         error_message = "El PIN ingresado es incorrecto."
         return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
 
-@require_POST
-def Reestablecer_Contraseña(request):
+def reestablecer_contrasena(request):
     return None
 
 
@@ -626,7 +622,7 @@ def password_reset_request(request):
         result = handler(email, request)
         return JsonResponse(result)
     except Exception as e:
-        print(f"❌ ERROR PASSWORD_RESET: {str(e)}")
+        print(f"ERROR PASSWORD_RESET: {str(e)}")
         import traceback
         traceback.print_exc()
         return JsonResponse({

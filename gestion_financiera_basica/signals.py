@@ -33,7 +33,7 @@ def notificar_nuevo_aporte(_sender, instance, created, **kwargs):
     ).exists()
     
     if existe_notificacion:
-        print("⚠️ Ya existe notificación para este aporte, saltando...")
+        print("WARNING: Ya existe notificacion para este aporte, saltando...")
         return
         
     meta = instance.id_meta_ahorro
@@ -152,11 +152,11 @@ def _obtener_prioridad_movimiento(monto):
 @prevent_duplicate_signals('movimiento_financiero', timeout=60)
 def notificar_movimiento_financiero(sender, instance, created, **kwargs):
     """Notifica cuando se registra un nuevo movimiento financiero"""
-    print(f"🔔 SEÑAL EJECUTADA: Movimiento {instance.tipo} - ${instance.monto} para usuario {instance.id_usuario.nombres}")
-    print(f"🔍 Created: {created}, Sender: {sender.__name__}, ID: {instance.id}")
+    print(f"SIGNAL EXECUTED: Movimiento {instance.tipo} - ${instance.monto} para usuario {instance.id_usuario.nombres}")
+    print(f"Created: {created}, Sender: {sender.__name__}, ID: {instance.id}")
     
     if not created:
-        print("⚠️ Movimiento actualizado, no se creó notificación")
+        print("WARNING: Movimiento actualizado, no se creo notificacion")
         return
     
     usuario = instance.id_usuario
@@ -166,14 +166,14 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
     hace_5_min = timezone.now() - timedelta(minutes=5)
     
     if _es_notificacion_movimiento_duplicada(usuario, cuenta, instance, hace_5_min):
-        print(f"⚠️ Ya existe notificación duplicada para movimiento ID {instance.id}, saltando...")
+        print(f"WARNING: Ya existe notificacion duplicada para movimiento ID {instance.id}, saltando...")
         return
     
     try:
         titulo, mensaje = _obtener_titulo_y_mensaje_movimiento(instance, cuenta, usuario)
         prioridad = _obtener_prioridad_movimiento(instance.monto)
         
-        print(f"🔔 Creando notificación: {titulo}")
+        print("Creando notificacion de movimiento")
         
         # Crear la notificación
         NotificationService.crear_notificacion(
@@ -196,12 +196,12 @@ def notificar_movimiento_financiero(sender, instance, created, **kwargs):
             }
         )
         
-        print("✅ Notificación creada exitosamente")
+        print("OK: Notificacion creada exitosamente")
         
     except Exception:
         logger.exception("Error en notificación de movimiento")
     else:
-        print("⚠️ Movimiento actualizado, no se creó notificación")
+        print("WARNING: Movimiento actualizado, no se creo notificacion")
 
 
 @receiver(post_save, sender=Cuenta)
@@ -271,7 +271,7 @@ def notificar_nueva_meta_ahorro(_sender, instance, created, **_kwargs):
     ).exists()
     
     if existe_notificacion:
-        print("⚠️ Ya existe notificación para esta nueva meta, saltando...")
+        print("WARNING: Ya existe notificacion para esta nueva meta, saltando...")
         return
         
     usuario = instance.id_usuario

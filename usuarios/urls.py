@@ -5,24 +5,24 @@ app_name = 'usuarios'
 
 urlpatterns = [
     # Autenticación básica
-    path('login/', views.Login, name='login'),
-    path('register/', views.Register, name='register'),
-    path('register/new/', views.Register, name='register_new'),  # Alias para el registro simplificado
-    path('register/simple/', views.Register, name='register_simple'),  # URL para el registro simplificado
+    path('login/', views.login_view, name='login'),
+    path('register/', views.register_view, name='register'),
+    path('register/new/', views.register_view, name='register_new'),  # Alias para el registro simplificado
+    path('register/simple/', views.register_view, name='register_simple'),  # URL para el registro simplificado
     
     # Login alternativo
     path('login/pin/', views.pin_login, name='pin_login'),
-    path('acceso-rapido/', views.Acceso_Rapido, name='acceso_rapido'),
+    path('acceso-rapido/', views.acceso_rapido, name='acceso_rapido'),
     
     # Verificación de correo electrónico
-    path('verificar-correo/', views.Pagina_Verificar_Correo, name='pagina_verificar_correo'),
-    path('verificacion-correo/', views.Verificacion_Correo, name='verificacion_correo'),
+    path('verificar-correo/', views.pagina_verificar_correo, name='pagina_verificar_correo'),
+    path('verificacion-correo/', views.verificacion_correo, name='verificacion_correo'),
     
     # Recuperación de contraseña
     path('password-reset/', views.password_reset_request, name='password_reset_request'),
     path('password-reset/modern/', views.password_reset_request, name='password_reset_modern'),
     path('api/recuperar-con-codigo/', views.recuperar_con_codigo, name='recuperar_con_codigo'),
-    path('reestablecer-contrasena/', views.Reestablecer_Contraseña, name='reestablecer_contrasena'),
+    path('reestablecer-contrasena/', views.reestablecer_contrasena, name='reestablecer_contrasena'),
     
     # Onboarding
     path('onboarding/', views.onboarding_view, name='onboarding'),
