@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 from django.shortcuts import redirect
-from django.views.decorators.http import require_http_methods, require_GET
+from django.views.decorators.http import require_GET, require_POST
 
 from cuentas.models import Moneda, Cuenta
 from .models import Usuario
@@ -243,7 +243,7 @@ def Register(request):
         
     return _handle_register_submit(request, monedas)
 
-@require_http_methods(["GET", "POST"])
+@require_POST
 def Pagina_Verificar_Correo(request):
     print("🔍 DEBUG: Entrando a Pagina_Verificar_Correo")
     data = request.session.get('registro_temp')
@@ -387,7 +387,7 @@ def Acceso_Rapido(request):
  
     return render(request , ACCESO_RAPIDO_TEMPLATE)
  
-@require_http_methods(["GET", "POST"])
+@require_POST
 def Reestablecer_Contraseña(request):
     pass
  
@@ -445,7 +445,7 @@ def pin_login(request):
         error_message = "Error al verificar PIN."
         return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
             
-@require_http_methods(["GET", "POST"])
+@require_GET
 def onboarding_view(request):
     """Vista de onboarding para nuevos usuarios"""
     if not request.user.is_authenticated:
@@ -462,7 +462,7 @@ def onboarding_view(request):
     except Exception as e:
         return JsonResponse({"error": f"Vista de onboarding no disponible: {str(e)}"}, status=503)
 
-
+@require_POST
 def complete_onboarding(request):
     """Completar onboarding y actualizar datos del usuario"""
     if not request.user.is_authenticated:
@@ -643,8 +643,13 @@ def password_reset_request(request):
 
     return render(request, 'usuarios/password_reset_modern.html')
 
-@require_http_methods(["GET", "POST"])
+@require_GET
 def recuperar_con_codigo(request):
+    """Vista para recuperación con código - Renderiza formulario para recuperación"""
+    return password_reset_request(request)
+
+@require_POST
+def recuperar_con_codigo_post(request):
     """API para recuperación con código - Alias para password_reset_request"""
     return password_reset_request(request)
 
