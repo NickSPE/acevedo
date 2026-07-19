@@ -506,26 +506,26 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Capital Inicial</label>
-                        <input type="number" name="initial" class="form-input" placeholder="10,000" min="0" step="0.01" required>
+                        <label for="savings_initial" class="form-label">Capital Inicial</label>
+                        <input type="number" id="savings_initial" name="initial" class="form-input" placeholder="10,000" min="0" step="0.01" required>
                         <div class="form-help">Dinero que tienes ahorrado actualmente</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Aporte Mensual</label>
-                        <input type="number" name="monthly" class="form-input" placeholder="500" min="0" step="0.01" required>
+                        <label for="savings_monthly" class="form-label">Aporte Mensual</label>
+                        <input type="number" id="savings_monthly" name="monthly" class="form-input" placeholder="500" min="0" step="0.01" required>
                         <div class="form-help">Cantidad que planeas ahorrar cada mes</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Tasa de Interés Anual (%)</label>
-                        <input type="number" name="rate" class="form-input" placeholder="5.0" min="0" step="0.1" max="100" required>
+                        <label for="savings_rate" class="form-label">Tasa de Interés Anual (%)</label>
+                        <input type="number" id="savings_rate" name="rate" class="form-input" placeholder="5.0" min="0" step="0.1" max="100" required>
                         <div class="form-help">Rendimiento anual esperado</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Período (años)</label>
-                        <input type="number" name="years" class="form-input" placeholder="10" min="1" max="50" required>
+                        <label for="savings_years" class="form-label">Período (años)</label>
+                        <input type="number" id="savings_years" name="years" class="form-input" placeholder="10" min="1" max="50" required>
                         <div class="form-help">Tiempo que planeas ahorrar</div>
                     </div>
                 </div>
@@ -564,20 +564,20 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Monto del Préstamo</label>
-                        <input type="number" name="amount" class="form-input" placeholder="200,000" min="1" step="0.01" required>
+                        <label for="loan_amount" class="form-label">Monto del Préstamo</label>
+                        <input type="number" id="loan_amount" name="amount" class="form-input" placeholder="200,000" min="1" step="0.01" required>
                         <div class="form-help">Cantidad total que necesitas prestar</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Tasa de Interés Anual (%)</label>
-                        <input type="number" name="rate" class="form-input" placeholder="3.5" min="0" step="0.1" max="100" required>
+                        <label for="loan_rate" class="form-label">Tasa de Interés Anual (%)</label>
+                        <input type="number" id="loan_rate" name="rate" class="form-input" placeholder="3.5" min="0" step="0.1" max="100" required>
                         <div class="form-help">Tasa de interés que te ofrece el banco</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Plazo (años)</label>
-                        <input type="number" name="years" class="form-input" placeholder="30" min="1" max="50" required>
+                        <label for="loan_years" class="form-label">Plazo (años)</label>
+                        <input type="number" id="loan_years" name="years" class="form-input" placeholder="30" min="1" max="50" required>
                         <div class="form-help">Tiempo para pagar el préstamo</div>
                     </div>
                 </div>
@@ -616,26 +616,26 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Ingresos Mensuales</label>
-                        <input type="number" name="income" class="form-input" placeholder="5,000" min="0" step="0.01" required>
+                        <label for="budget_income" class="form-label">Ingresos Mensuales</label>
+                        <input type="number" id="budget_income" name="income" class="form-input" placeholder="5,000" min="0" step="0.01" required>
                         <div class="form-help">Tus ingresos totales después de impuestos</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Necesidades</label>
-                        <input type="number" name="needs" class="form-input" placeholder="2,500" min="0" step="0.01">
+                        <label for="budget_needs" class="form-label">Necesidades</label>
+                        <input type="number" id="budget_needs" name="needs" class="form-input" placeholder="2,500" min="0" step="0.01">
                         <div class="form-help">Vivienda, comida, transporte, servicios</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Deseos</label>
-                        <input type="number" name="wants" class="form-input" placeholder="1,500" min="0" step="0.01">
+                        <label for="budget_wants" class="form-label">Deseos</label>
+                        <input type="number" id="budget_wants" name="wants" class="form-input" placeholder="1,500" min="0" step="0.01">
                         <div class="form-help">Entretenimiento, compras no esenciales</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Ahorros e Inversiones</label>
-                        <input type="number" name="savings" class="form-input" placeholder="1,000" min="0" step="0.01">
+                        <label for="budget_savings" class="form-label">Ahorros e Inversiones</label>
+                        <input type="number" id="budget_savings" name="savings" class="form-input" placeholder="1,000" min="0" step="0.01">
                         <div class="form-help">Ahorros para emergencias e inversiones</div>
                     </div>
                 </div>
@@ -674,38 +674,38 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Edad Actual</label>
-                        <input type="number" name="current_age" class="form-input" placeholder="35" min="18" max="80" required>
+                        <label for="retirement_current_age" class="form-label">Edad Actual</label>
+                        <input type="number" id="retirement_current_age" name="current_age" class="form-input" placeholder="35" min="18" max="80" required>
                         <div class="form-help">Tu edad actual en años</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Edad de Jubilación</label>
-                        <input type="number" name="retirement_age" class="form-input" placeholder="65" min="50" max="80" required>
+                        <label for="retirement_age" class="form-label">Edad de Jubilación</label>
+                        <input type="number" id="retirement_age" name="retirement_age" class="form-input" placeholder="65" min="50" max="80" required>
                         <div class="form-help">Edad a la que planeas jubilarte</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Ahorros Actuales</label>
-                        <input type="number" name="current_savings" class="form-input" placeholder="100,000" min="0" step="0.01" required>
+                        <label for="retirement_current_savings" class="form-label">Ahorros Actuales</label>
+                        <input type="number" id="retirement_current_savings" name="current_savings" class="form-input" placeholder="100,000" min="0" step="0.01" required>
                         <div class="form-help">Dinero ahorrado actualmente para jubilación</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Aporte Mensual</label>
-                        <input type="number" name="monthly_contribution" class="form-input" placeholder="1,000" min="0" step="0.01" required>
+                        <label for="retirement_monthly_contribution" class="form-label">Aporte Mensual</label>
+                        <input type="number" id="retirement_monthly_contribution" name="monthly_contribution" class="form-input" placeholder="1,000" min="0" step="0.01" required>
                         <div class="form-help">Cantidad que planeas ahorrar cada mes</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Rendimiento Esperado (%)</label>
-                        <input type="number" name="expected_return" class="form-input" placeholder="7.0" min="0" step="0.1" max="20" required>
+                        <label for="retirement_expected_return" class="form-label">Rendimiento Esperado (%)</label>
+                        <input type="number" id="retirement_expected_return" name="expected_return" class="form-input" placeholder="7.0" min="0" step="0.1" max="20" required>
                         <div class="form-help">Rendimiento anual esperado de tus inversiones</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Ingresos Deseados en Jubilación</label>
-                        <input type="number" name="desired_income" class="form-input" placeholder="5,000" min="0" step="0.01">
+                        <label for="retirement_desired_income" class="form-label">Ingresos Deseados en Jubilación</label>
+                        <input type="number" id="retirement_desired_income" name="desired_income" class="form-input" placeholder="5,000" min="0" step="0.01">
                         <div class="form-help">Ingresos mensuales que deseas en la jubilación</div>
                     </div>
                 </div>
@@ -744,32 +744,32 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Inversión Inicial</label>
-                        <input type="number" name="initial_investment" class="form-input" placeholder="25,000" min="0" step="0.01" required>
+                        <label for="investment_initial_investment" class="form-label">Inversión Inicial</label>
+                        <input type="number" id="investment_initial_investment" name="initial_investment" class="form-input" placeholder="25,000" min="0" step="0.01" required>
                         <div class="form-help">Capital inicial para invertir</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Inversión Mensual</label>
-                        <input type="number" name="monthly_investment" class="form-input" placeholder="1,000" min="0" step="0.01" required>
+                        <label for="investment_monthly_investment" class="form-label">Inversión Mensual</label>
+                        <input type="number" id="investment_monthly_investment" name="monthly_investment" class="form-input" placeholder="1,000" min="0" step="0.01" required>
                         <div class="form-help">Cantidad a invertir cada mes</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Rendimiento Anual Esperado (%)</label>
-                        <input type="number" name="annual_return" class="form-input" placeholder="10.0" min="0" step="0.1" max="30" required>
+                        <label for="investment_annual_return" class="form-label">Rendimiento Anual Esperado (%)</label>
+                        <input type="number" id="investment_annual_return" name="annual_return" class="form-input" placeholder="10.0" min="0" step="0.1" max="30" required>
                         <div class="form-help">Rendimiento promedio anual esperado</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Período de Inversión (años)</label>
-                        <input type="number" name="years" class="form-input" placeholder="15" min="1" max="50" required>
+                        <label for="investment_years" class="form-label">Período de Inversión (años)</label>
+                        <input type="number" id="investment_years" name="years" class="form-input" placeholder="15" min="1" max="50" required>
                         <div class="form-help">Tiempo que planeas mantener la inversión</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Nivel de Riesgo</label>
-                        <select name="risk_level" class="form-input" required>
+                        <label for="investment_risk_level" class="form-label">Nivel de Riesgo</label>
+                        <select id="investment_risk_level" name="risk_level" class="form-input" required>
                             <option value="">Selecciona el nivel</option>
                             <option value="low">Bajo (3-5% anual)</option>
                             <option value="medium">Medio (6-10% anual)</option>
@@ -779,8 +779,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Inflación Anual (%)</label>
-                        <input type="number" name="inflation_rate" class="form-input" placeholder="3.0" min="0" step="0.1" max="10">
+                        <label for="investment_inflation_rate" class="form-label">Inflación Anual (%)</label>
+                        <input type="number" id="investment_inflation_rate" name="inflation_rate" class="form-input" placeholder="3.0" min="0" step="0.1" max="10">
                         <div class="form-help">Tasa de inflación anual esperada</div>
                     </div>
                 </div>
@@ -800,7 +800,7 @@
             
             <div class="calculator-form">
                 <div class="empty-state">
-                    <div class="empty-icon">ðŸš§</div>
+                    <div class="empty-icon">🚧</div>
                     <h4>En Desarrollo</h4>
                     <p>Estamos trabajando en esta calculadora para ofrecerte la mejor experiencia.</p>
                 </div>
@@ -933,7 +933,7 @@
 
                 {% else %}
                 <div class="empty-state">
-                    <div class="empty-icon">ðŸ“Š</div>
+                    <div class="empty-icon">📊</div>
                     <h4>Sin Resultados</h4>
                     <p>Completa el formulario para ver tus resultados aquí</p>
                 </div>
