@@ -62,7 +62,7 @@ exit_trap() {
 
     echo
 
-    if [ $EXIT_NUM -eq 0 ];
+    if [[ $EXIT_NUM -eq 0 ]];
     then
         log "$g" "Succeeded!"
     else
@@ -102,9 +102,9 @@ checksum() {
   local checksum_url="$2"
   local major_version="$(echo "$CODACY_REPORTER_VERSION" | cut -d '.' -f 1)"
 
-  if [ "$CODACY_REPORTER_SKIP_CHECKSUM" = true ]; then
+  if [[ "$CODACY_REPORTER_SKIP_CHECKSUM" = true ]]; then
     log "$i" "Force skipping checksum on the binary."
-  elif [ "$major_version" -ge 13 ]; then
+  elif [[ "$major_version" -ge 13 ]]; then
     log "$i" "Checking checksum..."
     download_file "$checksum_url"
     if command -v sha512sum > /dev/null 2>&1; then
@@ -156,7 +156,7 @@ download_reporter() {
     local reporter_folder=$2
     local reporter_filename=$3
 
-    if [ ! -f "$reporter_path" ]
+    if [[ ! -f "$reporter_path" ]]
     then
         log "$i" "Downloading the codacy reporter $binary_name... ($CODACY_REPORTER_VERSION)"
 
@@ -187,9 +187,9 @@ os_name_arch=$(uname -sm)
 SELF_HOSTED_CODACY_REPORTER_VERSION="13.13.14"
 
 # Find the latest version in case is not specified
-if [ -z "$CODACY_REPORTER_VERSION" ] || [ "$CODACY_REPORTER_VERSION" = "latest" ]; then
+if [[ -z "$CODACY_REPORTER_VERSION" ]] || [[ "$CODACY_REPORTER_VERSION" = "latest" ]]; then
     # In case of a self hosted installation, pin a version to the latest released self hosted version working coverage reporter
-    if [ -n "$CODACY_API_BASE_URL" ] && is_self_hosted_instance; then
+    if [[ -n "$CODACY_API_BASE_URL" ]] && is_self_hosted_instance; then
       log "Self hosted instance detected, setting codacy coverage reporter version to $SELF_HOSTED_CODACY_REPORTER_VERSION"
       CODACY_REPORTER_VERSION="$SELF_HOSTED_CODACY_REPORTER_VERSION"
     else
@@ -198,10 +198,10 @@ if [ -z "$CODACY_REPORTER_VERSION" ] || [ "$CODACY_REPORTER_VERSION" = "latest" 
 fi
 
 # Temporary folder for downloaded files
-if [ -z "$CODACY_REPORTER_TMP_FOLDER" ]; then
-    if [ "$os_name" = "Linux" ]; then
+if [[ -z "$CODACY_REPORTER_TMP_FOLDER" ]]; then
+    if [[ "$os_name" = "Linux" ]]; then
         CODACY_REPORTER_TMP_FOLDER="$HOME/.cache/codacy/coverage-reporter"
-    elif [ "$os_name" = "Darwin" ]; then
+    elif [[ "$os_name" = "Darwin" ]]; then
         CODACY_REPORTER_TMP_FOLDER="$HOME/Library/Caches/Codacy/coverage-reporter"
     else
         CODACY_REPORTER_TMP_FOLDER=".codacy-coverage"
@@ -233,21 +233,21 @@ else
     run_command="java -jar \"$reporter_path\""
 fi
 
-if [ -z "$run_command" ]
+if [[ -z "$run_command" ]]
 then
     fatal "Codacy coverage reporter binary could not be found."
 fi
-if [ -z "$CODACY_REPORTER_OPTIONS" ] || [ -n "$CODACY_REPORTER_OPTIONS" ]; then
+if [[ -z "$CODACY_REPORTER_OPTIONS" ]] || [[ -n "$CODACY_REPORTER_OPTIONS" ]]; then
     EXTRA_ARGUMENTS="$CODACY_REPORTER_OPTIONS"
 else
     EXTRA_ARGUMENTS=""
 fi
 
 
-if [ "$#" -eq 1 ] && [ "$1" = "download" ];
+if [[ "$#" -eq 1 ]] && [[ "$1" = "download" ]];
 then
     log "$g" "Codacy reporter download succeeded";
-elif [ "$#" -gt 0 ];
+elif [[ "$#" -gt 0 ]];
 then
     log "Running command: $run_command $* $EXTRA_ARGUMENTS"
     eval "$run_command $* $EXTRA_ARGUMENTS"

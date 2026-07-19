@@ -21,6 +21,14 @@ def check_onboarding_required(user):
 def Generar_Pin():
     return str(secrets.randbelow(900000) + 100000)  # 6 dígitos
 
+# Constantes para evitar duplicados de literales
+EMAIL_BACKEND = 'usuarios.backends.EmailBackend'
+DASHBOARD_URL = 'core:dashboard'
+REGISTER_TEMPLATE = "usuarios/register_simple.html"
+ACCESO_RAPIDO_TEMPLATE = 'usuarios/acceso_rapido.html'
+PIN_LOGIN_TEMPLATE = 'usuarios/pin_login.html'
+USUARIO_NO_ENCONTRADO = 'Usuario no encontrado'
+
 def Login(request):
     # print(f"🔍 DEBUG LOGIN: Método {request.method}, URL: {request.path}") - DESACTIVADO
     
@@ -39,7 +47,7 @@ def Login(request):
         if usuario:
             request.session['user_id'] = usuario.id
             
-            login(request , usuario , backend='usuarios.backends.EmailBackend')
+            login(request , usuario , backend=EMAIL_BACKEND)
 
             email_verificado = request.user.email_verificado
             
@@ -52,7 +60,7 @@ def Login(request):
                     return redirect('usuarios:onboarding')
                 # Ir directamente al dashboard sin requerir PIN
                 print("🔍 DEBUG LOGIN: Redirigiendo a dashboard")
-                return redirect('core:dashboard')
+                return redirect(DASHBOARD_URL)
             else:
                 print("🔍 DEBUG LOGIN: Email no verificado, redirigiendo a verificación")
                 return redirect('usuarios:pagina_verificar_correo')
@@ -88,175 +96,152 @@ def _handle_send_verification(request):
     })
 
 
+def _handle_register_verification(request):
+    correo = request.POST.get('correo')
+    nombres = request.POST.get('nombres')
+    # Generar y enviar PIN
+    PIN = Generar_Pin()
+    request.session['pin_verification'] = PIN
+    request.session['email_for_verification'] = correo
+
+    print(f"🔍 DEBUG: PIN generado para verificación: {PIN}")
+    print(f"🔍 DEBUG: Enviando PIN a: {correo}")
+
+    try:
+        result = send_mail(
+            subject='Código de verificación - FinGest',
+            message=f'Hola {nombres},\n\nTu código de verificación para registrarte en FinGest es: {PIN}\n\nEste código expira en 10 minutos.\n\n¡Gracias por unirte a FinGest!',        
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[correo],
+            fail_silently=False,
+        )
+        print(f"🔍 DEBUG: Resultado del envío de verificación: {result}")
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Código enviado exitosamente'
+        })
+
+    except Exception as e:
+        print(f"❌ ERROR al enviar email de verificación: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al enviar el código: {str(e)}'
+        })
+
+def _handle_register_submit(request, monedas):
+    documento_identidad = request.POST.get('documento_identidad')
+    nombres = request.POST.get('nombres')
+    apellido_paterno = request.POST.get('apellido_paterno')
+    apellido_materno = request.POST.get('apellido_materno')
+    correo = request.POST.get('correo')
+    contrasena = request.POST.get('contrasena')
+    telefono = request.POST.get('telefono')
+    pin_acceso_rapido = request.POST.get("pin_acceso_rapido")
+    imagen_perfil = request.FILES.get('imagen_perfil')
+    verification_code = request.POST.get('codigo_verificacion')
+
+    # Verificar código de verificación
+    session_pin = request.session.get('pin_verification')
+    session_email = request.session.get('email_for_verification')
+
+    if not session_pin or not session_email or session_email != correo:
+        return render(request, REGISTER_TEMPLATE, {
+            "error": "Por favor solicita un código de verificación primero.", 
+            'monedas': monedas
+        })
+    
+    if verification_code != session_pin:
+        return render(request, REGISTER_TEMPLATE, {
+            "error": "Código de verificación incorrecto.", 
+            'monedas': monedas
+        })
+    
+    id_moneda_seleccionada = request.POST.get('id_moneda')
+    try:
+        moneda_obj = Moneda.objects.get(id=id_moneda_seleccionada)
+    except Moneda.DoesNotExist:
+        error = "La moneda seleccionada no es válida."
+        return render(request, REGISTER_TEMPLATE, {"error": error, 'monedas': monedas})
+
+    nombre_cuenta = request.POST.get('nombre_cuenta')
+    saldo_inicial = request.POST.get('saldo_inicial')
+    descripcion = request.POST.get('descripcion_cuenta', "")
+
+    if not nombre_cuenta:
+        nombre_cuenta = "Cuenta principal"
+
+    try:
+        saldo_inicial_float = float(saldo_inicial) if saldo_inicial else 0.0
+    except (ValueError, TypeError):
+        error = "El saldo inicial debe ser un número válido."
+        return render(request, REGISTER_TEMPLATE, {"error": error, 'monedas': monedas})
+
+    if imagen_perfil:
+        import base64
+        imagen_b64 = base64.b64encode(imagen_perfil.read()).decode('utf-8')
+    else:
+        imagen_b64 = None
+
+    if Usuario.objects.filter(correo=correo).exists():
+        error = "El correo ya está registrado."
+        return render(request, REGISTER_TEMPLATE, {"error": error, 'monedas': monedas})
+
+    try:
+        # Crear el usuario con valores por defecto para campos requeridos
+        nuevo_usuario = Usuario.objects.create_user(
+            documento_identidad=documento_identidad or '00000000',
+            nombres=nombres,
+            apellido_paterno=apellido_paterno,
+            apellido_materno=apellido_materno,
+            correo=correo,
+            password=contrasena,
+            telefono=int(telefono) if telefono else 0,
+            pin_acceso_rapido=pin_acceso_rapido or '000000',
+            imagen_perfil=imagen_b64,
+            email_verificado=True,
+            id_moneda=moneda_obj
+        )
+        
+        # Crear la cuenta principal
+        Cuenta.objects.create(
+            id_usuario=nuevo_usuario,
+            nombre=nombre_cuenta,
+            saldo_cuenta=saldo_inicial_float,
+            descripcion=descripcion
+        )
+        
+        # Limpiar sesión de verificación
+        if 'pin_verification' in request.session:
+            del request.session['pin_verification']
+        if 'email_for_verification' in request.session:
+            del request.session['email_for_verification']
+        
+        return render(request, "usuarios/login.html", {
+            "message_success": f"¡Registro exitoso, {nuevo_usuario.nombres}! Ahora inicia sesión con tu nueva cuenta."
+        })
+            
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return render(request, REGISTER_TEMPLATE, {
+            "error": f"Error al registrar usuario: {str(e)}", 
+            'monedas': monedas
+        })
+
 def Register(request):
     monedas = Moneda.objects.all()
 
     if request.method != "POST":
-        return render(request, 'usuarios/register_simple.html', {
+        return render(request, REGISTER_TEMPLATE, {
             'monedas': monedas
         })
 
     action = request.POST.get('action')
-    print(f"🔍 DEBUG REGISTER: POST recibido. Action: {action}")
-    print(f"🔍 DEBUG REGISTER: Datos POST: {list(request.POST.keys())}")
-
     if action == 'send_verification':
-        # Generar y enviar PIN
-        PIN = Generar_Pin()
-        request.session['pin_verification'] = PIN
-        request.session['email_for_verification'] = correo
-
-        print(f"🔍 DEBUG: PIN generado para verificación: {PIN}")
-        print(f"🔍 DEBUG: Enviando PIN a: {correo}")
-
-        try:
-            result = send_mail(
-                subject='Código de verificación - FinGest',
-                message=f'Hola {nombres},\n\nTu código de verificación para registrarte en FinGest es: {PIN}\n\nEste código expira en 10 minutos.\n\n¡Gracias por unirte a FinGest!',        
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[correo],
-                fail_silently=False,
-            )
-            print(f"🔍 DEBUG: Resultado del envío de verificación: {result}")
-
-            return JsonResponse({
-                'success': True,
-                'message': 'Código enviado exitosamente'
-            })
-
-        except Exception as e:
-            print(f"❌ ERROR al enviar email de verificación: {str(e)}")
-            return JsonResponse({
-                'success': False,
-                'error': f'Error al enviar el código: {str(e)}'
-            })
-
-        # Manejar registro normal (cuando se envía el formulario completo)
-        print("🔍 DEBUG: Procesando registro normal")
-
-        documento_identidad = request.POST.get('documento_identidad')
-        nombres = request.POST.get('nombres')
-        apellido_paterno = request.POST.get('apellido_paterno')
-        apellido_materno = request.POST.get('apellido_materno')
-        correo = request.POST.get('correo')
-        contrasena = request.POST.get('contrasena')
-        telefono = request.POST.get('telefono')
-        pin_acceso_rapido = request.POST.get("pin_acceso_rapido")
-        imagen_perfil = request.FILES.get('imagen_perfil')
-        verification_code = request.POST.get('codigo_verificacion')
-
-        print(f"🔍 DEBUG: Datos recibidos - correo: {correo}, código: {verification_code}")
-
-        # Verificar código de verificación
-        session_pin = request.session.get('pin_verification')
-        session_email = request.session.get('email_for_verification')
-
-        print(f"🔍 DEBUG: Sesión - PIN: {session_pin}, Email: {session_email}")
-
-        if not session_pin or not session_email or session_email != correo:
-            print("🔍 DEBUG: Error - No hay PIN en sesión o email no coincide")
-            return render(request, "usuarios/register_simple.html", {
-                "error": "Por favor solicita un código de verificación primero.", 
-                'monedas': monedas
-            })
+        return _handle_register_verification(request)
         
-        if verification_code != session_pin:
-            print(f"🔍 DEBUG: Error - Código incorrecto. Recibido: '{verification_code}', Esperado: '{session_pin}'")
-            return render(request, "usuarios/register_simple.html", {
-                "error": "Código de verificación incorrecto.", 
-                'monedas': monedas
-            })
-        
-        print("🔍 DEBUG: Código de verificación correcto, continuando con registro...")
-
-        id_moneda_seleccionada = request.POST.get('id_moneda')
-        print(f"🔍 DEBUG: Moneda seleccionada: {id_moneda_seleccionada}")
-        
-        try:
-            moneda_obj = Moneda.objects.get(id=id_moneda_seleccionada)
-        except Moneda.DoesNotExist:
-            error = "La moneda seleccionada no es válida."
-            return render(request, "usuarios/register_simple.html", {"error": error, 'monedas': monedas})
-
-        nombre_cuenta = request.POST.get('nombre_cuenta')
-        saldo_inicial = request.POST.get('saldo_inicial')
-        descripcion = request.POST.get('descripcion_cuenta')
-
-        if not descripcion:
-            descripcion = ""
-        if not nombre_cuenta:
-            nombre_cuenta = "Cuenta principal"
-
-        try:
-            saldo_inicial_float = float(saldo_inicial) if saldo_inicial else 0.0
-        except (ValueError, TypeError):
-            error = "El saldo inicial debe ser un número válido."
-            return render(request, "usuarios/register_simple.html", {"error": error, 'monedas': monedas})
-
-        if imagen_perfil:
-            import base64
-            imagen_b64 = base64.b64encode(imagen_perfil.read()).decode('utf-8')
-        else:
-            imagen_b64 = None
-
-        if Usuario.objects.filter(correo=correo).exists():
-            error = "El correo ya está registrado."
-            return render(request, "usuarios/register_simple.html", {"error": error, 'monedas': monedas})
-
-        print("🔍 DEBUG: Creando usuario...")
-        
-        try:
-            # Crear el usuario con valores por defecto para campos requeridos
-            nuevo_usuario = Usuario.objects.create_user(
-                documento_identidad=documento_identidad or '00000000',  # Valor por defecto si está vacío
-                nombres=nombres,
-                apellido_paterno=apellido_paterno,
-                apellido_materno=apellido_materno,
-                correo=correo,
-                password=contrasena,
-                telefono=int(telefono) if telefono else 0,  # Convertir a int o usar 0
-                pin_acceso_rapido=pin_acceso_rapido or '000000',  # PIN por defecto
-                imagen_perfil=imagen_b64,
-                email_verificado=True,  # Ya verificamos el correo con el código
-                id_moneda=moneda_obj
-            )
-            
-            print(f"🔍 DEBUG: Usuario creado: {nuevo_usuario.correo}")
-            
-            # Crear la cuenta principal
-            nueva_cuenta = Cuenta.objects.create(
-                id_usuario=nuevo_usuario,
-                nombre=nombre_cuenta,
-                saldo_cuenta=saldo_inicial_float,
-                descripcion=descripcion
-            )
-            
-            print(f"🔍 DEBUG: Cuenta creada: {nueva_cuenta.nombre}")
-            
-            # Limpiar sesión de verificación
-            if 'pin_verification' in request.session:
-                del request.session['pin_verification']
-            if 'email_for_verification' in request.session:
-                del request.session['email_for_verification']
-            
-            # NO autenticar automáticamente - redirigir al login
-            print("🔍 DEBUG: Usuario creado exitosamente, redirigiendo al login")
-            return render(request, "usuarios/login.html", {
-                "message_success": f"¡Registro exitoso, {nuevo_usuario.nombres}! Ahora inicia sesión con tu nueva cuenta."
-            })
-                
-        except Exception as e:
-            print(f"❌ ERROR al crear usuario: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            return render(request, "usuarios/register_simple.html", {
-                "error": f"Error al crear la cuenta: {str(e)}", 
-                'monedas': monedas
-            })
-
-    return render(request, 'usuarios/register_simple.html', {
-        'monedas': monedas,
-    })
+    return _handle_register_submit(request, monedas)
 
 @require_http_methods(["GET", "POST"])
 def Pagina_Verificar_Correo(request):
@@ -365,7 +350,7 @@ def Acceso_Rapido(request):
     if(not user.is_authenticated):
         return redirect('usuarios:login')
     print("Ingreso acceso rapido")
-
+ 
     if(request.method == "POST"):
         # Intentar obtener PIN de diferentes formatos posibles
         pin_input = request.POST.get('pin_input', '')  # Formato del template actual
@@ -378,92 +363,87 @@ def Acceso_Rapido(request):
         
         print(f"🔍 DEBUG ACCESO_RAPIDO: Todos los datos POST: {dict(request.POST)}")
         print(f"🔍 DEBUG ACCESO_RAPIDO: PIN obtenido: '{pin_input}'")
-
+ 
         if not pin_input.isdigit() or len(pin_input) != 6:
             error_message = "PIN inválido. Ingrese 6 dígitos numéricos."
-            return render(request, 'usuarios/acceso_rapido.html', {'error_message': error_message})
-
+            return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
+ 
         try:
             usuario = Usuario.objects.get(id=user.id)
         except Usuario.DoesNotExist:
-            error_message = "Usuario no encontrado."
-            return render(request, 'usuarios/acceso_rapido.html', {'error_message': error_message})
-
+            error_message = USUARIO_NO_ENCONTRADO
+            return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
+ 
         print(f"🔍 DEBUG ACCESO_RAPIDO: PIN ingresado: '{pin_input}'")
         print(f"🔍 DEBUG ACCESO_RAPIDO: PIN guardado: '{usuario.pin_acceso_rapido}' (tipo: {type(usuario.pin_acceso_rapido)})")
-
+ 
         if usuario.check_pin(pin_input):
             request.session['pin_acceso_rapido_validado'] = True
-
-            return redirect('core:dashboard') 
+ 
+            return redirect(DASHBOARD_URL) 
         else:
             error_message = "El PIN ingresado es incorrecto."
-            return render(request, 'usuarios/acceso_rapido.html', {'error_message': error_message})
-
-    return render(request , 'usuarios/acceso_rapido.html')
-
+            return render(request, ACCESO_RAPIDO_TEMPLATE, {'error_message': error_message})
+ 
+    return render(request , ACCESO_RAPIDO_TEMPLATE)
+ 
 @require_http_methods(["GET", "POST"])
 def Reestablecer_Contraseña(request):
     pass
-
+ 
 # === FUNCIONES PLACEHOLDER PARA URLs FALTANTES ===
+ 
+def _parse_and_validate_pin(request):
+    pin_input = request.POST.get('pin_input', '').strip()
+    if not pin_input:
+        pin_input = ''.join([
+            request.POST.get(f'pin{i}', '') for i in range(6)
+        ])
+    
+    if not pin_input:
+        return None, "No se recibió ningún PIN."
+    if not pin_input.isdigit():
+        return None, f"PIN inválido. Solo se permiten números. Recibido: '{pin_input}'"
+    if len(pin_input) != 6:
+        return None, f"PIN inválido. Debe tener exactamente 6 dígitos. Recibido: '{pin_input}' (longitud: {len(pin_input)})"
+        
+    return pin_input, None
+
+def _find_user_by_pin(pin_input):
+    for u in Usuario.objects.all():
+        if u.check_pin(pin_input):
+            return u
+    return None
 
 def pin_login(request):
     """Login directo usando solo PIN"""
     if request.method == "GET":
-        return render(request, 'usuarios/pin_login.html')
-
-    if request.method == "POST":
-        # Intentar obtener PIN de diferentes formatos posibles
-        pin_input = request.POST.get('pin_input', '').strip()
-        
-        # Si no viene en pin_input, intentar formato individual (pin0, pin1, etc.)
-        if not pin_input:
-            pin_input = ''.join([
-                request.POST.get(f'pin{i}', '') for i in range(6)
-            ])
-        
-        print(f"DEBUG PIN_LOGIN: Método: {request.method}")
-        print(f"DEBUG PIN_LOGIN: Todos los datos POST: {dict(request.POST)}")
-        print(f"DEBUG PIN_LOGIN: PIN obtenido: '{pin_input}' (longitud: {len(pin_input)})")
-        
-        if not pin_input:
-            error_message = "No se recibió ningún PIN."
-            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
-        
-        if not pin_input.isdigit():
-            error_message = f"PIN inválido. Solo se permiten números. Recibido: '{pin_input}'"
-            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
-            
-        if len(pin_input) != 6:
-            error_message = f"PIN inválido. Debe tener exactamente 6 dígitos. Recibido: '{pin_input}' (longitud: {len(pin_input)})"
-            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
-        
-        try:
-            usuario = None
-            for u in Usuario.objects.all():
-                if u.check_pin(pin_input):
-                    usuario = u
-                    break
-
-            if usuario:
-                if not usuario.is_active:
-                    error_message = "Esta cuenta está desactivada."
-                    return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
-
-                login(request, usuario, backend='usuarios.backends.EmailBackend')
-                request.session['pin_acceso_rapido_validado'] = True
-
-                if not usuario.onboarding_completed:
-                    return redirect('usuarios:onboarding')
-
-                return redirect('core:dashboard')
-            else:
-                error_message = "PIN incorrecto. No se encontró ningún usuario con ese PIN."
-                return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
-        except Exception:
-            error_message = "Error al verificar PIN."
-            return render(request, 'usuarios/pin_login.html', {'error_message': error_message})
+        return render(request, PIN_LOGIN_TEMPLATE)
+ 
+    pin_input, error_message = _parse_and_validate_pin(request)
+    if error_message:
+        return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
+ 
+    try:
+        usuario = _find_user_by_pin(pin_input)
+        if usuario:
+            if not usuario.is_active:
+                error_message = "Esta cuenta está desactivada."
+                return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
+ 
+            login(request, usuario, backend=EMAIL_BACKEND)
+            request.session['pin_acceso_rapido_validado'] = True
+ 
+            if not usuario.onboarding_completed:
+                return redirect('usuarios:onboarding')
+ 
+            return redirect(DASHBOARD_URL)
+        else:
+            error_message = "PIN incorrecto. No se encontró ningún usuario con ese PIN."
+            return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
+    except Exception:
+        error_message = "Error al verificar PIN."
+        return render(request, PIN_LOGIN_TEMPLATE, {'error_message': error_message})
             
 @require_http_methods(["GET", "POST"])
 def onboarding_view(request):
@@ -523,11 +503,12 @@ def _handle_skip_onboarding(usuario):
     usuario.save()
 
 
-def _complete_onboarding_data(usuario, data):
+def _set_user_pin_if_valid(usuario, data):
     pin_acceso_rapido = data.get('pin_acceso_rapido', '').strip()
     if pin_acceso_rapido and len(pin_acceso_rapido) == 6 and pin_acceso_rapido.isdigit():
         usuario.set_pin(pin_acceso_rapido)
 
+def _set_user_phone_if_valid(usuario, data):
     telefono = data.get('telefono', '').strip()
     if telefono:
         try:
@@ -535,21 +516,31 @@ def _complete_onboarding_data(usuario, data):
         except ValueError:
             pass
 
+def _set_user_account_if_valid(usuario, data):
     saldo_inicial = data.get('saldo_inicial', '').strip()
     nombre_cuenta = data.get('nombre_cuenta', '').strip()
 
-    if saldo_inicial or nombre_cuenta:
-        cuenta = Cuenta.objects.filter(id_usuario=usuario).first()
-        if cuenta:
-            if saldo_inicial:
-                try:
-                    cuenta.saldo_cuenta = float(saldo_inicial)
-                except ValueError:
-                    pass
-            if nombre_cuenta:
-                cuenta.nombre = nombre_cuenta
-            cuenta.save()
+    if not (saldo_inicial or nombre_cuenta):
+        return
 
+    cuenta = Cuenta.objects.filter(id_usuario=usuario).first()
+    if not cuenta:
+        return
+
+    if saldo_inicial:
+        try:
+            cuenta.saldo_cuenta = float(saldo_inicial)
+        except ValueError:
+            pass
+    if nombre_cuenta:
+        cuenta.nombre = nombre_cuenta
+    cuenta.save()
+
+
+def _complete_onboarding_data(usuario, data):
+    _set_user_pin_if_valid(usuario, data)
+    _set_user_phone_if_valid(usuario, data)
+    _set_user_account_if_valid(usuario, data)
     usuario.onboarding_completed = True
     usuario.save()
 
@@ -570,7 +561,7 @@ def _handle_send_code(email, request=None):
     try:
         usuario = Usuario.objects.get(correo=email)
     except Usuario.DoesNotExist:
-        return {'success': False, 'message': 'Usuario no encontrado'}
+        return {'success': False, 'message': USUARIO_NO_ENCONTRADO}
     codigo_recuperacion = str(secrets.randbelow(900000) + 100000)
     usuario.codigo_recuperacion = codigo_recuperacion
     usuario.codigo_expiracion = timezone.now() + datetime.timedelta(minutes=15)
@@ -590,7 +581,7 @@ def _handle_verify_code(email, request):
     try:
         usuario = Usuario.objects.get(correo=email)
     except Usuario.DoesNotExist:
-        return {'success': False, 'message': 'Usuario no encontrado'}
+        return {'success': False, 'message': USUARIO_NO_ENCONTRADO}
     codigo = request.POST.get('code', '').strip()
     if not usuario.codigo_recuperacion or usuario.codigo_recuperacion != codigo:
         return {'success': False, 'message': 'Código inválido'}
@@ -604,7 +595,7 @@ def _handle_reset_password(email, request):
     try:
         usuario = Usuario.objects.get(correo=email)
     except Usuario.DoesNotExist:
-        return {'success': False, 'message': 'Usuario no encontrado'}
+        return {'success': False, 'message': USUARIO_NO_ENCONTRADO}
     codigo = request.POST.get('code', '').strip()
     new_password = request.POST.get('password', '').strip()
     if not usuario.codigo_recuperacion or usuario.codigo_recuperacion != codigo:

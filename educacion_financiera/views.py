@@ -13,197 +13,199 @@ import json
 
 @login_required
 @fast_access_pin_verified
+# Constantes para evitar duplicados de literales
+ERROR_VALORES_INGRESADOS = "Error en los valores ingresados"
+METODO_NO_PERMITIDO = "Método no permitido"
+
+# Helpers de cálculo para reducir complejidad cognitiva
+def _calculate_savings(post_data):
+    try:
+        initial = float(post_data.get("initial", 0))
+        monthly = float(post_data.get("monthly", 0))
+        rate = float(post_data.get("rate", 0)) / 100
+        years = int(post_data.get("years", 0))
+        months = years * 12
+        
+        # Cálculo con interés compuesto
+        if rate > 0:
+            future_value = initial * (1 + rate/12) ** months + monthly * (((1 + rate/12) ** months - 1) / (rate/12))
+        else:
+            future_value = initial + (monthly * months)
+        
+        total_contributed = initial + (monthly * months)
+        interest_earned = future_value - total_contributed
+        
+        return {
+            'future_value': round(future_value, 2),
+            'total_contributed': round(total_contributed, 2),
+            'interest_earned': round(interest_earned, 2),
+            'type': 'savings'
+        }
+    except Exception:
+        return {"error": ERROR_VALORES_INGRESADOS}
+
+def _calculate_loan(post_data):
+    try:
+        amount = float(post_data.get("amount", 0))
+        rate = float(post_data.get("rate", 0)) / 100
+        years = int(post_data.get("years", 0))
+        months = years * 12
+        
+        if rate > 0:
+            monthly_rate = rate / 12
+            monthly_payment = amount * monthly_rate / (1 - (1 + monthly_rate) ** -months)
+        else:
+            monthly_payment = amount / months
+        
+        total_payment = monthly_payment * months
+        total_interest = total_payment - amount
+        
+        return {
+            'monthly_payment': round(monthly_payment, 2),
+            'total_payment': round(total_payment, 2),
+            'total_interest': round(total_interest, 2),
+            'loan_amount': amount,
+            'type': 'loan'
+        }
+    except Exception:
+        return {"error": ERROR_VALORES_INGRESADOS}
+
+def _calculate_budget(post_data):
+    try:
+        income = float(post_data.get("income", 0))
+        needs = float(post_data.get("needs", 0))
+        wants = float(post_data.get("wants", 0))
+        savings = float(post_data.get("savings", 0))
+        
+        total_expenses = needs + wants + savings
+        remaining = income - total_expenses
+        
+        # Regla 50/30/20
+        recommended_needs = income * 0.5
+        recommended_wants = income * 0.3
+        recommended_savings = income * 0.2
+        
+        return {
+            'income': income,
+            'total_expenses': round(total_expenses, 2),
+            'remaining': round(remaining, 2),
+            'needs_pct': round((needs/income)*100, 1) if income > 0 else 0,
+            'wants_pct': round((wants/income)*100, 1) if income > 0 else 0,
+            'savings_pct': round((savings/income)*100, 1) if income > 0 else 0,
+            'recommended_needs': round(recommended_needs, 2),
+            'recommended_wants': round(recommended_wants, 2),
+            'recommended_savings': round(recommended_savings, 2),
+            'type': 'budget'
+        }
+    except Exception:
+        return {"error": ERROR_VALORES_INGRESADOS}
+
+def _calculate_retirement(post_data):
+    try:
+        current_age = int(post_data.get("current_age", 0))
+        retirement_age = int(post_data.get("retirement_age", 0))
+        current_savings = float(post_data.get("current_savings", 0))
+        monthly_contribution = float(post_data.get("monthly_contribution", 0))
+        expected_return = float(post_data.get("expected_return", 0)) / 100
+        desired_income = float(post_data.get("desired_income", 0))
+        
+        years_to_retirement = retirement_age - current_age
+        months_to_retirement = years_to_retirement * 12
+        
+        # Cálculo del valor futuro con aportaciones
+        if expected_return > 0:
+            monthly_rate = expected_return / 12
+            # Valor futuro del dinero actual
+            future_current = current_savings * (1 + monthly_rate) ** months_to_retirement
+            # Valor futuro de las aportaciones mensuales
+            future_contributions = monthly_contribution * (((1 + monthly_rate) ** months_to_retirement - 1) / monthly_rate)
+            total_at_retirement = future_current + future_contributions
+        else:
+            total_at_retirement = current_savings + (monthly_contribution * months_to_retirement)
+        
+        # Ingreso mensual sostenible (regla del 4%)
+        monthly_income = (total_at_retirement * 0.04) / 12
+        total_contributions = current_savings + (monthly_contribution * months_to_retirement)
+        
+        return {
+            'total_at_retirement': round(total_at_retirement, 2),
+            'monthly_income': round(monthly_income, 2),
+            'total_contributions': round(total_contributions, 2),
+            'years_to_retirement': years_to_retirement,
+            'shortfall': round(max(0, desired_income - monthly_income), 2) if desired_income > 0 else 0,
+            'type': 'retirement'
+        }
+    except Exception:
+        return {"error": ERROR_VALORES_INGRESADOS}
+
+def _calculate_investment(post_data):
+    try:
+        initial_investment = float(post_data.get("initial_investment", 0))
+        monthly_investment = float(post_data.get("monthly_investment", 0))
+        annual_return = float(post_data.get("annual_return", 0)) / 100
+        years = int(post_data.get("years", 0))
+        inflation_rate = float(post_data.get("inflation_rate", 3.0)) / 100
+        
+        months = years * 12
+        
+        # Cálculo del valor futuro
+        if annual_return > 0:
+            monthly_rate = annual_return / 12
+            # Valor futuro de la inversión inicial
+            future_initial = initial_investment * (1 + monthly_rate) ** months
+            # Valor futuro de las inversiones mensuales
+            future_monthly = monthly_investment * (((1 + monthly_rate) ** months - 1) / monthly_rate)
+            final_value = future_initial + future_monthly
+        else:
+            final_value = initial_investment + (monthly_investment * months)
+        
+        total_invested = initial_investment + (monthly_investment * months)
+        total_profit = final_value - total_invested
+        roi_percentage = (total_profit / total_invested * 100) if total_invested > 0 else 0
+        
+        # Valor real ajustado por inflación
+        real_rate = ((1 + annual_return) / (1 + inflation_rate)) - 1
+        if real_rate > 0:
+            real_monthly_rate = real_rate / 12
+            real_future_initial = initial_investment * (1 + real_monthly_rate) ** months
+            real_future_monthly = monthly_investment * (((1 + real_monthly_rate) ** months - 1) / real_monthly_rate)
+            real_value = real_future_initial + real_future_monthly
+        else:
+            real_value = final_value / ((1 + inflation_rate) ** years)
+        
+        return {
+            'final_value': round(final_value, 2),
+            'total_profit': round(total_profit, 2),
+            'total_invested': round(total_invested, 2),
+            'roi_percentage': round(roi_percentage, 2),
+            'real_value': round(real_value, 2),
+            'type': 'investment'
+        }
+    except Exception:
+        return {"error": ERROR_VALORES_INGRESADOS}
+
+
+@login_required
+@fast_access_pin_verified
 def calculators(request):
     tab = request.GET.get("tab", "savings")  # default tab
     result = None
     ai_explanation = None
 
     if request.method == "POST":
-        if tab == "savings":
-            try:
-                initial = float(request.POST.get("initial", 0))
-                monthly = float(request.POST.get("monthly", 0))
-                rate = float(request.POST.get("rate", 0)) / 100
-                years = int(request.POST.get("years", 0))
-                months = years * 12
-                
-                # Cálculo con interés compuesto
-                if rate > 0:
-                    future_value = initial * (1 + rate/12) ** months + monthly * (((1 + rate/12) ** months - 1) / (rate/12))
-                else:
-                    future_value = initial + (monthly * months)
-                
-                total_contributed = initial + (monthly * months)
-                interest_earned = future_value - total_contributed
-                
-                result = {
-                    'future_value': round(future_value, 2),
-                    'total_contributed': round(total_contributed, 2),
-                    'interest_earned': round(interest_earned, 2),
-                    'type': 'savings'
-                }
-                
+        calc_funcs = {
+            "savings": _calculate_savings,
+            "loan": _calculate_loan,
+            "budget": _calculate_budget,
+            "retirement": _calculate_retirement,
+            "investment": _calculate_investment,
+        }
+        calc_func = calc_funcs.get(tab)
+        if calc_func:
+            result = calc_func(request.POST)
+            if result and "error" not in result:
                 # Generar explicación con IA
                 ai_explanation = generate_ai_explanation(result, tab)
-                
-            except Exception:
-                result = {"error": "Error en los valores ingresados"}
-        
-        elif tab == "loan":
-            try:
-                amount = float(request.POST.get("amount", 0))
-                rate = float(request.POST.get("rate", 0)) / 100
-                years = int(request.POST.get("years", 0))
-                months = years * 12
-                
-                if rate > 0:
-                    monthly_rate = rate / 12
-                    monthly_payment = amount * monthly_rate / (1 - (1 + monthly_rate) ** -months)
-                else:
-                    monthly_payment = amount / months
-                
-                total_payment = monthly_payment * months
-                total_interest = total_payment - amount
-                
-                result = {
-                    'monthly_payment': round(monthly_payment, 2),
-                    'total_payment': round(total_payment, 2),
-                    'total_interest': round(total_interest, 2),
-                    'loan_amount': amount,
-                    'type': 'loan'
-                }
-                
-                # Generar explicación con IA
-                ai_explanation = generate_ai_explanation(result, tab)
-                
-            except Exception:
-                result = {"error": "Error en los valores ingresados"}
-        
-        elif tab == "budget":
-            try:
-                income = float(request.POST.get("income", 0))
-                needs = float(request.POST.get("needs", 0))
-                wants = float(request.POST.get("wants", 0))
-                savings = float(request.POST.get("savings", 0))
-                
-                total_expenses = needs + wants + savings
-                remaining = income - total_expenses
-                
-                # Regla 50/30/20
-                recommended_needs = income * 0.5
-                recommended_wants = income * 0.3
-                recommended_savings = income * 0.2
-                
-                result = {
-                    'income': income,
-                    'total_expenses': round(total_expenses, 2),
-                    'remaining': round(remaining, 2),
-                    'needs_pct': round((needs/income)*100, 1) if income > 0 else 0,
-                    'wants_pct': round((wants/income)*100, 1) if income > 0 else 0,
-                    'savings_pct': round((savings/income)*100, 1) if income > 0 else 0,
-                    'recommended_needs': round(recommended_needs, 2),
-                    'recommended_wants': round(recommended_wants, 2),
-                    'recommended_savings': round(recommended_savings, 2),
-                    'type': 'budget'
-                }
-                
-                # Generar explicación con IA
-                ai_explanation = generate_ai_explanation(result, tab)
-                
-            except Exception:
-                result = {"error": "Error en los valores ingresados"}
-        
-        elif tab == "retirement":
-            try:
-                current_age = int(request.POST.get("current_age", 0))
-                retirement_age = int(request.POST.get("retirement_age", 0))
-                current_savings = float(request.POST.get("current_savings", 0))
-                monthly_contribution = float(request.POST.get("monthly_contribution", 0))
-                expected_return = float(request.POST.get("expected_return", 0)) / 100
-                desired_income = float(request.POST.get("desired_income", 0))
-                
-                years_to_retirement = retirement_age - current_age
-                months_to_retirement = years_to_retirement * 12
-                
-                # Cálculo del valor futuro con aportaciones
-                if expected_return > 0:
-                    monthly_rate = expected_return / 12
-                    # Valor futuro del dinero actual
-                    future_current = current_savings * (1 + monthly_rate) ** months_to_retirement
-                    # Valor futuro de las aportaciones mensuales
-                    future_contributions = monthly_contribution * (((1 + monthly_rate) ** months_to_retirement - 1) / monthly_rate)
-                    total_at_retirement = future_current + future_contributions
-                else:
-                    total_at_retirement = current_savings + (monthly_contribution * months_to_retirement)
-                
-                # Ingreso mensual sostenible (regla del 4%)
-                monthly_income = (total_at_retirement * 0.04) / 12
-                total_contributions = current_savings + (monthly_contribution * months_to_retirement)
-                
-                result = {
-                    'total_at_retirement': round(total_at_retirement, 2),
-                    'monthly_income': round(monthly_income, 2),
-                    'total_contributions': round(total_contributions, 2),
-                    'years_to_retirement': years_to_retirement,
-                    'shortfall': round(max(0, desired_income - monthly_income), 2) if desired_income > 0 else 0,
-                    'type': 'retirement'
-                }
-                
-                # Generar explicación con IA
-                ai_explanation = generate_ai_explanation(result, tab)
-                
-            except Exception:
-                result = {"error": "Error en los valores ingresados"}
-        
-        elif tab == "investment":
-            try:
-                initial_investment = float(request.POST.get("initial_investment", 0))
-                monthly_investment = float(request.POST.get("monthly_investment", 0))
-                annual_return = float(request.POST.get("annual_return", 0)) / 100
-                years = int(request.POST.get("years", 0))
-                inflation_rate = float(request.POST.get("inflation_rate", 3.0)) / 100
-                
-                months = years * 12
-                
-                # Cálculo del valor futuro
-                if annual_return > 0:
-                    monthly_rate = annual_return / 12
-                    # Valor futuro de la inversión inicial
-                    future_initial = initial_investment * (1 + monthly_rate) ** months
-                    # Valor futuro de las inversiones mensuales
-                    future_monthly = monthly_investment * (((1 + monthly_rate) ** months - 1) / monthly_rate)
-                    final_value = future_initial + future_monthly
-                else:
-                    final_value = initial_investment + (monthly_investment * months)
-                
-                total_invested = initial_investment + (monthly_investment * months)
-                total_profit = final_value - total_invested
-                roi_percentage = (total_profit / total_invested * 100) if total_invested > 0 else 0
-                
-                # Valor real ajustado por inflación
-                real_rate = ((1 + annual_return) / (1 + inflation_rate)) - 1
-                if real_rate > 0:
-                    real_monthly_rate = real_rate / 12
-                    real_future_initial = initial_investment * (1 + real_monthly_rate) ** months
-                    real_future_monthly = monthly_investment * (((1 + real_monthly_rate) ** months - 1) / real_monthly_rate)
-                    real_value = real_future_initial + real_future_monthly
-                else:
-                    real_value = final_value / ((1 + inflation_rate) ** years)
-                
-                result = {
-                    'final_value': round(final_value, 2),
-                    'total_profit': round(total_profit, 2),
-                    'total_invested': round(total_invested, 2),
-                    'roi_percentage': round(roi_percentage, 2),
-                    'real_value': round(real_value, 2),
-                    'type': 'investment'
-                }
-                
-                # Generar explicación con IA
-                ai_explanation = generate_ai_explanation(result, tab)
-                
-            except Exception:
-                result = {"error": "Error en los valores ingresados"}
 
     return render(request, 'educacion_financiera/calculators_new.html', {
         'tab': tab,
@@ -258,7 +260,7 @@ def toggle_favorito_curso(request, curso_id):
                 'error': str(e)
             })
     
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+    return JsonResponse({'success': False, 'error': METODO_NO_PERMITIDO})
 
 @login_required
 @fast_access_pin_verified

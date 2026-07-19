@@ -37,6 +37,126 @@ from .utils import (
 )
 from .helpers import procesar_imagen_perfil
 
+# Constantes para evitar literales repetidos
+PROFILE_URL = "cuentas:profile"
+DASHBOARD_URL = "cuentas:subcuentas_dashboard"
+METODO_NO_PERMITIDO = "Método no permitido"
+MONTO_MAYOR_CERO = "El monto debe ser mayor a 0"
+
+# Helpers para reducir complejidad cognitiva
+def _filtrar_transferencias_query(query, request_get):
+    fecha_desde = request_get.get('fecha_desde')
+    fecha_hasta = request_get.get('fecha_hasta')
+    subcuenta_id = request_get.get('subcuenta')
+    monto_min = request_get.get('monto_min')
+    
+    if fecha_desde:
+        try:
+            fecha_desde_dt = datetime.strptime(fecha_desde, '%Y-%m-%d').date()
+            query = query.filter(fecha_transferencia__date__gte=fecha_desde_dt)
+        except ValueError:
+            pass
+    if fecha_hasta:
+        try:
+            fecha_hasta_dt = datetime.strptime(fecha_hasta, '%Y-%m-%d').date()
+            query = query.filter(fecha_transferencia__date__lte=fecha_hasta_dt)
+        except ValueError:
+            pass
+    if subcuenta_id:
+        try:
+            sub_id = int(subcuenta_id)
+            query = query.filter(
+                Q(subcuenta_origen_id=sub_id) | Q(subcuenta_destino_id=sub_id)
+            )
+        except ValueError:
+            pass
+    if monto_min:
+        try:
+            min_val = float(monto_min)
+            query = query.filter(monto__gte=min_val)
+        except ValueError:
+            pass
+    return query
+
+def _filtrar_transferencias_principal_query(request_get, transferencias_subcuentas, transferencias_principal):
+    fecha_desde = request_get.get('fecha_desde')
+    fecha_hasta = request_get.get('fecha_hasta')
+    subcuenta_id = request_get.get('subcuenta')
+    tipo_transferencia = request_get.get('tipo')
+    
+    if fecha_desde:
+        try:
+            fecha_desde_dt = datetime.strptime(fecha_desde, '%Y-%m-%d').date()
+            transferencias_subcuentas = transferencias_subcuentas.filter(fecha_transferencia__date__gte=fecha_desde_dt)
+            transferencias_principal = transferencias_principal.filter(fecha_transferencia__date__gte=fecha_desde_dt)
+        except ValueError:
+            pass
+    if fecha_hasta:
+        try:
+            fecha_hasta_dt = datetime.strptime(fecha_hasta, '%Y-%m-%d').date()
+            transferencias_subcuentas = transferencias_subcuentas.filter(fecha_transferencia__date__lte=fecha_hasta_dt)
+            transferencias_principal = transferencias_principal.filter(fecha_transferencia__date__lte=fecha_hasta_dt)
+        except ValueError:
+            pass
+    if subcuenta_id:
+        try:
+            sub_id = int(subcuenta_id)
+            transferencias_subcuentas = transferencias_subcuentas.filter(
+                Q(subcuenta_origen_id=sub_id) | Q(subcuenta_destino_id=sub_id)
+            )
+            transferencias_principal = transferencias_principal.filter(subcuenta_id=sub_id)
+        except ValueError:
+            pass
+    if tipo_transferencia:
+        if tipo_transferencia == 'entre_subcuentas':
+            transferencias_principal = TransferenciaCuentaPrincipal.objects.none()
+        elif tipo_transferencia == 'con_principal':
+            transferencias_subcuentas = TransferenciaSubCuenta.objects.none()
+        elif tipo_transferencia in ['deposito', 'retiro']:
+            transferencias_principal = transferencias_principal.filter(tipo=tipo_transferencia)
+            transferencias_subcuentas = TransferenciaSubCuenta.objects.none()
+            
+    return transferencias_subcuentas, transferencias_principal
+
+def _handle_transferencia_cuenta_principal_post(request, subcuenta, cuenta_principal):
+    form = TransferenciaCuentaPrincipalForm(request.POST, subcuenta=subcuenta)
+    if not form.is_valid():
+        return None
+    with transaction.atomic():
+        transferencia = form.save(commit=False)
+        transferencia.subcuenta = subcuenta
+        transferencia.cuenta_destino = cuenta_principal
+        transferencia.id_usuario = request.user
+        
+        monto = transferencia.monto
+        
+        # Realizar la transferencia
+        if transferencia.tipo == 'deposito':
+            # Transferir de subcuenta a cuenta principal
+            subcuenta.saldo -= monto
+            cuenta_principal.saldo_cuenta += monto
+            mensaje = f'Transferencia de ${monto:.2f} realizada exitosamente desde "{subcuenta.nombre}" a tu cuenta principal.'
+        else:
+            # Transferir de cuenta principal a subcuenta
+            if cuenta_principal.saldo_disponible() < monto:
+                messages.error(request, 'No hay saldo suficiente en la cuenta principal.')
+                return render(request, 'cuentas/transferir_cuenta_principal.html', {
+                    'form': form,
+                    'subcuenta': subcuenta,
+                    'cuenta_principal': cuenta_principal
+                })
+            cuenta_principal.saldo_cuenta -= monto
+            subcuenta.saldo += monto
+            mensaje = f'Transferencia de ${monto:.2f} realizada exitosamente desde tu cuenta principal a "{subcuenta.nombre}".'
+        
+        subcuenta.save()
+        cuenta_principal.save()
+        transferencia.save()
+        
+        messages.success(request, mensaje)
+        return redirect(DASHBOARD_URL)
+
+
 # Views App CUENTAS
 
 # Función de detección automática eliminada - ahora el usuario selecciona manualmente
@@ -73,7 +193,7 @@ def _handle_profile_action(request, usuario):
     if handler:
         return handler(request, usuario)
     messages.error(request, "❌ Acción no válida.")
-    return redirect("cuentas:profile")
+    return redirect(PROFILE_URL)
 
 def _handle_change_photo(request, usuario):
     imagen_perfil = request.FILES.get("imagen_perfil")
@@ -82,7 +202,7 @@ def _handle_change_photo(request, usuario):
         messages.success(request, msg)
     else:
         messages.error(request, msg)
-    return redirect("cuentas:profile")
+    return redirect(PROFILE_URL)
 
 def _handle_update_profile(request, usuario):
     nombres = request.POST.get("nombres", "").strip()
@@ -95,7 +215,7 @@ def _handle_update_profile(request, usuario):
         messages.success(request, "✅ Información personal actualizada correctamente.")
     else:
         messages.error(request, "❌ Los campos Nombres, Apellido Paterno y País son obligatorios.")
-    return redirect("cuentas:profile")
+    return redirect(PROFILE_URL)
 
 @login_required
 @fast_access_pin_verified
@@ -184,7 +304,7 @@ def crear_subcuenta(request, _cuenta_id=None):
                 subcuenta.save()
                 
                 messages.success(request, f'Subcuenta "{subcuenta.nombre}" creada exitosamente como {tipo_msg}.')
-                return redirect('cuentas:subcuentas_dashboard')
+                return redirect(DASHBOARD_URL)
     else:
         form = SubCuentaForm(user=request.user)
     
@@ -218,7 +338,7 @@ def editar_subcuenta(request, subcuenta_id):
                     'message': f'SubCuenta "{subcuenta.nombre}" actualizada exitosamente.'
                 })
             
-            return redirect('cuentas:subcuentas_dashboard')
+            return redirect(DASHBOARD_URL)
         else:
             # Si es AJAX y hay errores
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -267,7 +387,7 @@ def eliminar_subcuenta(request, subcuenta_id):
             subcuenta.save()
             messages.success(request, f'SubCuenta "{subcuenta.nombre}" eliminada exitosamente.')
         
-        return redirect('cuentas:subcuentas_dashboard')
+        return redirect(DASHBOARD_URL)
     
     # Verificar si tiene transferencias
     tiene_transferencias = TransferenciaSubCuenta.objects.filter(
@@ -304,7 +424,7 @@ def transferir_subcuentas(request):
                 transferencia.save()
                 
             messages.success(request, f'Transferencia de ${monto:.2f} realizada exitosamente de "{origen.nombre}" a "{destino.nombre}".')
-            return redirect('cuentas:subcuentas_dashboard')
+            return redirect(DASHBOARD_URL)
     else:
         form = TransferenciaSubCuentaForm(user=request.user)
     
@@ -346,7 +466,7 @@ def depositar_subcuenta(request, subcuenta_id):
                     subcuenta.saldo += monto
                     subcuenta.save()
                     messages.success(request, f'Depósito de ${monto:.2f} realizado exitosamente a "{subcuenta.nombre}".')
-                    return redirect('cuentas:subcuentas_dashboard')
+                    return redirect(DASHBOARD_URL)
                 else:
                     # Para subcuentas personales, transferir desde cuenta principal
                     if cuenta.saldo_disponible() >= monto:
@@ -367,7 +487,7 @@ def depositar_subcuenta(request, subcuenta_id):
                         )
                         
                         messages.success(request, f'Depósito de ${monto:.2f} realizado exitosamente a "{subcuenta.nombre}".')
-                        return redirect('cuentas:subcuentas_dashboard')
+                        return redirect(DASHBOARD_URL)
                     else:
                         messages.error(request, 'No hay saldo suficiente en la cuenta principal.')
     else:
@@ -407,7 +527,7 @@ def retirar_subcuenta(request, subcuenta_id):
                     subcuenta.saldo -= monto
                     subcuenta.save()
                     messages.success(request, f'Retiro de ${monto:.2f} realizado exitosamente desde "{subcuenta.nombre}".')
-                    return redirect('cuentas:subcuentas_dashboard')
+                    return redirect(DASHBOARD_URL)
                 else:
                     # Para subcuentas personales, transferir a cuenta principal
                     subcuenta.saldo -= monto
@@ -426,7 +546,7 @@ def retirar_subcuenta(request, subcuenta_id):
                     )
                     
                     messages.success(request, f'Retiro de ${monto:.2f} realizado exitosamente desde "{subcuenta.nombre}".')
-                    return redirect('cuentas:subcuentas_dashboard')
+                    return redirect(DASHBOARD_URL)
     else:
         form = RetiroSubCuentaForm()
     
@@ -448,43 +568,10 @@ def historial_transferencias(request):
     )
     
     # Filtros
-    fecha_desde = request.GET.get('fecha_desde')
-    fecha_hasta = request.GET.get('fecha_hasta')
-    subcuenta_id = request.GET.get('subcuenta')
-    monto_min = request.GET.get('monto_min')
-    orden = request.GET.get('orden', '-fecha_transferencia')
-    
-    if fecha_desde:
-        try:
-            fecha_desde_dt = datetime.strptime(fecha_desde, '%Y-%m-%d').date()
-            transferencias_query = transferencias_query.filter(fecha_transferencia__date__gte=fecha_desde_dt)
-        except ValueError:
-            pass
-    
-    if fecha_hasta:
-        try:
-            fecha_hasta_dt = datetime.strptime(fecha_hasta, '%Y-%m-%d').date()
-            transferencias_query = transferencias_query.filter(fecha_transferencia__date__lte=fecha_hasta_dt)
-        except ValueError:
-            pass
-    
-    if subcuenta_id:
-        try:
-            subcuenta_id = int(subcuenta_id)
-            transferencias_query = transferencias_query.filter(
-                Q(subcuenta_origen_id=subcuenta_id) | Q(subcuenta_destino_id=subcuenta_id)
-            )
-        except ValueError:
-            pass
-    
-    if monto_min:
-        try:
-            monto_min = float(monto_min)
-            transferencias_query = transferencias_query.filter(monto__gte=monto_min)
-        except ValueError:
-            pass
+    transferencias_query = _filtrar_transferencias_query(transferencias_query, request.GET)
     
     # Ordenamiento
+    orden = request.GET.get('orden', '-fecha_transferencia')
     if orden in ['fecha_transferencia', '-fecha_transferencia', 'monto', '-monto']:
         transferencias_query = transferencias_query.order_by(orden)
     else:
@@ -534,7 +621,7 @@ def activar_subcuenta(request, subcuenta_id):
         subcuenta.save()
         
         messages.success(request, f'SubCuenta "{subcuenta.nombre}" activada exitosamente.')
-        return redirect('cuentas:subcuentas_dashboard')
+        return redirect(DASHBOARD_URL)
     
     return render(request, 'cuentas/activar_subcuenta.html', {
         'subcuenta': subcuenta
@@ -555,51 +642,19 @@ def transferir_a_cuenta_principal(request, subcuenta_id):
     if not (subcuenta.propietario == request.user or 
             (subcuenta.id_cuenta and subcuenta.id_cuenta.id_usuario == request.user)):
         messages.error(request, 'No tienes permisos para acceder a esta subcuenta.')
-        return redirect('cuentas:subcuentas_dashboard')
+        return redirect(DASHBOARD_URL)
     
     # Obtener la cuenta principal del usuario
     cuenta_principal = request.user.cuenta_set.first()
     if not cuenta_principal:
         messages.error(request, 'Necesitas tener una cuenta principal para recibir transferencias.')
-        return redirect('cuentas:subcuentas_dashboard')
+        return redirect(DASHBOARD_URL)
     
     if request.method == 'POST':
+        res = _handle_transferencia_cuenta_principal_post(request, subcuenta, cuenta_principal)
+        if res:
+            return res
         form = TransferenciaCuentaPrincipalForm(request.POST, subcuenta=subcuenta)
-        if form.is_valid():
-            with transaction.atomic():
-                transferencia = form.save(commit=False)
-                transferencia.subcuenta = subcuenta
-                transferencia.cuenta_destino = cuenta_principal
-                transferencia.id_usuario = request.user
-                
-                monto = transferencia.monto
-                
-                # Realizar la transferencia
-                if transferencia.tipo == 'deposito':
-                    # Transferir de subcuenta a cuenta principal
-                    subcuenta.saldo -= monto
-                    cuenta_principal.saldo_cuenta += monto
-                    mensaje = f'Transferencia de ${monto:.2f} realizada exitosamente desde "{subcuenta.nombre}" a tu cuenta principal.'
-                else:
-                    # Transferir de cuenta principal a subcuenta
-                    if cuenta_principal.saldo_disponible() >= monto:
-                        cuenta_principal.saldo_cuenta -= monto
-                        subcuenta.saldo += monto
-                        mensaje = f'Transferencia de ${monto:.2f} realizada exitosamente desde tu cuenta principal a "{subcuenta.nombre}".'
-                    else:
-                        messages.error(request, 'No hay saldo suficiente en la cuenta principal.')
-                        return render(request, 'cuentas/transferir_cuenta_principal.html', {
-                            'form': form,
-                            'subcuenta': subcuenta,
-                            'cuenta_principal': cuenta_principal
-                        })
-                
-                subcuenta.save()
-                cuenta_principal.save()
-                transferencia.save()
-                
-                messages.success(request, mensaje)
-                return redirect('cuentas:subcuentas_dashboard')
     else:
         form = TransferenciaCuentaPrincipalForm(subcuenta=subcuenta)
     
@@ -623,49 +678,10 @@ def historial_transferencias_cuenta_principal(request):
         id_usuario=request.user
     ).select_related('subcuenta', 'cuenta_destino')
     
-    # Filtros
-    fecha_desde = request.GET.get('fecha_desde')
-    fecha_hasta = request.GET.get('fecha_hasta')
-    subcuenta_id = request.GET.get('subcuenta')
-    tipo_transferencia = request.GET.get('tipo')
     orden = request.GET.get('orden', '-fecha_transferencia')
-    
-    if fecha_desde:
-        try:
-            fecha_desde_dt = datetime.strptime(fecha_desde, '%Y-%m-%d').date()
-            transferencias_subcuentas = transferencias_subcuentas.filter(fecha_transferencia__date__gte=fecha_desde_dt)
-            transferencias_principal = transferencias_principal.filter(fecha_transferencia__date__gte=fecha_desde_dt)
-        except ValueError:
-            pass
-    
-    if fecha_hasta:
-        try:
-            fecha_hasta_dt = datetime.strptime(fecha_hasta, '%Y-%m-%d').date()
-            transferencias_subcuentas = transferencias_subcuentas.filter(fecha_transferencia__date__lte=fecha_hasta_dt)
-            transferencias_principal = transferencias_principal.filter(fecha_transferencia__date__lte=fecha_hasta_dt)
-        except ValueError:
-            pass
-    
-    if subcuenta_id:
-        try:
-            subcuenta_id = int(subcuenta_id)
-            # Filtrar transferencias entre subcuentas que involucren la subcuenta específica
-            transferencias_subcuentas = transferencias_subcuentas.filter(
-                Q(subcuenta_origen_id=subcuenta_id) | Q(subcuenta_destino_id=subcuenta_id)
-            )
-            # Filtrar transferencias con cuenta principal de la subcuenta específica
-            transferencias_principal = transferencias_principal.filter(subcuenta_id=subcuenta_id)
-        except ValueError:
-            pass
-    
-    if tipo_transferencia:
-        if tipo_transferencia == 'entre_subcuentas':
-            transferencias_principal = TransferenciaCuentaPrincipal.objects.none()
-        elif tipo_transferencia == 'con_principal':
-            transferencias_subcuentas = TransferenciaSubCuenta.objects.none()
-        elif tipo_transferencia in ['deposito', 'retiro']:
-            transferencias_principal = transferencias_principal.filter(tipo=tipo_transferencia)
-            transferencias_subcuentas = TransferenciaSubCuenta.objects.none()
+    transferencias_subcuentas, transferencias_principal = _filtrar_transferencias_principal_query(
+        request.GET, transferencias_subcuentas, transferencias_principal
+    )
     
     # Combinar y ordenar todas las transferencias
     todas_transferencias = []
@@ -748,14 +764,14 @@ def historial_transferencias_cuenta_principal(request):
 def transferir_a_cuenta_principal_ajax(request):
     """Vista AJAX para transferir dinero desde una subcuenta a la cuenta principal"""
     if request.method != 'POST':
-        return JsonResponse({'success': False, 'error': 'Método no permitido'})
+        return JsonResponse({'success': False, 'error': METODO_NO_PERMITIDO})
     
     subcuenta_id = request.POST.get('subcuenta_id')
     monto = Decimal(str(request.POST.get('monto', '0')))
     
     # Validaciones
     if monto <= Decimal('0'):
-        return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
+        return JsonResponse({'success': False, 'error': MONTO_MAYOR_CERO})
     
     subcuenta = get_object_or_404(SubCuenta, id=subcuenta_id)
     
@@ -797,14 +813,14 @@ def transferir_a_cuenta_principal_ajax(request):
 def depositar_subcuenta_ajax(request):
     """Vista AJAX para depositar dinero en una subcuenta"""
     if request.method != 'POST':
-        return JsonResponse({'success': False, 'error': 'Método no permitido'})
+        return JsonResponse({'success': False, 'error': METODO_NO_PERMITIDO})
     
     subcuenta_id = request.POST.get('subcuenta_id')
     monto = Decimal(str(request.POST.get('monto', '0')))
     
     # Validaciones previas
     if monto <= Decimal('0'):
-        return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
+        return JsonResponse({'success': False, 'error': MONTO_MAYOR_CERO})
     
     subcuenta = get_object_or_404(SubCuenta, id=subcuenta_id)
     
@@ -845,7 +861,7 @@ def depositar_subcuenta_ajax(request):
 def transferir_subcuentas_ajax(request):
     """Vista AJAX para transferir dinero entre subcuentas"""
     if request.method != 'POST':
-        return JsonResponse({'success': False, 'error': 'Método no permitido'})
+        return JsonResponse({'success': False, 'error': METODO_NO_PERMITIDO})
     
     subcuenta_origen_id = request.POST.get('subcuenta_origen')
     subcuenta_destino_id = request.POST.get('subcuenta_destino')
@@ -853,7 +869,7 @@ def transferir_subcuentas_ajax(request):
     
     # Validaciones
     if monto <= Decimal('0'):
-        return JsonResponse({'success': False, 'error': 'El monto debe ser mayor a 0'})
+        return JsonResponse({'success': False, 'error': MONTO_MAYOR_CERO})
     
     if subcuenta_origen_id == subcuenta_destino_id:
         return JsonResponse({'success': False, 'error': 'No puedes transferir a la misma subcuenta'})

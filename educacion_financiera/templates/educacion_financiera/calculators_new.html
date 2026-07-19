@@ -1016,13 +1016,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (this.value) {
                 const number = parseFloat(this.value);
                 if (!isNaN(number) && number >= 1000) {
-                    this.setAttribute('data-formatted', number.toLocaleString());
+                    this.dataset.formatted = number.toLocaleString();
                 }
             }
         });
         
         input.addEventListener('focus', function() {
-            if (this.getAttribute('data-formatted')) {
+            if (this.dataset.formatted) {
                 this.value = this.value.replace(/,/g, '');
             }
         });

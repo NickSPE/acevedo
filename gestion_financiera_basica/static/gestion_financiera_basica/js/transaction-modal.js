@@ -251,6 +251,45 @@ class TransactionModal {
     }
   }
 
+  async handleResponse(response) {
+    const contentType = response.headers.get('content-type');
+    
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      
+      if (data.success) {
+        this.showSuccess(data.message || 'Transacción guardada correctamente');
+        setTimeout(() => {
+          this.close();
+          window.location.reload();
+        }, 1500);
+      } else {
+        this.showError(data.message || 'Error al guardar la transacción');
+        if (data.errors) {
+          this.showFieldErrors(data.errors);
+        }
+      }
+    } else {
+      // Si la respuesta es redirect o HTML (vista normal)
+      if (response.redirected || response.ok) {
+        this.showSuccess('Transacción guardada correctamente');
+        setTimeout(() => {
+          window.location.href = this.getSafeRedirectUrl(response.url, '/gestion_financiera_basica/transactions/');
+        }, 1500);
+      } else {
+        const text = await response.text();
+        if (text.includes('error') || text.includes('Error')) {
+          this.showError('Error al procesar la transacción');
+        } else {
+          this.showSuccess('Transacción guardada correctamente');
+          setTimeout(() => {
+            window.location.href = '/gestion_financiera_basica/transactions/';
+          }, 1500);
+        }
+      }
+    }
+  }
+
   async handleSubmit(e) {
     e.preventDefault();
     
@@ -275,42 +314,7 @@ class TransactionModal {
         }
       });
 
-      const contentType = response.headers.get('content-type');
-      
-      if (contentType && contentType.includes('application/json')) {
-        const data = await response.json();
-        
-        if (data.success) {
-          this.showSuccess(data.message || 'Transacción guardada correctamente');
-          setTimeout(() => {
-            this.close();
-            window.location.reload();
-          }, 1500);
-        } else {
-          this.showError(data.message || 'Error al guardar la transacción');
-          if (data.errors) {
-            this.showFieldErrors(data.errors);
-          }
-        }
-      } else {
-        // Si la respuesta es redirect o HTML (vista normal)
-        if (response.redirected || response.ok) {
-          this.showSuccess('Transacción guardada correctamente');
-          setTimeout(() => {
-            window.location.href = this.getSafeRedirectUrl(response.url, '/gestion_financiera_basica/transactions/');
-          }, 1500);
-        } else {
-          const text = await response.text();
-          if (text.includes('error') || text.includes('Error')) {
-            this.showError('Error al procesar la transacción');
-          } else {
-            this.showSuccess('Transacción guardada correctamente');
-            setTimeout(() => {
-              window.location.href = '/gestion_financiera_basica/transactions/';
-            }, 1500);
-          }
-        }
-      }
+      await this.handleResponse(response);
     } catch (error) {
       console.error('Error:', error);
       this.showError('Error de conexión. Intenta nuevamente.');
