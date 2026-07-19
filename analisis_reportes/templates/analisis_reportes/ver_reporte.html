@@ -511,7 +511,7 @@
     // Datos del reporte - con validación adicional
     let reportData;
     try {
-        reportData = {{ datos|safe }};
+        reportData = JSON.parse('{{ datos_json|escapejs }}');
     } catch (e) {
         console.error('Error parsing report data:', e);
         reportData = {};

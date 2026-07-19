@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_GET
 import os
 import glob
 from django.conf import settings
 
 @login_required
+@require_GET
 def ver_emails_enviados(request):
     """Vista para visualizar los emails enviados en formato web"""
     emails_path = getattr(settings, 'EMAIL_FILE_PATH', None)
@@ -65,6 +67,7 @@ def ver_emails_enviados(request):
 
 
 @login_required
+@require_GET
 def ver_email_completo(request, filename):
     """Vista para ver un email específico en formato HTML de manera segura"""
     emails_path = getattr(settings, 'EMAIL_FILE_PATH', None)

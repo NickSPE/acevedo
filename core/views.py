@@ -1,5 +1,6 @@
 from django.db.models import Sum, Q
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_GET
 from django.shortcuts import redirect, render
 from gestion_financiera_basica.models import Movimiento
 from usuarios.models import Usuario
@@ -10,6 +11,7 @@ from django.contrib import messages
 from django.conf import settings
 
 # Views App CORE
+@require_GET
 def Inicio(request):
     if(not request.user.is_authenticated):
         return render(request , 'core/index.html')
@@ -149,18 +151,22 @@ def logout_view(request):
     return redirect('core:index')
 
 @login_required
+@require_GET
 def temporary_logout(request):
     request.session["pin_acceso_rapido_validado"] = False
     return redirect("usuarios:acceso_rapido")
 
+@require_GET
 def privacy_policy(request):
     """Vista para la política de privacidad"""
     return render(request, 'core/privacy.html')
 
+@require_GET
 def terms_of_service(request):
     """Vista para los términos y condiciones"""
     return render(request, 'core/terms.html')
 
+@require_GET
 def help_center(request):
     """Vista para el centro de ayuda"""
     return render(request, 'core/help.html')

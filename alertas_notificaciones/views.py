@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_GET
 
 from .models import TipoNotificacion, ConfiguracionNotificacion, Notificacion
 from .services import NotificationService, ConfigurationNotificationService
@@ -136,6 +136,7 @@ def _manejar_actualizacion_configuracion(request):
         return redirect('alertas_notificaciones:configuraciones')
 
 @login_required
+@require_GET
 def historial(request):
     """Vista para el historial de notificaciones - 3 más recientes con opción de ver todas"""
     # Verificar si se quiere mostrar todas las notificaciones
@@ -235,11 +236,13 @@ def historial(request):
     return render(request, 'alertas_notificaciones/historial.html', context)
 
 @login_required
+@require_GET
 def alertas_automaticas(request):
     """Vista para alertas automáticas"""
     return render(request, 'alertas_notificaciones/alertas_automaticas.html')
 
 @login_required
+@require_GET
 def index(request):
     """Vista principal del módulo de alertas"""
     return render(request, 'alertas_notificaciones/index.html')
@@ -279,6 +282,7 @@ def marcar_todas_leidas(request):
         return JsonResponse({'status': 'error', 'message': str(e)})
 
 @login_required
+@require_GET
 def obtener_contador_notificaciones(request):
     """API para obtener contador de notificaciones no leídas"""
     try:
@@ -289,6 +293,7 @@ def obtener_contador_notificaciones(request):
 
 # Función de prueba para enviar notificación
 @login_required
+@require_http_methods(["GET", "POST"])
 def test_notification(request):
     """Vista de prueba para enviar notificación (solo para desarrollo)"""
     if request.method == 'POST':
@@ -314,6 +319,7 @@ def test_notification(request):
     return redirect('alertas_notificaciones:configuraciones')
 
 @login_required
+@require_GET
 def marcar_leida_simple(request, notificacion_id):
     """Vista simple para marcar notificación como leída (GET request)"""
     try:
@@ -342,6 +348,7 @@ def marcar_leida_simple(request, notificacion_id):
     return redirect('alertas_notificaciones:historial')
 
 @login_required
+@require_GET
 def marcar_todas_leidas_simple(request):
     """Vista simple para marcar todas las notificaciones como leídas (GET request)"""
     try:
@@ -364,11 +371,13 @@ def marcar_todas_leidas_simple(request):
     return redirect('alertas_notificaciones:historial')
 
 @login_required
+@require_GET
 def test_currency(request):
     """Vista de prueba para mostrar el formateo de moneda"""
     return render(request, 'alertas_notificaciones/test_currency.html')
 
 @login_required
+@require_GET
 def debug_currency(request):
     """Vista de debug para verificar la moneda del usuario"""
     debug_info = {
@@ -408,6 +417,7 @@ def debug_currency(request):
     })
 
 @login_required
+@require_GET
 def debug_simple(request):
     """Vista de debug simple para verificar moneda"""
     context = {

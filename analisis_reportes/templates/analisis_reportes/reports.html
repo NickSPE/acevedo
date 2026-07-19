@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gráfico de Categorías (Gastos por Categoría)
     const categoriasCtx = document.getElementById('categoriasChart');
     if (categoriasCtx) {
-        const categoriasData = {{ gastos_categoria|safe }};
+        const categoriasData = JSON.parse('{{ gastos_categoria|escapejs }}');
         
         new Chart(categoriasCtx, {
             type: 'doughnut',
@@ -556,7 +556,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gráfico de Flujo Mensual (Ingresos - Gastos = Ahorro/Déficit)
     const flujoMensualCtx = document.getElementById('flujoMensualChart');
     if (flujoMensualCtx) {
-        const flujoMensualData = {{ flujo_mensual|safe }};
+        const flujoMensualData = JSON.parse('{{ flujo_mensual|escapejs }}');
         
         new Chart(flujoMensualCtx, {
             type: 'line',

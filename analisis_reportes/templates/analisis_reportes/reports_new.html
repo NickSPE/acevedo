@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gráfico de Ingresos vs Gastos
     const ingresosGastosCtx = document.getElementById('ingresosGastosChart').getContext('2d');
-    const ingresosGastosData = {{ ingresos_egresos|safe }};
+    const ingresosGastosData = JSON.parse('{{ ingresos_egresos|escapejs }}');
     
     new Chart(ingresosGastosCtx, {
         type: 'bar',
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gráfico de Categorías
     const categoriasCtx = document.getElementById('categoriasChart').getContext('2d');
-    const categoriasData = {{ gastos_categoria|safe }};
+    const categoriasData = JSON.parse('{{ gastos_categoria|escapejs }}');
     
     new Chart(categoriasCtx, {
         type: 'doughnut',
@@ -368,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Gráfico de Flujo Mensual
     const flujoMensualCtx = document.getElementById('flujoMensualChart').getContext('2d');
-    const flujoMensualData = {{ flujo_mensual|safe }};
+    const flujoMensualData = JSON.parse('{{ flujo_mensual|escapejs }}');
     
     new Chart(flujoMensualCtx, {
         type: 'line',
