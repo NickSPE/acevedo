@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <!-- Información de la Meta -->
+  <!-- InformaciÃ³n de la Meta -->
   <div class="bg-white rounded-lg border border-[#E5E1DD] p-4 mb-4">
     <div class="flex items-center justify-between mb-3">
       <h3 class="text-base font-semibold text-[#605952]">{{ meta.nombre }}</h3>
@@ -61,7 +61,7 @@
         <p class="font-semibold text-[#605952]">${{ meta.falta_por_ahorrar|floatformat:2 }}</p>
       </div>
       <div>
-        <p class="text-[#736B5E]">Fecha límite</p>
+        <p class="text-[#736B5E]">Fecha lÃ­mite</p>
         <p class="font-semibold text-[#605952]">{{ meta.fecha_limite|date:"d/m/Y" }}</p>
       </div>
     </div>
@@ -86,13 +86,13 @@
           <span class="absolute left-3 top-2.5 text-[#736B5E] text-sm">$</span>
           {{ form.monto }}
         </div>
-        <p class="text-xs text-[#736B5E] mt-1">¿Cuánto dinero quieres aportar a esta meta?</p>
+        <p class="text-xs text-[#736B5E] mt-1">Â¿CuÃ¡nto dinero quieres aportar a esta meta?</p>
       </div>
 
-      <!-- Descripción -->
+      <!-- DescripciÃ³n -->
       <div class="mb-4">
         <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1.5">
-          Descripción del Aporte (Opcional)
+          DescripciÃ³n del Aporte (Opcional)
         </label>
         {% if form.descripcion.errors %}
           <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
@@ -100,7 +100,7 @@
           </div>
         {% endif %}
         {{ form.descripcion }}
-        <p class="text-xs text-[#736B5E] mt-1">Ejemplo: "Aporte mensual", "Bonificación", "Ahorro extra"</p>
+        <p class="text-xs text-[#736B5E] mt-1">Ejemplo: "Aporte mensual", "BonificaciÃ³n", "Ahorro extra"</p>
       </div>
 
       <!-- Errores generales -->
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-focus en el campo de monto
     montoInput.focus();
     
-    // Validación en tiempo real
+    // ValidaciÃ³n en tiempo real
     montoInput.addEventListener('input', function(e) {
       let value = parseFloat(e.target.value) || 0;
       
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      // Feedback visual según el monto
+      // Feedback visual segÃºn el monto
       if (value > metaFaltante) {
         e.target.classList.add('border-yellow-500', 'focus:ring-yellow-500');
         e.target.classList.remove('border-gray-300', 'focus:ring-blue-500');

@@ -91,7 +91,7 @@
         
         <div>
           <label for="{{ form.fecha_limite.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1.5">
-            Fecha Límite <span class="text-red-500">*</span>
+            Fecha LÃ­mite <span class="text-red-500">*</span>
           </label>
           {% if form.fecha_limite.errors %}
             <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
@@ -115,10 +115,10 @@
         {{ form.id_cuenta }}
       </div>
 
-      <!-- Descripción -->
+      <!-- DescripciÃ³n -->
       <div class="mb-4">
         <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1.5">
-          Descripción (Opcional)
+          DescripciÃ³n (Opcional)
         </label>
         {% if form.descripcion.errors %}
           <div class="mb-2 p-2 bg-red-50 border border-red-200 rounded-lg">
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Validación en tiempo real del monto
+  // ValidaciÃ³n en tiempo real del monto
   const montoInput = document.querySelector('input[name="monto_objetivo"]');
   if (montoInput) {
     montoInput.addEventListener('input', function(e) {
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Validación de fechas (solo visual, no bloquea submit)
+  // ValidaciÃ³n de fechas (solo visual, no bloquea submit)
   const fechaInicio = document.querySelector('input[name="fecha_inicio"]');
   const fechaLimite = document.querySelector('input[name="fecha_limite"]');
   
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!errorMsg) {
           errorMsg = document.createElement('p');
           errorMsg.className = 'date-error text-red-500 text-xs mt-1';
-          errorMsg.textContent = 'La fecha límite debe ser posterior a la fecha de inicio';
+          errorMsg.textContent = 'La fecha lÃ­mite debe ser posterior a la fecha de inicio';
           fechaLimite.parentElement.appendChild(errorMsg);
         }
       } else {

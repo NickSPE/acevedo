@@ -1,7 +1,7 @@
 {% extends "core/base_template.html" %}
 {% load static %}
 
-{% block title %}Análisis y Reportes | FinGest{% endblock %}
+{% block title %}AnÃ¡lisis y Reportes | FinGest{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto">
@@ -15,8 +15,8 @@
           </svg>
         </div>
         <div>
-          <h1 class="text-2xl font-bold text-[#605952]">Análisis y Reportes</h1>
-          <p class="text-[#736B5E] text-sm">Visualiza tu situación financiera</p>
+          <h1 class="text-2xl font-bold text-[#605952]">AnÃ¡lisis y Reportes</h1>
+          <p class="text-[#736B5E] text-sm">Visualiza tu situaciÃ³n financiera</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
@@ -66,14 +66,14 @@
         </div>
         
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1">
-          <!-- Período -->
-          <label for="select_periodo" class="sr-only">Período</label>
+          <!-- PerÃ­odo -->
+          <label for="select_periodo" class="sr-only">PerÃ­odo</label>
           <select id="select_periodo" name="periodo" class="w-full sm:w-44 border border-[#E5E1DD] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91] text-[#605952]">
             <option value="mes_actual" {% if periodo_actual == 'mes_actual' %}selected{% endif %}>Este mes</option>
             <option value="ultimo_mes" {% if periodo_actual == 'ultimo_mes' %}selected{% endif %}>Mes pasado</option>
-            <option value="trimestre" {% if periodo_actual == 'trimestre' %}selected{% endif %}>Último trimestre</option>
-            <option value="ano" {% if periodo_actual == 'ano' %}selected{% endif %}>Este año</option>
-            <option value="personalizado" {% if periodo_actual == 'personalizado' %}selected{% endif %}>Período personalizado</option>
+            <option value="trimestre" {% if periodo_actual == 'trimestre' %}selected{% endif %}>Ãšltimo trimestre</option>
+            <option value="ano" {% if periodo_actual == 'ano' %}selected{% endif %}>Este aÃ±o</option>
+            <option value="personalizado" {% if periodo_actual == 'personalizado' %}selected{% endif %}>PerÃ­odo personalizado</option>
           </select>
 
           <!-- Cuentas -->
@@ -112,7 +112,7 @@
     </form>
   </div>
 
-  <!-- Métricas principales -->
+  <!-- MÃ©tricas principales -->
   <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
     <!-- Balance total -->
     <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
@@ -130,13 +130,13 @@
       </div>
     </div>
 
-    <!-- Ingresos del período -->
+    <!-- Ingresos del perÃ­odo -->
     <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between">
         <div class="min-w-0 flex-1">
           <p class="text-xs font-medium text-[#736B5E] truncate">Ingresos</p>
           <p class="text-xl font-bold text-[#227C91] break-words">${{ stats.total_ingresos|floatformat:0 }}</p>
-          <p class="text-xs text-[#736B5E] mt-0.5">Período seleccionado</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">PerÃ­odo seleccionado</p>
         </div>
         <div class="w-9 h-9 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
           <svg class="w-5 h-5 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,13 +146,13 @@
       </div>
     </div>
 
-    <!-- Gastos del período -->
+    <!-- Gastos del perÃ­odo -->
     <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between">
         <div class="min-w-0 flex-1">
           <p class="text-xs font-medium text-[#736B5E] truncate">Gastos</p>
           <p class="text-xl font-bold text-red-600 break-words">${{ stats.total_egresos|floatformat:0 }}</p>
-          <p class="text-xs text-[#736B5E] mt-0.5">Período seleccionado</p>
+          <p class="text-xs text-[#736B5E] mt-0.5">PerÃ­odo seleccionado</p>
         </div>
         <div class="w-9 h-9 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
           <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,9 +181,9 @@
     </div>
   </div>
 
-  <!-- Gráficos y análisis -->
+  <!-- GrÃ¡ficos y anÃ¡lisis -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-    <!-- Gráfico de ingresos vs gastos -->
+    <!-- GrÃ¡fico de ingresos vs gastos -->
     <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-base font-semibold text-[#605952]">Ingresos vs Gastos</h3>
@@ -198,10 +198,10 @@
       </div>
     </div>
 
-    <!-- Distribución por categorías -->
+    <!-- DistribuciÃ³n por categorÃ­as -->
     <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-base font-semibold text-[#605952]">Gastos por Categoría</h3>
+        <h3 class="text-base font-semibold text-[#605952]">Gastos por CategorÃ­a</h3>
         <div class="w-7 h-7 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center">
           <svg class="w-4 h-4 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
@@ -230,7 +230,7 @@
     </div>
   </div>
 
-  <!-- Análisis detallado -->
+  <!-- AnÃ¡lisis detallado -->
   <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
     <!-- Top gastos -->
     <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
@@ -253,12 +253,12 @@
           <p class="font-semibold text-sm text-red-600 flex-shrink-0 ml-2">-${{ gasto.monto|floatformat:0 }}</p>
         </div>
         {% empty %}
-        <p class="text-[#736B5E] text-sm text-center py-4">No hay gastos en este período</p>
+        <p class="text-[#736B5E] text-sm text-center py-4">No hay gastos en este perÃ­odo</p>
         {% endfor %}
       </div>
     </div>
 
-    <!-- Análisis de subcuentas -->
+    <!-- AnÃ¡lisis de subcuentas -->
     <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-base font-semibold text-[#605952]">Estado de Subcuentas</h3>
@@ -321,7 +321,7 @@
   </div>
 </div>
 
-<!-- Scripts para los gráficos -->
+<!-- Scripts para los grÃ¡ficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Configuración común para todos los gráficos
+    // ConfiguraciÃ³n comÃºn para todos los grÃ¡ficos
     const commonOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -421,7 +421,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Gráfico de Ingresos vs Gastos
+    // GrÃ¡fico de Ingresos vs Gastos
     const ingresosGastosCtx = document.getElementById('ingresosGastosChart');
     if (ingresosGastosCtx) {
         const ingresosGastosData = JSON.parse('{{ ingresos_egresos|default:"{}" |escapejs }}');
@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Gráfico de Categorías (Gastos por Categoría)
+    // GrÃ¡fico de CategorÃ­as (Gastos por CategorÃ­a)
     const categoriasCtx = document.getElementById('categoriasChart');
     if (categoriasCtx) {
         const categoriasData = JSON.parse('{{ gastos_categoria|escapejs }}');
@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         '#eab308', // Amarillo
                         '#22c55e', // Verde
                         '#3b82f6', // Azul
-                        '#8b5cf6', // Púrpura
+                        '#8b5cf6', // PÃºrpura
                         '#ec4899', // Rosa
                         '#06b6d4'  // Cyan
                     ],
@@ -555,7 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Gráfico de Flujo Mensual (Ingresos - Gastos = Ahorro/Déficit)
+    // GrÃ¡fico de Flujo Mensual (Ingresos - Gastos = Ahorro/DÃ©ficit)
     const flujoMensualCtx = document.getElementById('flujoMensualChart');
     if (flujoMensualCtx) {
         const flujoMensualData = JSON.parse('{{ flujo_mensual|escapejs }}');
@@ -632,14 +632,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         callbacks: {
                             label: function(context) {
                                 const value = context.parsed.y;
-                                const label = value >= 0 ? 'Ahorro: +$' : 'Déficit: -$';
+                                const label = value >= 0 ? 'Ahorro: +$' : 'DÃ©ficit: -$';
                                 return label + Math.abs(value).toLocaleString();
                             },
                             afterLabel: function(context) {
                                 if (context.parsed.y >= 0) {
-                                    return '✓ Mes positivo';
+                                    return 'âœ“ Mes positivo';
                                 } else {
-                                    return '⚠ Mes con déficit';
+                                    return 'âš  Mes con dÃ©ficit';
                                 }
                             }
                         }
@@ -649,7 +649,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Redimensionar gráficos cuando cambie el tamaño de la ventana
+    // Redimensionar grÃ¡ficos cuando cambie el tamaÃ±o de la ventana
     window.addEventListener('resize', function() {
         Chart.helpers.each(Chart.instances, function(instance) {
             instance.resize();

@@ -207,7 +207,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
         </svg>
-        Nueva Transacción
+        Nueva TransacciÃ³n
       </button>
       <a href="{% url 'analisis_reportes:reports' %}" 
          class="btn-ghost px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-all" style="color: #605952;">
@@ -352,7 +352,7 @@
       <div class="flex items-center justify-between mb-4">
         <div>
           <h3 class="text-base font-bold" style="color: #605952;">Salud Financiera</h3>
-          <p class="text-xs" style="color: #736B5E;">Evaluación de tu gestión</p>
+          <p class="text-xs" style="color: #736B5E;">EvaluaciÃ³n de tu gestiÃ³n</p>
         </div>
         <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: #F1F0EE;">
           <svg class="w-5 h-5" style="color: #227C91;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -385,9 +385,9 @@
           <div class="text-center mb-3">
             <p class="text-sm font-semibold mb-1" style="color: #605952;">
               {% if salud_financiera_score >= 70 %}
-                Excelente gestión financiera
+                Excelente gestiÃ³n financiera
               {% elif salud_financiera_score >= 40 %}
-                Gestión financiera aceptable
+                GestiÃ³n financiera aceptable
               {% else %}
                 Necesitas optimizar tus gastos
               {% endif %}
@@ -429,7 +429,7 @@
       <div class="flex items-center justify-between mb-4">
         <div>
           <h3 class="text-base font-bold" style="color: #605952;">Desglose de Gastos</h3>
-          <p class="text-xs" style="color: #736B5E;">Por categorías</p>
+          <p class="text-xs" style="color: #736B5E;">Por categorÃ­as</p>
         </div>
         <a href="{% url 'analisis_reportes:reports' %}" class="text-sm font-medium flex items-center gap-1" style="color: #227C91;">
           Ver detalles
@@ -444,7 +444,7 @@
           <canvas id="gastosChartOverview"></canvas>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="chartLegendOverview">
-          <!-- Leyenda generada dinámicamente -->
+          <!-- Leyenda generada dinÃ¡micamente -->
         </div>
       {% else %}
         <div class="text-center py-12">
@@ -454,7 +454,7 @@
             </svg>
           </div>
           <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Sin gastos registrados</h4>
-          <p class="text-gray-600 dark:text-gray-400">Agrega algunos gastos para ver el análisis</p>
+          <p class="text-gray-600 dark:text-gray-400">Agrega algunos gastos para ver el anÃ¡lisis</p>
         </div>
       {% endif %}
     </div>
@@ -464,7 +464,7 @@
   <div class="space-y-6">
     <!-- Quick Actions -->
     <div class="feature-card rounded-xl p-6">
-      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Acciones Rápidas</h3>
+      <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Acciones RÃ¡pidas</h3>
       <div class="space-y-3">
         <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}" 
            class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-all group">
@@ -474,7 +474,7 @@
             </svg>
           </div>
           <div>
-            <div class="font-semibold text-gray-900 dark:text-white">Nueva Transacción</div>
+            <div class="font-semibold text-gray-900 dark:text-white">Nueva TransacciÃ³n</div>
             <div class="text-xs text-gray-600 dark:text-gray-400">Registra ingresos o gastos</div>
           </div>
         </a>
@@ -501,20 +501,20 @@
           </div>
           <div>
             <div class="font-semibold text-gray-900 dark:text-white">Generar Reportes</div>
-            <div class="text-xs text-gray-600 dark:text-gray-400">Análisis detallado y exportar</div>
+            <div class="text-xs text-gray-600 dark:text-gray-400">AnÃ¡lisis detallado y exportar</div>
           </div>
         </a>
       </div>
     </div>
     
-    <!-- Recent Transactions - Más ancho -->
+    <!-- Recent Transactions - MÃ¡s ancho -->
     <div class="lg:col-span-3 mt-6">
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md dark:hover:shadow-xl transition-shadow">
         <div class="p-6 border-b border-gray-100 dark:border-gray-700">
           <div class="flex items-center justify-between">
             <div>
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Movimientos Recientes</h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Sus últimas actividades financieras</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">Sus Ãºltimas actividades financieras</p>
             </div>
             <a href="{% url 'gestion_financiera_basica:transactions' %}" class="text-sm text-blue-600 hover:text-blue-500 font-medium">
               Ver todos
@@ -541,7 +541,7 @@
                   {% endif %}
                   <div>
                     <p class="text-sm font-medium text-gray-900 dark:text-white">{{ movimiento.nombre }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ movimiento.fecha_movimiento|date:"j M, Y" }} • {{ movimiento.id_cuenta.nombre_cuenta }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ movimiento.fecha_movimiento|date:"j M, Y" }} â€¢ {{ movimiento.id_cuenta.nombre_cuenta }}</p>
                   </div>
                 </div>
                 <div class="text-right">
@@ -560,8 +560,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V9a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                   </svg>
                 </div>
-                <p class="text-gray-500 dark:text-gray-400 font-medium">No hay movimientos aún</p>
-                <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Agrega tu primera transacción para comenzar</p>
+                <p class="text-gray-500 dark:text-gray-400 font-medium">No hay movimientos aÃºn</p>
+                <p class="text-gray-400 dark:text-gray-500 text-sm mt-1">Agrega tu primera transacciÃ³n para comenzar</p>
               </div>
             {% endfor %}
           </div>
@@ -571,12 +571,12 @@
   </div>
 </div>
 
-<!-- Script para gráfico de overview -->
+<!-- Script para grÃ¡fico de overview -->
 {% if gastos_por_categoria %}
 {{ gastos_por_categoria|json_script:"gastos-data-overview" }}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Obtener datos del gráfico desde Django para overview
+    // Obtener datos del grÃ¡fico desde Django para overview
     const gastosDataOverview = JSON.parse(document.getElementById('gastos-data-overview').textContent);
     
     // Verificar que tenemos datos
@@ -584,7 +584,7 @@
       return;
     }
     
-    // Colores para el gráfico (más sutiles para overview)
+    // Colores para el grÃ¡fico (mÃ¡s sutiles para overview)
     const coloresOverview = [
       '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
       '#8B5CF6', '#06B6D4', '#84CC16', '#F97316',
@@ -600,7 +600,7 @@
     const canvasOverview = document.getElementById('gastosChartOverview');
     if (!canvasOverview) return;
     
-    // Configuración del gráfico
+    // ConfiguraciÃ³n del grÃ¡fico
     const ctxOverview = canvasOverview.getContext('2d');
     const chartOverview = new Chart(ctxOverview, {
       type: 'doughnut',
@@ -664,9 +664,9 @@
 {% endif %}
 
 {% elif tab == "analytics" %}
-  <!-- 📊 Analytics -->
+  <!-- ðŸ“Š Analytics -->
   <div class="grid md:grid-cols-2 gap-8">
-    <!-- Gráfico de Gastos por Categoría -->
+    <!-- GrÃ¡fico de Gastos por CategorÃ­a -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 hover:shadow-md dark:hover:shadow-xl transition-shadow">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Desglose de Gastos</h3>
       {% if gastos_por_categoria %}
@@ -675,11 +675,11 @@
         </div>
         <div class="space-y-2">
           <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
-            Distribución de tus gastos por categoría
+            DistribuciÃ³n de tus gastos por categorÃ­a
           </p>
           <!-- Leyenda personalizada -->
           <div class="grid grid-cols-2 gap-2 mt-4" id="chartLegend">
-            <!-- Se llena dinámicamente con JavaScript -->
+            <!-- Se llena dinÃ¡micamente con JavaScript -->
           </div>
         </div>
       {% else %}
@@ -690,7 +690,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
             </svg>
             <p class="text-sm font-medium">Sin gastos registrados</p>
-            <p class="text-xs mt-1">Agrega algunos gastos para ver el análisis</p>
+            <p class="text-xs mt-1">Agrega algunos gastos para ver el anÃ¡lisis</p>
           </div>
         </div>
       {% endif %}
@@ -706,11 +706,11 @@
           </div>
           <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
             {% if score <= 30 %}
-              ¡Excelente! Has gastado solo el {{ score }}% del total manejado
+              Â¡Excelente! Has gastado solo el {{ score }}% del total manejado
             {% elif score <= 70 %}
               Bueno. Has gastado el {{ score }}% del total manejado
             {% else %}
-              Atención. Has gastado el {{ score }}% del total manejado
+              AtenciÃ³n. Has gastado el {{ score }}% del total manejado
             {% endif %}
           </p>
         {% endwith %}
@@ -719,7 +719,7 @@
         <p class="text-sm text-gray-500 dark:text-gray-400">Necesitas recursos y gastos para calcular</p>
       {% endif %}
       
-      <!-- Indicadores rápidos -->
+      <!-- Indicadores rÃ¡pidos -->
       <div class="grid grid-cols-2 gap-4 mt-6">
         <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-3">
           <div class="text-sm font-medium text-blue-600 dark:text-blue-400">Balance</div>
@@ -733,12 +733,12 @@
     </div>
   </div>
 
-  <!-- Datos para el gráfico -->
+  <!-- Datos para el grÃ¡fico -->
   {% if gastos_por_categoria %}
   {{ gastos_por_categoria|json_script:"gastos-data" }}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Obtener datos del gráfico desde Django
+      // Obtener datos del grÃ¡fico desde Django
       const gastosData = JSON.parse(document.getElementById('gastos-data').textContent);
       
       // Verificar que tenemos datos
@@ -746,7 +746,7 @@
         return;
       }
       
-      // Colores para el gráfico
+      // Colores para el grÃ¡fico
       const colores = [
         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
         '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF',
@@ -758,7 +758,7 @@
       const montos = gastosData.map(item => item.monto);
       const porcentajes = gastosData.map(item => item.porcentaje);
       
-      // Configuración del gráfico
+      // ConfiguraciÃ³n del grÃ¡fico
       const ctx = document.getElementById('gastosChart').getContext('2d');
       const chart = new Chart(ctx, {
         type: 'doughnut',
@@ -820,7 +820,7 @@
   {% endif %}
 
 {% elif tab == "savings" %}
-  <!-- 🏦 Savings Goals -->
+  <!-- ðŸ¦ Savings Goals -->
   <div class="grid md:grid-cols-3 gap-6">
     {% for goal in savings_goals %}
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">

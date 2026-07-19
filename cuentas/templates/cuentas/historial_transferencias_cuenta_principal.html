@@ -29,7 +29,7 @@
     </div>
   </div>
 
-  <!-- Estadísticas -->
+  <!-- EstadÃ­sticas -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
     <div class="bg-[#227C91] rounded-lg p-4 text-white">
       <div class="flex items-center gap-3">
@@ -54,7 +54,7 @@
         </div>
         <div>
           <p class="text-2xl font-bold text-green-600">{{ total_depositos }}</p>
-          <p class="text-sm text-[#736B5E]">Depósitos</p>
+          <p class="text-sm text-[#736B5E]">DepÃ³sitos</p>
         </div>
       </div>
     </div>
@@ -103,7 +103,7 @@
         <label for="id_tipo" class="block text-sm font-medium text-[#605952] mb-1">Tipo</label>
         <select id="id_tipo" name="tipo" class="w-full px-3 py-2 border-2 border-[#E5E1DD] rounded-lg focus:outline-none focus:border-[#227C91] text-[#605952]">
           <option value="">Todos</option>
-          <option value="deposito" {% if tipo_filtro == 'deposito' %}selected{% endif %}>Depósitos</option>
+          <option value="deposito" {% if tipo_filtro == 'deposito' %}selected{% endif %}>DepÃ³sitos</option>
           <option value="retiro" {% if tipo_filtro == 'retiro' %}selected{% endif %}>Retiros</option>
         </select>
       </div>
@@ -158,11 +158,11 @@
                 <span class="text-sm font-semibold text-[#605952]">{{ mov.destino }}</span>
                 {% elif mov.tipo_transferencia == 'retiro' %}
                 <span class="text-sm font-semibold text-green-600">Retiro de Cuenta Principal</span>
-                <span class="text-xs text-[#736B5E]">•</span>
+                <span class="text-xs text-[#736B5E]">â€¢</span>
                 <span class="text-sm text-[#605952]">{{ mov.destino }}</span>
                 {% else %}
-                <span class="text-sm font-semibold text-red-600">Depósito a Cuenta Principal</span>
-                <span class="text-xs text-[#736B5E]">•</span>
+                <span class="text-sm font-semibold text-red-600">DepÃ³sito a Cuenta Principal</span>
+                <span class="text-xs text-[#736B5E]">â€¢</span>
                 <span class="text-sm text-[#605952]">{{ mov.origen }}</span>
                 {% endif %}
               </div>

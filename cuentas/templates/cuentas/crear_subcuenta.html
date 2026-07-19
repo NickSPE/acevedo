@@ -25,9 +25,9 @@
     <form method="post" id="createSubcuentaForm">
       {% csrf_token %}
       
-      <!-- Selección de Tipo -->
+      <!-- SelecciÃ³n de Tipo -->
       <div class="mb-4">
-        <h6 class="text-sm font-semibold text-[#605952] mb-3">¿Qué tipo de subcuenta necesitas?</h6>
+        <h6 class="text-sm font-semibold text-[#605952] mb-3">Â¿QuÃ© tipo de subcuenta necesitas?</h6>
         <div class="grid grid-cols-2 gap-3">
           <div class="type-option border-2 border-[#227C91] bg-[#227C91] bg-opacity-5 p-4 rounded-lg cursor-pointer transition-all hover:shadow-md" data-type="personal">
             <div class="flex flex-col items-center text-center">
@@ -52,7 +52,7 @@
         <input type="hidden" name="tipo_subcuenta" id="tipo_subcuenta" value="personal">
       </div>
       
-      <!-- Información Básica -->
+      <!-- InformaciÃ³n BÃ¡sica -->
       <div class="mb-4">
         <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
           Nombre de la subcuenta
@@ -65,7 +65,7 @@
       
       <div class="mb-4">
         <label for="{{ form.tipo.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
-          Categoría
+          CategorÃ­a
         </label>
         {{ form.tipo }}
         {% if form.tipo.errors %}
@@ -75,7 +75,7 @@
       
       <div class="mb-4">
         <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
-          Descripción (opcional)
+          DescripciÃ³n (opcional)
         </label>
         {{ form.descripcion }}
         {% if form.descripcion.errors %}
@@ -83,7 +83,7 @@
         {% endif %}
       </div>
       
-      <!-- Información para negocios -->
+      <!-- InformaciÃ³n para negocios -->
       <div class="hidden bg-[#F1F0EE] rounded-lg p-3 mb-4" id="saldo-inicial-section">
         <h6 class="text-sm font-semibold text-[#605952] mb-2">Subcuenta de negocio independiente</h6>
         <div class="text-sm text-[#736B5E] space-y-1">
@@ -91,12 +91,12 @@
             <svg class="w-4 h-4 text-[#227C91] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <span>Tu subcuenta de negocio será completamente independiente</span>
+            <span>Tu subcuenta de negocio serÃ¡ completamente independiente</span>
           </p>
           <ul class="ml-6 space-y-1 text-[#605952]">
-            <li>• Empezará con $0.00</li>
-            <li>• No usará el dinero de tu cuenta personal</li>
-            <li>• Podrás agregar dinero después cuando quieras</li>
+            <li>â€¢ EmpezarÃ¡ con $0.00</li>
+            <li>â€¢ No usarÃ¡ el dinero de tu cuenta personal</li>
+            <li>â€¢ PodrÃ¡s agregar dinero despuÃ©s cuando quieras</li>
           </ul>
         </div>
       </div>
@@ -115,10 +115,10 @@
 </div>
 
 <script>
-// Manejo de selección de tipo
+// Manejo de selecciÃ³n de tipo
 document.querySelectorAll('.type-option').forEach(option => {
   option.addEventListener('click', function() {
-    // Remover selección anterior
+    // Remover selecciÃ³n anterior
     document.querySelectorAll('.type-option').forEach(opt => {
       opt.classList.remove('border-[#227C91]', 'bg-[#227C91]', 'bg-opacity-5');
       opt.classList.add('border-[#E5E1DD]', 'bg-[#F1F0EE]');
@@ -127,7 +127,7 @@ document.querySelectorAll('.type-option').forEach(option => {
       if (svg) svg.classList.add('text-[#736B5E]');
     });
     
-    // Agregar selección actual
+    // Agregar selecciÃ³n actual
     this.classList.remove('border-[#E5E1DD]', 'bg-[#F1F0EE]');
     this.classList.add('border-[#227C91]', 'bg-[#227C91]', 'bg-opacity-5');
     const svg = this.querySelector('svg');
@@ -137,7 +137,7 @@ document.querySelectorAll('.type-option').forEach(option => {
     const type = this.dataset.type;
     document.getElementById('tipo_subcuenta').value = type;
     
-    // Mostrar/ocultar sección de saldo inicial
+    // Mostrar/ocultar secciÃ³n de saldo inicial
     const saldoSection = document.getElementById('saldo-inicial-section');
     if (type === 'business') {
       saldoSection.classList.remove('hidden');

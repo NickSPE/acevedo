@@ -1,7 +1,7 @@
 {% extends "core/base_template.html" %}
 {% load static %}
 
-{% block title %}Cursos de Educación Financiera | FinGest{% endblock %}
+{% block title %}Cursos de EducaciÃ³n Financiera | FinGest{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto">
@@ -13,7 +13,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
-                <h1 class="text-3xl font-bold text-[#605952]">Educación Financiera</h1>
+                <h1 class="text-3xl font-bold text-[#605952]">EducaciÃ³n Financiera</h1>
             </div>
             <p class="text-[#736B5E]">Cursos seleccionados para mejorar tu conocimiento financiero</p>
         </div>
@@ -26,7 +26,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
-            <span class="text-sm font-semibold text-[#605952]">Filtrar por categoría</span>
+            <span class="text-sm font-semibold text-[#605952]">Filtrar por categorÃ­a</span>
         </div>
         <div class="flex flex-wrap gap-2 justify-center">
             <button onclick="filterCourses('all')"
@@ -43,7 +43,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                Nivel Básico
+                Nivel BÃ¡sico
             </button>
             <button onclick="filterCourses('intermedio')"
                 class="filter-btn px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-[#F1F0EE] text-[#605952] font-medium text-sm transition-all hover:border-[#227C91] hover:bg-[#227C91] hover:bg-opacity-10 flex items-center gap-2">
@@ -84,19 +84,19 @@
                 <img src="{{ course.imagen_url }}" alt="{{ course.titulo }}" class="w-full h-full object-cover">
                 {% else %}
                 <div class="flex items-center justify-center h-full text-white text-6xl">
-                    📚
+                    ðŸ“š
                 </div>
                 {% endif %}
 
-                <!-- Botón Favorito -->
+                <!-- BotÃ³n Favorito -->
                 <button onclick="toggleFavorito({{ course.id }})"
                     class="absolute top-3 right-3 w-10 h-10 bg-white bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-all transform hover:scale-110"
                     id="fav-btn-{{ course.id }}"
                     title="{% if course.es_favorito %}Quitar de favoritos{% else %}Agregar a favoritos{% endif %}">
                     {% if course.es_favorito %}
-                    <span class="text-red-500 text-xl">❤️</span>
+                    <span class="text-red-500 text-xl">â¤ï¸</span>
                     {% else %}
-                    <span class="text-gray-400 text-xl">🤍</span>
+                    <span class="text-gray-400 text-xl">ðŸ¤</span>
                     {% endif %}
                 </button>
             </div>
@@ -106,7 +106,7 @@
                 <!-- Meta Info -->
                 <div class="flex items-center justify-between mb-3">
                     <span class="px-3 py-1 rounded-full text-xs font-semibold
-                            {% if course.nivel|lower == 'basico' or course.nivel|lower == 'básico' %}bg-green-100 text-green-700
+                            {% if course.nivel|lower == 'basico' or course.nivel|lower == 'bÃ¡sico' %}bg-green-100 text-green-700
                             {% elif course.nivel|lower == 'intermedio' %}bg-blue-100 text-blue-700
                             {% else %}bg-purple-100 text-purple-700{% endif %}">
                         {{ course.nivel }}
@@ -119,10 +119,10 @@
                     </div>
                 </div>
 
-                <!-- Título -->
+                <!-- TÃ­tulo -->
                 <h3 class="text-lg font-bold text-[#605952] mb-2 line-clamp-2">{{ course.titulo }}</h3>
 
-                <!-- Descripción -->
+                <!-- DescripciÃ³n -->
                 <p class="text-sm text-[#736B5E] mb-4 line-clamp-3">{{ course.descripcion }}</p>
 
                 <!-- Detalles -->
@@ -154,7 +154,7 @@
                     </div>
                 </div>
 
-                <!-- Botón de Acción -->
+                <!-- BotÃ³n de AcciÃ³n -->
                 <a href="{{ course.url_externa }}" target="_blank" rel="noopener noreferrer"
                     class="w-full bg-[#227C91] hover:bg-[#1a6070] text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,21 +173,21 @@
         </div>
         {% empty %}
         <div class="col-span-full bg-white rounded-lg border border-[#E5E1DD] p-12 text-center">
-            <div class="text-6xl mb-4">📚</div>
+            <div class="text-6xl mb-4">ðŸ“š</div>
             <h3 class="text-xl font-bold text-[#605952] mb-2">No hay cursos disponibles</h3>
-            <p class="text-[#736B5E]">Los cursos estarán disponibles pronto. ¡Mantente atento!</p>
+            <p class="text-[#736B5E]">Los cursos estarÃ¡n disponibles pronto. Â¡Mantente atento!</p>
         </div>
         {% endfor %}
     </div>
 
-    <!-- Paginación -->
+    <!-- PaginaciÃ³n -->
     {% if paginator.num_pages > 1 %}
     <div class="flex items-center justify-center gap-3 mt-8 pb-8">
-        <!-- Botón Anterior -->
+        <!-- BotÃ³n Anterior -->
         {% if page_obj.has_previous %}
         <a href="?page=1"
             class="px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-white text-[#605952] font-medium hover:bg-[#227C91] hover:text-white hover:border-[#227C91] transition-all"
-            title="Primera página">
+            title="Primera pÃ¡gina">
             <svg class="w-5 h-5 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
@@ -215,7 +215,7 @@
         </button>
         {% endif %}
 
-        <!-- Números de página -->
+        <!-- NÃºmeros de pÃ¡gina -->
         <div class="flex items-center gap-1">
             {% for num in paginator.page_range %}
             {% if page_obj.number == num %}
@@ -231,7 +231,7 @@
                 {% endfor %}
         </div>
 
-        <!-- Botón Siguiente -->
+        <!-- BotÃ³n Siguiente -->
         {% if page_obj.has_next %}
         <a href="?page={{ page_obj.next_page_number }}"
             class="px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-white text-[#605952] font-medium hover:bg-[#227C91] hover:text-white hover:border-[#227C91] transition-all">
@@ -241,8 +241,8 @@
         </a>
         <a href="?page={{ paginator.num_pages }}"
             class="px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-white text-[#605952] font-medium hover:bg-[#227C91] hover:text-white hover:border-[#227C91] transition-all"
-            title="Última página">
-            Última
+            title="Ãšltima pÃ¡gina">
+            Ãšltima
             <svg class="w-5 h-5 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -256,7 +256,7 @@
         </button>
         <button
             class="px-4 py-2 rounded-lg border-2 border-[#E5E1DD] bg-[#F1F0EE] text-[#B0A8A0] font-medium cursor-not-allowed opacity-50">
-            Última
+            Ãšltima
             <svg class="w-5 h-5 inline ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
@@ -264,9 +264,9 @@
         {% endif %}
     </div>
 
-    <!-- Información de Página -->
+    <!-- InformaciÃ³n de PÃ¡gina -->
     <div class="text-center text-sm text-[#736B5E] pb-8">
-        Página {{ page_obj.number }} de {{ paginator.num_pages }} (Total: {{ paginator.count }} cursos)
+        PÃ¡gina {{ page_obj.number }} de {{ paginator.num_pages }} (Total: {{ paginator.count }} cursos)
     </div>
     {% endif %}
 </div>
@@ -299,7 +299,7 @@
             } else if (filter === 'gratis') {
                 shouldShow = cardFree === 'true';
             } else if (filter === 'basico') {
-                shouldShow = cardLevel === 'basico' || cardLevel === 'básico';
+                shouldShow = cardLevel === 'basico' || cardLevel === 'bÃ¡sico';
             } else {
                 shouldShow = cardLevel === filter;
             }
@@ -322,11 +322,11 @@
             .then(response => response.json())
             .then(data => {
                 if (data.es_favorito) {
-                    span.textContent = '❤️';
+                    span.textContent = 'â¤ï¸';
                     span.className = 'text-red-500 text-xl';
                     btn.title = 'Quitar de favoritos';
                 } else {
-                    span.textContent = '🤍';
+                    span.textContent = 'ðŸ¤';
                     span.className = 'text-gray-400 text-xl';
                     btn.title = 'Agregar a favoritos';
                 }

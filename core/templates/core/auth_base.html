@@ -31,7 +31,7 @@
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50">
-    <!-- Header limpio para páginas de autenticación -->
+    <!-- Header limpio para pÃ¡ginas de autenticaciÃ³n -->
     <header class="absolute top-0 left-0 right-0 z-10 p-6 bg-white bg-opacity-10 backdrop-blur-md shadow-md">
         <div class="flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -43,11 +43,11 @@
                 </h1>
             </div>
 
-            <!-- Enlaces de navegación para auth -->
+            <!-- Enlaces de navegaciÃ³n para auth -->
             <div class="flex items-center gap-4 text-sm">
                 {% block nav_links %}
                 <a href="{% url 'usuarios:login' %}" class="text-gray-600 hover:text-emerald-600 transition-colors">
-                    Iniciar Sesión
+                    Iniciar SesiÃ³n
                 </a>
                 <a href="{% url 'usuarios:register_simple' %}"
                     class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">

@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">🧪 Sistema de Pruebas de Notificaciones</h3>
+                    <h3 class="mb-0">ðŸ§ª Sistema de Pruebas de Notificaciones</h3>
                     <p class="mb-0">Utiliza estas opciones para probar el sistema de notificaciones por email</p>
                 </div>
                 
@@ -23,12 +23,12 @@
                         {% endfor %}
                     {% endif %}
                     
-                    <!-- Información del Usuario -->
+                    <!-- InformaciÃ³n del Usuario -->
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h5 class="card-title">👤 Información del Usuario</h5>
+                                    <h5 class="card-title">ðŸ‘¤ InformaciÃ³n del Usuario</h5>
                                     <p><strong>Nombre:</strong> {{ user.nombres }} {{ user.apellidos }}</p>
                                     <p><strong>Email:</strong> {{ user.correo }}</p>
                                     <p><strong>Metas de Ahorro:</strong> {{ metas.count }}</p>
@@ -39,11 +39,11 @@
                         <div class="col-md-6">
                             <div class="card bg-info text-white">
                                 <div class="card-body">
-                                    <h5 class="card-title">📧 Estado de Notificaciones</h5>
-                                    <p>Las notificaciones se enviarán al email: <strong>{{ user.correo }}</strong></p>
-                                    <p>Revisa tu bandeja de entrada y spam después de cada prueba.</p>
+                                    <h5 class="card-title">ðŸ“§ Estado de Notificaciones</h5>
+                                    <p>Las notificaciones se enviarÃ¡n al email: <strong>{{ user.correo }}</strong></p>
+                                    <p>Revisa tu bandeja de entrada y spam despuÃ©s de cada prueba.</p>
                                     <a href="{% url 'alertas_notificaciones:configuraciones' %}" class="btn btn-light btn-sm">
-                                        ⚙️ Configurar Notificaciones
+                                        âš™ï¸ Configurar Notificaciones
                                     </a>
                                 </div>
                             </div>
@@ -55,7 +55,7 @@
                         <div class="col-md-6">
                             <div class="card border-success">
                                 <div class="card-header bg-success text-white">
-                                    <h5 class="mb-0">💰 Prueba: Aporte a Meta</h5>
+                                    <h5 class="mb-0">ðŸ’° Prueba: Aporte a Meta</h5>
                                 </div>
                                 <div class="card-body">
                                     <p>Simula un aporte a una meta de ahorro existente.</p>
@@ -85,7 +85,7 @@
                                             </div>
                                             
                                             <button type="submit" class="btn btn-success">
-                                                💰 Simular Aporte
+                                                ðŸ’° Simular Aporte
                                             </button>
                                         </form>
                                     {% else %}
@@ -104,7 +104,7 @@
                         <div class="col-md-6">
                             <div class="card border-primary">
                                 <div class="card-header bg-primary text-white">
-                                    <h5 class="mb-0">💵 Prueba: Movimientos</h5>
+                                    <h5 class="mb-0">ðŸ’µ Prueba: Movimientos</h5>
                                 </div>
                                 <div class="card-body">
                                     {% if cuentas %}
@@ -114,7 +114,7 @@
                                                     {% csrf_token %}
                                                     <input type="hidden" name="test_type" value="movimiento_ingreso">
                                                     
-                                                    <h6 class="text-success">💵 Ingreso</h6>
+                                                    <h6 class="text-success">ðŸ’µ Ingreso</h6>
                                                     
                                                     <div class="mb-2">
                                                         <select name="cuenta_id" class="form-select form-select-sm" required>
@@ -133,7 +133,7 @@
                                                     </div>
                                                     
                                                     <button type="submit" class="btn btn-success btn-sm">
-                                                        💵 Simular Ingreso
+                                                        ðŸ’µ Simular Ingreso
                                                     </button>
                                                 </form>
                                             </div>
@@ -143,7 +143,7 @@
                                                     {% csrf_token %}
                                                     <input type="hidden" name="test_type" value="movimiento_egreso">
                                                     
-                                                    <h6 class="text-danger">💸 Gasto</h6>
+                                                    <h6 class="text-danger">ðŸ’¸ Gasto</h6>
                                                     
                                                     <div class="mb-2">
                                                         <select name="cuenta_id" class="form-select form-select-sm" required>
@@ -162,7 +162,7 @@
                                                     </div>
                                                     
                                                     <button type="submit" class="btn btn-danger btn-sm">
-                                                        💸 Simular Gasto
+                                                        ðŸ’¸ Simular Gasto
                                                     </button>
                                                 </form>
                                             </div>
@@ -182,7 +182,7 @@
                         <div class="col-md-6">
                             <div class="card border-warning">
                                 <div class="card-header bg-warning text-dark">
-                                    <h5 class="mb-0">⚠️ Prueba: Saldo Bajo</h5>
+                                    <h5 class="mb-0">âš ï¸ Prueba: Saldo Bajo</h5>
                                 </div>
                                 <div class="card-body">
                                     <p>Simula una alerta de saldo bajo estableciendo el saldo en $25.</p>
@@ -205,7 +205,7 @@
                                             </div>
                                             
                                             <button type="submit" class="btn btn-warning">
-                                                ⚠️ Simular Saldo Bajo
+                                                âš ï¸ Simular Saldo Bajo
                                             </button>
                                         </form>
                                     {% else %}
@@ -220,10 +220,10 @@
                         <div class="col-md-6">
                             <div class="card border-info">
                                 <div class="card-header bg-info text-white">
-                                    <h5 class="mb-0">🎯 Prueba: Nueva Meta</h5>
+                                    <h5 class="mb-0">ðŸŽ¯ Prueba: Nueva Meta</h5>
                                 </div>
                                 <div class="card-body">
-                                    <p>Simula la creación de una nueva meta de ahorro.</p>
+                                    <p>Simula la creaciÃ³n de una nueva meta de ahorro.</p>
                                     
                                     {% if cuentas %}
                                         <form method="post">
@@ -243,7 +243,7 @@
                                             </div>
                                             
                                             <button type="submit" class="btn btn-info">
-                                                🎯 Crear Meta de Prueba
+                                                ðŸŽ¯ Crear Meta de Prueba
                                             </button>
                                         </form>
                                     {% else %}
@@ -256,16 +256,16 @@
                         </div>
                     </div>
                     
-                    <!-- Enlaces de Navegación -->
+                    <!-- Enlaces de NavegaciÃ³n -->
                     <div class="text-center">
                         <a href="{% url 'alertas_notificaciones:historial' %}" class="btn btn-outline-primary">
-                            📋 Ver Historial de Notificaciones
+                            ðŸ“‹ Ver Historial de Notificaciones
                         </a>
                         <a href="{% url 'alertas_notificaciones:configuraciones' %}" class="btn btn-outline-secondary">
-                            ⚙️ Configurar Notificaciones
+                            âš™ï¸ Configurar Notificaciones
                         </a>
                         <a href="{% url 'core:dashboard' %}" class="btn btn-outline-dark">
-                            🏠 Volver al Dashboard
+                            ðŸ  Volver al Dashboard
                         </a>
                     </div>
                 </div>

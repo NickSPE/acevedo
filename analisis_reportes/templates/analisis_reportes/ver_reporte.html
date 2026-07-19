@@ -302,17 +302,17 @@
         </div>
     </div>
 
-    <!-- Información del Reporte -->
+    <!-- InformaciÃ³n del Reporte -->
     <div class="info-cards">
         <div class="info-card">
-            <p class="info-label">Período</p>
+            <p class="info-label">PerÃ­odo</p>
             <p class="info-value">
                 <i class="fas fa-calendar-alt"></i>
                 {{ reporte.fecha_inicio|date:"d/m/Y" }} - {{ reporte.fecha_fin|date:"d/m/Y" }}
             </p>
         </div>
         <div class="info-card">
-            <p class="info-label">Fecha de Creación</p>
+            <p class="info-label">Fecha de CreaciÃ³n</p>
             <p class="info-value">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</p>
         </div>
         <div class="info-card">
@@ -326,7 +326,7 @@
         {% if datos_procesados %}
             {% if datos_procesados.tipo == 'gastos_categoria' %}
                 <div class="chart-container">
-                    <h3 class="chart-title">Análisis de Gastos por Categoría</h3>
+                    <h3 class="chart-title">AnÃ¡lisis de Gastos por CategorÃ­a</h3>
                     <div class="chart-canvas">
                         <canvas id="reportChart"></canvas>
                     </div>
@@ -335,7 +335,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Categoría</th>
+                                <th>CategorÃ­a</th>
                                 <th>Monto</th>
                                 <th>Cantidad</th>
                                 <th>Porcentaje</th>
@@ -363,7 +363,7 @@
                 
             {% elif datos_procesados.tipo == 'ingresos_egresos' %}
                 <div class="chart-container">
-                    <h3 class="chart-title">Comparación de Ingresos vs Egresos</h3>
+                    <h3 class="chart-title">ComparaciÃ³n de Ingresos vs Egresos</h3>
                     <div class="chart-canvas">
                         <canvas id="reportChart"></canvas>
                     </div>
@@ -400,7 +400,7 @@
                 
             {% elif datos_procesados.tipo == 'subcuentas_analisis' %}
                 <div class="chart-container">
-                    <h3 class="chart-title">Análisis de Subcuentas</h3>
+                    <h3 class="chart-title">AnÃ¡lisis de Subcuentas</h3>
                     <div class="chart-canvas">
                         <canvas id="reportChart"></canvas>
                     </div>
@@ -452,7 +452,7 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Período</th>
+                                <th>PerÃ­odo</th>
                                 <th>Ingresos</th>
                                 <th>Egresos</th>
                                 <th>Balance</th>
@@ -486,7 +486,7 @@
             <div class="no-data">
                 <i class="fas fa-chart-line fa-3x" style="color: #636e72; margin-bottom: 1rem;"></i>
                 <p>No hay datos disponibles para este reporte.</p>
-                <p>Es posible que no haya transacciones en el período seleccionado.</p>
+                <p>Es posible que no haya transacciones en el perÃ­odo seleccionado.</p>
             </div>
         {% endif %}
     </div>
@@ -496,9 +496,9 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Validar que tenemos datos antes de crear gráficos
+// Validar que tenemos datos antes de crear grÃ¡ficos
 {% if datos and datos_procesados %}
-    // Configuración de colores
+    // ConfiguraciÃ³n de colores
     const colors = {
         primary: '#6C5CE7',
         success: '#00b894',
@@ -508,7 +508,7 @@
         secondary: '#636e72'
     };
     
-    // Datos del reporte - con validación adicional
+    // Datos del reporte - con validaciÃ³n adicional
     let reportData;
     try {
         reportData = JSON.parse('{{ datos_json|escapejs }}');
@@ -519,9 +519,9 @@
     
     const reportType = '{{ reporte.tipo_reporte }}';
     
-    // Solo crear gráfico si tenemos datos válidos
+    // Solo crear grÃ¡fico si tenemos datos vÃ¡lidos
     if (reportData && Object.keys(reportData).length > 0) {
-        // Crear gráfico según el tipo de reporte
+        // Crear grÃ¡fico segÃºn el tipo de reporte
         if (reportType === 'gastos_categoria' && reportData.labels && reportData.data) {
             new Chart(document.getElementById('reportChart'), {
                 type: 'doughnut',

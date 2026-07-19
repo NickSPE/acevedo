@@ -15,7 +15,7 @@
         </div>
         <div>
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Nueva Meta de Ahorro</h2>
-          <p class="text-gray-600 dark:text-gray-300">Define tu próximo objetivo financiero</p>
+          <p class="text-gray-600 dark:text-gray-300">Define tu prÃ³ximo objetivo financiero</p>
         </div>
       </div>
       <a href="{% url 'gestion_financiera_basica:savings_goals' %}" 
@@ -61,7 +61,7 @@
             <span class="absolute left-3 top-3 text-gray-500 dark:text-gray-400">$</span>
             {{ form.monto_objetivo }}
           </div>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">¿Cuánto dinero necesitas ahorrar?</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Â¿CuÃ¡nto dinero necesitas ahorrar?</p>
         </div>
         
         <div>
@@ -74,7 +74,7 @@
             </div>
           {% endif %}
           {{ form.id_cuenta }}
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Cuenta donde se realizarán los ahorros</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Cuenta donde se realizarÃ¡n los ahorros</p>
         </div>
       </div>
 
@@ -94,7 +94,7 @@
         
         <div>
           <label for="{{ form.fecha_limite.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Fecha Límite
+            Fecha LÃ­mite
           </label>
           {% if form.fecha_limite.errors %}
             <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -102,7 +102,7 @@
             </div>
           {% endif %}
           {{ form.fecha_limite }}
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">¿Cuándo necesitas tener el dinero?</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Â¿CuÃ¡ndo necesitas tener el dinero?</p>
         </div>
       </div>
 
@@ -117,13 +117,13 @@
           </div>
         {% endif %}
         {{ form.frecuencia_aporte }}
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">¿Con qué frecuencia planeas aportar dinero?</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Â¿Con quÃ© frecuencia planeas aportar dinero?</p>
       </div>
 
-      <!-- Descripción -->
+      <!-- DescripciÃ³n -->
       <div class="mb-8">
         <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Descripción (Opcional)
+          DescripciÃ³n (Opcional)
         </label>
         {% if form.descripcion.errors %}
           <div class="mb-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -131,7 +131,7 @@
           </div>
         {% endif %}
         {{ form.descripcion }}
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Agrega más detalles sobre tu meta de ahorro</p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Agrega mÃ¡s detalles sobre tu meta de ahorro</p>
       </div>
 
       <!-- Errores generales -->
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fechaInicioInput.value = localDateTime;
   }
   
-  // Validación en tiempo real del monto
+  // ValidaciÃ³n en tiempo real del monto
   const montoInput = document.querySelector('input[name="monto_objetivo"]');
   if (montoInput) {
     montoInput.addEventListener('input', function(e) {
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Validación de fechas
+  // ValidaciÃ³n de fechas
   const fechaInicio = document.querySelector('input[name="fecha_inicio"]');
   const fechaLimite = document.querySelector('input[name="fecha_limite"]');
   
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!errorMsg) {
           errorMsg = document.createElement('p');
           errorMsg.className = 'date-error text-red-500 text-xs mt-1';
-          errorMsg.textContent = 'La fecha límite debe ser posterior a la fecha de inicio';
+          errorMsg.textContent = 'La fecha lÃ­mite debe ser posterior a la fecha de inicio';
           fechaLimite.parentElement.appendChild(errorMsg);
         }
       } else {

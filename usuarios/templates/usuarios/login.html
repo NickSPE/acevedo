@@ -1,6 +1,6 @@
 {% extends 'core/auth_base.html' %}
 
-{% block title %}Iniciar Sesión - FinGest{% endblock %}
+{% block title %}Iniciar SesiÃ³n - FinGest{% endblock %}
 
 {% block nav_links %}
 <a href="{% url 'usuarios:register_simple' %}" class="back-btn">
@@ -29,7 +29,7 @@
         line-height: 1.6;
     }
 
-    /* Partículas de fondo */
+    /* PartÃ­culas de fondo */
     .floating-particles {
         position: fixed;
         top: 0;
@@ -397,7 +397,7 @@
     }
 </style>
 
-<!-- Partículas flotantes -->
+<!-- PartÃ­culas flotantes -->
 <div class="floating-particles">
     <div class="particle"></div>
     <div class="particle"></div>
@@ -414,12 +414,12 @@
 <div
     style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; z-index: 5;">
     <div class="form-card">
-        <button class="close-btn" id="closeButton" title="Volver a la página principal">
+        <button class="close-btn" id="closeButton" title="Volver a la pÃ¡gina principal">
             <i class="fas fa-times"></i>
         </button>
 
         <h1>Bienvenido de Vuelta</h1>
-        <p class="subtitle">Inicia sesión en tu cuenta de FinGest</p>
+        <p class="subtitle">Inicia sesiÃ³n en tu cuenta de FinGest</p>
 
         {% if message_success %}
         <div class="alert alert-success">
@@ -441,7 +441,7 @@
             <div class="form-group">
                 <label for="email">
                     <i class="fas fa-envelope" style="color: #227c91; margin-right: 6px;"></i>
-                    Correo electrónico
+                    Correo electrÃ³nico
                 </label>
                 <input type="email" id="email" name="email" placeholder="ejemplo@email.com" required
                     value="{{ email|default:'' }}" />
@@ -455,10 +455,10 @@
             <div class="form-group">
                 <label for="password">
                     <i class="fas fa-lock" style="color: #227c91; margin-right: 6px;"></i>
-                    Contraseña
+                    ContraseÃ±a
                 </label>
                 <div class="password-input">
-                    <input type="password" id="password" name="password" placeholder="Tu contraseña" required />
+                    <input type="password" id="password" name="password" placeholder="Tu contraseÃ±a" required />
                     <button type="button" class="password-toggle" id="togglePassword">
                         <i class="fas fa-eye"></i>
                     </button>
@@ -472,7 +472,7 @@
 
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt"></i>
-                Iniciar Sesión
+                Iniciar SesiÃ³n
             </button>
         </form>
 
@@ -482,19 +482,19 @@
             <div class="link-item">
                 <a href="{% url 'usuarios:pin_login' %}">
                     <i class="fas fa-keypad"></i>
-                    Acceso rápido con PIN
+                    Acceso rÃ¡pido con PIN
                 </a>
             </div>
 
             <div class="link-item secondary">
-                ¿No tienes una cuenta?
-                <a href="{% url 'usuarios:register_simple' %}">Regístrate aquí</a>
+                Â¿No tienes una cuenta?
+                <a href="{% url 'usuarios:register_simple' %}">RegÃ­strate aquÃ­</a>
             </div>
 
             <div class="link-item secondary">
                 <a href="{% url 'usuarios:password_reset_request' %}">
                     <i class="fas fa-redo"></i>
-                    ¿Olvidaste tu contraseña?
+                    Â¿Olvidaste tu contraseÃ±a?
                 </a>
             </div>
         </div>
@@ -503,7 +503,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Toggle contraseña
+        // Toggle contraseÃ±a
         const togglePassword = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
 
@@ -519,7 +519,7 @@
             });
         }
 
-        // Botón cerrar
+        // BotÃ³n cerrar
         const closeButton = document.getElementById('closeButton');
         if (closeButton) {
             closeButton.addEventListener('click', function () {
@@ -527,7 +527,7 @@
             });
         }
 
-        // Auto-cerrar alertas después de 5 segundos
+        // Auto-cerrar alertas despuÃ©s de 5 segundos
         const alerts = document.querySelectorAll('.alert');
         alerts.forEach(alert => {
             setTimeout(() => {

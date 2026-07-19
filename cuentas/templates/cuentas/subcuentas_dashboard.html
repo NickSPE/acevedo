@@ -2,7 +2,7 @@
 {% load static %}
 {% load currency_filters %}
 
-{% block title %}Gestión de Subcuentas | FinGest{% endblock %}
+{% block title %}GestiÃ³n de Subcuentas | FinGest{% endblock %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'cuentas/css/subcuenta-modal.css' %}">
@@ -21,7 +21,7 @@
           </svg>
         </div>
         <div>
-          <h1 class="text-2xl font-bold text-[#605952]">Gestión de Subcuentas</h1>
+          <h1 class="text-2xl font-bold text-[#605952]">GestiÃ³n de Subcuentas</h1>
           <p class="text-[#736B5E] text-sm">Organiza tu dinero y alcanza tus metas</p>
         </div>
       </div>
@@ -48,7 +48,7 @@
     </div>
   </div>
 
-  <!-- Métricas -->
+  <!-- MÃ©tricas -->
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
     <div class="bg-white rounded-lg p-4 border border-[#E5E1DD]">
       <div class="flex items-center justify-between">
@@ -239,7 +239,7 @@
   </div>
   {% endif %}
 
-  <!-- Estado vacío -->
+  <!-- Estado vacÃ­o -->
   {% if not subcuentas_independientes_activas and not cuentas_con_subcuentas %}
   <div class="bg-white rounded-lg p-8 border border-[#E5E1DD] text-center">
     <div class="w-16 h-16 bg-[#F1F0EE] rounded-full flex items-center justify-center mx-auto mb-4">
@@ -300,7 +300,7 @@
       </div>
       
       <div>
-        <label for="transferDesc" class="block text-sm font-medium text-[#605952] mb-1">Descripción (opcional)</label>
+        <label for="transferDesc" class="block text-sm font-medium text-[#605952] mb-1">DescripciÃ³n (opcional)</label>
         <input type="text" id="transferDesc" class="w-full border border-[#E5E1DD] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#227C91] focus:border-[#227C91]" name="descripcion" placeholder="Motivo de la transferencia">
       </div>
       
@@ -316,7 +316,7 @@
   </div>
 </div>
 
-<!-- Scripts de la página original continúan aquí... -->
+<!-- Scripts de la pÃ¡gina original continÃºan aquÃ­... -->
 <script>
 function openTransferToPrincipalModal(subcuentaId, nombre, saldo) {
     document.getElementById('subcuentaId').value = subcuentaId;
@@ -332,12 +332,12 @@ function closeModal(modalId) {
 }
 
 function openDepositModal(subcuentaId, nombre, tipo) {
-    // Redirigir a la página de depósito
+    // Redirigir a la pÃ¡gina de depÃ³sito
     window.location.href = `/cuentas/subcuentas/depositar/${subcuentaId}/`;
 }
 
 function openTransferModal() {
-    // Redirigir a la página de transferencia
+    // Redirigir a la pÃ¡gina de transferencia
     window.location.href = '{% url "cuentas:transferir_subcuentas" %}';
 }
 </script>

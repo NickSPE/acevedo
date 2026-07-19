@@ -1,13 +1,13 @@
 {% extends 'core/base_template.html' %}
 
-{% block title %}Nueva Transacción | FinGest{% endblock %}
+{% block title %}Nueva TransacciÃ³n | FinGest{% endblock %}
 
 {% block content %}
 <div class="max-w-md mx-auto">
   <!-- Header -->
   <div class="flex items-center justify-between mb-6">
     <div>
-      <h1 class="text-2xl font-semibold text-gray-900">Nueva transacción</h1>
+      <h1 class="text-2xl font-semibold text-gray-900">Nueva transacciÃ³n</h1>
       <p class="text-gray-500 text-sm mt-1">Registra un nuevo movimiento</p>
     </div>
     <a href="{% url 'gestion_financiera_basica:transactions' %}" class="text-gray-400 hover:text-gray-600 transition-colors">
@@ -21,9 +21,9 @@
   <div class="bg-white rounded-lg border border-gray-200 p-6">
     <form method="post" class="space-y-6">
       {% csrf_token %}
-      <!-- Tipo de transacción -->
+      <!-- Tipo de transacciÃ³n -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-3">Tipo de transacción</label>
+        <label class="block text-sm font-medium text-gray-700 mb-3">Tipo de transacciÃ³n</label>
         {% if form.tipo.errors %}
           <div class="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p class="text-red-600 text-sm">{{ form.tipo.errors.0 }}</p>
@@ -64,9 +64,9 @@
         </div>
       </div>
 
-      <!-- Nombre de la transacción -->
+      <!-- Nombre de la transacciÃ³n -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">DescripciÃ³n</label>
         {% if form.nombre.errors %}
           <div class="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p class="text-red-600 text-sm">{{ form.nombre.errors.0 }}</p>
@@ -110,9 +110,9 @@
         </div>
       </div>
 
-      <!-- Categoría -->
+      <!-- CategorÃ­a -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Categoría (opcional)</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">CategorÃ­a (opcional)</label>
         {% if form.categoria.errors %}
           <div class="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p class="text-red-600 text-sm">{{ form.categoria.errors.0 }}</p>
@@ -120,12 +120,12 @@
         {% endif %}
         <select name="categoria" id="id_categoria"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-gray-900">
-          <option value="">Seleccionar categoría</option>
-          <option value="alimentacion">Alimentación</option>
+          <option value="">Seleccionar categorÃ­a</option>
+          <option value="alimentacion">AlimentaciÃ³n</option>
           <option value="transporte">Transporte</option>
           <option value="entretenimiento">Entretenimiento</option>
           <option value="salud">Salud</option>
-          <option value="educacion">Educación</option>
+          <option value="educacion">EducaciÃ³n</option>
           <option value="compras">Compras</option>
           <option value="servicios">Servicios</option>
           <option value="vivienda">Vivienda</option>
@@ -146,9 +146,9 @@
                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 text-gray-900" required>
       </div>
 
-      <!-- Descripción -->
+      <!-- DescripciÃ³n -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Descripción (opcional)</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">DescripciÃ³n (opcional)</label>
         {% if form.descripcion.errors %}
           <div class="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p class="text-red-600 text-sm">{{ form.descripcion.errors.0 }}</p>
@@ -167,7 +167,7 @@
         </a>
         <button type="submit" 
                 class="flex-1 px-4 py-2 bg-[#227C91] hover:bg-[#1b5f6a] text-white rounded-lg font-medium transition-colors">
-          Guardar transacción
+          Guardar transacciÃ³n
         </button>
       </div>
     </form>
@@ -183,14 +183,14 @@ document.addEventListener('DOMContentLoaded', function() {
     fechaInput.value = today;
   }
 
-  // Categorías dinámicas según el tipo
+  // CategorÃ­as dinÃ¡micas segÃºn el tipo
   const categorias = {
     'egreso': [
-      ['alimentacion', 'Alimentación'],
+      ['alimentacion', 'AlimentaciÃ³n'],
       ['transporte', 'Transporte'],
       ['entretenimiento', 'Entretenimiento'],
       ['salud', 'Salud'],
-      ['educacion', 'Educación'],
+      ['educacion', 'EducaciÃ³n'],
       ['compras', 'Compras'],
       ['servicios', 'Servicios'],
       ['vivienda', 'Vivienda'],
@@ -200,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
       ['salario', 'Salario'],
       ['freelance', 'Freelance'],
       ['negocio', 'Negocio'],
-      ['inversion', 'Inversión'],
+      ['inversion', 'InversiÃ³n'],
       ['regalo', 'Regalo'],
       ['otros', 'Otros']
     ]
@@ -211,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!categoriaSelect) return;
     
     const valorActual = categoriaSelect.value;
-    categoriaSelect.innerHTML = '<option value="">Seleccionar categoría</option>';
+    categoriaSelect.innerHTML = '<option value="">Seleccionar categorÃ­a</option>';
     
     if (categorias[tipo]) {
       categorias[tipo].forEach(([value, text]) => {
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Inicializar categorías
+  // Inicializar categorÃ­as
   const tipoSeleccionado = document.querySelector('input[name="tipo"]:checked');
   if (tipoSeleccionado) {
     updateCategorias(tipoSeleccionado.value);

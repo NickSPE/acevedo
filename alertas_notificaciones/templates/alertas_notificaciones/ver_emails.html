@@ -9,17 +9,17 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">📧 Emails Enviados por el Sistema</h3>
-                    <p class="mb-0">Últimos emails generados por las notificaciones</p>
+                    <h3 class="mb-0">ðŸ“§ Emails Enviados por el Sistema</h3>
+                    <p class="mb-0">Ãšltimos emails generados por las notificaciones</p>
                 </div>
                 
                 <div class="card-body">
                     {% if emails %}
                         <div class="alert alert-info">
-                            <strong>📊 Total de emails:</strong> {{ total_emails }}
+                            <strong>ðŸ“Š Total de emails:</strong> {{ total_emails }}
                             <br>
-                            <small>Los emails se guardan en archivos porque está configurado el backend 'filebased'. 
-                            Para envío real, configura Gmail en settings.py</small>
+                            <small>Los emails se guardan en archivos porque estÃ¡ configurado el backend 'filebased'. 
+                            Para envÃ­o real, configura Gmail en settings.py</small>
                         </div>
                         
                         <div class="row">
@@ -28,7 +28,7 @@
                                     <div class="card border-left-primary">
                                         <div class="card-body">
                                             <h5 class="card-title text-primary">
-                                                📧 {{ email.subject|default:"Sin asunto" }}
+                                                ðŸ“§ {{ email.subject|default:"Sin asunto" }}
                                             </h5>
                                             
                                             <p class="card-text">
@@ -40,11 +40,11 @@
                                             <div class="btn-group">
                                                 <a href="{% url 'alertas_notificaciones:ver_email_completo' email.file %}" 
                                                    class="btn btn-primary btn-sm" target="_blank">
-                                                    👁️ Ver Email
+                                                    ðŸ‘ï¸ Ver Email
                                                 </a>
                                                 <button class="btn btn-outline-secondary btn-sm" 
                                                         onclick="togglePreview('{{ forloop.counter }}')">
-                                                    🔍 Preview
+                                                    ðŸ” Preview
                                                 </button>
                                             </div>
                                             
@@ -67,36 +67,36 @@
                         
                     {% else %}
                         <div class="alert alert-warning">
-                            <h5>📭 No hay emails enviados aún</h5>
+                            <h5>ðŸ“­ No hay emails enviados aÃºn</h5>
                             <p>Para generar emails de prueba:</p>
                             <ol>
                                 <li>Ve a <a href="{% url 'gestion_financiera_basica:test_notifications' %}">Pruebas de Notificaciones</a></li>
-                                <li>Crea una transacción de prueba</li>
-                                <li>Regresa aquí para ver el email generado</li>
+                                <li>Crea una transacciÃ³n de prueba</li>
+                                <li>Regresa aquÃ­ para ver el email generado</li>
                             </ol>
                         </div>
                     {% endif %}
                     
-                    <!-- Enlaces de navegación -->
+                    <!-- Enlaces de navegaciÃ³n -->
                     <div class="text-center mt-4">
                         <a href="{% url 'gestion_financiera_basica:test_notifications' %}" class="btn btn-success">
-                            🧪 Generar Email de Prueba
+                            ðŸ§ª Generar Email de Prueba
                         </a>
                         <a href="{% url 'alertas_notificaciones:configuraciones' %}" class="btn btn-outline-primary">
-                            ⚙️ Configurar Notificaciones
+                            âš™ï¸ Configurar Notificaciones
                         </a>
                         <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">
-                            🏠 Volver al Dashboard
+                            ðŸ  Volver al Dashboard
                         </a>
                     </div>
                     
                     <!-- Instrucciones para email real -->
                     <div class="mt-4">
                         <div class="alert alert-light">
-                            <h6><strong>💡 ¿Quieres recibir emails reales?</strong></h6>
+                            <h6><strong>ðŸ’¡ Â¿Quieres recibir emails reales?</strong></h6>
                             <p class="mb-2">Para recibir notificaciones en tu bandeja real:</p>
                             <ol class="mb-0">
-                                <li>Configura una cuenta Gmail con contraseña de aplicación</li>
+                                <li>Configura una cuenta Gmail con contraseÃ±a de aplicaciÃ³n</li>
                                 <li>Actualiza <code>EMAIL_BACKEND</code> en <code>settings.py</code></li>
                                 <li>Reinicia el servidor</li>
                             </ol>

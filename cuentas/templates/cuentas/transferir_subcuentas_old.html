@@ -90,7 +90,7 @@
     }
     
     .subcuenta-card.selected::after {
-        content: '✓';
+        content: 'âœ“';
         position: absolute;
         top: 10px;
         right: 10px;
@@ -305,7 +305,7 @@
                         <i class="fas fa-exchange-alt me-2"></i>
                         Transferir entre Subcuentas
                     </h1>
-                    <p class="mb-0 opacity-75">Mueve dinero de una subcuenta a otra de forma instantánea</p>
+                    <p class="mb-0 opacity-75">Mueve dinero de una subcuenta a otra de forma instantÃ¡nea</p>
                 </div>
                 <div class="col-auto">
                     <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-light btn-sm">
@@ -328,9 +328,9 @@
                     
                     <div class="mb-4">
                         <label class="form-label fw-bold">
-                            <i class="fas fa-wallet me-2"></i>¿De qué subcuenta quieres transferir?
+                            <i class="fas fa-wallet me-2"></i>Â¿De quÃ© subcuenta quieres transferir?
                         </label>
-                        <p class="text-muted small mb-3">Selecciona la subcuenta de donde saldrá el dinero</p>
+                        <p class="text-muted small mb-3">Selecciona la subcuenta de donde saldrÃ¡ el dinero</p>
                         
                         <div class="subcuenta-selection">
                             <div class="row" id="subcuentasOrigen">
@@ -382,9 +382,9 @@
                     
                     <div class="mb-4">
                         <label class="form-label fw-bold">
-                            <i class="fas fa-piggy-bank me-2"></i>¿Hacia qué subcuenta quieres transferir?
+                            <i class="fas fa-piggy-bank me-2"></i>Â¿Hacia quÃ© subcuenta quieres transferir?
                         </label>
-                        <p class="text-muted small mb-3">Selecciona la subcuenta que recibirá el dinero</p>
+                        <p class="text-muted small mb-3">Selecciona la subcuenta que recibirÃ¡ el dinero</p>
                         
                         <div class="subcuenta-selection">
                             <div class="row" id="subcuentasDestino">
@@ -421,7 +421,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- Monto y Descripción -->
+                    <!-- Monto y DescripciÃ³n -->
                     <div class="form-section">
                         <h6><i class="fas fa-dollar-sign me-2"></i>Detalles de la Transferencia</h6>
                     </div>
@@ -436,7 +436,7 @@
                                     <span class="input-group-text">$</span>
                                     {{ form.monto }}
                                     <button type="button" class="btn btn-outline-secondary" id="btnMaximo" disabled>
-                                        <i class="fas fa-arrow-up me-1"></i>Máximo
+                                        <i class="fas fa-arrow-up me-1"></i>MÃ¡ximo
                                     </button>
                                 </div>
                                 {% if form.monto.errors %}
@@ -448,13 +448,13 @@
                                 {% endif %}
                                 <div class="form-text mt-1">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    Máximo disponible: <strong id="maxDisponible">$0.00</strong>
+                                    MÃ¡ximo disponible: <strong id="maxDisponible">$0.00</strong>
                                 </div>
                             </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">
-                                    <i class="fas fa-comment me-2"></i>Descripción (Opcional)
+                                    <i class="fas fa-comment me-2"></i>DescripciÃ³n (Opcional)
                                 </label>
                                 {{ form.descripcion }}
                                 {% if form.descripcion.errors %}
@@ -498,7 +498,7 @@
                         </div>
                     </div>
 
-                    <!-- Botones de Acción -->
+                    <!-- Botones de AcciÃ³n -->
                     <div class="action-buttons">
                         <div class="d-flex justify-content-between flex-wrap gap-2">
                             <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
@@ -513,11 +513,11 @@
             </div>
         </div>
 
-        <!-- Información Importante -->
+        <!-- InformaciÃ³n Importante -->
         <div class="card mt-4">
             <div class="card-header bg-light">
                 <h6 class="mb-0">
-                    <i class="fas fa-lightbulb me-2"></i>Información Importante
+                    <i class="fas fa-lightbulb me-2"></i>InformaciÃ³n Importante
                 </h6>
             </div>
             <div class="card-body">
@@ -526,7 +526,7 @@
                         <div class="col-md-6">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-bolt text-warning me-2"></i>
-                                <span class="fw-bold">Transferencias instantáneas</span>
+                                <span class="fw-bold">Transferencias instantÃ¡neas</span>
                             </div>
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-history text-info me-2"></i>
@@ -540,7 +540,7 @@
                             </div>
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-check-circle text-primary me-2"></i>
-                                <span class="fw-bold">Subcuentas activas únicamente</span>
+                                <span class="fw-bold">Subcuentas activas Ãºnicamente</span>
                             </div>
                         </div>
                     </div>
@@ -567,7 +567,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let subcuentaDestinoSeleccionada = null;
     let saldoMaximo = 0;
 
-    // Configurar selección de subcuentas origen
+    // Configurar selecciÃ³n de subcuentas origen
     document.querySelectorAll('.subcuenta-card:not(.subcuenta-destino)').forEach(card => {
         card.addEventListener('click', function() {
             if (this.classList.contains('disabled')) return;
@@ -575,13 +575,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Deseleccionar todas las opciones origen
             document.querySelectorAll('.subcuenta-card:not(.subcuenta-destino)').forEach(c => c.classList.remove('selected'));
             
-            // Seleccionar esta opción
+            // Seleccionar esta opciÃ³n
             this.classList.add('selected');
             subcuentaOrigenSeleccionada = this.dataset.id;
             saldoMaximo = parseFloat(this.dataset.saldo);
             origenInput.value = subcuentaOrigenSeleccionada;
             
-            // Actualizar información
+            // Actualizar informaciÃ³n
             maxDisponible.textContent = '$' + saldoMaximo.toFixed(2);
             btnMaximo.disabled = saldoMaximo <= 0;
             
@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Configurar selección de subcuentas destino
+    // Configurar selecciÃ³n de subcuentas destino
     document.querySelectorAll('.subcuenta-destino').forEach(card => {
         card.addEventListener('click', function() {
             if (this.classList.contains('disabled')) return;
@@ -599,7 +599,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Deseleccionar todas las opciones destino
             document.querySelectorAll('.subcuenta-destino').forEach(c => c.classList.remove('selected'));
             
-            // Seleccionar esta opción
+            // Seleccionar esta opciÃ³n
             this.classList.add('selected');
             subcuentaDestinoSeleccionada = this.dataset.id;
             destinoInput.value = subcuentaDestinoSeleccionada;
@@ -608,7 +608,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Botón máximo
+    // BotÃ³n mÃ¡ximo
     btnMaximo.addEventListener('click', function() {
         if (saldoMaximo > 0) {
             montoInput.value = saldoMaximo.toFixed(2);
@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Validación de monto
+    // ValidaciÃ³n de monto
     montoInput.addEventListener('input', function() {
         const valor = parseFloat(this.value) || 0;
         if (valor > saldoMaximo) {
@@ -676,10 +676,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Confirmación antes del envío
+    // ConfirmaciÃ³n antes del envÃ­o
     form.addEventListener('submit', function(e) {
         const monto = parseFloat(montoInput.value) || 0;
-        if (!confirm(`¿Confirmas la transferencia de $${monto.toFixed(2)}?`)) {
+        if (!confirm(`Â¿Confirmas la transferencia de $${monto.toFixed(2)}?`)) {
             e.preventDefault();
         }
     });

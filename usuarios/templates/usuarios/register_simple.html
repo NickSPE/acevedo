@@ -41,7 +41,7 @@
             display: block;
         }
 
-        /* Partículas de fondo */
+        /* PartÃ­culas de fondo */
         .floating-particles {
             position: fixed;
             top: 0;
@@ -471,7 +471,7 @@
 </head>
 
 <body>
-    <!-- Partículas flotantes -->
+    <!-- PartÃ­culas flotantes -->
     <div class="floating-particles">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -485,7 +485,7 @@
         <div class="particle"></div>
     </div>
 
-    <!-- Navegación -->
+    <!-- NavegaciÃ³n -->
     <nav class="navbar">
         <div class="nav-content">
             <a href="{% url 'core:index' %}" class="logo">
@@ -506,7 +506,7 @@
 
     <div class="container">
         <div class="form-card">
-            <h1 class="text-3xl font-bold mb-4 text-fingest-primary">Únete a FinGest</h1>
+            <h1 class="text-3xl font-bold mb-4 text-fingest-primary">Ãšnete a FinGest</h1>
             <p class="subtitle">Crea tu cuenta en minutos y transforma tus finanzas</p>
 
             <!-- Alertas -->
@@ -520,7 +520,7 @@
             <form method="post" enctype="multipart/form-data" id="registration-form">
                 {% csrf_token %}
 
-                <!-- Información personal en grid compacto -->
+                <!-- InformaciÃ³n personal en grid compacto -->
 
                 <fieldset>
                     <legend>Datos Personales</legend>
@@ -545,13 +545,13 @@
                             <input type="email" name="correo" id="id_correo" required placeholder="tu@email.com">
                         </div>
 
-                        <!-- Contraseñas con ojito -->
+                        <!-- ContraseÃ±as con ojito -->
                         <div class="grid-2">
                             <div class="form-group">
-                                <label for="id_contrasena">Contraseña</label>
+                                <label for="id_contrasena">ContraseÃ±a</label>
                                 <div class="password-input">
                                     <input type="password" name="contrasena" id="id_contrasena" required minlength="8"
-                                        placeholder="Mín. 8 caracteres">
+                                        placeholder="MÃ­n. 8 caracteres">
                                     <i class="fas fa-eye password-toggle"
                                         onclick="togglePassword('id_contrasena', this)"></i>
                                 </div>
@@ -561,7 +561,7 @@
                                 <label for="id_confirmar_contrasena">Confirmar</label>
                                 <div class="password-input">
                                     <input type="password" name="confirmar_contrasena" id="id_confirmar_contrasena"
-                                        required minlength="8" placeholder="Repite contraseña">
+                                        required minlength="8" placeholder="Repite contraseÃ±a">
                                     <i class="fas fa-eye password-toggle"
                                         onclick="togglePassword('id_confirmar_contrasena', this)"></i>
                                 </div>
@@ -572,9 +572,9 @@
 
                     <hr>
 
-                    <!-- Verificación compacta -->
+                    <!-- VerificaciÃ³n compacta -->
                     <div class="verification-section">
-                        <h3><i class="fas fa-shield-check"></i> Verificación</h3>
+                        <h3><i class="fas fa-shield-check"></i> VerificaciÃ³n</h3>
 
                         <button type="button" id="send-code-btn" class="btn btn-secondary">
                             <i class="fas fa-envelope"></i>
@@ -583,19 +583,19 @@
 
                         <div id="verification-section" style="display: none;">
                             <div class="form-group" style="margin-top: 12px;">
-                                <label for="verification_code">Código (6 dígitos)</label>
+                                <label for="verification_code">CÃ³digo (6 dÃ­gitos)</label>
                                 <input type="text" name="codigo_verificacion" id="verification_code" maxlength="6"
                                     pattern="[0-9]{6}" class="code-input" placeholder="123456">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Términos compactos -->
+                    <!-- TÃ©rminos compactos -->
                     <div class="checkbox-group">
                         <input type="checkbox" id="id_acepta_terminos" name="acepta_terminos" required>
                         <label for="id_acepta_terminos">
-                            Acepto los <a href="{% url 'core:terms' %}" target="_blank">términos</a>
-                            y la <a href="{% url 'core:privacy' %}" target="_blank">política de privacidad</a>
+                            Acepto los <a href="{% url 'core:terms' %}" target="_blank">tÃ©rminos</a>
+                            y la <a href="{% url 'core:privacy' %}" target="_blank">polÃ­tica de privacidad</a>
                         </label>
                     </div>
 
@@ -609,15 +609,15 @@
                     <input type="hidden" name="saldo_inicial" value="0">
                     <input type="hidden" name="pin_acceso_rapido" value="">
 
-                    <!-- Botón de envío -->
+                    <!-- BotÃ³n de envÃ­o -->
                     <button type="submit" id="submit-btn" style="display: none;" class="btn btn-primary">
                         <i class="fas fa-rocket"></i>
                         Crear cuenta
                     </button>
 
                     <div class="login-link">
-                        ¿Ya tienes cuenta?
-                        <a href="{% url 'usuarios:login' %}">Iniciar sesión</a>
+                        Â¿Ya tienes cuenta?
+                        <a href="{% url 'usuarios:login' %}">Iniciar sesiÃ³n</a>
                     </div>
             </form>
         </div>
@@ -626,7 +626,7 @@
     <script>
         let codeRequested = false;
 
-        // Función para mostrar/ocultar contraseña
+        // FunciÃ³n para mostrar/ocultar contraseÃ±a
         function togglePassword(inputId, icon) {
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
@@ -640,40 +640,40 @@
             }
         }
 
-        // Verificar fortaleza de contraseña
+        // Verificar fortaleza de contraseÃ±a
         function checkPasswordStrength(password) {
             const strengthIndicator = document.getElementById('password-strength');
             let strength = 0;
             let messages = [];
 
             if (password.length >= 8) strength++;
-            else messages.push('Mínimo 8 caracteres');
+            else messages.push('MÃ­nimo 8 caracteres');
 
             if (/[a-z]/.test(password)) strength++;
-            else messages.push('Minúscula');
+            else messages.push('MinÃºscula');
 
             if (/[A-Z]/.test(password)) strength++;
-            else messages.push('Mayúscula');
+            else messages.push('MayÃºscula');
 
             if (/[0-9]/.test(password)) strength++;
-            else messages.push('Número');
+            else messages.push('NÃºmero');
 
             if (/[^A-Za-z0-9]/.test(password)) strength++;
-            else messages.push('Símbolo');
+            else messages.push('SÃ­mbolo');
 
             if (strength < 3) {
                 strengthIndicator.className = 'password-strength weak';
-                strengthIndicator.textContent = 'Débil - Falta: ' + messages.join(', ');
+                strengthIndicator.textContent = 'DÃ©bil - Falta: ' + messages.join(', ');
             } else if (strength < 5) {
                 strengthIndicator.className = 'password-strength medium';
                 strengthIndicator.textContent = 'Media - Falta: ' + messages.join(', ');
             } else {
                 strengthIndicator.className = 'password-strength strong';
-                strengthIndicator.textContent = '¡Contraseña fuerte!';
+                strengthIndicator.textContent = 'Â¡ContraseÃ±a fuerte!';
             }
         }
 
-        // Verificar coincidencia de contraseñas
+        // Verificar coincidencia de contraseÃ±as
         function checkPasswordMatch() {
             const password = document.getElementById('id_contrasena').value;
             const confirmPassword = document.getElementById('id_confirmar_contrasena').value;
@@ -686,16 +686,16 @@
 
             if (password === confirmPassword) {
                 matchIndicator.className = 'password-strength strong';
-                matchIndicator.textContent = '✓ Las contraseñas coinciden';
+                matchIndicator.textContent = 'âœ“ Las contraseÃ±as coinciden';
                 return true;
             } else {
                 matchIndicator.className = 'password-strength weak';
-                matchIndicator.textContent = '✗ Las contraseñas no coinciden';
+                matchIndicator.textContent = 'âœ— Las contraseÃ±as no coinciden';
                 return false;
             }
         }
 
-        // Event listeners para las contraseñas
+        // Event listeners para las contraseÃ±as
         document.getElementById('id_contrasena').addEventListener('input', function () {
             checkPasswordStrength(this.value);
             checkPasswordMatch();
@@ -703,7 +703,7 @@
 
         document.getElementById('id_confirmar_contrasena').addEventListener('input', checkPasswordMatch);
 
-        // Dividir apellidos automáticamente
+        // Dividir apellidos automÃ¡ticamente
         function splitApellidos() {
             const apellidosCompletos = document.getElementById('id_apellidos_completos').value.trim();
             const apellidos = apellidosCompletos.split(' ');
@@ -712,7 +712,7 @@
             document.getElementById('apellido_materno').value = apellidos[1] || '';
         }
 
-        // Enviar código de verificación
+        // Enviar cÃ³digo de verificaciÃ³n
         document.getElementById('send-code-btn').addEventListener('click', async function () {
             const correo = document.getElementById('id_correo').value;
             const nombres = document.getElementById('id_nombres').value;
@@ -722,20 +722,20 @@
                 return;
             }
 
-            // Verificar que las contraseñas coincidan antes de enviar código
+            // Verificar que las contraseÃ±as coincidan antes de enviar cÃ³digo
             if (!checkPasswordMatch()) {
-                showAlert('Las contraseñas deben coincidir antes de solicitar el código', 'error');
+                showAlert('Las contraseÃ±as deben coincidir antes de solicitar el cÃ³digo', 'error');
                 return;
             }
 
             const password = document.getElementById('id_contrasena').value;
             if (password.length < 8) {
-                showAlert('La contraseña debe tener al menos 8 caracteres', 'error');
+                showAlert('La contraseÃ±a debe tener al menos 8 caracteres', 'error');
                 return;
             }
 
             this.disabled = true;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando código...';
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando cÃ³digo...';
 
             try {
                 const formData = new FormData();
@@ -757,20 +757,20 @@
                     this.style.display = 'none';
 
                     codeRequested = true;
-                    showAlert('Código enviado a tu email correctamente', 'success');
+                    showAlert('CÃ³digo enviado a tu email correctamente', 'success');
                     document.getElementById('verification_code').focus();
                 } else {
-                    showAlert(data.error || 'Error al enviar el código', 'error');
+                    showAlert(data.error || 'Error al enviar el cÃ³digo', 'error');
                 }
             } catch (error) {
                 showAlert('Error: ' + error.message, 'error');
             } finally {
                 this.disabled = false;
-                this.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar código de verificación';
+                this.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar cÃ³digo de verificaciÃ³n';
             }
         });
 
-        // Función para mostrar alertas
+        // FunciÃ³n para mostrar alertas
         function showAlert(message, type) {
             // Remover alertas existentes
             const existingAlerts = document.querySelectorAll('.alert');
@@ -784,11 +784,11 @@
                 ${message}
             `;
 
-            // Insertar después del título
+            // Insertar despuÃ©s del tÃ­tulo
             const subtitle = document.querySelector('.subtitle');
             subtitle.parentNode.insertBefore(alert, subtitle.nextSibling);
 
-            // Auto-remover después de 5 segundos
+            // Auto-remover despuÃ©s de 5 segundos
             setTimeout(() => {
                 if (alert.parentNode) {
                     alert.remove();
@@ -796,28 +796,28 @@
             }, 5000);
         }
 
-        // Validar formulario antes del envío
+        // Validar formulario antes del envÃ­o
         document.getElementById('registration-form').addEventListener('submit', function (e) {
             if (!codeRequested) {
                 e.preventDefault();
-                showAlert('Primero debes solicitar y verificar tu código de email', 'error');
+                showAlert('Primero debes solicitar y verificar tu cÃ³digo de email', 'error');
                 return;
             }
 
             const codigo = document.getElementById('verification_code').value;
             if (!codigo || codigo.length !== 6) {
                 e.preventDefault();
-                showAlert('Debes ingresar el código de verificación de 6 dígitos', 'error');
+                showAlert('Debes ingresar el cÃ³digo de verificaciÃ³n de 6 dÃ­gitos', 'error');
                 return;
             }
 
             if (!checkPasswordMatch()) {
                 e.preventDefault();
-                showAlert('Las contraseñas no coinciden', 'error');
+                showAlert('Las contraseÃ±as no coinciden', 'error');
                 return;
             }
 
-            // Dividir apellidos antes del envío
+            // Dividir apellidos antes del envÃ­o
             splitApellidos();
 
             // Mostrar loading
@@ -826,7 +826,7 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
         });
 
-        // Auto-mostrar botón al completar código
+        // Auto-mostrar botÃ³n al completar cÃ³digo
         document.getElementById('verification_code').addEventListener('input', function () {
             if (this.value.length === 6) {
                 document.getElementById('submit-btn').style.display = 'block';

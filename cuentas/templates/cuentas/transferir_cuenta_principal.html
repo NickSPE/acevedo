@@ -218,14 +218,14 @@
 <div class="container">
     <div class="transfer-card">
         <div class="card-header">
-            <h1>💰 Transferir a Cuenta Principal</h1>
+            <h1>ðŸ’° Transferir a Cuenta Principal</h1>
             <p>Mueve dinero entre tu subcuenta y cuenta principal</p>
         </div>
         
         <div class="card-body">
             <div class="account-info">
                 <div class="account-card">
-                    <h3>📋 Subcuenta</h3>
+                    <h3>ðŸ“‹ Subcuenta</h3>
                     <div class="account-name">{{ subcuenta.nombre }}</div>
                     <div class="account-balance">${{ subcuenta.saldo|floatformat:2 }}</div>
                     {% if subcuenta.descripcion %}
@@ -234,7 +234,7 @@
                 </div>
                 
                 <div class="account-card">
-                    <h3>🏦 Cuenta Principal</h3>
+                    <h3>ðŸ¦ Cuenta Principal</h3>
                     <div class="account-name">{{ cuenta_principal.nombre_cuenta }}</div>
                     <div class="account-balance">${{ cuenta_principal.saldo_cuenta|floatformat:2 }}</div>
                 </div>
@@ -248,13 +248,13 @@
                 {% csrf_token %}
                 
                 <div class="transfer-type-info">
-                    <h4>📤 Transferencia hacia Cuenta Principal</h4>
-                    <p>El dinero se transferirá desde tu subcuenta hacia tu cuenta principal</p>
+                    <h4>ðŸ“¤ Transferencia hacia Cuenta Principal</h4>
+                    <p>El dinero se transferirÃ¡ desde tu subcuenta hacia tu cuenta principal</p>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ form.monto.id_for_label }}">
-                        💵 {{ form.monto.label }}
+                        ðŸ’µ {{ form.monto.label }}
                     </label>
                     {{ form.monto }}
                     {% if form.monto.help_text %}
@@ -271,7 +271,7 @@
                 
                 <div class="form-group">
                     <label class="form-label" for="{{ form.descripcion.id_for_label }}">
-                        📝 {{ form.descripcion.label }}
+                        ðŸ“ {{ form.descripcion.label }}
                     </label>
                     {{ form.descripcion }}
                     {% if form.descripcion.help_text %}
@@ -290,11 +290,11 @@
                 <input type="hidden" name="tipo" value="deposito">
                 
                 <div class="alert alert-info">
-                    <strong>💡 Información importante:</strong><br>
-                    • El monto se deducirá de tu subcuenta<br>
-                    • Se agregará a tu cuenta principal<br>
-                    • La transferencia es inmediata<br>
-                    • Puedes ver el historial en tu dashboard
+                    <strong>ðŸ’¡ InformaciÃ³n importante:</strong><br>
+                    â€¢ El monto se deducirÃ¡ de tu subcuenta<br>
+                    â€¢ Se agregarÃ¡ a tu cuenta principal<br>
+                    â€¢ La transferencia es inmediata<br>
+                    â€¢ Puedes ver el historial en tu dashboard
                 </div>
                 
                 <div class="btn-group">

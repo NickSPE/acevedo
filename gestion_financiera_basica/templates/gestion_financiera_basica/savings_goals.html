@@ -66,12 +66,12 @@
               </div>
             </div>
             
-            <!-- Descripción -->
+            <!-- DescripciÃ³n -->
             {% if goal.descripcion %}
               <p class="text-[#736B5E] text-xs mb-2 line-clamp-2">{{ goal.descripcion }}</p>
             {% endif %}
             
-            <!-- Fecha límite -->
+            <!-- Fecha lÃ­mite -->
             <div class="flex items-center gap-2 text-[#736B5E] text-xs mb-3">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -79,7 +79,7 @@
               <span>{{ goal.fecha_limite }}</span>
             </div>
             
-            <!-- Botones de acción -->
+            <!-- Botones de acciÃ³n -->
             <div class="flex gap-2">
               <a href="{% url 'gestion_financiera_basica:aportar_meta_ahorro' goal.id %}" 
                  class="flex-1 bg-[#227C91] hover:bg-[#1a6070] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors text-center">
@@ -121,16 +121,16 @@
       </div>
     </div>
   {% else %}
-    <!-- Estado vacío cuando no hay metas -->
+    <!-- Estado vacÃ­o cuando no hay metas -->
     <div class="bg-white rounded-lg border border-[#E5E1DD] p-10 text-center mb-6">
       <div class="w-16 h-16 bg-[#227C91] bg-opacity-10 rounded-lg flex items-center justify-center mx-auto mb-4">
         <svg class="w-8 h-8 text-[#227C91]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
         </svg>
       </div>
-      <h3 class="text-xl font-bold text-[#605952] mb-2">¡Comienza a Ahorrar!</h3>
+      <h3 class="text-xl font-bold text-[#605952] mb-2">Â¡Comienza a Ahorrar!</h3>
       <p class="text-[#736B5E] mb-4 max-w-md mx-auto text-sm">
-        Aún no tienes metas de ahorro. Crear objetivos específicos te ayudará a alcanzar tus sueños financieros.
+        AÃºn no tienes metas de ahorro. Crear objetivos especÃ­ficos te ayudarÃ¡ a alcanzar tus sueÃ±os financieros.
       </p>
       <button type="button" data-toggle="meta-modal"
          class="inline-flex items-center gap-2 bg-[#227C91] hover:bg-[#1a6070] text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors">
@@ -159,7 +159,7 @@
         <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-red-700 dark:text-red-300">Total Ahorrado</h4>
-            <span class="text-xl">💰</span>
+            <span class="text-xl">ðŸ’°</span>
           </div>
           <p class="text-2xl font-bold text-red-800 dark:text-red-200">{% format_money estadisticas.total_ahorrado user %}</p>
           <p class="text-xs text-red-600 dark:text-red-400">de {% format_money estadisticas.total_objetivo user %}</p>
@@ -168,7 +168,7 @@
         <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-orange-700 dark:text-orange-300">Total Ahorrado</h4>
-            <span class="text-xl">💰</span>
+            <span class="text-xl">ðŸ’°</span>
           </div>
           <p class="text-2xl font-bold text-orange-800 dark:text-orange-200">{% format_money estadisticas.total_ahorrado user %}</p>
           <p class="text-xs text-orange-600 dark:text-orange-400">de {% format_money estadisticas.total_objetivo user %}</p>
@@ -177,7 +177,7 @@
         <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-green-700 dark:text-green-300">Total Ahorrado</h4>
-            <span class="text-xl">💰</span>
+            <span class="text-xl">ðŸ’°</span>
           </div>
           <p class="text-2xl font-bold text-green-800 dark:text-green-200">{% format_money estadisticas.total_ahorrado user %}</p>
           <p class="text-xs text-green-600 dark:text-green-400">de {% format_money estadisticas.total_objetivo user %}</p>
@@ -188,7 +188,7 @@
         <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-red-700 dark:text-red-300">Progreso General</h4>
-            <span class="text-xl">📊</span>
+            <span class="text-xl">ðŸ“Š</span>
           </div>
           <p class="text-2xl font-bold text-red-800 dark:text-red-200">{{ estadisticas.porcentaje_total|floatformat:1 }}%</p>
           <p class="text-xs text-red-600 dark:text-red-400">promedio de todas las metas</p>
@@ -197,7 +197,7 @@
         <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-orange-700 dark:text-orange-300">Progreso General</h4>
-            <span class="text-xl">📊</span>
+            <span class="text-xl">ðŸ“Š</span>
           </div>
           <p class="text-2xl font-bold text-orange-800 dark:text-orange-200">{{ estadisticas.porcentaje_total|floatformat:1 }}%</p>
           <p class="text-xs text-orange-600 dark:text-orange-400">promedio de todas las metas</p>
@@ -206,7 +206,7 @@
         <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-blue-700 dark:text-blue-300">Progreso General</h4>
-            <span class="text-xl">📊</span>
+            <span class="text-xl">ðŸ“Š</span>
           </div>
           <p class="text-2xl font-bold text-blue-800 dark:text-blue-200">{{ estadisticas.porcentaje_total|floatformat:1 }}%</p>
           <p class="text-xs text-blue-600 dark:text-blue-400">promedio de todas las metas</p>
@@ -216,7 +216,7 @@
         <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-purple-700 dark:text-purple-300">Metas Activas</h4>
-            <span class="text-xl">🎯</span>
+            <span class="text-xl">ðŸŽ¯</span>
           </div>
           <p class="text-2xl font-bold text-purple-800 dark:text-purple-200">{{ estadisticas.total_metas }}</p>
           <p class="text-xs text-purple-600 dark:text-purple-400">{{ estadisticas.metas_completadas }} completadas</p>
@@ -225,7 +225,7 @@
         <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
           <div class="flex items-center justify-between mb-2">
             <h4 class="text-sm font-medium text-orange-700 dark:text-orange-300">Falta Ahorrar</h4>
-            <span class="text-xl">🚀</span>
+            <span class="text-xl">ðŸš€</span>
           </div>
           <p class="text-2xl font-bold text-orange-800 dark:text-orange-200">{% format_money estadisticas.falta_ahorrar user %}</p>
           <p class="text-xs text-orange-600 dark:text-orange-400">para completar todas las metas</p>
@@ -234,7 +234,7 @@
     </div>
   {% endif %}
 
-  <!-- Consejos Dinámicos Personalizados -->
+  <!-- Consejos DinÃ¡micos Personalizados -->
   {% if tips_dinamicos %}
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
       <div class="flex items-center gap-3 mb-6">
@@ -258,7 +258,7 @@
                 <h4 class="font-semibold text-gray-900 dark:text-white mb-2">{{ consejo.titulo }}</h4>
                 <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">{{ consejo.mensaje }}</p>
                 <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <p class="text-xs font-medium text-blue-700 dark:text-blue-300">💡 Acción recomendada:</p>
+                  <p class="text-xs font-medium text-blue-700 dark:text-blue-300">ðŸ’¡ AcciÃ³n recomendada:</p>
                   <p class="text-sm text-blue-600 dark:text-blue-400">{{ consejo.accion }}</p>
                 </div>
               </div>
@@ -279,7 +279,7 @@
       </div>
       <div>
         <h3 class="text-xl font-bold text-gray-900 dark:text-white">Estrategias Comprobadas</h3>
-        <p class="text-gray-600 dark:text-gray-300">Técnicas fundamentales para ahorrar exitosamente</p>
+        <p class="text-gray-600 dark:text-gray-300">TÃ©cnicas fundamentales para ahorrar exitosamente</p>
       </div>
     </div>
     
@@ -292,7 +292,7 @@
               <h4 class="font-semibold text-gray-900 dark:text-white mb-2">{{ tip.1 }}</h4>
               <p class="text-gray-600 dark:text-gray-300 text-sm">{{ tip.2 }}</p>
               <div class="hidden mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800" data-expanded-content>
-                <p class="text-xs font-medium text-blue-700 dark:text-blue-300">💡 Tip adicional: <span class="tip-extra"></span></p>
+                <p class="text-xs font-medium text-blue-700 dark:text-blue-300">ðŸ’¡ Tip adicional: <span class="tip-extra"></span></p>
               </div>
             </div>
           </div>
@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
     card.classList.add('animate-fade-in-up');
   });
   
-  // Animación de barras de progreso
+  // AnimaciÃ³n de barras de progreso
   const progressBars = document.querySelectorAll('[style*="width:"]');
   progressBars.forEach(bar => {
     const targetWidth = bar.style.width;
@@ -357,14 +357,14 @@ function expandirTip(elemento) {
   const esVisible = !contenidoExpandido.classList.contains('hidden');
   
   const consejosAdicionales = {
-    'Regla 50/30/20': 'Ajusta estos porcentajes según tu situación. Si tienes deudas, considera destinar más del 20% a ahorros y pagos.',
-    'Págrate Primero': 'Configura transferencias automáticas el día que recibes tu salario. Así ahorras antes de tener la tentación de gastar.',
-    'Metas Específicas': 'En lugar de "ahorrar dinero", di "ahorrar $5,000 para emergencias en 10 meses". La especificidad aumenta el éxito.',
+    'Regla 50/30/20': 'Ajusta estos porcentajes segÃºn tu situaciÃ³n. Si tienes deudas, considera destinar mÃ¡s del 20% a ahorros y pagos.',
+    'PÃ¡grate Primero': 'Configura transferencias automÃ¡ticas el dÃ­a que recibes tu salario. AsÃ­ ahorras antes de tener la tentaciÃ³n de gastar.',
+    'Metas EspecÃ­ficas': 'En lugar de "ahorrar dinero", di "ahorrar $5,000 para emergencias en 10 meses". La especificidad aumenta el Ã©xito.',
     'Revisa Regularmente': 'Programa una cita mensual contigo mismo para revisar tus finanzas. Celebra los logros y ajusta lo que no funciona.'
   };
   
   const titulo = elemento.querySelector('h4').textContent;
-  const consejoExtra = consejosAdicionales[titulo] || 'Mantén la consistencia y celebra cada pequeño logro en tu camino al ahorro.';
+  const consejoExtra = consejosAdicionales[titulo] || 'MantÃ©n la consistencia y celebra cada pequeÃ±o logro en tu camino al ahorro.';
   
   elemento.querySelector('.tip-extra').textContent = consejoExtra;
   
@@ -375,7 +375,7 @@ function expandirTip(elemento) {
     contenidoExpandido.classList.remove('hidden');
     elemento.classList.add('ring-2', 'ring-blue-300', 'dark:ring-blue-500');
     
-    // Animación de entrada suave
+    // AnimaciÃ³n de entrada suave
     contenidoExpandido.style.opacity = '0';
     contenidoExpandido.style.transform = 'translateY(-10px)';
     
@@ -387,7 +387,7 @@ function expandirTip(elemento) {
   }
 }
 
-// Función para confirmar eliminación de meta
+// FunciÃ³n para confirmar eliminaciÃ³n de meta
 function confirmarEliminacion(metaId, nombreMeta) {
   const modal = document.getElementById('modalEliminarMeta');
   const nombreElement = document.getElementById('nombreMetaEliminar');
@@ -396,7 +396,7 @@ function confirmarEliminacion(metaId, nombreMeta) {
   // Actualizar el nombre de la meta en el modal
   nombreElement.textContent = nombreMeta;
   
-  // Actualizar la acción del formulario
+  // Actualizar la acciÃ³n del formulario
   formEliminar.action = `/gestion_financiera_basica/metas/${metaId}/eliminar/`;
   
   // Mostrar el modal
@@ -404,7 +404,7 @@ function confirmarEliminacion(metaId, nombreMeta) {
   modal.classList.add('flex');
 }
 
-// Función para cancelar eliminación
+// FunciÃ³n para cancelar eliminaciÃ³n
 function cancelarEliminacion() {
   const modal = document.getElementById('modalEliminarMeta');
   modal.classList.add('hidden');
@@ -412,7 +412,7 @@ function cancelarEliminacion() {
 }
 </script>
 
-<!-- Modal de confirmación de eliminación -->
+<!-- Modal de confirmaciÃ³n de eliminaciÃ³n -->
 <div id="modalEliminarMeta" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
   <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
     <div class="p-6">
@@ -423,7 +423,7 @@ function cancelarEliminacion() {
       </div>
       
       <h3 class="text-lg font-bold text-gray-900 text-center mb-2">
-        ¿Estás seguro que deseas eliminar esta meta de ahorro?
+        Â¿EstÃ¡s seguro que deseas eliminar esta meta de ahorro?
       </h3>
       
       <p class="text-gray-600 text-center mb-1">
@@ -431,7 +431,7 @@ function cancelarEliminacion() {
       </p>
       
       <p class="text-sm text-red-600 text-center mb-6">
-        Esta acción no se puede deshacer.
+        Esta acciÃ³n no se puede deshacer.
       </p>
       
       <form id="formEliminarMeta" method="POST" class="flex gap-3">

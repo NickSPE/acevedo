@@ -24,14 +24,14 @@
             <button 
                 onclick="window.location.href='{% url 'core:index' %}'" 
                 class="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl transition-colors"
-                title="Volver a la página principal"
+                title="Volver a la pÃ¡gina principal"
             >&times;</button>
             
             <!-- Header -->
             <div class="text-center p-8 pb-4">
-                <div class="text-5xl mb-4">🔢</div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acceso Rápido</h2>
-                <p class="text-gray-600 dark:text-gray-400">Ingresa tu PIN de 6 dígitos</p>
+                <div class="text-5xl mb-4">ðŸ”¢</div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acceso RÃ¡pido</h2>
+                <p class="text-gray-600 dark:text-gray-400">Ingresa tu PIN de 6 dÃ­gitos</p>
                 <p class="text-sm text-blue-600 dark:text-blue-400 mt-2">Cada PIN accede directamente a su cuenta</p>
             </div>
 
@@ -53,7 +53,7 @@
                 <form method="post" id="pinForm">
                     {% csrf_token %}
                     
-                    <!-- Input para PC/Desktop (invisible para móvil) -->
+                    <!-- Input para PC/Desktop (invisible para mÃ³vil) -->
                     <div id="desktop-input" class="hidden lg:block mb-6">
                         <input 
                             type="text" 
@@ -67,7 +67,7 @@
                         />
                     </div>
 
-                    <!-- Teclado táctil para móvil (invisible para desktop) -->
+                    <!-- Teclado tÃ¡ctil para mÃ³vil (invisible para desktop) -->
                     <div id="mobile-keyboard" class="lg:hidden">
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             <!-- Fila 1 -->
@@ -100,14 +100,14 @@
                         </div>
                     </div>
 
-                    <!-- Campo oculto para enviar PIN desde móvil -->
+                    <!-- Campo oculto para enviar PIN desde mÃ³vil -->
                     <input type="hidden" name="pin_input" id="pinHidden" />
                 </form>
 
-                <!-- Botón para volver al login normal -->
+                <!-- BotÃ³n para volver al login normal -->
                 <div class="text-center">
                     <a href="{% url 'usuarios:login' %}" class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
-                        ← Usar email y contraseña
+                        â† Usar email y contraseÃ±a
                     </a>
                 </div>
             </div>
@@ -170,7 +170,7 @@
 
         // Manejo del input de desktop
         document.getElementById('pinInput')?.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, ''); // Solo números
+            let value = e.target.value.replace(/\D/g, ''); // Solo nÃºmeros
             if (value.length > maxPinLength) {
                 value = value.slice(0, maxPinLength);
             }
@@ -178,10 +178,10 @@
             currentPin = value;
             updatePinDisplay();
             
-            // Asegurar que el valor se envíe correctamente
+            // Asegurar que el valor se envÃ­e correctamente
             document.getElementById('pinHidden').value = value;
             
-            // Auto-submit en desktop también
+            // Auto-submit en desktop tambiÃ©n
             if (value.length === maxPinLength) {
                 setTimeout(() => {
                     document.getElementById('pinForm').submit();
@@ -189,7 +189,7 @@
             }
         });
 
-        // Manejar envío del formulario para asegurar el valor correcto
+        // Manejar envÃ­o del formulario para asegurar el valor correcto
         document.getElementById('pinForm').addEventListener('submit', function(e) {
             const desktopInput = document.getElementById('pinInput');
             const hiddenInput = document.getElementById('pinHidden');
@@ -200,9 +200,9 @@
                 hiddenInput.value = desktopInput.value;
                 console.log('Enviando PIN desde desktop:', desktopInput.value);
             } else if (currentPin) {
-                // Si estamos en móvil, usar currentPin
+                // Si estamos en mÃ³vil, usar currentPin
                 hiddenInput.value = currentPin;
-                console.log('Enviando PIN desde móvil:', currentPin);
+                console.log('Enviando PIN desde mÃ³vil:', currentPin);
             }
             
             console.log('Valor final enviado:', hiddenInput.value);
@@ -215,7 +215,7 @@
             } else if (e.key === 'Escape') {
                 window.location.href = '{% url "usuarios:login" %}';
             } else if (e.key === 'Backspace' && document.getElementById('mobile-keyboard').classList.contains('lg:hidden')) {
-                // Solo en móvil, en desktop el input maneja esto
+                // Solo en mÃ³vil, en desktop el input maneja esto
                 clearPin();
             }
         });
@@ -224,7 +224,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             updatePinDisplay();
             
-            // Vibración en móvil al tocar botones (si está soportado)
+            // VibraciÃ³n en mÃ³vil al tocar botones (si estÃ¡ soportado)
             if ('vibrate' in navigator) {
                 document.querySelectorAll('.pin-key, .pin-key-special').forEach(button => {
                     button.addEventListener('touchstart', () => {

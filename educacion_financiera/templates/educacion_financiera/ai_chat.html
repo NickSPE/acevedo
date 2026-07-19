@@ -7,12 +7,12 @@
   <div class="mb-6">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-2xl font-bold mb-1" style="color: #605952;">💬 Chat con IA</h2>
+        <h2 class="text-2xl font-bold mb-1" style="color: #605952;">ðŸ’¬ Chat con IA</h2>
         <p style="color: #736B5E;">Pregunta lo que quieras, sin restricciones</p>
       </div>
       <a href="{% url 'educacion_financiera:tips' %}" 
          class="px-4 py-2 text-white rounded-lg transition-colors" style="background-color: #227C91;" onmouseover="this.style.backgroundColor='#1a6070'" onmouseout="this.style.backgroundColor='#227C91'">
-        ← Volver a Tips
+        â† Volver a Tips
       </a>
     </div>
   </div>
@@ -24,10 +24,10 @@
       <!-- Welcome Message -->
       <div class="flex gap-3">
         <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
-          <span class="text-white text-sm">🤖</span>
+          <span class="text-white text-sm">ðŸ¤–</span>
         </div>
         <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
-          <p class="text-sm">¡Hola! 👋 Soy tu asistente de IA. Puedes preguntarme cualquier cosa que necesites saber.</p>
+          <p class="text-sm">Â¡Hola! ðŸ‘‹ Soy tu asistente de IA. Puedes preguntarme cualquier cosa que necesites saber.</p>
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@
         <input type="text" 
                id="user-input" 
                name="question"
-               placeholder="Escribe tu pregunta aquí..."
+               placeholder="Escribe tu pregunta aquÃ­..."
                class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
                style="border-color: #E5E1DD;"
                onfocus="this.style.borderColor='#227C91'; this.style.boxShadow='0 0 0 2px rgba(34, 124, 145, 0.2)'"
@@ -59,42 +59,42 @@
 
   <!-- Quick Suggestions -->
   <div class="mt-6">
-    <h3 class="text-sm font-medium mb-3" style="color: #605952;">Sugerencias rápidas:</h3>
+    <h3 class="text-sm font-medium mb-3" style="color: #605952;">Sugerencias rÃ¡pidas:</h3>
     <div class="flex flex-wrap gap-2">
-      <button onclick="sendQuickMessage('Hola, ¿cómo estás?')" 
+      <button onclick="sendQuickMessage('Hola, Â¿cÃ³mo estÃ¡s?')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
               onmouseout="this.style.backgroundColor='#F1F0EE'">
-        👋 Saludo
+        ðŸ‘‹ Saludo
       </button>
-      <button onclick="sendQuickMessage('¿Qué es Bitcoin?')" 
+      <button onclick="sendQuickMessage('Â¿QuÃ© es Bitcoin?')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
               onmouseout="this.style.backgroundColor='#F1F0EE'">
-        💰 Bitcoin
+        ðŸ’° Bitcoin
       </button>
       <button onclick="sendQuickMessage('Consejos para ahorrar')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
               onmouseout="this.style.backgroundColor='#F1F0EE'">
-        💡 Ahorros
+        ðŸ’¡ Ahorros
       </button>
-      <button onclick="sendQuickMessage('¿Cómo invertir mi dinero?')" 
+      <button onclick="sendQuickMessage('Â¿CÃ³mo invertir mi dinero?')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
               onmouseout="this.style.backgroundColor='#F1F0EE'">
-        📈 Inversiones
+        ðŸ“ˆ Inversiones
       </button>
-      <button onclick="sendQuickMessage('Explícame algo interesante')" 
+      <button onclick="sendQuickMessage('ExplÃ­came algo interesante')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
               onmouseout="this.style.backgroundColor='#F1F0EE'">
-        🎯 Sorpréndeme
+        ðŸŽ¯ SorprÃ©ndeme
       </button>
     </div>
   </div>
@@ -200,7 +200,7 @@ function addMessage(content, isUser = false) {
         <p class="text-sm">${escapedContent}</p>
       </div>
       <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #736B5E;">
-        <span class="text-white text-sm">👤</span>
+        <span class="text-white text-sm">ðŸ‘¤</span>
       </div>
     `;
     setHTML(messageDiv, userHTML);
@@ -211,7 +211,7 @@ function addMessage(content, isUser = false) {
     
     const aiHTML = `
       <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
-        <span class="text-white text-sm">🤖</span>
+        <span class="text-white text-sm">ðŸ¤–</span>
       </div>
       <div class="bg-white p-4 rounded-lg shadow-sm max-w-2xl border" style="border-color: #F1F0EE;">
         <div class="ai-response text-sm">${formattedContent}</div>
@@ -228,11 +228,11 @@ function addMessage(content, isUser = false) {
 function formatAIResponse(content) {
   let formatted = content;
   
-  // Convertir títulos (líneas que terminan con :)
+  // Convertir tÃ­tulos (lÃ­neas que terminan con :)
   formatted = formatted.replace(/^(.+):$/gm, '<h4 class="font-bold mt-3 mb-2 first:mt-0" style="color: #605952;">$1</h4>');
   
   // Convertir listas con guiones
-  formatted = formatted.replace(/^- (.+)$/gm, '<li class="ml-4 mb-1">• $1</li>');
+  formatted = formatted.replace(/^- (.+)$/gm, '<li class="ml-4 mb-1">â€¢ $1</li>');
   
   // Convertir listas numeradas
   formatted = formatted.replace(/^\d+\. (.+)$/gm, '<li class="ml-4 mb-1 list-decimal">$1</li>');
@@ -246,14 +246,14 @@ function formatAIResponse(content) {
   // Convertir texto en cursiva *texto*
   formatted = formatted.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
   
-  // Convertir párrafos (doble salto de línea)
+  // Convertir pÃ¡rrafos (doble salto de lÃ­nea)
   formatted = formatted.replace(/\n\n/g, '</p><p class="mb-3">');
   formatted = '<p class="mb-3">' + formatted + '</p>';
   
-  // Limpiar párrafos vacíos
+  // Limpiar pÃ¡rrafos vacÃ­os
   formatted = formatted.replace(/<p[^>]*><\/p>/g, '');
   
-  // Convertir saltos de línea simples
+  // Convertir saltos de lÃ­nea simples
   formatted = formatted.replace(/\n/g, '<br>');
   
   return formatted;
@@ -266,7 +266,7 @@ function showTyping() {
   typingDiv.className = 'flex gap-3';
   const typingHTML = `
     <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background-color: #227C91;">
-      <span class="text-white text-sm">🤖</span>
+      <span class="text-white text-sm">ðŸ¤–</span>
     </div>
     <div class="bg-white p-3 rounded-lg shadow-sm">
       <div class="flex gap-1">
@@ -327,7 +327,7 @@ async function sendMessage(message) {
     
   } catch (error) {
     removeTyping();
-    addMessage('Error de conexión. Por favor intenta de nuevo.');
+    addMessage('Error de conexiÃ³n. Por favor intenta de nuevo.');
     console.error('Error:', error);
   }
   
