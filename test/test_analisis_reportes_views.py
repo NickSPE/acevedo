@@ -141,7 +141,8 @@ class CalcularEstadisticasGeneralesTests(TestCase):
         self.fecha_inicio = timezone.localdate() - timedelta(days=30)
         self.fecha_fin = timezone.localdate()
 
-    def _dt(self, d):
+    @staticmethod
+    def _dt(d):
         return timezone.make_aware(datetime.combine(d, datetime.min.time()))
 
     def test_sin_datos_retorna_ceros(self):
@@ -194,7 +195,8 @@ class GetGastosPorCategoriaTests(TestCase):
         self.fecha_inicio = timezone.localdate() - timedelta(days=30)
         self.fecha_fin = timezone.localdate()
 
-    def _dt(self, d):
+    @staticmethod
+    def _dt(d):
         return timezone.make_aware(datetime.combine(d, datetime.min.time()))
 
     def test_sin_gastos_retorna_default(self):
@@ -210,17 +212,17 @@ class GetGastosPorCategoriaTests(TestCase):
         medio = self.fecha_inicio + (self.fecha_fin - self.fecha_inicio) // 2
         Movimiento.objects.create(
             nombre='Comida', tipo='egreso', monto=Decimal('200'),
-            fecha_movimiento=self._dt(medio), id_cuenta=cuenta,
+            fecha_movimiento=GetGastosPorCategoriaTests._dt(medio), id_cuenta=cuenta,
             id_usuario=self.usuario
         )
         Movimiento.objects.create(
             nombre='Comida', tipo='egreso', monto=Decimal('150'),
-            fecha_movimiento=self._dt(medio), id_cuenta=cuenta,
+            fecha_movimiento=GetGastosPorCategoriaTests._dt(medio), id_cuenta=cuenta,
             id_usuario=self.usuario
         )
         Movimiento.objects.create(
             nombre='Transporte', tipo='egreso', monto=Decimal('100'),
-            fecha_movimiento=self._dt(medio), id_cuenta=cuenta,
+            fecha_movimiento=GetGastosPorCategoriaTests._dt(medio), id_cuenta=cuenta,
             id_usuario=self.usuario
         )
         resultado = get_gastos_por_categoria(self.usuario, self.fecha_inicio, self.fecha_fin)
@@ -237,7 +239,8 @@ class GetIngresosVsEgresosTests(TestCase):
         self.fecha_inicio = timezone.localdate().replace(day=1)
         self.fecha_fin = timezone.localdate()
 
-    def _dt(self, d):
+    @staticmethod
+    def _dt(d):
         return timezone.make_aware(datetime.combine(d, datetime.min.time()))
 
     def test_retorna_estructura_correcta(self):
@@ -432,7 +435,8 @@ class GetFlujoMensualTests(TestCase):
         self.fecha_inicio = timezone.localdate().replace(day=1)
         self.fecha_fin = timezone.localdate()
 
-    def _dt(self, d):
+    @staticmethod
+    def _dt(d):
         return timezone.make_aware(datetime.combine(d, datetime.min.time()))
 
     def test_sin_datos_retorna_estructura(self):

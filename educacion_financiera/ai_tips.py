@@ -23,7 +23,8 @@ class FinancialTipsAI:
             print(f"Error inicializando cliente Gemini: {e}")
             self.model = None
     
-    def _generate_prompt(self, category: str, user_context: Optional[Dict] = None) -> str:
+    @staticmethod
+    def _generate_prompt(category: str, user_context: Optional[Dict] = None) -> str:
         """Generar prompt específico para cada categoría"""
         
         base_prompts = {
@@ -105,32 +106,32 @@ class FinancialTipsAI:
         Args:
             category: Categoría de consejos (daily, savings, debt, investment, personalized)
             user_context: Información del usuario para consejos personalizados
-            
-        Returns:
-            Lista de tuplas (emoji, título, descripción)
-        """
-        if not self.model:
-            return self._get_fallback_tips(category)
-        
-        try:
-            prompt = self._generate_prompt(category, user_context)
-            
-            response = self.model.generate_content(prompt)
-            
-            # Procesar respuesta y convertir a formato esperado
-            tips = self._parse_ai_response(response.text)
-            
-            # Si no se pudieron parsear, usar fallback
-            if not tips:
+            Returns:
+                Lista de tuplas (emoji, título, descripción)
+            """
+            if not self.model:
                 return self._get_fallback_tips(category)
-                
-            return tips
             
-        except Exception as e:
-            print(f"Error generando consejos con IA: {e}")
-            return self._get_fallback_tips(category)
-    
-    def _parse_ai_response(self, response_text: str) -> List[tuple]:
+            try:
+                prompt = self._generate_prompt(category, user_context)
+                
+                response = self.model.generate_content(prompt)
+                
+                # Procesar respuesta y convertir a formato esperado
+                tips = self._parse_ai_response(response.text)
+                
+                # Si no se pudieron parsear, usar fallback
+                if not tips:
+                    return self._get_fallback_tips(category)
+                    
+                return tips
+                
+            except Exception as e:
+                print(f"Error generando consejos con IA: {e}")
+                return self._get_fallback_tips(category)
+        
+    @staticmethod
+    def _parse_ai_response(response_text: str) -> List[tuple]:
         """Parsear respuesta de IA al formato esperado"""
         tips = []
         lines = response_text.strip().split('\n')
@@ -151,7 +152,7 @@ class FinancialTipsAI:
                     tips.append((emoji, title, description))
         
         return tips[:6]  # Máximo 6 consejos
-    
+
     def _get_fallback_tips(self, category: str) -> List[tuple]:
         """Consejos de respaldo en caso de error con IA"""
         

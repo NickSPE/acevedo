@@ -18,7 +18,8 @@ class EmailBackend(BaseBackend):
         except Usuario.DoesNotExist:
             return None
 
-    def user_can_authenticate(self, user):
+    @staticmethod
+    def user_can_authenticate(user):
         """
         Método de seguridad opcional como el que usa Django por defecto.
         Evita login si el usuario está inactivo.

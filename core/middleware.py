@@ -13,13 +13,14 @@ class ServerRestartSessionMiddleware:
         self.server_start_time = time.time()
         
         # Limpiar sesiones al iniciar el servidor
-        self.cleanup_sessions_on_startup()
+        ServerRestartSessionMiddleware.cleanup_sessions_on_startup()
 
     def __call__(self, request):
         response = self.get_response(request)
         return response
 
-    def cleanup_sessions_on_startup(self):
+    @staticmethod
+    def cleanup_sessions_on_startup():
         """Limpia sesiones al inicio del servidor"""
         try:
             # Verificar si es un reinicio real del servidor
