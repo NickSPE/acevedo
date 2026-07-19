@@ -24,10 +24,10 @@ def obtener_estadisticas_subcuentas(usuario):
     total_inactivas = inactivas_vinculadas + inactivas_independientes
     
     # Calcular saldos
-    saldo_vinculadas = sum([cuenta.saldo_total_subcuentas() for cuenta in cuentas])
+    saldo_vinculadas = sum(cuenta.saldo_total_subcuentas() for cuenta in cuentas)
     
     subcuentas_independientes = SubCuenta.objects.filter(propietario=usuario, id_cuenta__isnull=True)
-    saldo_independientes = sum([sc.saldo for sc in subcuentas_independientes])
+    saldo_independientes = sum(sc.saldo for sc in subcuentas_independientes)
     
     saldo_total = saldo_vinculadas + saldo_independientes
     

@@ -169,11 +169,11 @@ def savings_goals(request):
 
     # Calcular estadísticas para consejos personalizados
     porcentaje_total = (float(total_ahorrado) / float(total_objetivo) * 100) if total_objetivo > 0 else 0
-    promedio_progreso = sum([goal['porcentaje_num'] for goal in goals]) / len(goals) if goals else 0
-    
+    promedio_progreso = sum(goal['porcentaje_num'] for goal in goals) / len(goals) if goals else 0
+
     # Generar consejos dinámicos basados en el progreso
     tips_dinamicos = generar_consejos_dinamicos(goals, promedio_progreso, metas_completadas)
-    
+
     # Consejos estáticos base
     tips_base = [
         ("📂", "Regla 50/30/20", "Destina 50% de ingresos a necesidades, 30% a gustos, y 20% a ahorros."),
@@ -195,6 +195,7 @@ def savings_goals(request):
             "total_metas": len(goals),
             "promedio_progreso": promedio_progreso
         }
+    })
     })
 
 @login_required

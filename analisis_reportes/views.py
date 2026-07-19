@@ -248,7 +248,7 @@ def calcular_estadisticas_generales(usuario, fecha_inicio, fecha_fin):
     cuentas = Cuenta.objects.filter(id_usuario=usuario)
     
     # Balance total
-    balance_total = sum([cuenta.saldo_cuenta for cuenta in cuentas])
+    balance_total = sum(cuenta.saldo_cuenta for cuenta in cuentas)
     
     # Total en subcuentas (incluir independientes)
     total_subcuentas = SubCuenta.objects.filter(
@@ -530,7 +530,7 @@ def get_balance_general(usuario, _fecha_inicio, _fecha_fin):
     balance_data = []
     for cuenta in cuentas:
         subcuentas = SubCuenta.objects.filter(id_cuenta=cuenta, activa=True)
-        total_subcuentas = sum([sc.saldo for sc in subcuentas])
+        total_subcuentas = sum(sc.saldo for sc in subcuentas)
         
         balance_data.append({
             'cuenta': cuenta.nombre,
