@@ -170,8 +170,8 @@ def profile(request):
 
     imagen_base64, formato_imagen = None, None
     try:
-        from .helpers import procesar_imagen_perfil
-        imagen_base64, formato_imagen = procesar_imagen_perfil(usuario, solo_leer=True)
+        from .helpers import procesar_imagen_perfil as procesar_imagen_perfil_func
+        imagen_base64, formato_imagen = procesar_imagen_perfil_func(usuario, solo_leer=True)
     except ImportError:
         pass
     tab = request.GET.get("tab", "general")

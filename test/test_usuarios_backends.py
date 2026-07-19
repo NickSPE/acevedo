@@ -42,7 +42,6 @@ class EmailBackendTestCase(TestCase):
             password=TEST_WRONG_VAL
         )
         self.assertIsNone(user)
-
     def test_authenticate_nonexistent_user(self):
         user = self.backend.authenticate(
             request=None,
@@ -67,6 +66,6 @@ class EmailBackendTestCase(TestCase):
     def test_user_can_authenticate_active(self):
         self.assertTrue(self.backend.user_can_authenticate(self.usuario))
 
-    def test_user_can_authenticate_inactive(self):
+    def test_inactive_user_cannot_authenticate(self):
         self.usuario.is_active = False
         self.assertFalse(self.backend.user_can_authenticate(self.usuario))

@@ -108,27 +108,27 @@ class FinancialTipsAI:
             user_context: Información del usuario para consejos personalizados
             Returns:
                 Lista de tuplas (emoji, título, descripción)
-            """
-            if not self.model:
-                return self._get_fallback_tips(category)
+        """
+        if not self.model:
+            return self._get_fallback_tips(category)
+        
+        try:
+            prompt = self._generate_prompt(category, user_context)
             
-            try:
-                prompt = self._generate_prompt(category, user_context)
-                
-                response = self.model.generate_content(prompt)
-                
-                # Procesar respuesta y convertir a formato esperado
-                tips = self._parse_ai_response(response.text)
-                
-                # Si no se pudieron parsear, usar fallback
-                if not tips:
-                    return self._get_fallback_tips(category)
-                    
-                return tips
-                
-            except Exception as e:
-                print(f"Error generando consejos con IA: {e}")
+            response = self.model.generate_content(prompt)
+            
+            # Procesar respuesta y convertir a formato esperado
+            tips = self._parse_ai_response(response.text)
+            
+            # Si no se pudieron parsear, usar fallback
+            if not tips:
                 return self._get_fallback_tips(category)
+                
+            return tips
+            
+        except Exception as e:
+            print(f"Error generando consejos con IA: {e}")
+            return self._get_fallback_tips(category)
         
     @staticmethod
     def _parse_ai_response(response_text: str) -> List[tuple]:
