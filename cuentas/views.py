@@ -4,7 +4,6 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Q, Sum
-from django.urls import reverse
 from django.core.paginator import Paginator
 from django.utils import timezone
 from datetime import datetime
@@ -23,9 +22,6 @@ from core.decorators import fast_access_pin_verified
 # Servicios y utilidades
 from .services import (
     actualizar_perfil_usuario,
-    actualizar_contacto_usuario,
-    cambiar_password_usuario,
-    cambiar_pin_usuario,
     procesar_transferencia_entre_subcuentas,
     procesar_deposito_subcuenta,
     procesar_transferencia_a_principal

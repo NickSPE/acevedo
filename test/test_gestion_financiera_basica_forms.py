@@ -1,10 +1,9 @@
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 from django.test import TestCase
-from django.contrib.auth.hashers import make_password
 from cuentas.models import Moneda, Cuenta
 from usuarios.models import Usuario
-from gestion_financiera_basica.models import Movimiento, MetaAhorro, AporteMetaAhorro
+from gestion_financiera_basica.models import MetaAhorro
 from gestion_financiera_basica.forms import MovimientoForm, MetaAhorroForm, AporteMetaAhorroForm
 
 

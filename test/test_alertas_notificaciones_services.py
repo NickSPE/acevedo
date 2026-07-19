@@ -1,5 +1,5 @@
 from django.test import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from django.contrib.auth import get_user_model
 from alertas_notificaciones.models import (
     Notificacion, TipoNotificacion, ConfiguracionNotificacion, PlantillaNotificacion
