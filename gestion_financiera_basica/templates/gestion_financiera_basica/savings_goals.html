@@ -293,26 +293,28 @@
       </div>
     </div>
 
-    <div
-      class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-300 cursor-pointer"
-      role="button" tabindex="0" aria-expanded="false" onclick="expandirTip(this)"
-      onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirTip(this); }">
-      <div class="flex items-start gap-3">
-        <div class="text-2xl">{{ tip.0 }}</div>
-        <div class="flex-1">
-          <h4 class="font-semibold text-gray-900 dark:text-white mb-2">{{ tip.1 }}</h4>
-          <p class="text-gray-600 dark:text-gray-300 text-sm">{{ tip.2 }}</p>
-          <div
-            class="hidden mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
-            data-expanded-content>
-            <p class="text-xs font-medium text-blue-700 dark:text-blue-300">💡 Tip adicional: <span
-                class="tip-extra"></span></p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {% for tip in tips %}
+      <div
+        class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-300 cursor-pointer"
+        role="button" tabindex="0" aria-expanded="false" onclick="expandirTip(this)"
+        onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); expandirTip(this); }">
+        <div class="flex items-start gap-3">
+          <div class="text-2xl">{{ tip.0 }}</div>
+          <div class="flex-1">
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">{{ tip.1 }}</h4>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">{{ tip.2 }}</p>
+            <div
+              class="hidden mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
+              data-expanded-content>
+              <p class="text-xs font-medium text-blue-700 dark:text-blue-300">💡 Tip adicional: <span
+                  class="tip-extra"></span></p>
+            </div>
           </div>
         </div>
       </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
   </div>
   </div>
   <style>
