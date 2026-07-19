@@ -16,8 +16,7 @@ Usuario = get_user_model()
 class NotificationServiceTestCase(TestCase):
     def setUp(self):
         self.moneda = Moneda.objects.create(
-            codigo='PEN', nombre='Soles', simbolo='S/.'
-        )
+            codigo='PEN', nombre='Soles', simbolo='S/.')
         self.usuario = Usuario.objects.create_user(
             correo='notif_test@test.com', password='Password123!',
             nombres='Notif', apellido_paterno='Test',
