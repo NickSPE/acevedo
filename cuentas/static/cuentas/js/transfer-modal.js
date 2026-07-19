@@ -89,7 +89,8 @@ class TransferModal {
         this.isOpen = true;
         
         // Trigger reflow para activar animación
-        modal.offsetHeight;
+        const _reflow = modal.offsetHeight;
+        console.log("Reflow triggered: ", _reflow);
         
         // Focus en el formulario
         const form = document.getElementById(this.formId);

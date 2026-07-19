@@ -186,14 +186,14 @@
 /* Temas de color personalizados */
 .theme-dark {
     background-color: #2d3436;
-    background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+    background-image: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
 }
 
 .theme-dark .main-header,
 .theme-dark .stat-card,
 .theme-dark .subcuenta-card {
     background-color: #333333;
-    background: rgba(255, 255, 255, 0.1);
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
     backdrop-filter: blur(10px);
     color: white;
 }

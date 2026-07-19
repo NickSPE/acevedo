@@ -323,11 +323,11 @@
     </div>
     <div id="validate_logout_overlay"
         class="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 hidden"
-        role="button" tabindex="0" onclick="cerrarLogoutModal()"
-        onkeypress="if(event.key === 'Enter' || event.key === ' ') { cerrarLogoutModal(); event.preventDefault(); }">
-
+        onclick="cerrarLogoutModal()">
+ 
         <!-- Modal -->
         <dialog id="ventana_confirmar_cierre_sesion" onclick="event.stopPropagation()"
+            onkeydown="if(event.key === 'Escape') cerrarLogoutModal()"
             class="relative rounded-md p-6 bg-white shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0 pointer-events-none">
 
             <!-- Botón X -->

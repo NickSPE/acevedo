@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ingresosGastosCtx = document.getElementById('ingresosGastosChart').getContext('2d');
     const ingresosGastosData = JSON.parse('{{ ingresos_egresos|escapejs }}');
     
-    new Chart(ingresosGastosCtx, {
+    const chartIngresosGastos = new Chart(ingresosGastosCtx, {
         type: 'bar',
         data: {
             labels: ingresosGastosData.labels,
@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const categoriasCtx = document.getElementById('categoriasChart').getContext('2d');
     const categoriasData = JSON.parse('{{ gastos_categoria|escapejs }}');
     
-    new Chart(categoriasCtx, {
+    const chartCategorias = new Chart(categoriasCtx, {
         type: 'doughnut',
         data: {
             labels: categoriasData.labels,
@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const flujoMensualCtx = document.getElementById('flujoMensualChart').getContext('2d');
     const flujoMensualData = JSON.parse('{{ flujo_mensual|escapejs }}');
     
-    new Chart(flujoMensualCtx, {
+    const chartFlujoMensual = new Chart(flujoMensualCtx, {
         type: 'line',
         data: {
             labels: flujoMensualData.labels,
