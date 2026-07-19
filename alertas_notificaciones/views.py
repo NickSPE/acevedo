@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
 from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods, require_GET
+from django.views.decorators.http import require_GET, require_POST
 
 from .models import TipoNotificacion, ConfiguracionNotificacion, Notificacion
 from .services import NotificationService, ConfigurationNotificationService
@@ -274,7 +274,7 @@ def obtener_contador_notificaciones(request):
 
 # Función de prueba para enviar notificación
 @login_required
-@require_http_methods(["GET", "POST"])
+@require_POST
 def test_notification(request):
     """Vista de prueba para enviar notificación (solo para desarrollo)"""
     if request.method == 'POST':
