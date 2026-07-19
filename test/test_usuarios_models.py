@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.contrib.auth.hashers import check_password
 from usuarios.models import Usuario
 from cuentas.models import Moneda
 
@@ -12,8 +11,7 @@ TEST_SHORT_VAL = 'Pass123!'
 class UsuarioModelTestCase(TestCase):
     def setUp(self):
         self.moneda = Moneda.objects.create(
-            codigo='PEN', nombre='Soles', simbolo='S/.'
-        )
+            codigo='PEN', nombre='Soles', simbolo='S/.')
         self.usuario = Usuario.objects.create_user(
             correo='test_model@test.com',
             password=TEST_PASS_VAL,

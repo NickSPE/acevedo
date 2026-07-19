@@ -6,7 +6,7 @@ Ubicación: test/test_educacion_financiera_views.py
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from cuentas.models import Moneda
 from educacion_financiera.models import CursoExterno, FavoritoCurso
 from educacion_financiera.utils import marcar_favoritos, paginar_cursos
