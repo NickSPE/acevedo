@@ -26,7 +26,7 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <!-- DOMPurify para prevenir inyecciÃ³n de XSS -->
+    <!-- DOMPurify para prevenir inyección de XSS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" integrity="sha512-421712a23354a55855f750058b88f36c56157f49551c6e11409f98f71120f2628cc0d565612e47e3a967f1396a328574c3e80cc056801901a073f8a002636ed7" crossorigin="anonymous"></script>
     <style>
         /* Estilos del Sidebar */
@@ -135,12 +135,12 @@
                         href="{% url 'core:dashboard' %}">FinGest</a>
                 </div>
             </div>
-            <!-- NavegaciÃ³n -->
+            <!-- Navegación -->
             <nav class="px-6 py-6 space-y-8">
-                <!-- VisiÃ³n General -->
+                <!-- Visión General -->
                 <div>
                     <div class="mb-4">
-                        <span class="section-title text-xs font-medium uppercase tracking-wide">VisiÃ³n General</span>
+                        <span class="section-title text-xs font-medium uppercase tracking-wide">Visión General</span>
                     </div>
                     <ul class="space-y-1">
                         <li>
@@ -184,7 +184,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                <span>AnÃ¡lisis y Reportes</span>
+                                <span>Análisis y Reportes</span>
                             </a>
                         </li>
                         <li>
@@ -250,11 +250,11 @@
                     </div>
                 </div>
 
-                <!-- ConfiguraciÃ³n -->
+                <!-- Configuración -->
                 <div>
                     <button type="button" class="w-full mb-3 px-3 py-2 rounded-lg section-title text-xs font-medium uppercase tracking-wide flex items-center justify-between border-0 bg-transparent text-left"
                         onclick="toggleSection('configuracion')">
-                        <span>ConfiguraciÃ³n</span>
+                        <span>Configuración</span>
                         <svg id="chevron-configuracion" class="h-4 w-4 chevron-icon rotated" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -294,14 +294,14 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
-                                    <span>ConfiguraciÃ³n</span>
+                                    <span>Configuración</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                <!-- Cerrar SesiÃ³n (fuera de configuraciÃ³n) -->
+                <!-- Cerrar Sesión (fuera de configuración) -->
                 <div class="mt-4 px-3">
                     <div class="border-t border-separator mb-3"></div>
                     <button type="button" onclick="abrirLogoutModal()"
@@ -311,7 +311,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
-                        <span>Cerrar SesiÃ³n</span>
+                        <span>Cerrar Sesión</span>
                     </button>
                 </div>
             </nav>
@@ -328,15 +328,15 @@
         <dialog id="ventana_confirmar_cierre_sesion"
             class="relative rounded-md p-6 bg-white shadow-xl max-w-sm w-full transform transition-all duration-300 scale-95 opacity-0 pointer-events-none">
 
-            <!-- BotÃ³n X -->
+            <!-- Botón X -->
             <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-xl"
                 onclick="cerrarLogoutModal()">&times;</button>
 
             <form method="post" action="{% url 'core:logout' %}" enctype="multipart/form-data"
                 class="flex flex-col items-center">
                 {% csrf_token %}
-                <h2 class="text-lg font-bold mb-3 text-center">Â¿Cerrar sesiÃ³n?</h2>
-                <p class="text-gray-500 text-sm mb-4 text-center">La prÃ³xima vez deberÃ¡ iniciar sesiÃ³n con sus
+                <h2 class="text-lg font-bold mb-3 text-center">¿Cerrar sesión?</h2>
+                <p class="text-gray-500 text-sm mb-4 text-center">La próxima vez deberá iniciar sesión con sus
                     credenciales.</p>
                 <div class="flex justify-between gap-4 mt-2">
                     <button type="button" onclick="cerrarLogoutModal()"
@@ -384,15 +384,15 @@
                 function actualizarLabels() {
                     const unidad = unidadSelect.value;
                     duracionLabel.textContent = `Cantidad de ${unidad.toLowerCase()}s`;
-                    if (unidad === "Mes") aporteLabel.textContent = "DepÃ³sito mensual (â‚¬)";
-                    else if (unidad === "Semana") aporteLabel.textContent = "DepÃ³sito semanal (â‚¬)";
-                    else aporteLabel.textContent = "DepÃ³sito anual (â‚¬)";
+                    if (unidad === "Mes") aporteLabel.textContent = "Depósito mensual (â‚¬)";
+                    else if (unidad === "Semana") aporteLabel.textContent = "Depósito semanal (â‚¬)";
+                    else aporteLabel.textContent = "Depósito anual (â‚¬)";
                 }
 
                 // Se actualiza al cambiar el combo
                 unidadSelect.addEventListener("change", actualizarLabels);
 
-                // Se actualiza al cargar la pÃ¡gina
+                // Se actualiza al cargar la página
                 actualizarLabels();
 
                 form.addEventListener("submit", function (e) {
@@ -404,11 +404,11 @@
                     const duracion = Number.parseFloat(document.getElementById("duracion").value) || 0;
                     const unidad = unidadSelect.value;
 
-                    let periodosPorAÃ±o = 1;
-                    if (unidad === "Mes") periodosPorAÃ±o = 12;
-                    else if (unidad === "Semana") periodosPorAÃ±o = 52;
+                    let periodosPorAño = 1;
+                    if (unidad === "Mes") periodosPorAño = 12;
+                    else if (unidad === "Semana") periodosPorAño = 52;
 
-                    const r = (tasa / 100) / periodosPorAÃ±o;
+                    const r = (tasa / 100) / periodosPorAño;
                     const n = duracion;
 
                     const montoFinal = capital * Math.pow(1 + r, n) + aporte * ((Math.pow(1 + r, n) - 1) / r);
@@ -473,7 +473,7 @@
             setTimeout(() => {
                 logoutModal.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
                 logoutModal.classList.add('opacity-100', 'scale-100');
-            }, 10); // pequeÃ±o delay para que se apliquen transiciones
+            }, 10); // pequeño delay para que se apliquen transiciones
         }
 
         function cerrarLogoutModal() {
@@ -504,7 +504,7 @@
 
     <!-- Dark Mode JavaScript -->
     <script>
-        // FunciÃ³n para aplicar el tema
+        // Función para aplicar el tema
         function applyTheme(theme) {
             const html = document.documentElement;
             const toggle = document.getElementById('darkModeToggle');

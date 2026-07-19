@@ -2,7 +2,7 @@
 {% load static %}
 {% load currency_filters %}
 
-{% block title %}GestiÃ³n de Subcuentas | FinGest{% endblock %}
+{% block title %}Gestión de Subcuentas | FinGest{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -490,7 +490,7 @@
 {% block content %}
 <div class="subcuentas-main">
     <div class="subcuentas-header">
-        <h1><i class="fas fa-wallet"></i> GestiÃ³n de Subcuentas</h1>
+        <h1><i class="fas fa-wallet"></i> Gestión de Subcuentas</h1>
         <p>Organiza tu dinero de manera inteligente y alcanza tus metas financieras</p>
         
         <div class="header-actions">
@@ -516,7 +516,7 @@
         </div>
     </div>
 
-    <!-- MÃ©tricas -->
+    <!-- Métricas -->
     <div class="metrics-grid">
         <div class="metric-card">
             <div class="metric-icon blue">
@@ -711,7 +711,7 @@
             </div>
             
             <div class="modal-form-group">
-                <label for="transferDescNew" class="modal-label">DescripciÃ³n (opcional)</label>
+                <label for="transferDescNew" class="modal-label">Descripción (opcional)</label>
                 <input type="text" id="transferDescNew" class="modal-input" name="descripcion" placeholder="Motivo de la transferencia">
             </div>
             
@@ -765,8 +765,8 @@
             </div>
             
             <div class="modal-form-group">
-                <label for="depositDescNew" class="modal-label">DescripciÃ³n (opcional)</label>
-                <input type="text" id="depositDescNew" class="modal-input" name="descripcion" placeholder="Motivo del depÃ³sito">
+                <label for="depositDescNew" class="modal-label">Descripción (opcional)</label>
+                <input type="text" id="depositDescNew" class="modal-input" name="descripcion" placeholder="Motivo del depósito">
             </div>
             
             <div class="modal-actions">
@@ -832,7 +832,7 @@
             </div>
             
             <div class="modal-form-group">
-                <label for="transferDescBetween" class="modal-label">DescripciÃ³n (opcional)</label>
+                <label for="transferDescBetween" class="modal-label">Descripción (opcional)</label>
                 <input type="text" id="transferDescBetween" class="modal-input" name="descripcion" placeholder="Motivo de la transferencia">
             </div>
             
@@ -884,13 +884,13 @@ function openDepositModal(subcuentaId, subcuentaName, tipoSubcuenta) {
     const esNegocio = tipoSubcuenta === 'negocio';
     document.getElementById('depositTipo').value = esNegocio ? 'negocio' : 'personal';
     
-    // Cambiar el tÃ­tulo del modal
+    // Cambiar el título del modal
     const modalTitle = document.querySelector('#depositModal .modal-title');
     const montoLabel = document.querySelector('#depositModal .modal-label');
     const montoInput = document.querySelector('#depositModal #depositAmount');
     const descripcionInput = document.querySelector('#depositModal input[name="descripcion"]');
     
-    // Cambiar el contenido del modal segÃºn el tipo de subcuenta
+    // Cambiar el contenido del modal según el tipo de subcuenta
     const transferInfo = document.querySelector('#depositModal .transfer-info');
     
     if (esNegocio) {
@@ -919,7 +919,7 @@ function openDepositModal(subcuentaId, subcuentaName, tipoSubcuenta) {
         modalTitle.textContent = 'Depositar en Subcuenta';
         montoLabel.textContent = 'Monto a depositar';
         montoInput.placeholder = '0.00';
-        descripcionInput.placeholder = 'Motivo del depÃ³sito';
+        descripcionInput.placeholder = 'Motivo del depósito';
         const personalHTML = `
             <div class="transfer-row">
                 <span>Desde:</span>
@@ -1013,12 +1013,12 @@ document.getElementById('depositForm').addEventListener('submit', function(e) {
             closeModal('depositModal');
             location.reload(); // Recargar para mostrar los nuevos saldos
         } else {
-            alert(data.error || 'Error al procesar el depÃ³sito');
+            alert(data.error || 'Error al procesar el depósito');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al procesar el depÃ³sito');
+        alert('Error al procesar el depósito');
     })
     .finally(() => {
         submitBtn.innerHTML = originalText;

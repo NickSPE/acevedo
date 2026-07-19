@@ -16,7 +16,7 @@
       </div>
       <div>
         <h1 class="text-2xl font-bold text-[#605952]">Editar Subcuenta</h1>
-        <p class="text-[#736B5E] text-sm">Actualiza la informaciÃ³n de tu subcuenta</p>
+        <p class="text-[#736B5E] text-sm">Actualiza la información de tu subcuenta</p>
       </div>
     </div>
   </div>
@@ -58,7 +58,7 @@
       
       <div>
         <label for="{{ form.tipo.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
-          CategorÃ­a
+          Categoría
         </label>
         {{ form.tipo }}
         {% if form.tipo.errors %}
@@ -68,7 +68,7 @@
       
       <div>
         <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-[#605952] mb-1">
-          DescripciÃ³n (opcional)
+          Descripción (opcional)
         </label>
         {{ form.descripcion }}
         {% if form.descripcion.errors %}
@@ -100,7 +100,7 @@
           <span class="ml-2 text-sm text-[#605952]">Subcuenta activa</span>
         </label>
         <p class="text-xs text-[#736B5E] mt-1 ml-6">
-          Desactiva esta subcuenta si ya no la necesitas. Los fondos se mantendrÃ¡n seguros.
+          Desactiva esta subcuenta si ya no la necesitas. Los fondos se mantendrán seguros.
         </p>
         {% if form.activa.errors %}
           <p class="text-red-600 text-xs mt-1 ml-6">{{ form.activa.errors.0 }}</p>
@@ -403,11 +403,11 @@
 <div class="edit-container">
     <div class="page-header">
         <h1><i class="fas fa-edit me-2"></i>Editar Subcuenta</h1>
-        <p>Modifica la informaciÃ³n de tu subcuenta</p>
+        <p>Modifica la información de tu subcuenta</p>
     </div>
 
     <div class="form-card">
-        <!-- InformaciÃ³n actual de la subcuenta -->
+        <!-- Información actual de la subcuenta -->
         <div class="subcuenta-info">
             <div class="subcuenta-icon" style="background-color: {{ subcuenta.color }};">
                 {% if subcuenta.es_negocio %}
@@ -431,7 +431,7 @@
             </div>
         </div>
 
-        <!-- InformaciÃ³n del saldo actual -->
+        <!-- Información del saldo actual -->
         <div class="saldo-info">
             <h6><i class="fas fa-wallet me-2"></i>Saldo Actual</h6>
             <div class="saldo-amount">${{ subcuenta.saldo|floatformat:2 }}</div>
@@ -440,7 +440,7 @@
         {% if subcuenta.es_negocio %}
             <div class="alert alert-info">
                 <i class="fas fa-info-circle me-2"></i>
-                <strong>Subcuenta de Negocio:</strong> Esta es una cuenta independiente que no estÃ¡ vinculada a tu cuenta principal.
+                <strong>Subcuenta de Negocio:</strong> Esta es una cuenta independiente que no está vinculada a tu cuenta principal.
             </div>
         {% else %}
             <div class="alert alert-warning">
@@ -449,7 +449,7 @@
             </div>
         {% endif %}
 
-        <!-- Formulario de ediciÃ³n -->
+        <!-- Formulario de edición -->
         <form method="post" id="editSubcuentaForm">
             {% csrf_token %}
             
@@ -465,7 +465,7 @@
             
             <div class="form-group">
                 <label for="{{ form.tipo.id_for_label }}" class="form-label">
-                    <i class="fas fa-list me-2"></i>CategorÃ­a
+                    <i class="fas fa-list me-2"></i>Categoría
                 </label>
                 {{ form.tipo }}
                 {% if form.tipo.errors %}
@@ -473,22 +473,22 @@
                 {% endif %}
                 <div class="form-text">
                     {% if subcuenta.es_negocio %}
-                        CategorÃ­a de negocio. No se puede cambiar el tipo de subcuenta.
+                        Categoría de negocio. No se puede cambiar el tipo de subcuenta.
                     {% else %}
-                        CategorÃ­a personal. No se puede cambiar el tipo de subcuenta.
+                        Categoría personal. No se puede cambiar el tipo de subcuenta.
                     {% endif %}
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="{{ form.descripcion.id_for_label }}" class="form-label">
-                    <i class="fas fa-align-left me-2"></i>DescripciÃ³n (opcional)
+                    <i class="fas fa-align-left me-2"></i>Descripción (opcional)
                 </label>
                 {{ form.descripcion }}
                 {% if form.descripcion.errors %}
                     <div class="text-danger small mt-1">{{ form.descripcion.errors.0 }}</div>
                 {% endif %}
-                <div class="form-text">Describe el propÃ³sito o meta de esta subcuenta</div>
+                <div class="form-text">Describe el propósito o meta de esta subcuenta</div>
             </div>
 
             {% if subcuenta.meta_objetivo %}
@@ -513,11 +513,11 @@
                 {% if form.fecha_meta.errors %}
                     <div class="text-danger small mt-1">{{ form.fecha_meta.errors.0 }}</div>
                 {% endif %}
-                <div class="form-text">Fecha lÃ­mite para alcanzar tu meta</div>
+                <div class="form-text">Fecha límite para alcanzar tu meta</div>
             </div>
             {% endif %}
             
-            <!-- Botones de acciÃ³n -->
+            <!-- Botones de acción -->
             <div class="btn-group">
                 <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
                     <i class="fas fa-times"></i>Cancelar
@@ -527,7 +527,7 @@
                 </button>
                 <a href="{% url 'cuentas:eliminar_subcuenta' subcuenta.id %}" 
                    class="btn btn-danger" 
-                   onclick="return confirm('Â¿EstÃ¡s seguro de que deseas eliminar esta subcuenta? Esta acciÃ³n no se puede deshacer.')">
+                   onclick="return confirm('¿Estás seguro de que deseas eliminar esta subcuenta? Esta acción no se puede deshacer.')">
                     <i class="fas fa-trash"></i>Eliminar
                 </a>
             </div>
@@ -541,27 +541,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const categoriaSelect = document.querySelector('[name="tipo"]');
     const esNegocio = {{ subcuenta.es_negocio|yesno:"true,false" }};
     
-    // Establecer las categorÃ­as correctas segÃºn el tipo de subcuenta
+    // Establecer las categorías correctas según el tipo de subcuenta
     if (esNegocio) {
-        // CategorÃ­as para negocios
+        // Categorías para negocios
         const categoriasNegocio = `
-            <option value="">Selecciona una categorÃ­a</option>
-            <option value="tienda_fisica">Tienda FÃ­sica</option>
+            <option value="">Selecciona una categoría</option>
+            <option value="tienda_fisica">Tienda Física</option>
             <option value="tienda_online">Tienda Online</option>
             <option value="servicios_profesionales">Servicios Profesionales</option>
             <option value="freelance">Trabajo Freelance</option>
             <option value="negocio_propio">Negocio Propio</option>
             <option value="ingresos_pasivos">Ingresos Pasivos</option>
             <option value="ventas_productos">Ventas de Productos</option>
-            <option value="consultoria">ConsultorÃ­a</option>
+            <option value="consultoria">Consultoría</option>
             <option value="alquiler_propiedades">Alquiler de Propiedades</option>
             <option value="otros_negocio">Otros</option>
         `;
         categoriaSelect.innerHTML = categoriasNegocio;
     } else {
-        // CategorÃ­as personales
+        // Categorías personales
         const categoriasPersonales = `
-            <option value="">Selecciona una categorÃ­a</option>
+            <option value="">Selecciona una categoría</option>
             <option value="ahorro_meta">Ahorro para Meta</option>
             <option value="emergencia">Fondo de Emergencia</option>
             <option value="inversion">Inversiones</option>
@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <option value="gastos_variables">Gastos Variables</option>
             <option value="entretenimiento">Entretenimiento</option>
             <option value="viajes">Viajes y Vacaciones</option>
-            <option value="educacion">EducaciÃ³n y Cursos</option>
+            <option value="educacion">Educación y Cursos</option>
             <option value="salud">Salud y Bienestar</option>
             <option value="familia">Gastos Familiares</option>
             <option value="otros">Otros</option>
@@ -577,10 +577,10 @@ document.addEventListener('DOMContentLoaded', function() {
         categoriaSelect.innerHTML = categoriasPersonales;
     }
     
-    // Seleccionar la categorÃ­a actual
+    // Seleccionar la categoría actual
     categoriaSelect.value = '{{ subcuenta.tipo }}';
     
-    // ValidaciÃ³n del formulario
+    // Validación del formulario
     form.addEventListener('submit', function(e) {
         const nombre = this.querySelector('[name="nombre"]').value.trim();
         

@@ -16,12 +16,12 @@
 
         <!-- Contenido del modal -->
         <div class="p-8">
-            <!-- Paso 1: Bienvenida y ConfiguraciÃ³n BÃ¡sica -->
+            <!-- Paso 1: Bienvenida y Configuración Básica -->
             <div id="step1" class="step-content">
                 <div class="text-center mb-6">
                     <div class="text-6xl mb-4">ðŸŽ‰</div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Â¡Bienvenido a FinGest, {{ user.nombres }}!</h2>
-                    <p class="text-gray-600 dark:text-gray-400">Vamos a configurar tu cuenta en 3 pasos rÃ¡pidos</p>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Bienvenido a FinGest, {{ user.nombres }}!</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Vamos a configurar tu cuenta en 3 pasos rápidos</p>
                 </div>
 
                 <form id="step1Form" class="space-y-4">
@@ -33,7 +33,7 @@
                         <input type="number" name="saldo_inicial" step="0.01" min="0" placeholder="0.00"
                             class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Puedes dejarlo en $0 y agregarlo
-                            despuÃ©s</p>
+                            después</p>
                     </div>
 
                     <!-- Nombre de cuenta -->
@@ -57,20 +57,20 @@
                 </div>
             </div>
 
-            <!-- Paso 2: PIN de Acceso RÃ¡pido -->
+            <!-- Paso 2: PIN de Acceso Rápido -->
             <div id="step2" class="step-content hidden">
                 <div class="text-center mb-6">
                     <div class="text-6xl mb-4">ðŸ”¢</div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acceso RÃ¡pido con PIN</h2>
-                    <p class="text-gray-600 dark:text-gray-400">Como Yape - configura un PIN para entrar mÃ¡s fÃ¡cil</p>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acceso Rápido con PIN</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Como Yape - configura un PIN para entrar más fácil</p>
                 </div>
 
                 <div class="bg-blue-50 dark:bg-blue-900/30 rounded-lg p-4 mb-6">
                     <div class="flex items-center space-x-3">
                         <div class="text-blue-500">â„¹ï¸</div>
                         <div>
-                            <p class="text-sm text-blue-800 dark:text-blue-300">Con el PIN puedes acceder rÃ¡pidamente
-                                sin escribir tu email y contraseÃ±a</p>
+                            <p class="text-sm text-blue-800 dark:text-blue-300">Con el PIN puedes acceder rápidamente
+                                sin escribir tu email y contraseña</p>
                         </div>
                     </div>
                 </div>
@@ -78,25 +78,25 @@
                 <form id="step2Form" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ðŸ” Crea tu PIN
-                            (exactamente 6 dÃ­gitos)</label>
+                            (exactamente 6 dígitos)</label>
                         <input type="text" name="pin_acceso_rapido" placeholder="123456" maxlength="6"
                             pattern="[0-9]{6}"
                             class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center text-2xl tracking-wider"
                             oninput="validatePin(this)" />
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">Solo nÃºmeros, exactamente 6
-                            dÃ­gitos</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">Solo números, exactamente 6
+                            dígitos</p>
                     </div>
                 </form>
 
                 <div class="flex justify-between mt-8">
                     <button onclick="prevStep()"
                         class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
-                        â† AtrÃ¡s
+                        â† Atrás
                     </button>
                     <div class="space-x-3">
                         <button onclick="skipStep()"
                             class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
-                            DespuÃ©s
+                            Después
                         </button>
                         <button onclick="nextStep()"
                             class="px-6 py-3 bg-[#1d293d] text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all">
@@ -111,7 +111,7 @@
                 <div class="text-center mb-6">
                     <div class="text-6xl mb-4">ðŸ””</div>
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Notificaciones</h2>
-                    <p class="text-gray-600 dark:text-gray-400">Â¿Quieres recibir alertas sobre tus finanzas?</p>
+                    <p class="text-gray-600 dark:text-gray-400">¿Quieres recibir alertas sobre tus finanzas?</p>
                 </div>
 
                 <form id="step3Form" class="space-y-4">
@@ -128,7 +128,7 @@
 
                     <!-- SMS notifications -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ðŸ“± TelÃ©fono
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ðŸ“± Teléfono
                             (opcional - para SMS)</label>
                         <div class="flex space-x-2">
                             <select name="codigo_pais"
@@ -146,11 +146,11 @@
                 <div class="flex justify-between mt-8">
                     <button onclick="prevStep()"
                         class="px-4 py-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
-                        â† AtrÃ¡s
+                        â† Atrás
                     </button>
                     <button onclick="finishOnboarding()"
                         class="px-6 py-3 bg-[#1d293d] text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all">
-                        Â¡Empezar! ðŸš€
+                        ¡Empezar! ðŸš€
                     </button>
                 </div>
             </div>
@@ -158,8 +158,8 @@
             <!-- Paso final: Completado -->
             <div id="stepFinal" class="step-content hidden text-center">
                 <div class="text-6xl mb-4">âœ¨</div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Â¡Todo listo!</h2>
-                <p class="text-gray-600 dark:text-gray-400 mb-6">Tu cuenta estÃ¡ configurada y lista para usar</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Todo listo!</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Tu cuenta está configurada y lista para usar</p>
 
                 <div class="space-y-3 mb-8">
                     <div class="flex items-center justify-center space-x-2 text-green-600 dark:text-green-400">
@@ -215,7 +215,7 @@
         if (currentStep === 2) {
             const pin = document.querySelector('input[name="pin_acceso_rapido"]').value;
             if (pin && (pin.length !== 6 || !/^\d{6}$/.test(pin))) {
-                alert('El PIN debe tener exactamente 6 dÃ­gitos numÃ©ricos.');
+                alert('El PIN debe tener exactamente 6 dígitos numéricos.');
                 return;
             }
         }
@@ -277,7 +277,7 @@
         // Validar PIN antes de enviar
         const pin = formData.pin_acceso_rapido;
         if (pin && (pin.length !== 6 || !/^\d{6}$/.test(pin))) {
-            alert('El PIN debe tener exactamente 6 dÃ­gitos numÃ©ricos.');
+            alert('El PIN debe tener exactamente 6 dígitos numéricos.');
             showStep(2); // Volver al paso del PIN
             return;
         }
@@ -301,11 +301,11 @@
                     // Ir directamente al dashboard sin mostrar paso final
                     window.location.href = '{% url "core:dashboard" %}';
                 } else {
-                    alert('Error al completar el onboarding. IntÃ©ntalo nuevamente.');
+                    alert('Error al completar el onboarding. Inténtalo nuevamente.');
                 }
             }).catch(error => {
                 console.error('Error:', error);
-                alert('Error de conexiÃ³n. IntÃ©ntalo nuevamente.');
+                alert('Error de conexión. Inténtalo nuevamente.');
             });
     }
 
@@ -313,12 +313,12 @@
         window.location.href = '{% url "core:dashboard" %}';
     }
 
-    // FunciÃ³n de validaciÃ³n del PIN
+    // Función de validación del PIN
     function validatePin(input) {
-        // Solo permitir nÃºmeros
+        // Solo permitir números
         input.value = input.value.replace(/[^0-9]/g, '');
 
-        // Limitar a 6 dÃ­gitos
+        // Limitar a 6 dígitos
         if (input.value.length > 6) {
             input.value = input.value.slice(0, 6);
         }

@@ -44,7 +44,7 @@
 
     <!-- Contenido principal -->
     <div class="profile-main">
-        <!-- NavegaciÃ³n de tabs minimalista -->
+        <!-- Navegación de tabs minimalista -->
         <div class="tab-navigation">
             <div class="nav-track">
                 <div class="nav-indicator"></div>
@@ -72,15 +72,15 @@
             <div class="tab-content {% if tab == 'general' or not tab %}active{% endif %}" id="tab-general">
                 <div class="content-grid">
                     
-                    <!-- InformaciÃ³n personal -->
+                    <!-- Información personal -->
                     <div class="info-card">
                         <div class="card-header">
                             <div class="header-icon">
                                 <i class="fas fa-user-circle"></i>
                             </div>
                             <div class="header-text">
-                                <h3>InformaciÃ³n Personal</h3>
-                                <p>Gestiona tus datos bÃ¡sicos</p>
+                                <h3>Información Personal</h3>
+                                <p>Gestiona tus datos básicos</p>
                             </div>
                             <button class="edit-toggle" onclick="toggleEdit('personal')">
                                 <i class="fas fa-edit"></i>
@@ -108,13 +108,13 @@
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label for="id_pais">PaÃ­s</label>
+                                    <label for="id_pais">País</label>
                                     <select id="id_pais" name="pais" disabled>
-                                        <option value="">Selecciona tu paÃ­s</option>
-                                        <option value="Peru" {% if usuario.pais == "Peru" %}selected{% endif %}>PerÃº</option>
-                                        <option value="Spain" {% if usuario.pais == "Spain" %}selected{% endif %}>EspaÃ±a</option>
+                                        <option value="">Selecciona tu país</option>
+                                        <option value="Peru" {% if usuario.pais == "Peru" %}selected{% endif %}>Perú</option>
+                                        <option value="Spain" {% if usuario.pais == "Spain" %}selected{% endif %}>España</option>
                                         <option value="United States" {% if usuario.pais == "United States" %}selected{% endif %}>Estados Unidos</option>
-                                        <option value="Mexico" {% if usuario.pais == "Mexico" %}selected{% endif %}>MÃ©xico</option>
+                                        <option value="Mexico" {% if usuario.pais == "Mexico" %}selected{% endif %}>México</option>
                                         <option value="Argentina" {% if usuario.pais == "Argentina" %}selected{% endif %}>Argentina</option>
                                         <option value="Colombia" {% if usuario.pais == "Colombia" %}selected{% endif %}>Colombia</option>
                                         <option value="Chile" {% if usuario.pais == "Chile" %}selected{% endif %}>Chile</option>
@@ -135,7 +135,7 @@
                         </form>
                     </div>
 
-                    <!-- InformaciÃ³n de contacto -->
+                    <!-- Información de contacto -->
                     <div class="info-card">
                         <div class="card-header">
                             <div class="header-icon">
@@ -143,7 +143,7 @@
                             </div>
                             <div class="header-text">
                                 <h3>Contacto</h3>
-                                <p>InformaciÃ³n de contacto</p>
+                                <p>Información de contacto</p>
                             </div>
                             <button class="edit-toggle" onclick="toggleEdit('contact')">
                                 <i class="fas fa-edit"></i>
@@ -156,7 +156,7 @@
                             
                             <div class="form-layout">
                                 <div class="input-group full-width">
-                                    <label for="id_email">Correo ElectrÃ³nico</label>
+                                    <label for="id_email">Correo Electrónico</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-envelope"></i>
                                         <input type="email" id="id_email" name="email" value="{{ usuario.correo }}" readonly>
@@ -164,7 +164,7 @@
                                 </div>
                                 
                                 <div class="input-group full-width">
-                                    <label for="id_telefono">TelÃ©fono</label>
+                                    <label for="id_telefono">Teléfono</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-phone"></i>
                                         <input type="tel" id="id_telefono" name="telefono" value="{{ usuario.telefono|default:'' }}" 
@@ -228,15 +228,15 @@
             <div class="tab-content {% if tab == 'security' %}active{% endif %}" id="tab-security">
                 <div class="content-grid security-horizontal">
                     
-                    <!-- Cambiar contraseÃ±a -->
+                    <!-- Cambiar contraseña -->
                     <div class="info-card security-card">
                         <div class="card-header">
                             <div class="header-icon">
                                 <i class="fas fa-lock"></i>
                             </div>
                             <div class="header-text">
-                                <h3>ContraseÃ±a</h3>
-                                <p>Actualiza tu contraseÃ±a de acceso</p>
+                                <h3>Contraseña</h3>
+                                <p>Actualiza tu contraseña de acceso</p>
                             </div>
                         </div>
                         
@@ -246,7 +246,7 @@
                             
                             <div class="form-layout vertical">
                                 <div class="input-group">
-                                    <label for="current-pass">ContraseÃ±a Actual</label>
+                                    <label for="current-pass">Contraseña Actual</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-key"></i>
                                         <input type="password" name="actual_password" id="current-pass">
@@ -257,7 +257,7 @@
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label for="new-pass">Nueva ContraseÃ±a</label>
+                                    <label for="new-pass">Nueva Contraseña</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-lock"></i>
                                         <input type="password" name="new_password" id="new-pass">
@@ -268,7 +268,7 @@
                                 </div>
                                 
                                 <div class="input-group">
-                                    <label for="confirm-pass">Confirmar ContraseÃ±a</label>
+                                    <label for="confirm-pass">Confirmar Contraseña</label>
                                     <div class="input-with-icon">
                                         <i class="fas fa-check-circle"></i>
                                         <input type="password" name="confirm_password" id="confirm-pass">
@@ -282,18 +282,18 @@
                             <div class="security-indicators">
                                 <div class="indicator" id="length-indicator">
                                     <i class="fas fa-times"></i>
-                                    <span>MÃ­nimo 8 caracteres</span>
+                                    <span>Mínimo 8 caracteres</span>
                                 </div>
                                 <div class="indicator" id="match-indicator">
                                     <i class="fas fa-times"></i>
-                                    <span>Las contraseÃ±as coinciden</span>
+                                    <span>Las contraseñas coinciden</span>
                                 </div>
                             </div>
                             
                             <div class="form-actions">
                                 <button type="submit" class="btn-save" id="change-password-btn" disabled>
                                     <i class="fas fa-shield-alt"></i>
-                                    Actualizar ContraseÃ±a
+                                    Actualizar Contraseña
                                 </button>
                             </div>
                         </form>
@@ -353,7 +353,7 @@
                             <div class="security-indicators">
                                 <div class="indicator" id="pin-length-indicator">
                                     <i class="fas fa-times"></i>
-                                    <span>6 dÃ­gitos numÃ©ricos</span>
+                                    <span>6 dígitos numéricos</span>
                                 </div>
                                 <div class="indicator" id="pin-match-indicator">
                                     <i class="fas fa-times"></i>
@@ -582,7 +582,7 @@
     margin: 0 auto;
 }
 
-/* NavegaciÃ³n de tabs moderna */
+/* Navegación de tabs moderna */
 .tab-navigation {
     position: relative;
     display: flex;
@@ -685,7 +685,7 @@
     }
 }
 
-/* Cards de informaciÃ³n */
+/* Cards de información */
 .info-card {
     background: white;
     border-radius: var(--radius-xl);
@@ -905,7 +905,7 @@
     text-align: center;
 }
 
-/* Ajustes especÃ­ficos para inputs de PIN con iconos */
+/* Ajustes específicos para inputs de PIN con iconos */
 .pin-input:focus {
     letter-spacing: 0.3rem;
 }
@@ -997,7 +997,7 @@
     box-shadow: var(--shadow-md);
 }
 
-/* SecciÃ³n de foto */
+/* Sección de foto */
 .photo-section {
     padding: 1.5rem;
     display: flex;
@@ -1224,7 +1224,7 @@
 </style>
 
 <script>
-// NavegaciÃ³n de tabs
+// Navegación de tabs
 function switchTab(tabName) {
     // Actualizar indicador visual
     const tabs = document.querySelectorAll('.nav-tab');
@@ -1250,7 +1250,7 @@ function switchTab(tabName) {
     window.history.pushState({}, '', url);
 }
 
-// Alternar ediciÃ³n de formularios
+// Alternar edición de formularios
 function toggleEdit(formType) {
     const form = document.getElementById(`${formType}-form`);
     const actions = document.getElementById(`${formType}-actions`);
@@ -1291,7 +1291,7 @@ function cancelEdit(formType) {
     actions.classList.add('hidden');
 }
 
-// Toggle de contraseÃ±as
+// Toggle de contraseñas
 function togglePassword(inputId) {
     const input = document.getElementById(inputId);
     const button = input.nextElementSibling;
@@ -1308,7 +1308,7 @@ function togglePassword(inputId) {
     }
 }
 
-// ValidaciÃ³n de contraseÃ±as y PINs
+// Validación de contraseñas y PINs
 document.addEventListener('DOMContentLoaded', function() {
     const newPassInput = document.getElementById('new-pass');
     const confirmPassInput = document.getElementById('confirm-pass');
@@ -1348,7 +1348,7 @@ document.addEventListener('DOMContentLoaded', function() {
             matchIndicator?.querySelector('i').classList.add('fa-times');
         }
         
-        // Habilitar/deshabilitar botÃ³n
+        // Habilitar/deshabilitar botón
         if (changeBtn) {
             changeBtn.disabled = !(newPass.length >= 8 && newPass === confirmPass);
         }
@@ -1381,22 +1381,22 @@ document.addEventListener('DOMContentLoaded', function() {
             pinMatchIndicator?.querySelector('i').classList.add('fa-times');
         }
         
-        // Habilitar/deshabilitar botÃ³n de PIN
+        // Habilitar/deshabilitar botón de PIN
         const pinBtn = document.querySelector('#pin-form .btn-save');
         if (pinBtn) {
             pinBtn.disabled = !(isPinValid && newPin === confirmPin);
         }
     }
     
-    // Event listeners para contraseÃ±as
+    // Event listeners para contraseñas
     newPassInput?.addEventListener('input', validatePassword);
     confirmPassInput?.addEventListener('input', validatePassword);
     
-    // Event listeners para PINs con validaciÃ³n de solo nÃºmeros
+    // Event listeners para PINs con validación de solo números
     [newPinInput, confirmPinInput].forEach(input => {
         if (input) {
             input.addEventListener('input', function(e) {
-                // Solo permitir nÃºmeros
+                // Solo permitir números
                 this.value = this.value.replace(/\D/g, '');
                 validatePIN();
             });

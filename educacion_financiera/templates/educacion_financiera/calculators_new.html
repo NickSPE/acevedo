@@ -453,7 +453,7 @@
             <a href="{% url 'educacion_financiera:calculators' %}?tab=loan" 
                class="tab-btn {% if tab == 'loan' %}active{% endif %}">
                 <i class="fas fa-home"></i>
-                PrÃ©stamos
+                Préstamos
             </a>
             <a href="{% url 'educacion_financiera:calculators' %}?tab=budget" 
                class="tab-btn {% if tab == 'budget' %}active{% endif %}">
@@ -463,12 +463,12 @@
             <a href="{% url 'educacion_financiera:calculators' %}?tab=retirement" 
                class="tab-btn {% if tab == 'retirement' %}active{% endif %}">
                 <i class="fas fa-beach"></i>
-                JubilaciÃ³n
+                Jubilación
             </a>
             <a href="{% url 'educacion_financiera:calculators' %}?tab=investment" 
                class="tab-btn {% if tab == 'investment' %}active{% endif %}">
                 <i class="fas fa-chart-line"></i>
-                InversiÃ³n
+                Inversión
             </a>
         </div>
     </div>
@@ -481,7 +481,7 @@
             {% if tab == "savings" %}
             <div class="calculator-header savings">
                 <h3><i class="fas fa-piggy-bank calculator-icon me-2"></i>Calculadora de Ahorros</h3>
-                <p>Descubre el poder del interÃ©s compuesto en tus ahorros</p>
+                <p>Descubre el poder del interés compuesto en tus ahorros</p>
             </div>
             
             <form method="POST" class="calculator-form" id="savingsForm">
@@ -518,13 +518,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Tasa de InterÃ©s Anual (%)</label>
+                        <label class="form-label">Tasa de Interés Anual (%)</label>
                         <input type="number" name="rate" class="form-input" placeholder="5.0" min="0" step="0.1" max="100" required>
                         <div class="form-help">Rendimiento anual esperado</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">PerÃ­odo (aÃ±os)</label>
+                        <label class="form-label">Período (años)</label>
                         <input type="number" name="years" class="form-input" placeholder="10" min="1" max="50" required>
                         <div class="form-help">Tiempo que planeas ahorrar</div>
                     </div>
@@ -536,11 +536,11 @@
                 </button>
             </form>
 
-            <!-- Calculadora de PrÃ©stamos -->
+            <!-- Calculadora de Préstamos -->
             {% elif tab == "loan" %}
             <div class="calculator-header loan">
-                <h3><i class="fas fa-home calculator-icon me-2"></i>Calculadora de PrÃ©stamos</h3>
-                <p>Planifica tus pagos y conoce el costo real de tu prÃ©stamo</p>
+                <h3><i class="fas fa-home calculator-icon me-2"></i>Calculadora de Préstamos</h3>
+                <p>Planifica tus pagos y conoce el costo real de tu préstamo</p>
             </div>
             
             <form method="POST" class="calculator-form" id="loanForm">
@@ -548,7 +548,7 @@
                 <input type="hidden" name="tab" value="loan">
                 
                 <div class="presets-section">
-                    <div class="presets-title">Tipos de PrÃ©stamo:</div>
+                    <div class="presets-title">Tipos de Préstamo:</div>
                     <div class="presets-grid">
                         <button type="button" class="preset-btn" onclick="setPreset('loan', {amount: 200000, rate: 3.5, years: 30})">
                             Casa ($200K)
@@ -564,27 +564,27 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Monto del PrÃ©stamo</label>
+                        <label class="form-label">Monto del Préstamo</label>
                         <input type="number" name="amount" class="form-input" placeholder="200,000" min="1" step="0.01" required>
                         <div class="form-help">Cantidad total que necesitas prestar</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Tasa de InterÃ©s Anual (%)</label>
+                        <label class="form-label">Tasa de Interés Anual (%)</label>
                         <input type="number" name="rate" class="form-input" placeholder="3.5" min="0" step="0.1" max="100" required>
-                        <div class="form-help">Tasa de interÃ©s que te ofrece el banco</div>
+                        <div class="form-help">Tasa de interés que te ofrece el banco</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Plazo (aÃ±os)</label>
+                        <label class="form-label">Plazo (años)</label>
                         <input type="number" name="years" class="form-input" placeholder="30" min="1" max="50" required>
-                        <div class="form-help">Tiempo para pagar el prÃ©stamo</div>
+                        <div class="form-help">Tiempo para pagar el préstamo</div>
                     </div>
                 </div>
 
                 <button type="submit" class="calculate-btn">
                     <i class="fas fa-calculator"></i>
-                    Calcular Mi PrÃ©stamo
+                    Calcular Mi Préstamo
                 </button>
             </form>
 
@@ -618,7 +618,7 @@
                     <div class="form-group">
                         <label class="form-label">Ingresos Mensuales</label>
                         <input type="number" name="income" class="form-input" placeholder="5,000" min="0" step="0.01" required>
-                        <div class="form-help">Tus ingresos totales despuÃ©s de impuestos</div>
+                        <div class="form-help">Tus ingresos totales después de impuestos</div>
                     </div>
                     
                     <div class="form-group">
@@ -646,11 +646,11 @@
                 </button>
             </form>
 
-            <!-- Calculadora de JubilaciÃ³n -->
+            <!-- Calculadora de Jubilación -->
             {% elif tab == "retirement" %}
             <div class="calculator-header retirement">
-                <h3><i class="fas fa-umbrella-beach calculator-icon me-2"></i>Calculadora de JubilaciÃ³n</h3>
-                <p>Planifica tu futuro y asegura una jubilaciÃ³n cÃ³moda</p>
+                <h3><i class="fas fa-umbrella-beach calculator-icon me-2"></i>Calculadora de Jubilación</h3>
+                <p>Planifica tu futuro y asegura una jubilación cómoda</p>
             </div>
             
             <form method="POST" class="calculator-form" id="retirementForm">
@@ -658,16 +658,16 @@
                 <input type="hidden" name="tab" value="retirement">
                 
                 <div class="presets-section">
-                    <div class="presets-title">Escenarios de JubilaciÃ³n:</div>
+                    <div class="presets-title">Escenarios de Jubilación:</div>
                     <div class="presets-grid">
                         <button type="button" class="preset-btn" onclick="setPreset('retirement', {current_age: 30, retirement_age: 65, current_savings: 50000, monthly_contribution: 800, expected_return: 7})">
-                            Joven (30 aÃ±os)
+                            Joven (30 años)
                         </button>
                         <button type="button" class="preset-btn" onclick="setPreset('retirement', {current_age: 40, retirement_age: 65, current_savings: 150000, monthly_contribution: 1200, expected_return: 6})">
-                            Adulto (40 aÃ±os)
+                            Adulto (40 años)
                         </button>
                         <button type="button" class="preset-btn" onclick="setPreset('retirement', {current_age: 50, retirement_age: 67, current_savings: 300000, monthly_contribution: 2000, expected_return: 5})">
-                            Pre-jubilado (50 aÃ±os)
+                            Pre-jubilado (50 años)
                         </button>
                     </div>
                 </div>
@@ -676,11 +676,11 @@
                     <div class="form-group">
                         <label class="form-label">Edad Actual</label>
                         <input type="number" name="current_age" class="form-input" placeholder="35" min="18" max="80" required>
-                        <div class="form-help">Tu edad actual en aÃ±os</div>
+                        <div class="form-help">Tu edad actual en años</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Edad de JubilaciÃ³n</label>
+                        <label class="form-label">Edad de Jubilación</label>
                         <input type="number" name="retirement_age" class="form-input" placeholder="65" min="50" max="80" required>
                         <div class="form-help">Edad a la que planeas jubilarte</div>
                     </div>
@@ -688,7 +688,7 @@
                     <div class="form-group">
                         <label class="form-label">Ahorros Actuales</label>
                         <input type="number" name="current_savings" class="form-input" placeholder="100,000" min="0" step="0.01" required>
-                        <div class="form-help">Dinero ahorrado actualmente para jubilaciÃ³n</div>
+                        <div class="form-help">Dinero ahorrado actualmente para jubilación</div>
                     </div>
                     
                     <div class="form-group">
@@ -704,23 +704,23 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Ingresos Deseados en JubilaciÃ³n</label>
+                        <label class="form-label">Ingresos Deseados en Jubilación</label>
                         <input type="number" name="desired_income" class="form-input" placeholder="5,000" min="0" step="0.01">
-                        <div class="form-help">Ingresos mensuales que deseas en la jubilaciÃ³n</div>
+                        <div class="form-help">Ingresos mensuales que deseas en la jubilación</div>
                     </div>
                 </div>
 
                 <button type="submit" class="calculate-btn">
                     <i class="fas fa-calculator"></i>
-                    Calcular Mi JubilaciÃ³n
+                    Calcular Mi Jubilación
                 </button>
             </form>
 
-            <!-- Calculadora de InversiÃ³n -->
+            <!-- Calculadora de Inversión -->
             {% elif tab == "investment" %}
             <div class="calculator-header investment">
-                <h3><i class="fas fa-chart-line calculator-icon me-2"></i>Calculadora de InversiÃ³n</h3>
-                <p>EvalÃºa el potencial de crecimiento de tus inversiones</p>
+                <h3><i class="fas fa-chart-line calculator-icon me-2"></i>Calculadora de Inversión</h3>
+                <p>Evalúa el potencial de crecimiento de tus inversiones</p>
             </div>
             
             <form method="POST" class="calculator-form" id="investmentForm">
@@ -728,7 +728,7 @@
                 <input type="hidden" name="tab" value="investment">
                 
                 <div class="presets-section">
-                    <div class="presets-title">Estrategias de InversiÃ³n:</div>
+                    <div class="presets-title">Estrategias de Inversión:</div>
                     <div class="presets-grid">
                         <button type="button" class="preset-btn" onclick="setPreset('investment', {initial_investment: 10000, monthly_investment: 500, annual_return: 8, years: 10, risk_level: 'medium'})">
                             Conservador
@@ -744,13 +744,13 @@
                 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">InversiÃ³n Inicial</label>
+                        <label class="form-label">Inversión Inicial</label>
                         <input type="number" name="initial_investment" class="form-input" placeholder="25,000" min="0" step="0.01" required>
                         <div class="form-help">Capital inicial para invertir</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">InversiÃ³n Mensual</label>
+                        <label class="form-label">Inversión Mensual</label>
                         <input type="number" name="monthly_investment" class="form-input" placeholder="1,000" min="0" step="0.01" required>
                         <div class="form-help">Cantidad a invertir cada mes</div>
                     </div>
@@ -762,9 +762,9 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">PerÃ­odo de InversiÃ³n (aÃ±os)</label>
+                        <label class="form-label">Período de Inversión (años)</label>
                         <input type="number" name="years" class="form-input" placeholder="15" min="1" max="50" required>
-                        <div class="form-help">Tiempo que planeas mantener la inversiÃ³n</div>
+                        <div class="form-help">Tiempo que planeas mantener la inversión</div>
                     </div>
                     
                     <div class="form-group">
@@ -775,27 +775,27 @@
                             <option value="medium">Medio (6-10% anual)</option>
                             <option value="high">Alto (11%+ anual)</option>
                         </select>
-                        <div class="form-help">Nivel de riesgo que estÃ¡s dispuesto a asumir</div>
+                        <div class="form-help">Nivel de riesgo que estás dispuesto a asumir</div>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">InflaciÃ³n Anual (%)</label>
+                        <label class="form-label">Inflación Anual (%)</label>
                         <input type="number" name="inflation_rate" class="form-input" placeholder="3.0" min="0" step="0.1" max="10">
-                        <div class="form-help">Tasa de inflaciÃ³n anual esperada</div>
+                        <div class="form-help">Tasa de inflación anual esperada</div>
                     </div>
                 </div>
 
                 <button type="submit" class="calculate-btn">
                     <i class="fas fa-calculator"></i>
-                    Calcular Mi InversiÃ³n
+                    Calcular Mi Inversión
                 </button>
             </form>
 
             {% else %}
             <!-- Placeholder para otras calculadoras -->
             <div class="calculator-header">
-                <h3><i class="fas fa-tools me-2"></i>PrÃ³ximamente</h3>
-                <p>Esta calculadora estarÃ¡ disponible pronto</p>
+                <h3><i class="fas fa-tools me-2"></i>Próximamente</h3>
+                <p>Esta calculadora estará disponible pronto</p>
             </div>
             
             <div class="calculator-form">
@@ -812,7 +812,7 @@
         <div class="results-panel">
             <div class="results-header">
                 <h4><i class="fas fa-chart-bar me-2"></i>Resultados</h4>
-                <p style="margin: 0; color: #6b7280; font-size: 0.875rem;">Tus cÃ¡lculos aparecerÃ¡n aquÃ­</p>
+                <p style="margin: 0; color: #6b7280; font-size: 0.875rem;">Tus cálculos aparecerán aquí</p>
             </div>
             
             <div class="results-content">
@@ -834,7 +834,7 @@
                         <div class="result-label">Total Aportado</div>
                     </div>
 
-                    <!-- Resultados de PrÃ©stamos -->
+                    <!-- Resultados de Préstamos -->
                     {% elif result.type == 'loan' %}
                     <div class="result-card animate-count">
                         <div class="result-value">${{ result.monthly_payment|floatformat:2 }}</div>
@@ -873,7 +873,7 @@
                         <div class="result-label">Ahorros (Recomendado: 20%)</div>
                     </div>
                     
-                    <!-- Resultados de JubilaciÃ³n -->
+                    <!-- Resultados de Jubilación -->
                     {% elif result.type == 'retirement' %}
                     <div class="result-card animate-count">
                         <div class="result-value">${{ result.total_at_retirement|floatformat:2 }}</div>
@@ -892,14 +892,14 @@
                     
                     <div class="result-card animate-count" style="animation-delay: 0.3s;">
                         <div class="result-value">{{ result.years_to_retirement }}</div>
-                        <div class="result-label">AÃ±os para Jubilarte</div>
+                        <div class="result-label">Años para Jubilarte</div>
                     </div>
                     
-                    <!-- Resultados de InversiÃ³n -->
+                    <!-- Resultados de Inversión -->
                     {% elif result.type == 'investment' %}
                     <div class="result-card animate-count">
                         <div class="result-value">${{ result.final_value|floatformat:2 }}</div>
-                        <div class="result-label">Valor Final de InversiÃ³n</div>
+                        <div class="result-label">Valor Final de Inversión</div>
                     </div>
                     
                     <div class="result-card animate-count" style="animation-delay: 0.1s;">
@@ -909,21 +909,21 @@
                     
                     <div class="result-card animate-count" style="animation-delay: 0.2s;">
                         <div class="result-value">{{ result.roi_percentage|floatformat:1 }}%</div>
-                        <div class="result-label">Retorno sobre InversiÃ³n</div>
+                        <div class="result-label">Retorno sobre Inversión</div>
                     </div>
                     
                     <div class="result-card animate-count" style="animation-delay: 0.3s;">
                         <div class="result-value">${{ result.real_value|floatformat:2 }}</div>
-                        <div class="result-label">Valor Real (Ajustado por InflaciÃ³n)</div>
+                        <div class="result-label">Valor Real (Ajustado por Inflación)</div>
                     </div>
                     {% endif %}
 
-                    <!-- ExplicaciÃ³n de IA -->
+                    <!-- Explicación de IA -->
                     {% if ai_explanation %}
                     <div class="ai-section">
                         <div class="ai-header">
                             <i class="fas fa-robot"></i>
-                            <strong>AnÃ¡lisis con IA</strong>
+                            <strong>Análisis con IA</strong>
                         </div>
                         <div class="ai-content">
                             {{ ai_explanation|linebreaks }}
@@ -935,7 +935,7 @@
                 <div class="empty-state">
                     <div class="empty-icon">ðŸ“Š</div>
                     <h4>Sin Resultados</h4>
-                    <p>Completa el formulario para ver tus resultados aquÃ­</p>
+                    <p>Completa el formulario para ver tus resultados aquí</p>
                 </div>
                 {% endif %}
                 
@@ -950,7 +950,7 @@
 </div>
 
 <script>
-// FunciÃ³n para establecer valores predefinidos
+// Función para establecer valores predefinidos
 function setPreset(type, values) {
     const form = document.getElementById(type + 'Form');
     if (!form) return;
@@ -959,7 +959,7 @@ function setPreset(type, values) {
         const input = form.querySelector(`input[name="${key}"]`);
         if (input) {
             input.value = values[key];
-            // Agregar animaciÃ³n visual
+            // Agregar animación visual
             input.style.background = '#e0f2fe';
             setTimeout(() => {
                 input.style.background = '';
@@ -988,7 +988,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ValidaciÃ³n en tiempo real
+    // Validación en tiempo real
     const inputs = document.querySelectorAll('.form-input');
     inputs.forEach(input => {
         input.addEventListener('input', function() {
@@ -997,7 +997,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Formatear nÃºmeros mientras se escriben
+// Formatear números mientras se escriben
 function formatNumber(input) {
     let value = input.value.replace(/[^\d.]/g, '');
     if (value) {
@@ -1008,7 +1008,7 @@ function formatNumber(input) {
     }
 }
 
-// Agregar formateo a inputs numÃ©ricos
+// Agregar formateo a inputs numéricos
 document.addEventListener('DOMContentLoaded', function() {
     const numberInputs = document.querySelectorAll('input[type="number"]');
     numberInputs.forEach(input => {

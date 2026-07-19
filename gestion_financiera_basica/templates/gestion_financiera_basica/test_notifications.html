@@ -23,12 +23,12 @@
                         {% endfor %}
                     {% endif %}
                     
-                    <!-- InformaciÃ³n del Usuario -->
+                    <!-- Información del Usuario -->
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="card bg-light">
                                 <div class="card-body">
-                                    <h5 class="card-title">ðŸ‘¤ InformaciÃ³n del Usuario</h5>
+                                    <h5 class="card-title">ðŸ‘¤ Información del Usuario</h5>
                                     <p><strong>Nombre:</strong> {{ user.nombres }} {{ user.apellidos }}</p>
                                     <p><strong>Email:</strong> {{ user.correo }}</p>
                                     <p><strong>Metas de Ahorro:</strong> {{ metas.count }}</p>
@@ -40,8 +40,8 @@
                             <div class="card bg-info text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">ðŸ“§ Estado de Notificaciones</h5>
-                                    <p>Las notificaciones se enviarÃ¡n al email: <strong>{{ user.correo }}</strong></p>
-                                    <p>Revisa tu bandeja de entrada y spam despuÃ©s de cada prueba.</p>
+                                    <p>Las notificaciones se enviarán al email: <strong>{{ user.correo }}</strong></p>
+                                    <p>Revisa tu bandeja de entrada y spam después de cada prueba.</p>
                                     <a href="{% url 'alertas_notificaciones:configuraciones' %}" class="btn btn-light btn-sm">
                                         âš™ï¸ Configurar Notificaciones
                                     </a>
@@ -223,7 +223,7 @@
                                     <h5 class="mb-0">ðŸŽ¯ Prueba: Nueva Meta</h5>
                                 </div>
                                 <div class="card-body">
-                                    <p>Simula la creaciÃ³n de una nueva meta de ahorro.</p>
+                                    <p>Simula la creación de una nueva meta de ahorro.</p>
                                     
                                     {% if cuentas %}
                                         <form method="post">
@@ -256,7 +256,7 @@
                         </div>
                     </div>
                     
-                    <!-- Enlaces de NavegaciÃ³n -->
+                    <!-- Enlaces de Navegación -->
                     <div class="text-center">
                         <a href="{% url 'alertas_notificaciones:historial' %}" class="btn btn-outline-primary">
                             ðŸ“‹ Ver Historial de Notificaciones

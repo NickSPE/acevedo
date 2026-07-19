@@ -1,15 +1,15 @@
 {% extends "core/base_template.html" %}
 {% load static %}
 
-{% block title %}AnÃ¡lisis y Reportes | FinGest{% endblock %}
+{% block title %}Análisis y Reportes | FinGest{% endblock %}
 
 {% block content %}
 <div class="p-6 space-y-6">
   <!-- Header -->
   <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
     <div>
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">AnÃ¡lisis y Reportes</h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-1">Visualiza y analiza tu situaciÃ³n financiera</p>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Análisis y Reportes</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Visualiza y analiza tu situación financiera</p>
     </div>
     <div class="flex flex-wrap items-center gap-3">
       <button
@@ -43,22 +43,22 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <!-- PerÃ­odo -->
-        <label for="select_periodo_new" class="sr-only">PerÃ­odo</label>
+        <!-- Período -->
+        <label for="select_periodo_new" class="sr-only">Período</label>
         <select id="select_periodo_new"
           class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white">
           <option value="mes_actual">Este mes</option>
           <option value="ultimo_mes">Mes pasado</option>
           <option value="trimestre">Ãšltimo trimestre</option>
-          <option value="ano">Este aÃ±o</option>
-          <option value="personalizado">PerÃ­odo personalizado</option>
+          <option value="ano">Este año</option>
+          <option value="personalizado">Período personalizado</option>
         </select>
 
-        <!-- Tipo de anÃ¡lisis -->
-        <label for="select_analisis_new" class="sr-only">Tipo de anÃ¡lisis</label>
+        <!-- Tipo de análisis -->
+        <label for="select_analisis_new" class="sr-only">Tipo de análisis</label>
         <select id="select_analisis_new"
           class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white">
-          <option value="general">AnÃ¡lisis general</option>
+          <option value="general">Análisis general</option>
           <option value="ingresos">Solo ingresos</option>
           <option value="gastos">Solo gastos</option>
           <option value="subcuentas">Por subcuentas</option>
@@ -82,7 +82,7 @@
     </div>
   </div>
 
-  <!-- MÃ©tricas principales -->
+  <!-- Métricas principales -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <!-- Balance total -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
@@ -101,13 +101,13 @@
       </div>
     </div>
 
-    <!-- Ingresos del perÃ­odo -->
+    <!-- Ingresos del período -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Ingresos</p>
           <p class="text-2xl font-bold text-green-600 dark:text-green-400">${{ stats.total_ingresos|floatformat:0 }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">PerÃ­odo seleccionado</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Período seleccionado</p>
         </div>
         <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
           <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,13 +117,13 @@
       </div>
     </div>
 
-    <!-- Gastos del perÃ­odo -->
+    <!-- Gastos del período -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between">
         <div>
           <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Gastos</p>
           <p class="text-2xl font-bold text-red-600 dark:text-red-400">${{ stats.total_egresos|floatformat:0 }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">PerÃ­odo seleccionado</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Período seleccionado</p>
         </div>
         <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
           <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,9 +156,9 @@
     </div>
   </div>
 
-  <!-- GrÃ¡ficos y anÃ¡lisis -->
+  <!-- Gráficos y análisis -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-    <!-- GrÃ¡fico de ingresos vs gastos -->
+    <!-- Gráfico de ingresos vs gastos -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ingresos vs Gastos</h3>
@@ -174,10 +174,10 @@
       </div>
     </div>
 
-    <!-- DistribuciÃ³n por categorÃ­as -->
+    <!-- Distribución por categorías -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Gastos por CategorÃ­a</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Gastos por Categoría</h3>
         <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
           <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor"
             viewBox="0 0 24 24">
@@ -209,7 +209,7 @@
     </div>
   </div>
 
-  <!-- AnÃ¡lisis detallado -->
+  <!-- Análisis detallado -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <!-- Top gastos -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
@@ -232,12 +232,12 @@
           <p class="font-semibold text-sm text-red-600 dark:text-red-400">-${{ gasto.monto|floatformat:0 }}</p>
         </div>
         {% empty %}
-        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay gastos en este perÃ­odo</p>
+        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4">No hay gastos en este período</p>
         {% endfor %}
       </div>
     </div>
 
-    <!-- AnÃ¡lisis de subcuentas -->
+    <!-- Análisis de subcuentas -->
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between mb-4">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Estado de Subcuentas</h3>
@@ -308,9 +308,9 @@
   </div>
 </div>
 
-<!-- GrÃ¡ficos -->
+<!-- Gráficos -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-  <!-- HistÃ³rico de Ingresos vs Gastos -->
+  <!-- Histórico de Ingresos vs Gastos -->
   <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
     <h3 class="text-lg font-semibold mb-4 dark:text-white">Ingresos vs Gastos</h3>
     <div class="h-[300px] relative">
@@ -318,9 +318,9 @@
     </div>
   </div>
 
-  <!-- DistribuciÃ³n de Gastos -->
+  <!-- Distribución de Gastos -->
   <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-    <h3 class="text-lg font-semibold mb-4 dark:text-white">DistribuciÃ³n de Gastos</h3>
+    <h3 class="text-lg font-semibold mb-4 dark:text-white">Distribución de Gastos</h3>
     <div class="h-[300px] relative">
       <canvas id="categoriasChart"></canvas>
     </div>
@@ -329,7 +329,7 @@
 
 <!-- Flujo de Caja Mensual -->
 <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-6">
-  <h3 class="text-lg font-semibold mb-4 dark:text-white">EvoluciÃ³n del Flujo Neto</h3>
+  <h3 class="text-lg font-semibold mb-4 dark:text-white">Evolución del Flujo Neto</h3>
   <div class="h-[300px] relative">
     <canvas id="flujoMensualChart"></canvas>
   </div>
@@ -353,7 +353,7 @@
       }
     };
 
-    // GrÃ¡fico de Ingresos vs Gastos
+    // Gráfico de Ingresos vs Gastos
     const ingresosGastosCtx = document.getElementById('ingresosGastosChart').getContext('2d');
     const ingresosGastosData = JSON.parse('{{ ingresos_egresos|escapejs }}');
 
@@ -390,7 +390,7 @@
       }
     });
 
-    // GrÃ¡fico de CategorÃ­as
+    // Gráfico de Categorías
     const categoriasCtx = document.getElementById('categoriasChart').getContext('2d');
     const categoriasData = JSON.parse('{{ gastos_categoria|escapejs }}');
 
@@ -421,7 +421,7 @@
       }
     });
 
-    // GrÃ¡fico de Flujo Mensual
+    // Gráfico de Flujo Mensual
     const flujoMensualCtx = document.getElementById('flujoMensualChart').getContext('2d');
     const flujoMensualData = JSON.parse('{{ flujo_mensual|escapejs }}');
 

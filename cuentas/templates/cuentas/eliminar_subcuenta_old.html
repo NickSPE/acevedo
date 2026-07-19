@@ -39,7 +39,7 @@
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             Eliminar Subcuenta
                         </h1>
-                        <p class="text-muted mb-0">Esta acciÃ³n no se puede deshacer</p>
+                        <p class="text-muted mb-0">Esta acción no se puede deshacer</p>
                     </div>
                     <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-outline-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Volver
@@ -54,21 +54,21 @@
                 <div class="card danger-card">
                     <div class="card-body text-center">
                         <i class="fas fa-exclamation-triangle icon-warning mb-3"></i>
-                        <h4 class="text-danger">Â¿EstÃ¡s seguro de eliminar esta subcuenta?</h4>
-                        <p class="mb-0">Esta acciÃ³n eliminarÃ¡ permanentemente la subcuenta y toda su informaciÃ³n asociada</p>
+                        <h4 class="text-danger">¿Estás seguro de eliminar esta subcuenta?</h4>
+                        <p class="mb-0">Esta acción eliminará permanentemente la subcuenta y toda su información asociada</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- InformaciÃ³n de la subcuenta -->
+        <!-- Información de la subcuenta -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card subcuenta-info" style="border-left-color: {{ subcuenta.color }};">
                     <div class="card-header">
                         <h5 class="mb-0">
                             <i class="fas fa-info-circle me-2"></i>
-                            InformaciÃ³n de la Subcuenta
+                            Información de la Subcuenta
                         </h5>
                     </div>
                     <div class="card-body">
@@ -88,7 +88,7 @@
                         {% if subcuenta.descripcion %}
                         <div class="row mt-3">
                             <div class="col-12">
-                                <h6 class="text-muted">DescripciÃ³n</h6>
+                                <h6 class="text-muted">Descripción</h6>
                                 <p>{{ subcuenta.descripcion }}</p>
                             </div>
                         </div>
@@ -108,7 +108,7 @@
                                 </span>
                             </div>
                             <div class="col-md-4">
-                                <h6 class="text-muted">Fecha de CreaciÃ³n</h6>
+                                <h6 class="text-muted">Fecha de Creación</h6>
                                 <p>{{ subcuenta.fecha_creacion|date:'d/m/Y H:i' }}</p>
                             </div>
                         </div>
@@ -117,7 +117,7 @@
             </div>
         </div>
 
-        <!-- InformaciÃ³n sobre el saldo -->
+        <!-- Información sobre el saldo -->
         {% if subcuenta.saldo != 0 %}
         <div class="row mb-4">
             <div class="col-12">
@@ -125,16 +125,16 @@
                     <div class="card-body">
                         <h6 class="text-warning">
                             <i class="fas fa-exclamation-circle me-2"></i>
-                            AtenciÃ³n: La subcuenta tiene saldo
+                            Atención: La subcuenta tiene saldo
                         </h6>
                         <p class="mb-2">
                             Esta subcuenta tiene un saldo de <strong>${{ subcuenta.saldo|floatformat:2 }}</strong>.
                         </p>
                         <p class="mb-0">
                             {% if subcuenta.saldo > 0 %}
-                                Al eliminar la subcuenta, este saldo se transferirÃ¡ de vuelta a la cuenta principal.
+                                Al eliminar la subcuenta, este saldo se transferirá de vuelta a la cuenta principal.
                             {% else %}
-                                Al eliminar la subcuenta, este saldo negativo se descontarÃ¡ de la cuenta principal.
+                                Al eliminar la subcuenta, este saldo negativo se descontará de la cuenta principal.
                             {% endif %}
                         </p>
                     </div>
@@ -143,7 +143,7 @@
         </div>
         {% endif %}
 
-        <!-- InformaciÃ³n sobre transferencias -->
+        <!-- Información sobre transferencias -->
         {% if tiene_transferencias %}
         <div class="row mb-4">
             <div class="col-12">
@@ -154,8 +154,8 @@
                             Historial de Transferencias
                         </h6>
                         <p class="mb-0">
-                            Esta subcuenta tiene transferencias registradas. Al eliminarla, se mantendrÃ¡ el historial 
-                            de transferencias para fines de auditorÃ­a, pero la subcuenta no estarÃ¡ disponible 
+                            Esta subcuenta tiene transferencias registradas. Al eliminarla, se mantendrá el historial 
+                            de transferencias para fines de auditoría, pero la subcuenta no estará disponible 
                             para nuevas operaciones.
                         </p>
                     </div>
@@ -164,7 +164,7 @@
         </div>
         {% endif %}
 
-        <!-- Formulario de confirmaciÃ³n -->
+        <!-- Formulario de confirmación -->
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -172,7 +172,7 @@
                         <form method="post">
                             {% csrf_token %}
                             
-                            <!-- ConfirmaciÃ³n -->
+                            <!-- Confirmación -->
                             <div class="mb-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="confirmar" required>
@@ -182,7 +182,7 @@
                                 </div>
                             </div>
 
-                            <!-- Texto de confirmaciÃ³n -->
+                            <!-- Texto de confirmación -->
                             <div class="mb-4">
                                 <label for="confirmacion_texto" class="form-label">
                                     Para confirmar, escribe <strong>"{{ subcuenta.nombre }}"</strong> en el campo siguiente:
@@ -211,7 +211,7 @@
             <div class="col-12">
                 <div class="card bg-light">
                     <div class="card-header">
-                        <h6 class="mb-0">Â¿Consideraste estas alternativas?</h6>
+                        <h6 class="mb-0">¿Consideraste estas alternativas?</h6>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -268,9 +268,9 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmarCheck.addEventListener('change', validarFormulario);
     confirmacionTexto.addEventListener('input', validarFormulario);
     
-    // ConfirmaciÃ³n adicional antes del envÃ­o
+    // Confirmación adicional antes del envío
     document.querySelector('form').addEventListener('submit', function(e) {
-        if (!confirm('Â¿EstÃ¡s completamente seguro? Esta acciÃ³n NO se puede deshacer.')) {
+        if (!confirm('¿Estás completamente seguro? Esta acción NO se puede deshacer.')) {
             e.preventDefault();
         }
     });

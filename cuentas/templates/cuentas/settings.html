@@ -1,16 +1,16 @@
 {% extends "core/base_template.html" %}
 
-{% block title %}ConfiguraciÃ³n{% endblock %}
+{% block title %}Configuración{% endblock %}
 
 {% block content %}
-<h2 class="text-2xl font-bold mb-1">ConfiguraciÃ³n</h2>
-<p class="text-sm text-gray-500 mb-6">Personaliza la aplicaciÃ³n segÃºn tus preferencias</p>
+<h2 class="text-2xl font-bold mb-1">Configuración</h2>
+<p class="text-sm text-gray-500 mb-6">Personaliza la aplicación según tus preferencias</p>
 
 <div class="grid md:grid-cols-2 gap-6">
   <!-- Apariencia -->
   <div class="bg-white p-6 rounded shadow">
     <h3 class="text-lg font-semibold mb-2">Apariencia</h3>
-    <p class="text-sm text-gray-500 mb-4">Personaliza la apariencia de la aplicaciÃ³n</p>
+    <p class="text-sm text-gray-500 mb-4">Personaliza la apariencia de la aplicación</p>
     <form class="space-y-3">
       <div>
         <label for="select_tema" class="block text-sm font-medium mb-1 text-gray-700">Tema</label>
@@ -21,7 +21,7 @@
         <select id="select_estilo" class="w-full border p-2 rounded"><option>Predeterminado</option></select>
       </div>
       <div>
-        <label for="select_tamano" class="block text-sm font-medium mb-1 text-gray-700">TamaÃ±o de fuente</label>
+        <label for="select_tamano" class="block text-sm font-medium mb-1 text-gray-700">Tamaño de fuente</label>
         <select id="select_tamano" class="w-full border p-2 rounded"><option>Mediano</option></select>
       </div>
       <button class="w-full py-2 rounded mt-2" style="background-color: #227C91; color: white;">
@@ -32,12 +32,12 @@
 
   <!-- Idioma -->
   <div class="bg-white p-6 rounded shadow">
-    <h3 class="text-lg font-semibold mb-2">Idioma y LocalizaciÃ³n</h3>
+    <h3 class="text-lg font-semibold mb-2">Idioma y Localización</h3>
     <p class="text-sm text-gray-500 mb-4">Configura el idioma y las preferencias regionales</p>
     <form class="space-y-3">
       <div>
         <label for="select_idioma" class="block text-sm font-medium mb-1 text-gray-700">Idioma</label>
-        <select id="select_idioma" class="w-full border p-2 rounded"><option>EspaÃ±ol</option></select>
+        <select id="select_idioma" class="w-full border p-2 rounded"><option>Español</option></select>
       </div>
       <div>
         <label for="select_moneda" class="block text-sm font-medium mb-1 text-gray-700">Moneda preferida</label>
@@ -59,7 +59,7 @@
     <p class="text-sm text-gray-500 mb-4">Gestiona tus preferencias de privacidad</p>
     <form class="space-y-3">
       <label class="flex justify-between items-center">
-        <span class="text-sm">AnalÃ­ticas</span>
+        <span class="text-sm">Analíticas</span>
         <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" />
       </label>
       <label class="flex justify-between items-center">
@@ -67,7 +67,7 @@
         <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" checked />
       </label>
       <label class="flex justify-between items-center">
-        <span class="text-sm">PersonalizaciÃ³n</span>
+        <span class="text-sm">Personalización</span>
         <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" />
       </label>
       <button class="w-full py-2 rounded mt-2" style="background-color: #227C91; color: white;">

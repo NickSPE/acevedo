@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}FinGest - GestiÃ³n Financiera Inteligente{% endblock %}</title>
+    <title>{% block title %}FinGest - Gestión Financiera Inteligente{% endblock %}</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
@@ -99,7 +99,7 @@
             padding: 0 24px;
         }
 
-        /* NavegaciÃ³n moderna y atractiva */
+        /* Navegación moderna y atractiva */
         .navbar {
             position: fixed;
             top: 0;
@@ -504,7 +504,7 @@
             color: #227c91;
         }
 
-        /* Mejoras tipogrÃ¡ficas */
+        /* Mejoras tipográficas */
         .feature-title {
             font-size: 22px;
             font-weight: 700;
@@ -520,7 +520,7 @@
             font-weight: 400;
         }
 
-        /* Efectos de partÃ­culas flotantes */
+        /* Efectos de partículas flotantes */
         .floating-particles {
             position: fixed;
             top: 0;
@@ -531,7 +531,7 @@
             z-index: 1;
         }
 
-        /* Estilos para el grÃ¡fico donut */
+        /* Estilos para el gráfico donut */
         #expenseChart {
             filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.1));
             transition: transform 0.3s ease;
@@ -541,7 +541,7 @@
             transform: scale(1.02);
         }
 
-        /* AnimaciÃ³n de entrada para el grÃ¡fico */
+        /* Animación de entrada para el gráfico */
         @keyframes chartFadeIn {
             0% {
                 opacity: 0;
@@ -794,7 +794,7 @@
             }
         }
 
-        /* Estilos para dispositivos muy pequeÃ±os */
+        /* Estilos para dispositivos muy pequeños */
         @media (max-width: 480px) {
             .container {
                 padding: 0 16px;
@@ -845,13 +845,13 @@
                 padding: 32px 24px;
             }
 
-            /* Mejorar responsividad del grÃ¡fico */
+            /* Mejorar responsividad del gráfico */
             .chart-container {
                 width: 240px !important;
                 height: 240px !important;
             }
 
-            /* Ajustar leyenda en mÃ³vil */
+            /* Ajustar leyenda en móvil */
             .hero div[style*="gap: 40px"] {
                 flex-direction: column !important;
                 gap: 24px !important;
@@ -861,7 +861,7 @@
 </head>
 
 <body>
-    <!-- PartÃ­culas flotantes -->
+    <!-- Partículas flotantes -->
     <div class="floating-particles">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -880,7 +880,7 @@
         <div class="particle"></div>
     </div>
 
-    <!-- NavegaciÃ³n ultra limpia -->
+    <!-- Navegación ultra limpia -->
     <nav class="navbar" id="navbar">
         <div class="container">
             <div class="nav-content">
@@ -902,7 +902,7 @@
                 <div style="display: flex; align-items: center; gap: 16px;">
                     <a href="{% url 'usuarios:login' %}"
                         style="color: #475569; text-decoration: none; font-weight: 500; transition: color 0.3s ease;">Iniciar
-                        sesiÃ³n</a>
+                        sesión</a>
                     <a href="{% url 'usuarios:register' %}" class="nav-cta">Comenzar gratis</a>
                 </div>
             </div>
@@ -913,9 +913,9 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content fade-in">
-                <h1>GestiÃ³n financiera <span class="highlight">inteligente</span> y simple</h1>
-                <p>Controla tus finanzas personales con herramientas profesionales. Reportes automÃ¡ticos, alertas
-                    inteligentes y anÃ¡lisis en tiempo real.</p>
+                <h1>Gestión financiera <span class="highlight">inteligente</span> y simple</h1>
+                <p>Controla tus finanzas personales con herramientas profesionales. Reportes automáticos, alertas
+                    inteligentes y análisis en tiempo real.</p>
 
                 <!-- Hero Image Placeholder -->
                 <div style="margin: 60px auto; max-width: 800px; position: relative;">
@@ -931,7 +931,7 @@
 
                                 <div
                                     style="display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap;">
-                                    <!-- GrÃ¡fico donut -->
+                                    <!-- Gráfico donut -->
                                     <div class="chart-container"
                                         style="width: 280px; height: 280px; position: relative;">
                                         <canvas id="expenseChart"></canvas>
@@ -939,7 +939,7 @@
 
                                     <!-- Leyenda visual con iconos -->
                                     <div style="display: flex; flex-direction: column; gap: 20px; text-align: left;">
-                                        <!-- AlimentaciÃ³n -->
+                                        <!-- Alimentación -->
                                         <div
                                             style="display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: 12px; transition: all 0.3s ease;">
                                             <div
@@ -1034,15 +1034,15 @@
                 <div class="stats">
                     <div class="stat">
                         <span class="stat-number">98%</span>
-                        <span class="stat-label">PrecisiÃ³n en reportes</span>
+                        <span class="stat-label">Precisión en reportes</span>
                     </div>
                     <div class="stat">
                         <span class="stat-number">24/7</span>
-                        <span class="stat-label">Monitoreo automÃ¡tico</span>
+                        <span class="stat-label">Monitoreo automático</span>
                     </div>
                     <div class="stat">
                         <span class="stat-number">50+</span>
-                        <span class="stat-label">Tipos de anÃ¡lisis</span>
+                        <span class="stat-label">Tipos de análisis</span>
                     </div>
                 </div>
             </div>
@@ -1056,8 +1056,8 @@
                 <h2 class="section-title" style="font-size: 56px;">Todo lo que necesitas en <span
                         style="background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">un
                         solo lugar</span></h2>
-                <p class="section-subtitle" style="font-size: 22px;">Herramientas profesionales diseÃ±adas para
-                    simplificar tu gestiÃ³n financiera personal y llevar tus finanzas al siguiente nivel</p>
+                <p class="section-subtitle" style="font-size: 22px;">Herramientas profesionales diseñadas para
+                    simplificar tu gestión financiera personal y llevar tus finanzas al siguiente nivel</p>
             </div>
 
             <div class="features-grid">
@@ -1066,9 +1066,9 @@
                         style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid rgba(34, 197, 94, 0.2);">
                         <i class="fas fa-chart-bar" style="color: #227c91; font-size: 32px;"></i>
                     </div>
-                    <h3 class="feature-title">Reportes AutomÃ¡ticos</h3>
+                    <h3 class="feature-title">Reportes Automáticos</h3>
                     <p class="feature-description">Genera reportes financieros detallados en PDF y Excel con un solo
-                        clic. AnÃ¡lisis completos de tus ingresos, gastos y tendencias.</p>
+                        clic. Análisis completos de tus ingresos, gastos y tendencias.</p>
                 </div>
 
                 <div class="feature-card fade-in">
@@ -1077,7 +1077,7 @@
                         <i class="fas fa-bell" style="color: #3b82f6; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Alertas Inteligentes</h3>
-                    <p class="feature-description">Recibe notificaciones automÃ¡ticas sobre gastos inusuales,
+                    <p class="feature-description">Recibe notificaciones automáticas sobre gastos inusuales,
                         vencimientos y oportunidades de ahorro personalizadas.</p>
                 </div>
 
@@ -1087,7 +1087,7 @@
                         <i class="fas fa-wallet" style="color: #f59e0b; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Control de Gastos</h3>
-                    <p class="feature-description">Categoriza y rastrea todos tus gastos automÃ¡ticamente. Establece
+                    <p class="feature-description">Categoriza y rastrea todos tus gastos automáticamente. Establece
                         presupuestos y monitorea tu progreso en tiempo real.</p>
                 </div>
 
@@ -1096,7 +1096,7 @@
                         style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border: 2px solid rgba(139, 92, 246, 0.2);">
                         <i class="fas fa-chart-line" style="color: #8b5cf6; font-size: 32px;"></i>
                     </div>
-                    <h3 class="feature-title">AnÃ¡lisis Avanzado</h3>
+                    <h3 class="feature-title">Análisis Avanzado</h3>
                     <p class="feature-description">Visualiza patrones de gasto, proyecciones futuras y recomendaciones
                         personalizadas basadas en tu comportamiento financiero.</p>
                 </div>
@@ -1106,9 +1106,9 @@
                         style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid rgba(239, 68, 68, 0.2);">
                         <i class="fas fa-graduation-cap" style="color: #ef4444; font-size: 32px;"></i>
                     </div>
-                    <h3 class="feature-title">EducaciÃ³n Financiera</h3>
+                    <h3 class="feature-title">Educación Financiera</h3>
                     <p class="feature-description">Accede a contenido educativo personalizado, tips de ahorro y
-                        estrategias de inversiÃ³n adaptadas a tu perfil.</p>
+                        estrategias de inversión adaptadas a tu perfil.</p>
                 </div>
 
                 <div class="feature-card fade-in">
@@ -1117,8 +1117,8 @@
                         <i class="fas fa-shield-alt" style="color: #14b8a6; font-size: 32px;"></i>
                     </div>
                     <h3 class="feature-title">Seguridad Total</h3>
-                    <p class="feature-description">Tus datos estÃ¡n protegidos con encriptaciÃ³n de nivel bancario y
-                        autenticaciÃ³n de mÃºltiples factores.</p>
+                    <p class="feature-description">Tus datos están protegidos con encriptación de nivel bancario y
+                        autenticación de múltiples factores.</p>
                 </div>
             </div>
         </div>
@@ -1159,7 +1159,7 @@
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd"></path>
                             </svg>
-                            Reportes bÃ¡sicos
+                            Reportes básicos
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
                             <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
@@ -1181,7 +1181,7 @@
                     style="border: 2px solid #227c91; position: relative; background: rgba(255, 255, 255, 0.95);">
                     <div
                         style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #227c91; color: white; padding: 6px 20px; border-radius: 20px; font-size: 14px; font-weight: 600;">
-                        MÃ¡s popular</div>
+                        Más popular</div>
                     <h3 class="feature-title">Pro</h3>
                     <div style="font-size: 48px; font-weight: 700; color: #227c91; margin: 20px 0;">
                         $19<span style="font-size: 18px; font-weight: 400; color: #64748b;">/mes</span>
@@ -1212,7 +1212,7 @@
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd"></path>
                             </svg>
-                            Alertas automÃ¡ticas
+                            Alertas automáticas
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
                             <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
@@ -1251,7 +1251,7 @@
                                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                     clip-rule="evenodd"></path>
                             </svg>
-                            MÃºltiples usuarios
+                            Múltiples usuarios
                         </li>
                         <li style="display: flex; align-items: center; gap: 8px;">
                             <svg style="width: 16px; height: 16px; color: #227c91;" fill="currentColor"
@@ -1287,8 +1287,8 @@
                 <h2 class="section-title"
                     style="font-size: 56px; font-weight: 800; background: linear-gradient(135deg, #0f172a 0%, #227c91 50%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                     Simplificamos tus finanzas personales</h2>
-                <p class="section-subtitle" style="font-size: 20px; margin-bottom: 60px;">Somos expertos en tecnologÃ­a
-                    financiera comprometidos con democratizar el acceso a herramientas profesionales de gestiÃ³n
+                <p class="section-subtitle" style="font-size: 20px; margin-bottom: 60px;">Somos expertos en tecnología
+                    financiera comprometidos con democratizar el acceso a herramientas profesionales de gestión
                     financiera.</p>
 
                 <!-- Team Preview -->
@@ -1302,7 +1302,7 @@
                         </div>
                         <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Inteligencia
                             Artificial</h3>
-                        <p style="color: #64748b; font-size: 16px;">Algoritmos avanzados para anÃ¡lisis predictivo y
+                        <p style="color: #64748b; font-size: 16px;">Algoritmos avanzados para análisis predictivo y
                             recomendaciones personalizadas</p>
                     </div>
 
@@ -1314,8 +1314,8 @@
                         </div>
                         <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Equipo
                             Experto</h3>
-                        <p style="color: #64748b; font-size: 16px;">Profesionales en finanzas y tecnologÃ­a trabajando
-                            para tu Ã©xito financiero</p>
+                        <p style="color: #64748b; font-size: 16px;">Profesionales en finanzas y tecnología trabajando
+                            para tu éxito financiero</p>
                     </div>
 
                     <div
@@ -1324,9 +1324,9 @@
                             style="width: 80px; height: 80px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
                             <i class="fas fa-heart" style="color: white; font-size: 32px;"></i>
                         </div>
-                        <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">PasiÃ³n por
+                        <h3 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 12px;">Pasión por
                             Ayudar</h3>
-                        <p style="color: #64748b; font-size: 16px;">Cada funcionalidad estÃ¡ diseÃ±ada pensando en mejorar
+                        <p style="color: #64748b; font-size: 16px;">Cada funcionalidad está diseñada pensando en mejorar
                             tu bienestar financiero</p>
                     </div>
                 </div>
@@ -1339,8 +1339,8 @@
                     <div style="position: relative; z-index: 2;">
                         <blockquote
                             style="font-size: 24px; font-weight: 600; color: #0f172a; line-height: 1.6; font-style: italic; margin-bottom: 24px;">
-                            "Nuestra misiÃ³n es empoderar a las personas con las herramientas y conocimientos necesarios
-                            para tomar decisiones financieras inteligentes y alcanzar sus metas econÃ³micas."
+                            "Nuestra misión es empoderar a las personas con las herramientas y conocimientos necesarios
+                            para tomar decisiones financieras inteligentes y alcanzar sus metas económicas."
                         </blockquote>
                         <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
                             <div
@@ -1365,11 +1365,11 @@
         </div>
         <div class="container" style="position: relative; z-index: 2;">
             <div class="fade-in" style="text-align: center; max-width: 700px; margin: 0 auto;">
-                <h2 class="section-title" style="font-size: 56px;">Â¿Listo para <span
+                <h2 class="section-title" style="font-size: 56px;">¿Listo para <span
                         style="background: linear-gradient(135deg, #227c91 0%, #3b82f6 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">transformar</span>
                     tus finanzas?</h2>
                 <p class="section-subtitle" style="font-size: 22px;">Ãšnete a miles de usuarios que ya controlan sus
-                    finanzas con FinGest y descubre el poder de la gestiÃ³n financiera inteligente</p>
+                    finanzas con FinGest y descubre el poder de la gestión financiera inteligente</p>
 
                 <!-- CTA Visual -->
                 <div
@@ -1381,9 +1381,9 @@
                             <i class="fas fa-rocket" style="color: white; font-size: 24px;"></i>
                         </div>
                         <div>
-                            <div style="font-size: 18px; font-weight: 700; color: #0f172a;">Â¡Empieza en menos de 2
+                            <div style="font-size: 18px; font-weight: 700; color: #0f172a;">¡Empieza en menos de 2
                                 minutos!</div>
-                            <div style="color: #64748b; font-size: 14px;">ConfiguraciÃ³n rÃ¡pida y sencilla</div>
+                            <div style="color: #64748b; font-size: 14px;">Configuración rápida y sencilla</div>
                         </div>
                     </div>
 
@@ -1410,7 +1410,7 @@
             <div class="footer-content">
                 <div class="footer-links">
                     <a href="{% url 'core:privacy' %}">Privacidad</a>
-                    <a href="{% url 'core:terms' %}">TÃ©rminos</a>
+                    <a href="{% url 'core:terms' %}">Términos</a>
                     <a href="{% url 'core:help' %}">Ayuda</a>
                     <a href="{% url 'core:contact' %}">Contacto</a>
                 </div>
@@ -1420,14 +1420,14 @@
     </footer>
 
     <script>
-        // Crear grÃ¡fico donut de gastos
+        // Crear gráfico donut de gastos
         document.addEventListener('DOMContentLoaded', function () {
             const ctx = document.getElementById('expenseChart').getContext('2d');
 
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['CategorÃ­a A', 'CategorÃ­a B', 'CategorÃ­a C', 'CategorÃ­a D', 'CategorÃ­a E'],
+                    labels: ['Categoría A', 'Categoría B', 'Categoría C', 'Categoría D', 'Categoría E'],
                     datasets: [{
                         data: [1250, 890, 650, 420, 290],
                         backgroundColor: [
@@ -1435,7 +1435,7 @@
                             '#3b82f6', // Azul brillante
                             '#227c91', // Verde brillante
                             '#f59e0b', // Amarillo brillante
-                            '#8b5cf6'  // PÃºrpura brillante
+                            '#8b5cf6'  // Púrpura brillante
                         ],
                         borderWidth: 0,
                         hoverBorderWidth: 3,
@@ -1484,7 +1484,7 @@
                         arc: {
                             hoverBackgroundColor: function (context) {
                                 const color = context.element.options.backgroundColor;
-                                return color + 'CC'; // Hacer el color mÃ¡s brillante en hover
+                                return color + 'CC'; // Hacer el color más brillante en hover
                             }
                         }
                     }

@@ -18,8 +18,8 @@
                         <div class="alert alert-info">
                             <strong>ðŸ“Š Total de emails:</strong> {{ total_emails }}
                             <br>
-                            <small>Los emails se guardan en archivos porque estÃ¡ configurado el backend 'filebased'. 
-                            Para envÃ­o real, configura Gmail en settings.py</small>
+                            <small>Los emails se guardan en archivos porque está configurado el backend 'filebased'. 
+                            Para envío real, configura Gmail en settings.py</small>
                         </div>
                         
                         <div class="row">
@@ -67,17 +67,17 @@
                         
                     {% else %}
                         <div class="alert alert-warning">
-                            <h5>ðŸ“­ No hay emails enviados aÃºn</h5>
+                            <h5>ðŸ“­ No hay emails enviados aún</h5>
                             <p>Para generar emails de prueba:</p>
                             <ol>
                                 <li>Ve a <a href="{% url 'gestion_financiera_basica:test_notifications' %}">Pruebas de Notificaciones</a></li>
-                                <li>Crea una transacciÃ³n de prueba</li>
-                                <li>Regresa aquÃ­ para ver el email generado</li>
+                                <li>Crea una transacción de prueba</li>
+                                <li>Regresa aquí para ver el email generado</li>
                             </ol>
                         </div>
                     {% endif %}
                     
-                    <!-- Enlaces de navegaciÃ³n -->
+                    <!-- Enlaces de navegación -->
                     <div class="text-center mt-4">
                         <a href="{% url 'gestion_financiera_basica:test_notifications' %}" class="btn btn-success">
                             ðŸ§ª Generar Email de Prueba
@@ -93,10 +93,10 @@
                     <!-- Instrucciones para email real -->
                     <div class="mt-4">
                         <div class="alert alert-light">
-                            <h6><strong>ðŸ’¡ Â¿Quieres recibir emails reales?</strong></h6>
+                            <h6><strong>ðŸ’¡ ¿Quieres recibir emails reales?</strong></h6>
                             <p class="mb-2">Para recibir notificaciones en tu bandeja real:</p>
                             <ol class="mb-0">
-                                <li>Configura una cuenta Gmail con contraseÃ±a de aplicaciÃ³n</li>
+                                <li>Configura una cuenta Gmail con contraseña de aplicación</li>
                                 <li>Actualiza <code>EMAIL_BACKEND</code> en <code>settings.py</code></li>
                                 <li>Reinicia el servidor</li>
                             </ol>

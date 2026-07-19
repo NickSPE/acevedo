@@ -10,7 +10,7 @@
 
 {% block content %}
 <div class="p-6 space-y-5">
-  <!-- Header con estadÃ­sticas -->
+  <!-- Header con estadísticas -->
   <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
     <div>
       <h1 class="text-2xl font-bold" style="color: #605952;">Transacciones</h1>
@@ -30,7 +30,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round"    stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
-       Nueva TransacciÃ³n
+       Nueva Transacción
       </button>
 
     </div>
@@ -114,7 +114,7 @@
     </div>
   </div>
 
-  <!-- Filtros y BÃºsqueda optimizados para mÃ³vil -->
+  <!-- Filtros y Búsqueda optimizados para móvil -->
   <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 mb-6">
     <!-- Header compacto -->
     <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 lg:hidden">
@@ -139,12 +139,12 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
       </svg>
-      <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Filtros y BÃºsqueda</span>
+      <span class="text-lg font-medium text-gray-700 dark:text-gray-300">Filtros y Búsqueda</span>
     </div>
 
     <!-- Contenido de filtros -->
     <div id="filter-content" class="hidden lg:block">
-      <!-- Filtros por tipo - Compactos en mÃ³vil -->
+      <!-- Filtros por tipo - Compactos en móvil -->
       <div class="px-4 lg:px-6 pb-4">
         <div class="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
           <span class="text-sm font-medium text-gray-600 dark:text-gray-400 min-w-fit">Tipo:</span>
@@ -167,14 +167,14 @@
                  class="block w-full pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:border-gray-500" style="border-color: #E5E1DD; color: #605952;">
         </div>
 
-        <!-- BÃºsqueda y OrdenaciÃ³n - Compacto en mÃ³vil -->
+        <!-- Búsqueda y Ordenación - Compacto en móvil -->
         <form method="GET" class="space-y-3 lg:space-y-0 lg:flex lg:gap-4">
           <!-- Mantener el filtro actual -->
           {% if filter_type and filter_type != 'all' %}
           <input type="hidden" name="filter" value="{{ filter_type }}">
           {% endif %}
 
-          <!-- Campo de bÃºsqueda -->
+          <!-- Campo de búsqueda -->
           <div class="flex-1">
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -189,20 +189,20 @@
             </div>
           </div>
 
-          <!-- Fila para ordenaciÃ³n y botÃ³n en mÃ³vil -->
+          <!-- Fila para ordenación y botón en móvil -->
           <div class="flex gap-2">
-            <!-- OrdenaciÃ³n -->
+            <!-- Ordenación -->
             <div class="flex-1 lg:w-44">
               <select name="sort" onchange="this.form.submit()"
                 class="block w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:text-white">
-                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>MÃ¡s recientes</option>
-                <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>MÃ¡s antiguos</option>
+                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Más recientes</option>
+                <option value="oldest" {% if sort_by == 'oldest' %}selected{% endif %}>Más antiguos</option>
                 <option value="highest" {% if sort_by == 'highest' %}selected{% endif %}>Mayor monto</option>
                 <option value="lowest" {% if sort_by == 'lowest' %}selected{% endif %}>Menor monto</option>
               </select>
             </div>
 
-            <!-- BotÃ³n de bÃºsqueda -->
+            <!-- Botón de búsqueda -->
             <button type="submit"
                class="bg-[#227C91] hover:bg-[#1B6677] text-white px-4 lg:px-6 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 min-w-fit">
              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -239,7 +239,7 @@
       {% for movimiento in transactions %}
       <div class="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
         <div class="flex items-center gap-3">
-          <!-- Icono de categorÃ­a -->
+          <!-- Icono de categoría -->
           <div
             class="w-10 h-10 {% if movimiento.tipo == 'ingreso' %}bg-green-100 text-green-600{% else %}bg-red-100 text-red-600{% endif %} rounded-lg flex items-center justify-center">
             {% if movimiento.tipo == 'ingreso' %}
@@ -253,7 +253,7 @@
             {% endif %}
           </div>
 
-          <!-- InformaciÃ³n de la transacciÃ³n -->
+          <!-- Información de la transacción -->
           <div>
             <p class="font-medium text-gray-900">{{ movimiento.nombre }}</p>
             <p class="text-sm text-gray-500">{{ movimiento.fecha_movimiento|date:"j M, Y" }} â€¢ {{ movimiento.id_cuenta.nombre }}</p>
@@ -274,13 +274,13 @@
             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
         <p class="text-gray-500 font-medium mb-2">No hay transacciones</p>
-        <p class="text-gray-400 text-sm mb-4">Comience agregando su primera transacciÃ³n</p>
+        <p class="text-gray-400 text-sm mb-4">Comience agregando su primera transacción</p>
         <a href="{% url 'gestion_financiera_basica:agregar_movimiento' %}"
          class="bg-[#227C91] hover:bg-[#1b6676] text-white px-4 py-2 rounded-lg font-medium text-sm transition-colors inline-flex items-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
-           Nueva transacciÃ³n
+           Nueva transacción
         </a>
 
       </div>
@@ -288,7 +288,7 @@
     </div>
   </div>
 
-  <!-- Secciones adicionales para hacer la pÃ¡gina mÃ¡s atractiva -->
+  <!-- Secciones adicionales para hacer la página más atractiva -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 
     <!-- Transacciones Recientes -->
@@ -336,11 +336,11 @@
     </div>
     {% endif %}
 
-    <!-- CategorÃ­as mÃ¡s frecuentes -->
+    <!-- Categorías más frecuentes -->
     {% if categorias_frecuentes %}
     <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">CategorÃ­as del Mes</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Categorías del Mes</h3>
         <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
           <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor"
             viewBox="0 0 24 24">
@@ -357,7 +357,7 @@
             <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
             <div>
               <p class="font-medium text-gray-900 dark:text-white text-sm">{{ categoria.nombre }}</p>
-              <p class="text-xs text-gray-500 dark:text-gray-400">{{ categoria.cantidad }} transacciÃ³n {{ categoria.cantidad|pluralize:"es" }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">{{ categoria.cantidad }} transacción {{ categoria.cantidad|pluralize:"es" }}</p>
             </div>
           </div>
           <p class="font-semibold text-sm text-gray-900 dark:text-white">${{ categoria.total_monto|floatformat:0 }}</p>
@@ -368,7 +368,7 @@
     {% endif %}
   </div>
 
-  <!-- Resumen estadÃ­stico -->
+  <!-- Resumen estadístico -->
   <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mt-6">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Resumen Financiero</h3>
@@ -391,11 +391,11 @@
       </div>
       <div class="text-center">
         <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">${{ ingresos_semana|floatformat:0 }}</p>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Ingresos (7 dÃ­as)</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Ingresos (7 días)</p>
       </div>
       <div class="text-center">
         <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">${{ gastos_semana|floatformat:0 }}</p>
-        <p class="text-sm text-gray-600 dark:text-gray-400">Gastos (7 dÃ­as)</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Gastos (7 días)</p>
       </div>
     </div>
   </div>

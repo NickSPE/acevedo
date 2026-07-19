@@ -27,7 +27,7 @@
           <span class="text-white text-sm">ðŸ¤–</span>
         </div>
         <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
-          <p class="text-sm">Â¡Hola! ðŸ‘‹ Soy tu asistente de IA. Puedes preguntarme cualquier cosa que necesites saber.</p>
+          <p class="text-sm">¡Hola! ðŸ‘‹ Soy tu asistente de IA. Puedes preguntarme cualquier cosa que necesites saber.</p>
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@
         <input type="text" 
                id="user-input" 
                name="question"
-               placeholder="Escribe tu pregunta aquÃ­..."
+               placeholder="Escribe tu pregunta aquí..."
                class="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
                style="border-color: #E5E1DD;"
                onfocus="this.style.borderColor='#227C91'; this.style.boxShadow='0 0 0 2px rgba(34, 124, 145, 0.2)'"
@@ -59,16 +59,16 @@
 
   <!-- Quick Suggestions -->
   <div class="mt-6">
-    <h3 class="text-sm font-medium mb-3" style="color: #605952;">Sugerencias rÃ¡pidas:</h3>
+    <h3 class="text-sm font-medium mb-3" style="color: #605952;">Sugerencias rápidas:</h3>
     <div class="flex flex-wrap gap-2">
-      <button onclick="sendQuickMessage('Hola, Â¿cÃ³mo estÃ¡s?')" 
+      <button onclick="sendQuickMessage('Hola, ¿cómo estás?')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
               onmouseout="this.style.backgroundColor='#F1F0EE'">
         ðŸ‘‹ Saludo
       </button>
-      <button onclick="sendQuickMessage('Â¿QuÃ© es Bitcoin?')" 
+      <button onclick="sendQuickMessage('¿Qué es Bitcoin?')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
@@ -82,19 +82,19 @@
               onmouseout="this.style.backgroundColor='#F1F0EE'">
         ðŸ’¡ Ahorros
       </button>
-      <button onclick="sendQuickMessage('Â¿CÃ³mo invertir mi dinero?')" 
+      <button onclick="sendQuickMessage('¿Cómo invertir mi dinero?')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
               onmouseout="this.style.backgroundColor='#F1F0EE'">
         ðŸ“ˆ Inversiones
       </button>
-      <button onclick="sendQuickMessage('ExplÃ­came algo interesante')" 
+      <button onclick="sendQuickMessage('Explícame algo interesante')" 
               class="px-3 py-1 rounded-full text-sm transition-colors"
               style="background-color: #F1F0EE; color: #605952;"
               onmouseover="this.style.backgroundColor='#E5E1DD'"
               onmouseout="this.style.backgroundColor='#F1F0EE'">
-        ðŸŽ¯ SorprÃ©ndeme
+        ðŸŽ¯ Sorpréndeme
       </button>
     </div>
   </div>
@@ -228,7 +228,7 @@ function addMessage(content, isUser = false) {
 function formatAIResponse(content) {
   let formatted = content;
   
-  // Convertir tÃ­tulos (lÃ­neas que terminan con :)
+  // Convertir títulos (líneas que terminan con :)
   formatted = formatted.replace(/^(.+):$/gm, '<h4 class="font-bold mt-3 mb-2 first:mt-0" style="color: #605952;">$1</h4>');
   
   // Convertir listas con guiones
@@ -246,14 +246,14 @@ function formatAIResponse(content) {
   // Convertir texto en cursiva *texto*
   formatted = formatted.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
   
-  // Convertir pÃ¡rrafos (doble salto de lÃ­nea)
+  // Convertir párrafos (doble salto de línea)
   formatted = formatted.replace(/\n\n/g, '</p><p class="mb-3">');
   formatted = '<p class="mb-3">' + formatted + '</p>';
   
-  // Limpiar pÃ¡rrafos vacÃ­os
+  // Limpiar párrafos vacíos
   formatted = formatted.replace(/<p[^>]*><\/p>/g, '');
   
-  // Convertir saltos de lÃ­nea simples
+  // Convertir saltos de línea simples
   formatted = formatted.replace(/\n/g, '<br>');
   
   return formatted;
@@ -327,7 +327,7 @@ async function sendMessage(message) {
     
   } catch (error) {
     removeTyping();
-    addMessage('Error de conexiÃ³n. Por favor intenta de nuevo.');
+    addMessage('Error de conexión. Por favor intenta de nuevo.');
     console.error('Error:', error);
   }
   

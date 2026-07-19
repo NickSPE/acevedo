@@ -283,7 +283,7 @@
                 </div>
             </div>
             
-            <!-- InformaciÃ³n de la subcuenta -->
+            <!-- Información de la subcuenta -->
             <div class="subcuenta-display">
                 <div class="row align-items-center">
                     <div class="col-md-8">
@@ -324,9 +324,9 @@
                     <i class="fas fa-coins"></i>
                 </div>
                 <div class="text-center">
-                    <h6 class="text-muted mb-1">Disponible para DepÃ³sito</h6>
+                    <h6 class="text-muted mb-1">Disponible para Depósito</h6>
                     <h4 class="text-warning mb-0">${{ cuenta.saldo_disponible|floatformat:2 }}</h4>
-                    <small class="text-muted">DespuÃ©s de otras subcuentas</small>
+                    <small class="text-muted">Después de otras subcuentas</small>
                 </div>
             </div>
         </div>
@@ -337,22 +337,22 @@
                 <form method="post" id="depositoForm">
                     {% csrf_token %}
                     
-                    <!-- Monto del DepÃ³sito -->
+                    <!-- Monto del Depósito -->
                     <div class="form-section">
-                        <h6><i class="fas fa-dollar-sign me-2"></i>Monto del DepÃ³sito</h6>
+                        <h6><i class="fas fa-dollar-sign me-2"></i>Monto del Depósito</h6>
                     </div>
                     
                     <div class="amount-section">
                         <div class="row">
                             <div class="col-md-8 mb-3">
                                 <label for="{{ form.monto.id_for_label }}" class="form-label fw-bold">
-                                    <i class="fas fa-money-bill-wave me-2"></i>Â¿CuÃ¡nto quieres depositar? *
+                                    <i class="fas fa-money-bill-wave me-2"></i>¿Cuánto quieres depositar? *
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
                                     {{ form.monto }}
                                     <button type="button" class="btn btn-outline-secondary" id="btnMaximo">
-                                        <i class="fas fa-arrow-up me-1"></i>MÃ¡ximo
+                                        <i class="fas fa-arrow-up me-1"></i>Máximo
                                     </button>
                                 </div>
                                 {% if form.monto.errors %}
@@ -364,13 +364,13 @@
                                 {% endif %}
                                 <div class="form-text mt-1">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    MÃ¡ximo disponible: <strong>${{ cuenta.saldo_disponible|floatformat:2 }}</strong>
+                                    Máximo disponible: <strong>${{ cuenta.saldo_disponible|floatformat:2 }}</strong>
                                 </div>
                             </div>
                             
                             <div class="col-md-4 mb-3">
                                 <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-bold">
-                                    <i class="fas fa-comment me-2"></i>DescripciÃ³n (Opcional)
+                                    <i class="fas fa-comment me-2"></i>Descripción (Opcional)
                                 </label>
                                 {{ form.descripcion }}
                                 {% if form.descripcion.errors %}
@@ -380,7 +380,7 @@
                                         {% endfor %}
                                     </div>
                                 {% endif %}
-                                <div class="form-text">Describe el motivo del depÃ³sito</div>
+                                <div class="form-text">Describe el motivo del depósito</div>
                             </div>
                         </div>
                     </div>
@@ -388,7 +388,7 @@
                     <!-- Vista Previa -->
                     <div class="mb-4" id="vistaPreviaDiv" style="display: none;">
                         <div class="form-section">
-                            <h6><i class="fas fa-eye me-2"></i>Vista Previa del DepÃ³sito</h6>
+                            <h6><i class="fas fa-eye me-2"></i>Vista Previa del Depósito</h6>
                         </div>
                         
                         <div class="preview-section">
@@ -400,7 +400,7 @@
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <i class="fas fa-plus-circle fa-2x mb-2 opacity-75"></i>
-                                    <h6 class="opacity-75 mb-1">DepÃ³sito</h6>
+                                    <h6 class="opacity-75 mb-1">Depósito</h6>
                                     <h4 class="mb-0" id="montoDeposito">$0.00</h4>
                                 </div>
                                 <div class="col-md-4 mb-3">
@@ -412,14 +412,14 @@
                         </div>
                     </div>
 
-                    <!-- Botones de AcciÃ³n -->
+                    <!-- Botones de Acción -->
                     <div class="action-buttons">
                         <div class="d-flex justify-content-between flex-wrap gap-2">
                             <a href="{% url 'cuentas:subcuentas_dashboard' %}" class="btn btn-secondary">
                                 <i class="fas fa-times me-2"></i>Cancelar
                             </a>
                             <button type="submit" class="btn btn-success" id="btnDepositar" disabled>
-                                <i class="fas fa-plus-circle me-2"></i>Realizar DepÃ³sito
+                                <i class="fas fa-plus-circle me-2"></i>Realizar Depósito
                             </button>
                         </div>
                     </div>
@@ -460,11 +460,11 @@
             </div>
         </div>
 
-        <!-- InformaciÃ³n Importante -->
+        <!-- Información Importante -->
         <div class="card mt-4">
             <div class="card-header bg-light">
                 <h6 class="mb-0">
-                    <i class="fas fa-lightbulb me-2"></i>InformaciÃ³n Importante
+                    <i class="fas fa-lightbulb me-2"></i>Información Importante
                 </h6>
             </div>
             <div class="card-body">
@@ -473,11 +473,11 @@
                         <div class="col-md-6">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-bolt text-success me-2"></i>
-                                <span class="fw-bold">Transferencia instantÃ¡nea</span>
+                                <span class="fw-bold">Transferencia instantánea</span>
                             </div>
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-history text-success me-2"></i>
-                                <span class="fw-bold">Registro automÃ¡tico en historial</span>
+                                <span class="fw-bold">Registro automático en historial</span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // BotÃ³n mÃ¡ximo
+    // Botón máximo
     btnMaximo.addEventListener('click', function() {
         if (saldoDisponible > 0) {
             montoInput.value = saldoDisponible.toFixed(2);
@@ -536,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // ValidaciÃ³n de monto
+    // Validación de monto
     montoInput.addEventListener('input', function() {
         const valor = parseFloat(this.value) || 0;
         if (valor > saldoDisponible) {
@@ -572,15 +572,15 @@ document.addEventListener('DOMContentLoaded', function() {
         montoDeposito.textContent = '$' + monto.toFixed(2);
     }
     
-    // ConfirmaciÃ³n antes del envÃ­o
+    // Confirmación antes del envío
     form.addEventListener('submit', function(e) {
         const monto = parseFloat(montoInput.value) || 0;
-        if (!confirm(`Â¿Confirmas el depÃ³sito de $${monto.toFixed(2)} en la subcuenta "{{ subcuenta.nombre }}"?`)) {
+        if (!confirm(`¿Confirmas el depósito de $${monto.toFixed(2)} en la subcuenta "{{ subcuenta.nombre }}"?`)) {
             e.preventDefault();
         }
     });
     
-    // ValidaciÃ³n inicial
+    // Validación inicial
     validarFormulario();
 });
 </script>
