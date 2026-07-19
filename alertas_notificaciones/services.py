@@ -260,10 +260,10 @@ class EmailService:
             icon_color = "#8B5CF6"  # Morado para metas
         elif "saldo" in notificacion.titulo.lower():
             icon_color = "#F59E0B"  # Naranja para alertas de saldo
-        
+
         # Obtener datos adicionales
         datos = notificacion.datos_adicionales or {}
-        
+
         # Crear secciones de información adicional
         info_adicional = ""
         if datos.get('movimiento_tipo'):
@@ -278,7 +278,7 @@ class EmailService:
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <span style="color: #6b7280;"><strong>Monto:</strong></span>
-                    <span style="color: #1f2937; font-weight: bold; font-size: 18px;">{NotificationService._format_currency(datos.get('monto', 0), usuario)}</span>
+                    <span style="color: #1f2937; font-weight: bold; font-size: 18px;">{NotificationService.format_currency(datos.get('monto', 0), usuario)}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                     <span style="color: #6b7280;"><strong>Cuenta:</strong></span>
@@ -286,11 +286,11 @@ class EmailService:
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: #6b7280;"><strong>Saldo actual:</strong></span>
-                    <span style="color: #059669; font-weight: bold;">{NotificationService._format_currency(datos.get('saldo_actual', 0), usuario)}</span>
+                    <span style="color: #059669; font-weight: bold;">{NotificationService.format_currency(datos.get('saldo_actual', 0), usuario)}</span>
                 </div>
             </div>
             """
-        
+
         # Información para metas de ahorro
         if datos.get('meta_nombre'):
             info_adicional += f"""
@@ -306,11 +306,11 @@ class EmailService:
                 </div>
                 <div style="display: flex; justify-content: space-between;">
                     <span style="color: #6b7280;"><strong>Objetivo:</strong></span>
-                    <span style="color: #1f2937; font-weight: bold;">{NotificationService._format_currency(datos.get('monto_objetivo', 0), usuario)}</span>
+                    <span style="color: #1f2937; font-weight: bold;">{NotificationService.format_currency(datos.get('monto_objetivo', 0), usuario)}</span>
                 </div>
             </div>
             """
-        
+
         return f"""
         <!DOCTYPE html>
         <html>
