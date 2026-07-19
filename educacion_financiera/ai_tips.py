@@ -153,7 +153,8 @@ class FinancialTipsAI:
         
         return tips[:6]  # Máximo 6 consejos
 
-    def _get_fallback_tips(self, category: str) -> List[tuple]:
+    @staticmethod
+    def _get_fallback_tips(category: str) -> List[tuple]:
         """Consejos de respaldo en caso de error con IA"""
         
         fallback_tips = {
@@ -179,6 +180,8 @@ class FinancialTipsAI:
                 ("🚫", "Parar Nuevas Deudas", "No uses crédito mientras pagas deudas existentes."),
                 ("📝", "Plan de Pagos", "Crea un calendario con fechas y montos específicos."),
             ],
+        }
+        return fallback_tips.get(category, [])
             "investment": [
                 ("🎯", "Diversificación", "No pongas todos los huevos en una canasta."),
                 ("⏰", "Tiempo en Mercado", "El tiempo en el mercado supera al timing del mercado."),
