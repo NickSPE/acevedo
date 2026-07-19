@@ -4,7 +4,7 @@
 
 # Django y dependencias core
 Django>=4.2.30,<5.3.0
-django-decouple>=2.1
+python-decouple>=3.8
 
 # Base de datos
 psycopg2-binary>=2.9.12  # PostgreSQL adapter (incluye libpq actualizada contra CVE-2021-23222)
