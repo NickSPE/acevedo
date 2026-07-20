@@ -16,7 +16,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install "pip==26.1.2" \
+            --hash=sha256:382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab
           pip install --only-binary :all: --require-hashes -r requirements.txt
           pip install --only-binary :all: --require-hashes -r requirements-test.txt
 
